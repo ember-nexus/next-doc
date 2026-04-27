@@ -1,0 +1,29 @@
+---
+import { getDatabase } from "../../db.ts";
+import { DateTime } from "luxon";
+import { DuckDBTimestampValue } from "@duckdb/node-api";
+
+interface VersionRow {
+    release_id: number,
+    version: string;
+    release_date: DuckDBTimestampValue | null;
+}
+
+const connection = await getDatabase();
+const query = await connection.runAndReadAll('SELECT release_id, version, release_date FROM versions;');
+const rows = query.getRows() as unknown as [number, string, DuckDBTimestampValue][];
+
+const versions: VersionRow[] = rows.map(([release_id, version, release_date]) => ({
+    release_id,
+    version,
+    release_date,
+}));
+---
+
+<ul>
+    {versions.map(({ release_id, version, release_date }) => (
+            <li>
+                [{release_id}] {version}: {release_date ? DateTime.fromMillis(Number(release_date.micros / 1000n)).toFormat("yyyy-MM-dd") : 'not released'}
+            </li>
+    ))}
+</ul>

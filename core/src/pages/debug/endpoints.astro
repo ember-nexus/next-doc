@@ -1,0 +1,29 @@
+---
+import { getDatabase } from "../../db.ts";
+
+interface EndpointRow {
+    endpoint: string;
+    release_version: string;
+    endpoint_version: string;
+    filename: string;
+}
+
+const connection = await getDatabase();
+const query = await connection.runAndReadAll('SELECT endpoint, release_version, endpoint_version, filename FROM endpoints;');
+const rows = query.getRows() as unknown as [string, string, string, string][];
+
+const endpoints: EndpointRow[] = rows.map(([endpoint, release_version, endpoint_version, filename]) => ({
+    endpoint,
+    release_version,
+    endpoint_version,
+    filename
+}));
+---
+
+<ul>
+    {endpoints.map(({ endpoint, release_version, endpoint_version, filename }) => (
+            <li>
+                {endpoint}: {release_version} ({endpoint_version}), {filename}
+            </li>
+    ))}
+</ul>

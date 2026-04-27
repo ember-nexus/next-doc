@@ -1,0 +1,30 @@
+---
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+    const entries = await getCollection('endpoints');
+
+    return entries.map((entry) => ({
+        params: {
+            release_version: entry.data.release_version,
+            endpoint: entry.data.endpoint.replace(/\//g, '_'), // sanitize slashes in URL
+        },
+        props: { entry },
+    }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<html>
+<head>
+    <title>{entry.data.endpoint} — {entry.data.release_version}</title>
+</head>
+<body>
+<h1>{entry.data.endpoint}</h1>
+<p>Release: {entry.data.release_version} | Version: {entry.data.endpoint_version}</p>
+
+<Content />
+</body>
+</html>

@@ -1,0 +1,66 @@
+---
+import { getDatabase } from "../../db.ts";
+
+const connection = await getDatabase();
+
+// Get all table names
+const tablesResult = await connection.runAndReadAll(
+    `SELECT table_name FROM information_schema.tables WHERE table_schema = 'main' ORDER BY table_name;`
+);
+const tableNames = (tablesResult.getRows() as [string][]).map(([name]) => name);
+
+// For each table, fetch first 10 rows + column names
+const tables: { name: string; columns: string[]; rows: unknown[][] }[] = [];
+
+for (const tableName of tableNames) {
+    const result = await connection.runAndReadAll(
+        `SELECT * FROM "${tableName}" LIMIT 10;`
+    );
+    const columns = result.columnNames() as string[];
+    const rows = result.getRows() as unknown[][];
+    tables.push({ name: tableName, columns, rows });
+}
+
+// Render a markdown table as a string
+function toMarkdownTable(columns: string[], rows: unknown[][]): string {
+    const escape = (val: unknown): string =>
+        String(val ?? "NULL").replace(/\|/g, "\\|");
+
+    const header = `| ${columns.map(escape).join(" | ")} |`;
+    const separator = `| ${columns.map(() => "---").join(" | ")} |`;
+    const body = rows
+        .map((row) => `| ${row.map(escape).join(" | ")} |`)
+        .join("\n");
+
+    return [header, separator, body].join("\n");
+}
+---
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Table Preview</title>
+    <style>
+        body { font-family: sans-serif; padding: 2rem; }
+        h2 { margin-top: 2rem; }
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+<h1>Database Table Preview (first 10 rows each)</h1>
+
+{tables.map(({ name, columns, rows }) => (
+        <section>
+            <h2>{name}</h2>
+            <pre><code>{toMarkdownTable(columns, rows)}</code></pre>
+        </section>
+))}
+</body>
+</html>

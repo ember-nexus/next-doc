@@ -1,0 +1,16 @@
+name: doc
+
+services:
+
+  core:
+    container_name: core
+    build:
+      dockerfile: tools/Dockerfile
+      context: ..
+      target: dev
+    tty: true
+    volumes:
+      - ../core:/core
+    working_dir: /core
+    ports:
+      - 4321:4321
