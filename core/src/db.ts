@@ -1,4 +1,4 @@
-import {DuckDBConnection, DuckDBInstance} from "@duckdb/node-api";
+import {DuckDBConnection, DuckDBInstance, INTEGER} from "@duckdb/node-api";
 
 let _connection: DuckDBConnection | null = null;
 
@@ -11,21 +11,35 @@ export async function getDatabase(): Promise<DuckDBConnection> {
         await _connection.run("LOAD yaml;");
         await _connection.run("SET file_search_path = '/core/src/data';");
 
+        // read regular versions from version yml files
         await _connection.run(`
             CREATE OR REPLACE TABLE versions AS
             SELECT ROW_NUMBER() OVER () AS release_id, *
-            FROM ((SELECT *
+            FROM (SELECT *
                    FROM 'versions/**/*.yml'
                    ORDER BY
                        CAST (split_part(version, '.', 1) AS INTEGER),
                        CAST (split_part(version, '.', 2) AS INTEGER),
                        CAST (split_part(version, '.', 3) AS INTEGER))
-                  UNION ALL
-                  SELECT 'dev' AS version,
-                         NULL  AS release_date,
-                         NULL  AS url);
             ;
         `);
+        // add special versions - latest (alias to latest regular version) and dev (most recent state from repository)
+        const latestReleaseResult = (await _connection.runAndReadAll(`
+            SELECT release_id, version, release_date, url FROM versions
+            ORDER BY release_id DESC
+            LIMIT 1;
+        `)).getRows();
+        await _connection.run(`
+            INSERT INTO versions VALUES
+                ($latest_release_id, 'latest', $latest_release_date, $latest_url),
+                ($dev_release_id, 'dev', NULL, NULL)
+            ;
+        `, {
+            'latest_release_id': Number(latestReleaseResult[0][0]) + 1,
+            'latest_release_date': latestReleaseResult[0][2],
+            'latest_url': latestReleaseResult[0][3],
+            'dev_release_id': Number(latestReleaseResult[0][0]) + 2,
+        });
 
         await _connection.run(`
             CREATE OR REPLACE TABLE raw_endpoints AS

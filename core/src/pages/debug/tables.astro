@@ -14,7 +14,7 @@ const tables: { name: string; columns: string[]; rows: unknown[][] }[] = [];
 
 for (const tableName of tableNames) {
     const result = await connection.runAndReadAll(
-        `SELECT * FROM "${tableName}" LIMIT 10;`
+        `SELECT * FROM "${tableName}";`
     );
     const columns = result.columnNames() as string[];
     const rows = result.getRows() as unknown[][];

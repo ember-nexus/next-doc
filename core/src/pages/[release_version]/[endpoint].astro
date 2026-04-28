@@ -4,6 +4,8 @@ import { getCollection, render } from 'astro:content';
 export async function getStaticPaths() {
     const entries = await getCollection('endpoints');
 
+    // console.log(entries);
+
     return entries.map((entry) => ({
         params: {
             release_version: entry.data.release_version,
