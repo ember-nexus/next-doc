@@ -1,4 +1,45 @@
 version: "0.0.5"
 release_date: "2023-05-13T22:22:31Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.5"
-changes: []
+changes:
+  - type: add
+    title: "Database connection strings are now configurable via environment variables."
+    features: []
+  - type: add
+    title: "Redis is now used."
+    features: []
+  - type: add
+    title: "Add `user:create` command."
+    features:
+      - "cli:user:create"
+  - type: add
+    title: "Add `user:session:create` command."
+    features:
+      - "cli:user:session:create"
+  - type: add
+    title: "Update dependencies."
+    features:
+      - "dependency:composer"
+  - type: add
+    title: "Token management now uses Redis."
+    features: []
+  - type: remove
+    title: "Remove Twig from production requirements, as it is not used."
+    features: []
+  - type: add
+    title: "Add security test cases, part of feature tests."
+    features: []
+  - type: change
+    title: "Upgrade to PHP 8.2.6."
+    features:
+      - "dependency:php"
+  - type: change
+    title: "Upgrade to Alpine 3.18."
+    features:
+      - "dependency:alpine-linux"
+  - type: change
+    title: "Rework several commands."
+    features: []
+  - type: remove
+    title: "Remove templates from Dockerfile."
+    features: []

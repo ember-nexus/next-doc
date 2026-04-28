@@ -48,7 +48,7 @@ export async function getDatabase(): Promise<DuckDBConnection> {
         });
 
         await _connection.run(`
-CREATE OR REPLACE TEMP TABLE raw_changes AS
+CREATE OR REPLACE TABLE changes AS
 SELECT
     version,
     yaml_extract_string(change, '$.type')     AS type,

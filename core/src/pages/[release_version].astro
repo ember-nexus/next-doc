@@ -1,0 +1,102 @@
+---
+import { getCollection, render } from 'astro:content';
+import { getDatabase } from "../db.ts";
+import { marked } from 'marked';
+import Default from '../layouts/Default.astro'
+
+export async function getStaticPaths() {
+    const entries = await getCollection('versions');
+    return entries.map((entry) => ({
+        params: { release_version: entry.data.release_version },
+        props: { entry },
+    }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const release_version = entry.data.release_version;
+
+const connection = await getDatabase();
+
+const changes = (await connection.runAndReadAll(`
+    SELECT type, title, features FROM changes
+    WHERE version = $version
+    ORDER BY CASE type
+                 WHEN 'add'    THEN 1
+                 WHEN 'change' THEN 2
+                 WHEN 'remove' THEN 3
+                 ELSE 4
+                 END;
+`, { version: release_version })).getRows();
+
+const navRow = (await connection.runAndReadAll(`
+    SELECT prev_version, next_version
+    FROM (
+        SELECT
+            version,
+            LAG(version)  OVER () AS prev_version,
+            LEAD(version) OVER () AS next_version
+        FROM versions
+    )
+    WHERE version = $version;
+`, { version: release_version })).getRows();
+
+const prevVersion: string | null = navRow[0]?.[0] ?? null;
+const nextVersion: string | null = navRow[0]?.[1] ?? null;
+
+const grouped = new Map<string, { title: string; features: string[] }[]>();
+for (const [type, title, featuresRaw] of changes) {
+    const features: string[] = featuresRaw
+        ? (Array.isArray(featuresRaw)
+                ? featuresRaw
+                : String(featuresRaw)
+                    .replace(/^\[|\]$/g, '')
+                    .split(',')
+                    .map(f => f.trim())
+        ).filter(f => f.length > 0)
+        : [];
+    if (!grouped.has(type)) grouped.set(type, []);
+    grouped.get(type)!.push({ title, features });
+}
+
+const markdownString = [...grouped.entries()].map(([type, items]) => {
+    const itemLines = items.map(({ title, features }) => {
+        if (features.length === 0) return `- ${title}`;
+        const featureLines = features.join(', ');
+        return `- ${title}  \n${featureLines}`;
+    }).join('\n');
+    return `## ${type}\n\n${itemLines}`;
+}).join('\n\n');
+
+const changesHtml = await marked.parse(markdownString);
+---
+<Default title={entry.data.release_version}>
+    <h1>Release: {release_version}</h1>
+    <Content />
+    <Fragment set:html={changesHtml} />
+
+    <div class="release-nav">
+        <wa-button
+                href={prevVersion ? `/${prevVersion}/` : undefined}
+                disabled={!prevVersion || undefined}
+        >
+            <wa-icon slot="prefix" name="arrow-left"></wa-icon>
+            Previous Release{prevVersion ? `: ${prevVersion}` : ''}
+        </wa-button>
+        <wa-button
+                href={nextVersion ? `/${nextVersion}/` : undefined}
+                disabled={!nextVersion || undefined}
+        >
+            Next Release{nextVersion ? `: ${nextVersion}` : ''}
+            <wa-icon slot="suffix" name="arrow-right"></wa-icon>
+        </wa-button>
+    </div>
+</Default>
+
+<style>
+    .release-nav {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+</style>

@@ -1,0 +1,29 @@
+---
+import '../styles/global.css'
+interface Props {
+    title: string
+    description?: string
+}
+const {
+    title,
+    description = 'My Astro App',
+} = Astro.props
+---
+<!doctype html>
+<html lang="de" dir="ltr" class="wa-theme-default wa-palette-default wa-brand-blue">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <script>
+        import '@awesome.me/webawesome/dist/components/button/button.js';
+    </script>
+</head>
+<body class="min-h-screen flex flex-col bg-white text-gray-9 font-sans text-1 leading-3">
+<main class="flex-1 px-5 py-6 mx-auto w-full max-w-screen-xl prose prose-lg">
+    <slot />
+</main>
+</body>
+</html>

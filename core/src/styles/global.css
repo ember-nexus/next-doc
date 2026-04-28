@@ -1,17 +1,9 @@
 @import "tailwindcss";
-@plugin "@tailwindcss/typography";
 
-::-moz-selection,
-::selection {
-    background: lime;
-    color: #fff;
-}
+@import "@awesome.me/webawesome/dist/styles/themes/default.css" layer(vendor);
+@import "@awesome.me/webawesome/dist/styles/webawesome.css" layer(vendor);
+/*@plugin "@tailwindcss/typography";*/
 
-@layer base {
-    html {
-        font-size: 18px;
-    }
-}
 
 @font-face {
     font-family: "Qanelas Soft Custom";
@@ -65,79 +57,4 @@
 
 * {
     box-sizing: border-box;
-}
-
-body {
-    font-family: "Roboto";
-}
-
-h1, h2, h3, h4, h5, h6 {
-    font-family: "Qanelas Soft Custom", "Roboto";
-}
-
-.lucide, .icon {
-    width: 20px;
-    height: 20px;
-}
-
-.astro-code {
-    font-family: 'Fira Code', monospace;
-}
-
-
-
-body {
-    /*background: url('/noise/006.png');*/
-    /*background: url('/noise/008.png');*/
-    /*background: url('/noise/013.png');*/
-    /*background: url('/noise/015.png');*/
-    /*background: url('/noise/016.png');*/
-    /*background: url('/noise/019.png');*/
-    /*background: url('/noise/024.png');*/
-    /*background: url('/noise/035.png');*/
-    /*background: url('/noise/037.png');*/
-    /*background: url('/noise/050.png');*/
-    /*background: url('/noise/051.png');*/
-    /*background: url('/noise/054.png');*/
-    /*background: url('/noise/057.png');*/
-    /*background: url('/noise/060.png');*/
-    /*background: url('/noise/065.png');*/
-    /*background: url('/noise/075.png');*/
-    /*background: url('/noise/077.png');*/
-    /*background: url('/noise/084.png');*/
-    /*background: url('/noise/088.png');*/
-}
-
-.noise {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url("/noise.png");
-    filter: grayscale(1);
-    /*background-size: 103px;*/
-}
-
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    /*background: #00c950;*/
-    background: #16db66;
-    background: #fff;
-    mix-blend-mode: multiply;
-}
-
-.isolate {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: -1;
-    isolation: isolate;
-    opacity: 0.3;
 }

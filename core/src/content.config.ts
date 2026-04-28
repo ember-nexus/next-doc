@@ -2,6 +2,7 @@ import { defineCollection, z } from 'astro:content';
 
 
 import { endpointLoader } from './loaders/endpointLoader';
+import {versionLoader} from "./loaders/versionLoader";
 
 const endpoints = defineCollection({
     loader: endpointLoader(),
@@ -13,4 +14,11 @@ const endpoints = defineCollection({
     }),
 });
 
-export const collections = { endpoints };
+const versions = defineCollection({
+    loader: versionLoader(),
+    schema: z.object({
+        release_version: z.string(),
+    }),
+});
+
+export const collections = { endpoints, versions };
