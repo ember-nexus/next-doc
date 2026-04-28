@@ -1,4 +1,4 @@
-import {DuckDBConnection, DuckDBInstance, INTEGER} from "@duckdb/node-api";
+import {DuckDBConnection, DuckDBInstance, INTEGER, LIST, MAP, STRUCT, VARCHAR} from "@duckdb/node-api";
 
 let _connection: DuckDBConnection | null = null;
 
@@ -14,7 +14,11 @@ export async function getDatabase(): Promise<DuckDBConnection> {
         // read regular versions from version yml files
         await _connection.run(`
             CREATE OR REPLACE TABLE versions AS
-            SELECT ROW_NUMBER() OVER () AS release_id, *
+            SELECT
+                ROW_NUMBER() OVER () AS release_id,
+                version,
+                release_date,
+                url
             FROM (SELECT *
                    FROM 'versions/**/*.yml'
                    ORDER BY
@@ -39,7 +43,38 @@ export async function getDatabase(): Promise<DuckDBConnection> {
             'latest_release_date': latestReleaseResult[0][2],
             'latest_url': latestReleaseResult[0][3],
             'dev_release_id': Number(latestReleaseResult[0][0]) + 2,
+        }, {
+            'latest_changes': LIST(STRUCT({ type: VARCHAR, title: VARCHAR, features: LIST(VARCHAR) }))
         });
+
+        await _connection.run(`
+CREATE OR REPLACE TEMP TABLE raw_changes AS
+SELECT
+    version,
+    yaml_extract_string(change, '$.type')     AS type,
+    yaml_extract_string(change, '$.title')    AS title,
+    yaml_extract(change, '$.features')        AS features
+FROM (
+    SELECT
+        version,
+        yaml_extract(changes_yaml, '$[' || i.i || ']') AS change
+    FROM (
+        SELECT
+            yaml_extract_string(content::YAML, '$.version') AS version,
+            yaml_extract(content::YAML, '$.changes')        AS changes_yaml
+        FROM read_text('versions/**/*.yml')
+    ) base,
+    LATERAL (
+        SELECT unnest(generate_series(0, yaml_array_length(changes_yaml) - 1)) AS i
+    ) i
+);
+        `);
+
+        // const debugResult = (await _connection.runAndReadAll(`SELECT * FROM versions WHERE version = '0.0.36';`)).getRows();
+        // console.log(debugResult[0]);
+        //
+        // const debugResult2 = (await _connection.runAndReadAll(`SELECT typeof(changes) FROM 'versions/**/*.yml' LIMIT 1;`)).getRows();
+        // console.log(debugResult2);
 
         await _connection.run(`
             CREATE OR REPLACE TABLE raw_endpoints AS

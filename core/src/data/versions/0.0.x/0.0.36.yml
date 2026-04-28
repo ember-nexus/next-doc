@@ -1,3 +1,8 @@
 version: "0.0.36"
 release_date: "2023-10-29T11:50:43Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.36"
+changes:
+  - type: add
+    title: "Add post-element endpoint, closes #123."
+    features:
+      - 'get-element'
