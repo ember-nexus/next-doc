@@ -1,4 +1,12 @@
 version: "0.1.13"
 release_date: "2024-10-02T21:22:48Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.13"
-changes: []
+changes:
+  - type: change
+    title: "Upgrade PHP to 8.3.12, skipping 8.3.11."
+    features:
+      - "dependency:php"
+  - type: change
+    title: "Upgrade upstream dependency NGINX Unit to 1.33.0."
+    features:
+      - "dependency:nginx-unit"

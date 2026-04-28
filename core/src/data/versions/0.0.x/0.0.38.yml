@@ -1,4 +1,39 @@
 version: "0.0.38"
 release_date: "2023-12-08T13:37:46Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.38"
-changes: []
+changes:
+  - type: add
+    title: "Add documentation and automatic example generation for healthcheck command."
+    features:
+      - "cli:healthcheck"
+  - type: add
+    title: "Add 401 error case for the GET /me endpoint."
+    features:
+      - "endpoint:get-me"
+  - type: add
+    title: "Add parameters `page` and `pageSize` to documentation of collection endpoints."
+    features: []
+  - type: change
+    title: "Rename `_PartialUnifiedCollection` to `_PartialElementCollection`."
+    features: []
+  - type: change
+    title: "All CI tasks are configured to have timeouts."
+    features: []
+  - type: change
+    title: "Upgrade dependencies, e.g. Symfony to 7.0 and intermediate Neo4j PHP dependencies as far as possible."
+    features:
+      - "dependency:symfony"
+      - "dependency:composer"
+  - type: change
+    title: "Deactivate `composer mess` in CI due to upstream issue."
+    features: []
+  - type: change
+    title: "Upgrade to Alpine 3.19."
+    features:
+      - "dependency:alpine-linux"
+  - type: fix
+    title: "Fix logic to detect readable relations between user and group elements."
+    features: []
+  - type: fix
+    title: "Uncommented and fixed assertions in feature tests."
+    features: []

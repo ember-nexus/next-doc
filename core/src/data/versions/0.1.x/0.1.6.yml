@@ -1,4 +1,46 @@
 version: "0.1.6"
 release_date: "2024-04-22T05:47:38Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.6"
-changes: []
+changes:
+  - type: add
+    title: "Introduce simpler request bodies for endpoints `POST /change-password`, `POST /token` and `POST /register`."
+    features:
+      - "endpoint:post-change-password"
+      - "endpoint:post-token"
+      - "endpoint:post-register"
+  - type: add
+    title: "Add first unit tests for controller."
+    features: []
+  - type: add
+    title: "Enable PHP's strict type."
+    features: []
+  - type: add
+    title: "Enable PHP Opcache extension."
+    features: []
+  - type: add
+    title: "Add `brianium/paratest` as a parallel PHP Unit runtime."
+    features:
+      - "dependency:composer"
+  - type: change
+    title: "In the case of server errors during requests in production environments, the error message will be printed to the log."
+    features: []
+  - type: change
+    title: "Update PHP dependencies."
+    features:
+      - "dependency:composer"
+  - type: change
+    title: "Upgrade remaining GitHub actions, required due to deprecation of Node 16."
+    features: []
+  - type: change
+    title: "Upgrade PHP Unit to major version 10."
+    features:
+      - "dependency:composer"
+  - type: deprecate
+    title: "Original request body scheme of endpoints `POST /change-password`, `POST /token` and `POST /register` is deprecated, will be removed in version 0.2.0."
+    features:
+      - "endpoint:post-change-password"
+      - "endpoint:post-token"
+      - "endpoint:post-register"
+  - type: remove
+    title: "Remove leak test due to incompatibility with PHP Unit 10+."
+    features: []

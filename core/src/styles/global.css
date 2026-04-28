@@ -4,6 +4,9 @@
 @import "@awesome.me/webawesome/dist/styles/webawesome.css" layer(vendor);
 /*@plugin "@tailwindcss/typography";*/
 
+:root {
+    font-size: 18px;
+}
 
 @font-face {
     font-family: "Qanelas Soft Custom";

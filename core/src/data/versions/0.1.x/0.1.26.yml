@@ -1,4 +1,8 @@
 version: "0.1.26"
 release_date: "2025-11-17T22:44:47Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.26"
-changes: []
+changes:
+  - type: change
+    title: "Upgrade PHP to 8.4.14."
+    features:
+      - "dependency:php"

@@ -1,4 +1,8 @@
 version: "0.1.17"
 release_date: "2024-12-10T17:20:17Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.17"
-changes: []
+changes:
+  - type: change
+    title: "Upgrade to Alpine 3.21."
+    features:
+      - "dependency:alpine-linux"

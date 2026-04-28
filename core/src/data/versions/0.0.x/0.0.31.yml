@@ -1,4 +1,33 @@
 version: "0.0.31"
 release_date: "2023-09-26T09:40:01Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.31"
-changes: []
+changes:
+  - type: add
+    title: "Add healthcheck command."
+    features:
+      - "cli:healthcheck"
+  - type: add
+    title: "Add healthcheck command in Docker image."
+    features: []
+  - type: add
+    title: "Add feature test to test that tokens not owned by any user are invalid."
+    features: []
+  - type: add
+    title: "Add feature test to test that tokens owned by two or more users are invalid as well."
+    features: []
+  - type: change
+    title: "Increase reference dataset version to 0.0.9."
+    features: []
+  - type: change
+    title: "Upgrade MongoDB version from 6.x to 7.x in Docker Compose examples."
+    features: []
+  - type: change
+    title: "Move `guzzlehttp/guzzle` to production dependency, as it is required by healthcheck."
+    features:
+      - "dependency:composer"
+  - type: change
+    title: "Change test CI runner of feature test jobs to ubuntu-latest in order to reduce CI cost."
+    features: []
+  - type: change
+    title: "Feature test CI is back to using 4 vCPUs, although one of the 4 test scenarios is removed to save costs."
+    features: []

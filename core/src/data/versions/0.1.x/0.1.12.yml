@@ -1,4 +1,11 @@
 version: "0.1.12"
 release_date: "2024-08-04T22:15:49Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.12"
-changes: []
+changes:
+  - type: change
+    title: "Update versions of Neo4j used inside the CI."
+    features: []
+  - type: change
+    title: "Upgrade PHP to 8.3.10."
+    features:
+      - "dependency:php"

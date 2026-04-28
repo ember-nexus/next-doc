@@ -1,4 +1,14 @@
 version: "0.1.19"
 release_date: "2025-02-22T13:29:16Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.19"
-changes: []
+changes:
+  - type: change
+    title: "Upgrade upstream dependency NGINX Unit to 1.34.1."
+    features:
+      - "dependency:nginx-unit"
+  - type: change
+    title: "Change method declaration from `self` to `static`, general improvement."
+    features: []
+  - type: fix
+    title: "Fix bad release 0.1.18 by upgrading `neo4j-php/Bolt` to version 7.2.3."
+    features: []

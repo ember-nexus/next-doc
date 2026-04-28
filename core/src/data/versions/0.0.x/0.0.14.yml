@@ -1,4 +1,15 @@
 version: "0.0.14"
 release_date: "2023-06-12T16:19:11Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.14"
-changes: []
+changes:
+  - type: add
+    title: "Upgrade PHP to version 8.2.7."
+    features:
+      - "dependency:php"
+  - type: add
+    title: "Upgrade NGINX Unit to version 1.30."
+    features:
+      - "dependency:nginx-unit"
+  - type: add
+    title: "Update 'Check upstream dependency - Nginx Unit' action from nginx/unit to unit."
+    features: []

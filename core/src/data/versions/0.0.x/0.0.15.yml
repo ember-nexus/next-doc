@@ -1,4 +1,17 @@
 version: "0.0.15"
 release_date: "2023-07-01T14:49:04Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.15"
-changes: []
+changes:
+  - type: add
+    title: "Add PHP ZIP extension."
+    features: []
+  - type: add
+    title: "Add backup:fetch command."
+    features:
+      - "cli:backup:fetch"
+  - type: change
+    title: "Feature tests are now loaded from ember-nexus/reference-dataset directly."
+    features: []
+  - type: fix
+    title: "Fixed NGINX Unit upstream dependency check action, will no longer return empty strings as version numbers."
+    features: []

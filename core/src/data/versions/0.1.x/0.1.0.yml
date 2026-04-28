@@ -1,4 +1,37 @@
 version: "0.1.0"
 release_date: "2023-12-16T16:52:14Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.0"
-changes: []
+changes:
+  - type: add
+    title: "Add documentation and automatic documentation tests for endpoint DELETE `/token`."
+    features:
+      - "endpoint:delete-token"
+  - type: add
+    title: "Add command `token:revoke`."
+    features:
+      - "cli:token:revoke"
+  - type: change
+    title: "Switch license to AGPL-3.0-only."
+    features: []
+  - type: change
+    title: "Remove commented and unused code, configuration etc."
+    features: []
+  - type: change
+    title: "Remove test CI triggers 'pull_request' and 'fork'."
+    features: []
+  - type: change
+    title: "Rename command `user:token:create` to `token:create`."
+    features:
+      - "cli:token:create"
+  - type: change
+    title: "Tokens cached by Redis now automatically expire within 30 minutes or as their expiration date is reached."
+    features: []
+  - type: fix
+    title: "Deleting tokens now deletes the correct token from Redis."
+    features: []
+  - type: fix
+    title: "Add missing feature tests."
+    features: []
+  - type: fix
+    title: "Fix bug where datetime-similar properties could not be correctly returned to the user."
+    features: []

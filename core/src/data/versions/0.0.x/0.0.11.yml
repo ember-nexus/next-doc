@@ -1,4 +1,12 @@
 version: "0.0.11"
 release_date: "2023-05-28T11:21:32Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.11"
-changes: []
+changes:
+  - type: add
+    title: "Add PHP sockets extension, upgrade PhpAmqpLib."
+    features:
+      - "dependency:composer"
+  - type: add
+    title: "Improve post search endpoint, add documentation."
+    features:
+      - "endpoint:post-search"

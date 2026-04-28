@@ -1,4 +1,22 @@
 version: "0.0.28"
 release_date: "2023-09-14T19:10:01Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.28"
-changes: []
+changes:
+  - type: add
+    title: "Add feature test for GET `/token` endpoint."
+    features:
+      - "endpoint:get-token"
+  - type: add
+    title: "Add feature test for POST `/token` endpoint."
+    features:
+      - "endpoint:post-token"
+  - type: add
+    title: "Add feature test for DELETE `/token` endpoint."
+    features:
+      - "endpoint:delete-token"
+  - type: change
+    title: "Increase reference dataset version to 0.0.8."
+    features: []
+  - type: change
+    title: "Switch license to GPL-3.0-only."
+    features: []

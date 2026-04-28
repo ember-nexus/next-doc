@@ -1,4 +1,7 @@
 version: "0.0.17"
 release_date: "2023-07-09T09:05:08Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.17"
-changes: []
+changes:
+  - type: change
+    title: "Test."
+    features: []

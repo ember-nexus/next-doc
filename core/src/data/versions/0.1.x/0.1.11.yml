@@ -1,4 +1,15 @@
 version: "0.1.11"
 release_date: "2024-07-08T13:03:09Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.11"
-changes: []
+changes:
+  - type: change
+    title: "Upgrade PHP to 8.3.9."
+    features:
+      - "dependency:php"
+  - type: change
+    title: "Upgrade Xdebug to 3.3.2."
+    features:
+      - "dependency:composer"
+  - type: change
+    title: "Remove deprecated phpstan configuration."
+    features: []

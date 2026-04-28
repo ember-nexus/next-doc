@@ -1,4 +1,25 @@
 version: "0.1.2"
 release_date: "2024-02-28T22:09:14Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.2"
-changes: []
+changes:
+  - type: change
+    title: "Upgrade most GitHub actions, required due to deprecation of Node 16."
+    features: []
+  - type: change
+    title: "Increase feature test timeout from 10 to 15 minutes."
+    features: []
+  - type: change
+    title: "Upgrade PHP to 8.3.3."
+    features:
+      - "dependency:php"
+  - type: change
+    title: "Upgrade upstream dependency NGINX Unit to 1.32.0."
+    features:
+      - "dependency:nginx-unit"
+  - type: change
+    title: "Upgrade dependencies."
+    features:
+      - "dependency:composer"
+  - type: change
+    title: "Add environment variable `COMPOSER_ALLOW_SUPERUSER=1` in release action to fix image build."
+    features: []

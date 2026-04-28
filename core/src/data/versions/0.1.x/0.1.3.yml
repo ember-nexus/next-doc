@@ -1,4 +1,14 @@
 version: "0.1.3"
 release_date: "2024-03-04T14:05:29Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.3"
-changes: []
+changes:
+  - type: change
+    title: "Update NGINX Unit build steps in Dockerfile, replace Mercurial repo with new GitHub repo."
+    features:
+      - "dependency:nginx-unit"
+  - type: change
+    title: "Streamline documentation."
+    features: []
+  - type: remove
+    title: "Remove supervisord and its dependencies like Python. Logs are directly sent to stderr."
+    features: []

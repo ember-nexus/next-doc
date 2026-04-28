@@ -1,4 +1,8 @@
 version: "0.0.18"
 release_date: "2023-07-20T10:49:08Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.18"
-changes: []
+changes:
+  - type: change
+    title: "Upgrade PHP to 8.2.8."
+    features:
+      - "dependency:php"

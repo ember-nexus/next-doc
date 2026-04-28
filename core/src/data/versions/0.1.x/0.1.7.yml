@@ -1,4 +1,27 @@
 version: "0.1.7"
 release_date: "2024-05-17T10:41:35Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.7"
-changes: []
+changes:
+  - type: add
+    title: "Add `requestId` property to all logs to enable finding all logs made during a single request."
+    features: []
+  - type: change
+    title: "Change naming of internal variables to replace `Uuid` with `Id`."
+    features: []
+  - type: change
+    title: "Server exceptions with the HTTP status code 500 will now always log their message."
+    features: []
+  - type: change
+    title: "Upgrade PHP to 8.3.7."
+    features:
+      - "dependency:php"
+  - type: change
+    title: "Update PHP dependencies."
+    features:
+      - "dependency:composer"
+  - type: change
+    title: "Feature tests use production docker build in CI."
+    features: []
+  - type: fix
+    title: "Fix wrong license identifier in Dockerfile."
+    features: []

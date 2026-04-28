@@ -1,4 +1,10 @@
 version: "0.0.34"
 release_date: "2023-10-26T07:31:25Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.34"
-changes: []
+changes:
+  - type: add
+    title: "New releases include two new labels, 'major.minor' and 'major'."
+    features: []
+  - type: add
+    title: "Release action will now update version string in documentation automatically."
+    features: []

@@ -3,6 +3,23 @@ release_date: "2023-10-29T11:50:43Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.36"
 changes:
   - type: add
-    title: "Add post-element endpoint, closes #123."
+    title: "Add explicit feature tests for parents, children and related endpoints to (not) include non-OWNS-relations."
+    features: []
+  - type: change
+    title: "Update readme and docker image labels."
+    features: []
+  - type: change
+    title: "Increase reference dataset version to 0.0.16."
+    features: []
+  - type: change
+    title: "Upgrade PHP to 8.2.12."
     features:
-      - 'get-element'
+      - "dependency:php"
+  - type: change
+    title: "Upgrade PHP dependencies and upgrade feature tests to use Neo4j 5.13."
+    features:
+      - "dependency:composer"
+  - type: fix
+    title: "Fix index endpoint to include elements which are directly owned or are accessible."
+    features:
+      - "endpoint:get-index"

@@ -1,4 +1,7 @@
 version: "0.1.14"
 release_date: "2024-10-07T19:44:46Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.14"
-changes: []
+changes:
+  - type: add
+    title: "Add HTTP header `Access-Control-Expose-Headers`."
+    features: []

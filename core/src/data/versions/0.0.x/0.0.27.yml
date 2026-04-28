@@ -1,4 +1,12 @@
 version: "0.0.27"
 release_date: "2023-09-02T16:32:02Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.27"
-changes: []
+changes:
+  - type: change
+    title: "Upgrade upstream dependencies PHP to 8.2.10 and NGINX Unit to 1.31."
+    features:
+      - "dependency:php"
+      - "dependency:nginx-unit"
+  - type: change
+    title: "Unknown routes are handled by a custom problem handler (404)."
+    features: []

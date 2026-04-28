@@ -1,4 +1,19 @@
 version: "0.1.18"
 release_date: "2025-02-16T23:50:05Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.18"
-changes: []
+changes:
+  - type: change
+    title: "Upgrade PHP to 8.4.4."
+    features:
+      - "dependency:php"
+  - type: change
+    title: "Update dependencies."
+    features:
+      - "dependency:composer"
+  - type: change
+    title: "Update code style."
+    features: []
+  - type: change
+    title: "Remove dev dependencies `roave/no-leaks` and `boesing/psalm-plugin-stringf` due to conflict with newer PHP versions."
+    features:
+      - "dependency:composer"

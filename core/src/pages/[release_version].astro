@@ -3,6 +3,8 @@ import { getCollection, render } from 'astro:content';
 import { getDatabase } from "../db.ts";
 import { marked } from 'marked';
 import Default from '../layouts/Default.astro'
+import {DateTime} from "luxon";
+import {DuckDBTimestampValue} from "@duckdb/node-api";
 
 export async function getStaticPaths() {
     const entries = await getCollection('versions');
@@ -17,6 +19,11 @@ const { Content } = await render(entry);
 const release_version = entry.data.release_version;
 
 const connection = await getDatabase();
+
+const [releaseDate, url] = (await connection.runAndReadAll(`
+    SELECT release_date, url FROM versions
+    WHERE version = $version
+`, { version: release_version })).getRows()[0] as unknown as [DuckDBTimestampValue, string];
 
 const changes = (await connection.runAndReadAll(`
     SELECT type, title, features FROM changes
@@ -69,9 +76,12 @@ const markdownString = [...grouped.entries()].map(([type, items]) => {
 }).join('\n\n');
 
 const changesHtml = await marked.parse(markdownString);
+
 ---
 <Default title={entry.data.release_version}>
     <h1>Release: {release_version}</h1>
+    <p>Released on {releaseDate ? DateTime.fromMillis(Number(releaseDate.micros / 1000n)).toFormat("yyyy-MM-dd") : 'unknown'}</p>
+    <a href={url}>Go to GitHub release</a>
     <Content />
     <Fragment set:html={changesHtml} />
 
@@ -80,7 +90,6 @@ const changesHtml = await marked.parse(markdownString);
                 href={prevVersion ? `/${prevVersion}/` : undefined}
                 disabled={!prevVersion || undefined}
         >
-            <wa-icon slot="prefix" name="arrow-left"></wa-icon>
             Previous Release{prevVersion ? `: ${prevVersion}` : ''}
         </wa-button>
         <wa-button
@@ -88,7 +97,11 @@ const changesHtml = await marked.parse(markdownString);
                 disabled={!nextVersion || undefined}
         >
             Next Release{nextVersion ? `: ${nextVersion}` : ''}
-            <wa-icon slot="suffix" name="arrow-right"></wa-icon>
+        </wa-button>
+        <wa-button
+                href="/latest/"
+        >
+            Latest Release
         </wa-button>
     </div>
 </Default>

@@ -1,4 +1,7 @@
 version: "0.0.21"
 release_date: "2023-08-15T14:28:39Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.21"
-changes: []
+changes:
+  - type: change
+    title: "Optimize Docker image layer count."
+    features: []

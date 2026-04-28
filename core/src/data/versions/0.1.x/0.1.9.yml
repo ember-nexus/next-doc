@@ -1,4 +1,14 @@
 version: "0.1.9"
 release_date: "2024-06-09T13:43:13Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.9"
-changes: []
+changes:
+  - type: change
+    title: "Rework README.md, add shield labels."
+    features: []
+  - type: change
+    title: "Fix LICENSE file."
+    features: []
+  - type: change
+    title: "Upgrade PHP to 8.3.8."
+    features:
+      - "dependency:php"

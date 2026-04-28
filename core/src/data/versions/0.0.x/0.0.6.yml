@@ -1,4 +1,26 @@
 version: "0.0.6"
 release_date: "2023-05-15T16:41:55Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.6"
-changes: []
+changes:
+  - type: add
+    title: "Refactor security tests."
+    features: []
+  - type: add
+    title: "Add placeholder controllers for WebDAV HTTP methods."
+    features: []
+  - type: add
+    title: "Add placeholder controllers for file controllers."
+    features: []
+  - type: add
+    title: "Add PostElementController."
+    features:
+      - "endpoint:post-element"
+  - type: add
+    title: "Refactor security tests of scenario 1."
+    features: []
+  - type: add
+    title: "Fix table overflow issue in documentation."
+    features: []
+  - type: add
+    title: "Rework GetChildrenController, GetParentsController, GetRelatedController and PostElementController."
+    features: []

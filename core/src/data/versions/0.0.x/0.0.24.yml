@@ -1,4 +1,11 @@
 version: "0.0.24"
 release_date: "2023-08-21T16:45:59Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.24"
-changes: []
+changes:
+  - type: change
+    title: "Improve CI/CD."
+    features: []
+  - type: change
+    title: "Upgrade PHP to 8.2.9."
+    features:
+      - "dependency:php"

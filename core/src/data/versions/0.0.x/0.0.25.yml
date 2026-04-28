@@ -1,4 +1,24 @@
 version: "0.0.25"
 release_date: "2023-08-31T20:43:57Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.25"
-changes: []
+changes:
+  - type: add
+    title: "Add CI workflow to check for upstream Alpine updates."
+    features:
+      - "dependency:alpine-linux"
+  - type: add
+    title: "Add supervisord to combine all relevant logs and publish to docker logs."
+    features: []
+  - type: add
+    title: "Add endpoint DELETE `/token`."
+    features:
+      - "endpoint:delete-token"
+  - type: change
+    title: "Improve documentation."
+    features: []
+  - type: change
+    title: "Change PHP CS ruleset such that global objects are always imported."
+    features: []
+  - type: change
+    title: "Rework exception and logging."
+    features: []

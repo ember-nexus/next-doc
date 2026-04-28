@@ -1,4 +1,33 @@
 version: "0.1.24"
 release_date: "2025-09-20T14:24:54Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.24"
-changes: []
+changes:
+  - type: add
+    title: "Add new polyglot search endpoint."
+    features:
+      - "endpoint:search"
+  - type: add
+    title: "Add support for parsing Cypher queries via ANTLR grammars."
+    features: []
+  - type: add
+    title: "Add support for expressions in Elasticsearch Query DSL and Element Hydration search steps using the Expr library."
+    features: []
+  - type: add
+    title: "Add `GET /graph-structure` endpoint."
+    features:
+      - "endpoint:get-graph-structure"
+  - type: add
+    title: "Increase general test coverage to 28.2% (lines) and 54.1% (classes), increase mutant score indicator for covered code to 91%."
+    features: []
+  - type: change
+    title: "Improve documentation."
+    features: []
+  - type: change
+    title: "Upgrade Symfony and other PHP dependencies."
+    features:
+      - "dependency:symfony"
+      - "dependency:composer"
+  - type: remove
+    title: "Removed old search endpoint logic. Existing search queries need to be adapted for the new search endpoint."
+    features:
+      - "endpoint:search"

@@ -1,4 +1,25 @@
 version: "0.1.4"
 release_date: "2024-03-10T16:25:49Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.4"
-changes: []
+changes:
+  - type: add
+    title: "Add support for the `If-Match` header."
+    features: []
+  - type: add
+    title: "Add support for the `If-None-Match` header."
+    features: []
+  - type: add
+    title: "Add links in error endpoints to http.dev explaining the current error status code."
+    features: []
+  - type: add
+    title: "Add documentation for the GET `error/500/internal-server-error` endpoint."
+    features: []
+  - type: change
+    title: "Increase reference dataset version to 0.0.24."
+    features: []
+  - type: change
+    title: "Refactor parts of the Etag generation."
+    features: []
+  - type: fix
+    title: "Fix controller example tests for put element and patch element endpoints."
+    features: []

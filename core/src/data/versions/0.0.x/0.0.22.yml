@@ -1,4 +1,7 @@
 version: "0.0.22"
 release_date: "2023-08-15T14:52:59Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.22"
-changes: []
+changes:
+  - type: fix
+    title: "Fix labels in new compressed production Docker image."
+    features: []

@@ -1,4 +1,20 @@
 version: "0.1.25"
 release_date: "2025-09-27T11:52:02Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.25"
-changes: []
+changes:
+  - type: add
+    title: "Add feature test case to validate post element behavior."
+    features: []
+  - type: change
+    title: "Upgrade PHP to 8.4.13, skipping 8.4.12."
+    features:
+      - "dependency:php"
+  - type: change
+    title: "Refactored event listener configuration from YAML files to PHP attributes."
+    features: []
+  - type: fix
+    title: "Fix issue with deserializing array data from MongoDB which lead to exceptions."
+    features: []
+  - type: fix
+    title: "Created and updated properties in Elasticsearch now use correct datetime type and no longer plain text."
+    features: []

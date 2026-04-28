@@ -1,4 +1,17 @@
 version: "0.0.37"
 release_date: "2023-11-24T18:29:26Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.37"
-changes: []
+changes:
+  - type: change
+    title: "Move code to expire deleted tokens from Redis into separate event listener."
+    features: []
+  - type: change
+    title: "Upgrade PHP to 8.3.0."
+    features:
+      - "dependency:php"
+  - type: change
+    title: "Add parameter `--ignore-platform-req=php` to CI jobs."
+    features: []
+  - type: change
+    title: "Add env variable `PHP_CS_FIXER_IGNORE_ENV=1` in cs:list CI job."
+    features: []

@@ -1,4 +1,7 @@
 version: "0.0.13"
 release_date: "2023-05-30T12:19:57Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.13"
-changes: []
+changes:
+  - type: add
+    title: "Add header `Access-Control-Allow-Headers: Authorization` to all responses."
+    features: []

@@ -1,4 +1,33 @@
 version: "0.0.19"
 release_date: "2023-08-10T11:59:59Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.19"
-changes: []
+changes:
+  - type: add
+    title: "Add `/instance-configuration` endpoint for retrieving instance specific configurations."
+    features:
+      - "endpoint:get-instance-configuration"
+  - type: add
+    title: "Add `charset=utf-8` property in response headers."
+    features: []
+  - type: change
+    title: "Change theme colors in documentation, update favicon."
+    features: []
+  - type: change
+    title: "Update dependencies."
+    features:
+      - "dependency:composer"
+  - type: change
+    title: "Enhance API endpoint documentation."
+    features: []
+  - type: change
+    title: "Update docker-compose.yml for local deployment."
+    features: []
+  - type: change
+    title: "Disable NGINX Unit version in response header."
+    features: []
+  - type: change
+    title: "Disabled PHP version in response header."
+    features: []
+  - type: change
+    title: "Split services.yaml file into smaller ones for easier customization."
+    features: []

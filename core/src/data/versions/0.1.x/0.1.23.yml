@@ -1,4 +1,16 @@
 version: "0.1.23"
 release_date: "2025-08-16T08:22:39Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.23"
-changes: []
+changes:
+  - type: change
+    title: "Upgrade to Alpine 3.22."
+    features:
+      - "dependency:alpine-linux"
+  - type: change
+    title: "Upgrade PHP to 8.4.11."
+    features:
+      - "dependency:php"
+  - type: fix
+    title: "Post token endpoint returns status code 201 instead of 200."
+    features:
+      - "endpoint:post-token"

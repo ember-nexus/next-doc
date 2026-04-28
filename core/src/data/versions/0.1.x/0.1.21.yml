@@ -1,4 +1,14 @@
 version: "0.1.21"
 release_date: "2025-03-22T22:58:38Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.21"
-changes: []
+changes:
+  - type: add
+    title: "Add `CODEOWNERS` file."
+    features: []
+  - type: change
+    title: "Upgrade PHP to 8.4.5."
+    features:
+      - "dependency:php"
+  - type: fix
+    title: "Fix post release task regarding Originstamp certificates."
+    features: []

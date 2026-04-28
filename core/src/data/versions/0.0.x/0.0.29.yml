@@ -1,4 +1,28 @@
 version: "0.0.29"
 release_date: "2023-09-17T13:26:05Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.29"
-changes: []
+changes:
+  - type: add
+    title: "Add new type of feature tests which check that the examples in the documentation are up-to-date."
+    features: []
+  - type: add
+    title: "Add WebDAV HTTP methods to the allowed HTTP method lists."
+    features: []
+  - type: add
+    title: "Add 'Example Generation Test' to CI."
+    features: []
+  - type: add
+    title: "Enable phpstan rule for enforcing safe functions."
+    features: []
+  - type: add
+    title: "Add PHP Mess Detector."
+    features: []
+  - type: add
+    title: "Set configuration framework.disallow_search_engine_index explicitly to false to disable the HTTP tag X-Robots-Tag."
+    features: []
+  - type: change
+    title: "NGINX Unit strips all cookie headers from responses."
+    features: []
+  - type: fix
+    title: "Software version is now correctly set in final Docker images."
+    features: []

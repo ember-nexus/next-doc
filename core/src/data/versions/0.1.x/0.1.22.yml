@@ -1,4 +1,19 @@
 version: "0.1.22"
 release_date: "2025-05-21T13:46:07Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.22"
-changes: []
+changes:
+  - type: change
+    title: "Upgrade PHP to 8.4.7."
+    features:
+      - "dependency:php"
+  - type: change
+    title: "Upgrade PHP to 8.4.6."
+    features:
+      - "dependency:php"
+  - type: change
+    title: "Fixed pecl mongodb to version 1.21.0 due to breaking changes in version 2.x."
+    features:
+      - "dependency:composer"
+  - type: fix
+    title: "Fix bug in CI check upstream dependency NGINX Unit."
+    features: []

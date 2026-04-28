@@ -1,4 +1,24 @@
 version: "0.0.32"
 release_date: "2023-09-30T08:27:24Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.32"
-changes: []
+changes:
+  - type: add
+    title: "Add POST /change-password endpoint, including tests and documentation."
+    features:
+      - "endpoint:post-change-password"
+  - type: change
+    title: "Increase reference dataset version to 0.0.11."
+    features: []
+  - type: change
+    title: "Change default anonymous user to `2d376349-c5e2-42c8-8ce0-d6f525256cf7`."
+    features: []
+  - type: change
+    title: "Upgrade PHP to 8.2.11."
+    features:
+      - "dependency:php"
+  - type: remove
+    title: "Remove test command."
+    features: []
+  - type: fix
+    title: "Backup will only load JSON files, before that every file was tried to be loaded."
+    features: []

@@ -1,4 +1,16 @@
 version: "0.0.8"
 release_date: "2023-05-26T18:27:39Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.8"
-changes: []
+changes:
+  - type: add
+    title: "Add PHP intl extension."
+    features: []
+  - type: add
+    title: "Add support for RabbitMQ."
+    features: []
+  - type: add
+    title: "Partly refactor of the event system."
+    features: []
+  - type: add
+    title: "WIP calculate users and groups with search access, store result in Elasticsearch itself."
+    features: []

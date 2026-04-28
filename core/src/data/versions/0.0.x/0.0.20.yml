@@ -1,4 +1,29 @@
 version: "0.0.20"
 release_date: "2023-08-15T13:46:46Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.0.20"
-changes: []
+changes:
+  - type: add
+    title: "Add POST '/token' endpoint."
+    features:
+      - "endpoint:post-token"
+  - type: add
+    title: "Add expiration date to tokens."
+    features: []
+  - type: change
+    title: "Reword application configuration, via internal Symfony bundle."
+    features: []
+  - type: change
+    title: "Switch datetime format from temporary string type to datetime."
+    features: []
+  - type: change
+    title: "Change default JSON encoding options."
+    features: []
+  - type: change
+    title: "Replaced configuration, documentation WIP."
+    features: []
+  - type: change
+    title: "Rework event system."
+    features: []
+  - type: fix
+    title: "Fix issue #22."
+    features: []

@@ -1,4 +1,51 @@
 version: "0.1.1"
 release_date: "2024-01-27T21:21:24Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.1"
-changes: []
+changes:
+  - type: add
+    title: "Add `/.well-known/security.txt` endpoint."
+    features:
+      - "endpoint:get-security-txt"
+  - type: add
+    title: "Add HTTP header `Etag` to GET responses of element and collection endpoints."
+    features: []
+  - type: add
+    title: "Add `beste/psr-testlogger` for creating easier unit tests."
+    features:
+      - "dependency:composer"
+  - type: change
+    title: "Constants are changed to contain type declarations."
+    features: []
+  - type: change
+    title: "Remove timeout from PHP-tasks."
+    features: []
+  - type: change
+    title: "Upgrade PHP to 8.3.2."
+    features:
+      - "dependency:php"
+  - type: change
+    title: "Enable `composer mess` in CI due to fixed upstream issue."
+    features: []
+  - type: change
+    title: "Enable PHP CS Fixer rule `self_accessor`."
+    features: []
+  - type: change
+    title: "Change value of HTTP header `X-Powered-By` to `Ember Nexus API`."
+    features: []
+  - type: change
+    title: "Move configuration files and scripts out of root folder."
+    features: []
+  - type: change
+    title: "Replace flysystem AWS with `async-aws/s3`."
+    features:
+      - "dependency:composer"
+  - type: change
+    title: "Upgrade dependencies."
+    features:
+      - "dependency:composer"
+  - type: fix
+    title: "Fix monospace font in documentation (graph renderings)."
+    features: []
+  - type: fix
+    title: "Fix bug where updated timestamps were not updated when they already were set to a value."
+    features: []

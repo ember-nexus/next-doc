@@ -1,4 +1,26 @@
 version: "0.1.27"
 release_date: "2025-12-20T23:08:10Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.27"
-changes: []
+changes:
+  - type: add
+    title: "Add favicon files."
+    features: []
+  - type: change
+    title: "Replace NGINX Unit with FrankenPHP."
+    features:
+      - "dependency:frankenphp"
+  - type: change
+    title: "Upgrade PHP to 8.5.1."
+    features:
+      - "dependency:php"
+  - type: change
+    title: "Upgrade to Alpine 3.23."
+    features:
+      - "dependency:alpine-linux"
+  - type: change
+    title: "Command `backup:list` sorts backups by creation date, desc."
+    features:
+      - "cli:backup:list"
+  - type: fix
+    title: "Redis cache is cleared after backup load."
+    features: []

@@ -1,4 +1,14 @@
 version: "0.1.16"
 release_date: "2024-11-06T22:02:17Z"
 url: "https://github.com/ember-nexus/api/releases/tag/0.1.16"
-changes: []
+changes:
+  - type: add
+    title: "Improve error handling when request contains malformed JSON."
+    features: []
+  - type: change
+    title: "Upgrade PHP to 8.3.13."
+    features:
+      - "dependency:php"
+  - type: change
+    title: "Change license from AGPL 3 to Source First License 1.1."
+    features: []
