@@ -1,12 +1,20 @@
 import {DuckDBConnection, DuckDBInstance, INTEGER, LIST, MAP, STRUCT, VARCHAR} from "@duckdb/node-api";
 
 let _connection: DuckDBConnection | null = null;
+let _initPromise: Promise<DuckDBConnection> | null = null;
 
 export async function getDatabase(): Promise<DuckDBConnection> {
-    if (_connection === null) {
+    if (_connection !== null) {
+        return _connection;
+    }
+
+    if (_initPromise !== null) {
+        return _initPromise; // wait for the in-flight init, don't recompute
+    }
+
+    _initPromise = (async () => {
         const _db = await DuckDBInstance.create();
         _connection = await _db.connect();
-
         await _connection.run("INSTALL yaml FROM community;");
         await _connection.run("LOAD yaml;");
         await _connection.run("SET file_search_path = '/core/src/data';");
@@ -70,12 +78,6 @@ FROM (
 );
         `);
 
-        // const debugResult = (await _connection.runAndReadAll(`SELECT * FROM versions WHERE version = '0.0.36';`)).getRows();
-        // console.log(debugResult[0]);
-        //
-        // const debugResult2 = (await _connection.runAndReadAll(`SELECT typeof(changes) FROM 'versions/**/*.yml' LIMIT 1;`)).getRows();
-        // console.log(debugResult2);
-
         await _connection.run(`
             CREATE OR REPLACE TABLE raw_endpoints AS
             SELECT *
@@ -124,7 +126,9 @@ FROM (
                               AND er.release_id = evr.applicable_release_id
             ORDER BY evr.endpoint, evr.release_id;
         `);
-    }
 
-    return _connection;
+        return _connection;
+    })();
+
+    return _initPromise;
 }

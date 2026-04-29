@@ -8,3 +8,15 @@ changes:
   - type: add
     title: "Dockerfile for [Nginx Unit](https://unit.nginx.org/)."
     features: []
+  - type: add
+    title: "Implement basic form of element endpoints."
+    features:
+      - api:get-element
+      - api:get-children
+      - api:get-index
+      - api:get-parents
+      - api:get-related
+      - api:post-element
+      - api:patch-element
+      - api:put-element
+      - api:delete-element

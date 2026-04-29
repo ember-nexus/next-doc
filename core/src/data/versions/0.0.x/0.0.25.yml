@@ -12,7 +12,7 @@ changes:
   - type: add
     title: "Add endpoint DELETE `/token`."
     features:
-      - "endpoint:delete-token"
+      - "api:delete-token"
   - type: change
     title: "Improve documentation."
     features: []

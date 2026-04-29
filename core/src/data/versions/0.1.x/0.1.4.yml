@@ -4,10 +4,14 @@ url: "https://github.com/ember-nexus/api/releases/tag/0.1.4"
 changes:
   - type: add
     title: "Add support for the `If-Match` header."
-    features: []
+    features:
+      - api:get-element
+      - api:post-element
   - type: add
     title: "Add support for the `If-None-Match` header."
-    features: []
+    features:
+      - api:get-element
+      - api:post-element
   - type: add
     title: "Add links in error endpoints to http.dev explaining the current error status code."
     features: []

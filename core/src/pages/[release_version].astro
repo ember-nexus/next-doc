@@ -5,6 +5,8 @@ import { marked } from 'marked';
 import Default from '../layouts/Default.astro'
 import {DateTime} from "luxon";
 import {DuckDBTimestampValue} from "@duckdb/node-api";
+import {getAllVersions, getPrevAndNextVersion, getVersion} from "../repository";
+import {getChangesByVersion} from "../repository/ChangeRepository.ts";
 
 export async function getStaticPaths() {
     const entries = await getCollection('versions');
@@ -15,88 +17,49 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { Content } = await render(entry);
 const release_version = entry.data.release_version;
+const { Content } = await render(entry);
 
-const connection = await getDatabase();
+const version = await getVersion(release_version);
+const changes = await getChangesByVersion(release_version);
+const prevAndNextVersion = await getPrevAndNextVersion(release_version);
 
-const [releaseDate, url] = (await connection.runAndReadAll(`
-    SELECT release_date, url FROM versions
-    WHERE version = $version
-`, { version: release_version })).getRows()[0] as unknown as [DuckDBTimestampValue, string];
 
-const changes = (await connection.runAndReadAll(`
-    SELECT type, title, features FROM changes
-    WHERE version = $version
-    ORDER BY CASE type
-                 WHEN 'add'    THEN 1
-                 WHEN 'change' THEN 2
-                 WHEN 'remove' THEN 3
-                 ELSE 4
-                 END;
-`, { version: release_version })).getRows();
-
-const navRow = (await connection.runAndReadAll(`
-    SELECT prev_version, next_version
-    FROM (
-        SELECT
-            version,
-            LAG(version)  OVER () AS prev_version,
-            LEAD(version) OVER () AS next_version
-        FROM versions
-    )
-    WHERE version = $version;
-`, { version: release_version })).getRows();
-
-const prevVersion: string | null = navRow[0]?.[0] ?? null;
-const nextVersion: string | null = navRow[0]?.[1] ?? null;
-
-const grouped = new Map<string, { title: string; features: string[] }[]>();
-for (const [type, title, featuresRaw] of changes) {
-    const features: string[] = featuresRaw
-        ? (Array.isArray(featuresRaw)
-                ? featuresRaw
-                : String(featuresRaw)
-                    .replace(/^\[|\]$/g, '')
-                    .split(',')
-                    .map(f => f.trim())
-        ).filter(f => f.length > 0)
-        : [];
-    if (!grouped.has(type)) grouped.set(type, []);
-    grouped.get(type)!.push({ title, features });
-}
-
-const markdownString = [...grouped.entries()].map(([type, items]) => {
-    const itemLines = items.map(({ title, features }) => {
-        if (features.length === 0) return `- ${title}`;
-        const featureLines = features.join(', ');
-        return `- ${title}  \n${featureLines}`;
-    }).join('\n');
-    return `## ${type}\n\n${itemLines}`;
-}).join('\n\n');
+const markdownString = Object.entries(Object.groupBy(changes, (c) => c.type))
+    .map(([type, items]) => {
+        const itemLines = (items ?? [])
+            .map(({ title, features }) =>
+                features.length > 0
+                    ? `- ${title}  \n${features.join(', ')}`
+                    : `- ${title}`
+            )
+            .join('\n');
+        return `## ${type}\n\n${itemLines}`;
+    })
+    .join('\n\n');
 
 const changesHtml = await marked.parse(markdownString);
 
 ---
 <Default title={entry.data.release_version}>
     <h1>Release: {release_version}</h1>
-    <p>Released on {releaseDate ? DateTime.fromMillis(Number(releaseDate.micros / 1000n)).toFormat("yyyy-MM-dd") : 'unknown'}</p>
-    <a href={url}>Go to GitHub release</a>
+    <p>Released on {version.releaseDate?.toFormat("yyyy-MM-dd") ?? 'not yet released'}</p>
+    <a href={version.url}>Go to GitHub release</a>
     <Content />
     <Fragment set:html={changesHtml} />
 
     <div class="release-nav">
         <wa-button
-                href={prevVersion ? `/${prevVersion}/` : undefined}
-                disabled={!prevVersion || undefined}
+                href={prevAndNextVersion.prev ? `/${prevAndNextVersion.prev}/` : undefined}
+                disabled={!prevAndNextVersion.prev || undefined}
         >
-            Previous Release{prevVersion ? `: ${prevVersion}` : ''}
+            Previous Release{prevAndNextVersion.prev ? `: ${prevAndNextVersion.prev}` : ''}
         </wa-button>
         <wa-button
-                href={nextVersion ? `/${nextVersion}/` : undefined}
-                disabled={!nextVersion || undefined}
+                href={prevAndNextVersion.next ? `/${prevAndNextVersion.next}/` : undefined}
+                disabled={!prevAndNextVersion.next || undefined}
         >
-            Next Release{nextVersion ? `: ${nextVersion}` : ''}
+            Next Release{prevAndNextVersion.next ? `: ${prevAndNextVersion.next}` : ''}
         </wa-button>
         <wa-button
                 href="/latest/"

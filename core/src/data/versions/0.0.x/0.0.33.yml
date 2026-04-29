@@ -20,22 +20,22 @@ changes:
   - type: add
     title: "Add GET /me endpoint and associated documentation, examples and tests."
     features:
-      - "endpoint:get-me"
+      - "api:get-me"
   - type: add
     title: "Add GET /token endpoint (again), this time finished."
     features:
-      - "endpoint:get-token"
+      - "api:get-token"
   - type: change
     title: "Rename term 'session' to 'token'."
     features: []
   - type: change
     title: "Finalise documentation for the POST /token endpoint."
     features:
-      - "endpoint:post-token"
+      - "api:post-token"
   - type: change
     title: "Elements in endpoint get index are now sorted via the element's id."
     features:
-      - "endpoint:get-index"
+      - "api:get-index"
   - type: change
     title: "Relations in collection endpoints are sorted by their id as well."
     features: []

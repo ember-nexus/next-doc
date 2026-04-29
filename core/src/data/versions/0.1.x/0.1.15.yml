@@ -8,4 +8,4 @@ changes:
   - type: fix
     title: "Fix pagination bug with the get index endpoint, where the total number of nodes was limited to the page size."
     features:
-      - "endpoint:get-index"
+      - "api:get-index"

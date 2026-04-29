@@ -5,7 +5,7 @@ changes:
   - type: add
     title: "Add new polyglot search endpoint."
     features:
-      - "endpoint:search"
+      - "api:search"
   - type: add
     title: "Add support for parsing Cypher queries via ANTLR grammars."
     features: []
@@ -15,7 +15,7 @@ changes:
   - type: add
     title: "Add `GET /graph-structure` endpoint."
     features:
-      - "endpoint:get-graph-structure"
+      - "api:get-graph-structure"
   - type: add
     title: "Increase general test coverage to 28.2% (lines) and 54.1% (classes), increase mutant score indicator for covered code to 91%."
     features: []
@@ -30,4 +30,4 @@ changes:
   - type: remove
     title: "Removed old search endpoint logic. Existing search queries need to be adapted for the new search endpoint."
     features:
-      - "endpoint:search"
+      - "api:search"

@@ -5,7 +5,7 @@ changes:
   - type: add
     title: "Add POST '/token' endpoint."
     features:
-      - "endpoint:post-token"
+      - "api:post-token"
   - type: add
     title: "Add expiration date to tokens."
     features: []

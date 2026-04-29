@@ -5,7 +5,7 @@ changes:
   - type: add
     title: "Add documentation and automatic documentation tests for endpoint DELETE `/token`."
     features:
-      - "endpoint:delete-token"
+      - "api:delete-token"
   - type: add
     title: "Add command `token:revoke`."
     features:

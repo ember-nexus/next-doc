@@ -9,7 +9,7 @@ changes:
   - type: add
     title: "Add 401 error case for the GET /me endpoint."
     features:
-      - "endpoint:get-me"
+      - "api:get-me"
   - type: add
     title: "Add parameters `page` and `pageSize` to documentation of collection endpoints."
     features: []

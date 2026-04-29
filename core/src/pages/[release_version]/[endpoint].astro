@@ -1,5 +1,8 @@
 ---
 import { getCollection, render } from 'astro:content';
+import {getChangesByFeatureUpToVersion} from "../../repository/ChangeRepository.ts";
+import {marked} from "marked";
+import Default from "../../layouts/Default.astro";
 
 export async function getStaticPaths() {
     const entries = await getCollection('endpoints');
@@ -17,16 +20,23 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
----
+const release_version = entry.data.release_version;
 
-<html>
-<head>
-    <title>{entry.data.endpoint} — {entry.data.release_version}</title>
-</head>
-<body>
+
+const changes = await getChangesByFeatureUpToVersion('api:get-element', release_version);
+
+const markdownString = changes
+    .map(({ title, version }) => `- ${title} (${version})`)
+    .join('\n');
+
+const changesHtml = await marked.parse(markdownString);
+---
+<Default title={`${entry.data.endpoint} at version ${release_version}`}>
 <h1>{entry.data.endpoint}</h1>
-<p>Release: {entry.data.release_version} | Version: {entry.data.endpoint_version}</p>
+<p>Release: {release_version} | Version: {entry.data.endpoint_version}</p>
+
+<h3>History</h3>
+<Fragment set:html={changesHtml} />
 
 <Content />
-</body>
-</html>
+</Default>

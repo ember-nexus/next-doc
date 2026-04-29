@@ -5,7 +5,7 @@ changes:
   - type: add
     title: "Add `/.well-known/security.txt` endpoint."
     features:
-      - "endpoint:get-security-txt"
+      - "api:get-security-txt"
   - type: add
     title: "Add HTTP header `Etag` to GET responses of element and collection endpoints."
     features: []

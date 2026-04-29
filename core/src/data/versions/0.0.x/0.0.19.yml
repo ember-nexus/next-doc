@@ -5,7 +5,7 @@ changes:
   - type: add
     title: "Add `/instance-configuration` endpoint for retrieving instance specific configurations."
     features:
-      - "endpoint:get-instance-configuration"
+      - "api:get-instance-configuration"
   - type: add
     title: "Add `charset=utf-8` property in response headers."
     features: []

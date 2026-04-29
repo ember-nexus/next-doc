@@ -5,15 +5,15 @@ changes:
   - type: add
     title: "Add feature test for GET `/token` endpoint."
     features:
-      - "endpoint:get-token"
+      - "api:get-token"
   - type: add
     title: "Add feature test for POST `/token` endpoint."
     features:
-      - "endpoint:post-token"
+      - "api:post-token"
   - type: add
     title: "Add feature test for DELETE `/token` endpoint."
     features:
-      - "endpoint:delete-token"
+      - "api:delete-token"
   - type: change
     title: "Increase reference dataset version to 0.0.8."
     features: []

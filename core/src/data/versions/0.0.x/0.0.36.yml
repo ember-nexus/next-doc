@@ -22,4 +22,4 @@ changes:
   - type: fix
     title: "Fix index endpoint to include elements which are directly owned or are accessible."
     features:
-      - "endpoint:get-index"
+      - "api:get-index"

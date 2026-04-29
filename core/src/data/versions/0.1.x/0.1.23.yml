@@ -13,4 +13,4 @@ changes:
   - type: fix
     title: "Post token endpoint returns status code 201 instead of 200."
     features:
-      - "endpoint:post-token"
+      - "api:post-token"

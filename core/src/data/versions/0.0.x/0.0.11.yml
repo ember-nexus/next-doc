@@ -9,4 +9,4 @@ changes:
   - type: add
     title: "Improve post search endpoint, add documentation."
     features:
-      - "endpoint:post-search"
+      - "api:post-search"

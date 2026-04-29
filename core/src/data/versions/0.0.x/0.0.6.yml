@@ -14,7 +14,7 @@ changes:
   - type: add
     title: "Add PostElementController."
     features:
-      - "endpoint:post-element"
+      - "api:post-element"
   - type: add
     title: "Refactor security tests of scenario 1."
     features: []

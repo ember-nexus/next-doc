@@ -5,7 +5,7 @@ changes:
   - type: add
     title: "Add POST /change-password endpoint, including tests and documentation."
     features:
-      - "endpoint:post-change-password"
+      - "api:post-change-password"
   - type: change
     title: "Increase reference dataset version to 0.0.11."
     features: []
