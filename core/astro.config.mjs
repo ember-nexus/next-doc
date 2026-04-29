@@ -19,7 +19,11 @@ export default defineConfig({
   integrations: [mdx(), sitemap()],
   markdown: {
     shikiConfig: {
-      theme: 'min-light'
+      theme: 'min-light',
+      langs: [
+          "json",
+          "text"
+      ]
     },
   }
 });

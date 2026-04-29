@@ -3,6 +3,8 @@ import { getCollection, render } from 'astro:content';
 import {getChangesByFeatureUpToVersion} from "../../repository/ChangeRepository.ts";
 import {marked} from "marked";
 import Default from "../../layouts/Default.astro";
+import type {HttpStatusCode, ResponseExample} from "../../type";
+import ResponseExamplesCard from "../../component/ResponseExamplesCard.astro";
 
 export async function getStaticPaths() {
     const entries = await getCollection('endpoints');
@@ -30,6 +32,92 @@ const markdownString = changes
     .join('\n');
 
 const changesHtml = await marked.parse(markdownString);
+
+const examples : ResponseExample[] = [
+    {
+        httpStatusCode: 200,
+        name: "Node",
+        description: 'The get element endpoint at GET /<uuid> is used to retrieve the data of a single element, which can be either a node or a relationship.',
+        body: {
+            content: `{
+  "type": "Comment",
+  "id": "74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
+  "data": {
+    "created": "2025-09-27T10:39:51+00:00",
+    "name": "Blue",
+    "updated": "2025-09-27T10:39:51+00:00",
+    "content": "Blue is one of the three primary colours in the RYB colour model (traditional colour theory), as well as in the RGB (additive) colour model. It lies between violet and cyan on the spectrum of visible light. The eye perceives blue when observing light with a dominant wavelength between approximately 450 and 495 nanometres. Most blues contain a slight mixture of other colours; azure contains some green, while ultramarine contains some violet. The clear daytime sky and the deep sea appear blue because of an optical effect known as Rayleigh scattering. An optical effect called the Tyndall effect explains blue eyes. Distant objects appear more blue because of another optical effect called aerial perspective."
+  }
+}`,
+            type: "json",
+        },
+        headers: `Access-Control-Allow-Headers: Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method
+Access-Control-Allow-Methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
+Access-Control-Allow-Origin: *
+Access-Control-Expose-Headers: ETag, Location
+Allow: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
+Cache-Control: no-cache, private
+Content-Type: application/json; charset=utf-8
+Date: Fri, 06 Oct 2023 20:02:22 GMT
+Etag: "Fj0kUmVpX2T"
+Transfer-Encoding: chunked
+X-Powered-By: Ember Nexus API`,
+    },
+    {
+        httpStatusCode: 200,
+        name: "Relation",
+        description: 'The get element endpoint at GET /<uuid> is used to retrieve the data of a single element, which can be either a node or a relationship.',
+        body: {
+            content: `{
+  "type": "OWNS",
+  "id": "eb5d2879-c5e6-43a6-b8ce-2a1188ca7073",
+  "start": "56fda20c-b238-4034-b555-1df47c47e17a",
+  "end": "ce8abdea-2e6c-41d4-b779-87b803f77836",
+  "data": {
+    "created": "2025-09-27T10:39:58+00:00",
+    "updated": "2025-09-27T10:39:58+00:00"
+  }
+}`,
+            type: "json",
+        },
+        headers: `Access-Control-Allow-Headers: Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method
+Access-Control-Allow-Methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
+Access-Control-Allow-Origin: *
+Access-Control-Expose-Headers: ETag, Location
+Allow: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
+Cache-Control: no-cache, private
+Content-Type: application/json; charset=utf-8
+Date: Fri, 06 Oct 2023 20:02:22 GMT
+Etag: "Fj0kUmVpX2T"
+Transfer-Encoding: chunked
+X-Powered-By: Ember Nexus API`,
+    },
+    {
+        httpStatusCode: 404,
+        name: null,
+        description: 'blib blub',
+        body: {
+            content: `{
+  "type": "http://api/error/404/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "Requested element was not found."
+}`,
+            type: "json",
+        },
+        headers: `Access-Control-Allow-Headers: Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method
+Access-Control-Allow-Methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
+Access-Control-Allow-Origin: *
+Access-Control-Expose-Headers: ETag, Location
+Allow: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
+Cache-Control: no-cache, private
+Content-Type: application/problem+json; charset=utf-8
+Date: Fri, 06 Oct 2023 20:32:44 GMT
+Transfer-Encoding: chunked
+X-Powered-By: Ember Nexus API`,
+    }
+];
+
 ---
 <Default title={`${entry.data.endpoint} at version ${release_version}`}>
 <h1>{entry.data.endpoint}</h1>
@@ -37,6 +125,8 @@ const changesHtml = await marked.parse(markdownString);
 
 <h3>History</h3>
 <Fragment set:html={changesHtml} />
+
+    <ResponseExamplesCard examples={examples} />
 
 <Content />
 </Default>

@@ -1,0 +1,435 @@
+---
+import {
+    getHttpStatusCodeFamily,
+    getHttpStatusCodeFamilyLabel,
+    getHttpStatusCodeLabel,
+    type ResponseExample
+} from "../type";
+interface Props {
+    examples: ResponseExample[];
+}
+import { Code } from 'astro:components';
+
+const {examples} = Astro.props;
+
+function getPillLabel(example: ResponseExample): string {
+    return example.name !== null
+        ? `${example.httpStatusCode} ${example.name}`
+        : `${example.httpStatusCode}`;
+}
+
+function getFamilyVar(example: ResponseExample): string {
+    const family = getHttpStatusCodeFamily(example.httpStatusCode);
+    const map: Record<number, string> = {
+        2: "success",
+        3: "redirect",
+        4: "client-error",
+        5: "server-error",
+    };
+    return map[family] ?? "neutral";
+}
+
+const componentId = `re-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<div class="response-examples-wrap">
+    <p class="section-label">Example responses</p>
+
+    <div class="card" id={componentId}>
+        <!-- Pill strip -->
+        <div class="pill-strip" role="list" aria-label="Response examples">
+            {examples.map((example, index) => {
+                const familyVar = getFamilyVar(example);
+                const label = getPillLabel(example);
+                const statusLabel = getHttpStatusCodeLabel(example.httpStatusCode);
+                const family = getHttpStatusCodeFamily(example.httpStatusCode);
+                const familyName = getHttpStatusCodeFamilyLabel(family);
+                return (
+                        <wa-button
+                                role="listitem"
+                                pill
+                                class={`resp-pill resp-pill--${familyVar}`}
+                                data-index={index}
+                                data-card={componentId}
+                                aria-pressed={index === 0 ? "true" : "false"}
+                                aria-label={`${label} — ${statusLabel}, ${familyName}`}
+                                title={`${label}: ${statusLabel}`}
+                        >
+                            {label}
+                        </wa-button>
+                );
+            })}
+        </div>
+
+        <!-- Description rows (one per example, shown/hidden via JS) -->
+        {examples.map((example, index) => {
+            const familyVar = getFamilyVar(example);
+            const statusLabel = getHttpStatusCodeLabel(example.httpStatusCode);
+            const displayName = example.name ?? statusLabel;
+            const family = getHttpStatusCodeFamily(example.httpStatusCode);
+            const familyName = getHttpStatusCodeFamilyLabel(family);
+            return (
+                    <div
+                            class={`desc-row desc-row--${familyVar}`}
+                            data-desc={componentId}
+                            data-index={index}
+                            aria-hidden={index !== 0 ? "true" : "false"}
+                            style={index !== 0 ? "display:none" : ""}
+                    >
+                        <div class="desc-header">
+                            <span class="desc-code">{example.httpStatusCode}</span>
+                            <span class="desc-dot" aria-hidden="true">·</span>
+                            <span class="desc-name">{statusLabel} -</span>
+                            <span class="desc-name">{displayName}</span>
+                            <span class="sr-only">{example.name}</span>
+                        </div>
+                        <p class="desc-text">{example.description}</p>
+                    </div>
+            );
+        })}
+
+        <!-- Tab group for Body / Headers -->
+        <wa-tab-group class="resp-tabs" no-scroll-controls>
+            <wa-tab panel="body">Body</wa-tab>
+            <wa-tab panel="headers">Headers</wa-tab>
+
+            <wa-tab-panel name="body" style="--padding: 0; --wa-border-radius-m:0;">
+                {examples.map((example, index) => (
+                        <div
+                                class="code-wrap"
+                                data-body={componentId}
+                                data-index={index}
+                                aria-hidden={index !== 0 ? "true" : "false"}
+                                style={index !== 0 ? "display:none" : ""}
+                        >
+                            {example.body !== null ? (
+                                    <Code code={example.body.content} lang={example.body.type === "json" ? "json" : "text"} theme="min-light" />
+                            ) : (
+                                    <p class="code-empty" aria-live="polite">
+                                        No body returned for {example.httpStatusCode} responses.
+                                    </p>
+                            )}
+                        </div>
+                ))}
+            </wa-tab-panel>
+
+            <wa-tab-panel name="headers" style="--padding: 0; --wa-border-radius-m:0;">
+                {examples.map((example, index) => (
+                        <div
+                                class="code-wrap"
+                                data-headers={componentId}
+                                data-index={index}
+                                aria-hidden={index !== 0 ? "true" : "false"}
+                                style={index !== 0 ? "display:none" : ""}
+                        >
+
+                        <Code code={example.headers} lang="text" theme="min-light" />
+                        </div>
+                ))}
+            </wa-tab-panel>
+        </wa-tab-group>
+    </div>
+</div>
+
+<style>
+    @reference "tailwindcss";
+
+    /* ── Color tokens per status family ───────────────────────────── */
+    .response-examples-wrap {
+        --re-success-bg:          #EAF3DE;
+        --re-success-bg-mid:      #C0DD97;
+        --re-success-active:      #639922;
+        --re-success-text:        #3B6D11;
+        --re-success-dark:        #27500A;
+        --re-success-bar:         #639922;
+
+        --re-redirect-bg:         #E6F1FB;
+        --re-redirect-bg-mid:     #B5D4F4;
+        --re-redirect-active:     #378ADD;
+        --re-redirect-text:       #185FA5;
+        --re-redirect-dark:       #0C447C;
+        --re-redirect-bar:        #378ADD;
+
+        --re-client-error-bg:     #FAECE7;
+        --re-client-error-bg-mid: #F5C4B3;
+        --re-client-error-active: #D85A30;
+        --re-client-error-text:   #993C1D;
+        --re-client-error-dark:   #712B13;
+        --re-client-error-bar:    #D85A30;
+
+        --re-server-error-bg:     #FCEBEB;
+        --re-server-error-bg-mid: #F7C1C1;
+        --re-server-error-active: #E24B4A;
+        --re-server-error-text:   #A32D2D;
+        --re-server-error-dark:   #791F1F;
+        --re-server-error-bar:    #E24B4A;
+
+        --re-neutral-bg:          #F1EFE8;
+        --re-neutral-bg-mid:      #D3D1C7;
+        --re-neutral-active:      #5F5E5A;
+        --re-neutral-text:        #444441;
+        --re-neutral-dark:        #2C2C2A;
+        --re-neutral-bar:         #888780;
+    }
+
+    /* ── Layout ───────────────────────────────────────────────────── */
+    .section-label {
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+        color: var(--wa-color-neutral-500, #888780);
+    }
+
+    .card {
+        border-radius: 0.75rem;
+        border: 0.5px solid color-mix(in srgb, currentColor 15%, transparent);
+        overflow: hidden;
+        background: var(--wa-color-neutral-0, #ffffff);
+    }
+
+    /* ── Pill strip ───────────────────────────────────────────────── */
+    .pill-strip {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.375rem;
+        padding: 0.625rem 1rem;
+        background: color-mix(in srgb, currentColor 4%, transparent);
+        border-bottom: 0.5px solid color-mix(in srgb, currentColor 15%, transparent);
+    }
+
+    /* ── wa-button sizing (CSS-only, no size attribute) ───────────── */
+    .resp-pill {
+        --wa-button-font-size:      0.72rem;
+        --wa-button-padding-inline: 0.6rem;
+        --wa-button-padding-block:  0.2rem;
+        --wa-button-border-width:   0.5px;
+    }
+
+    /* ── Per-family inactive state ────────────────────────────────── */
+    /*
+     * --wa-color-fill-loud is the token wa-button uses for its background
+     * when variant="filled" (the default). We override it per family.
+     * Border and text colors use the dedicated button tokens.
+     */
+    .resp-pill--success {
+        --wa-color-fill-loud:               var(--re-success-bg);
+        --wa-button-border-color:           var(--re-success-bg-mid);
+        --wa-button-border-color-hover:     var(--re-success-text);
+        --wa-button-color:                  var(--re-success-text);
+        --wa-button-color-hover:            var(--re-success-dark);
+        --wa-button-background-color-hover: var(--re-success-bg-mid);
+    }
+    .resp-pill--redirect {
+        --wa-color-fill-loud:               var(--re-redirect-bg);
+        --wa-button-border-color:           var(--re-redirect-bg-mid);
+        --wa-button-border-color-hover:     var(--re-redirect-text);
+        --wa-button-color:                  var(--re-redirect-text);
+        --wa-button-color-hover:            var(--re-redirect-dark);
+        --wa-button-background-color-hover: var(--re-redirect-bg-mid);
+    }
+    .resp-pill--client-error {
+        --wa-color-fill-loud:               var(--re-client-error-bg);
+        --wa-button-border-color:           var(--re-client-error-bg-mid);
+        --wa-button-border-color-hover:     var(--re-client-error-text);
+        --wa-button-color:                  var(--re-client-error-text);
+        --wa-button-color-hover:            var(--re-client-error-dark);
+        --wa-button-background-color-hover: var(--re-client-error-bg-mid);
+    }
+    .resp-pill--server-error {
+        --wa-color-fill-loud:               var(--re-server-error-bg);
+        --wa-button-border-color:           var(--re-server-error-bg-mid);
+        --wa-button-border-color-hover:     var(--re-server-error-text);
+        --wa-button-color:                  var(--re-server-error-text);
+        --wa-button-color-hover:            var(--re-server-error-dark);
+        --wa-button-background-color-hover: var(--re-server-error-bg-mid);
+    }
+
+    /* ── Active / pressed state — solid filled ────────────────────── */
+    .resp-pill--success[aria-pressed="true"] {
+        --wa-color-fill-loud:               var(--re-success-active);
+        --wa-button-border-color:           var(--re-success-active);
+        --wa-button-border-color-hover:     var(--re-success-active);
+        --wa-button-color:                  #ffffff;
+        --wa-button-color-hover:            #ffffff;
+        --wa-button-background-color-hover: var(--re-success-active);
+    }
+    .resp-pill--redirect[aria-pressed="true"] {
+        --wa-color-fill-loud:               var(--re-redirect-active);
+        --wa-button-border-color:           var(--re-redirect-active);
+        --wa-button-border-color-hover:     var(--re-redirect-active);
+        --wa-button-color:                  #ffffff;
+        --wa-button-color-hover:            #ffffff;
+        --wa-button-background-color-hover: var(--re-redirect-active);
+    }
+    .resp-pill--client-error[aria-pressed="true"] {
+        --wa-color-fill-loud:               var(--re-client-error-active);
+        --wa-button-border-color:           var(--re-client-error-active);
+        --wa-button-border-color-hover:     var(--re-client-error-active);
+        --wa-button-color:                  #ffffff;
+        --wa-button-color-hover:            #ffffff;
+        --wa-button-background-color-hover: var(--re-client-error-active);
+    }
+    .resp-pill--server-error[aria-pressed="true"] {
+        --wa-color-fill-loud:               var(--re-server-error-active);
+        --wa-button-border-color:           var(--re-server-error-active);
+        --wa-button-border-color-hover:     var(--re-server-error-active);
+        --wa-button-color:                  #ffffff;
+        --wa-button-color-hover:            #ffffff;
+        --wa-button-background-color-hover: var(--re-server-error-active);
+    }
+
+    /* ── Description row ──────────────────────────────────────────── */
+    .desc-row {
+        padding: 0.75rem 1rem;
+        border-bottom: 0.5px solid color-mix(in srgb, currentColor 15%, transparent);
+        border-left: 3px solid transparent;
+        border-radius: 0;
+    }
+    .desc-row--success      { border-left-color: var(--re-success-bar); }
+    .desc-row--redirect     { border-left-color: var(--re-redirect-bar); }
+    .desc-row--client-error { border-left-color: var(--re-client-error-bar); }
+    .desc-row--server-error { border-left-color: var(--re-server-error-bar); }
+
+    .desc-header {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.25rem;
+    }
+    .desc-code {
+        font-family: var(--wa-font-mono, ui-monospace, monospace);
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--wa-color-neutral-900, #1a1a1a);
+    }
+    .desc-dot {
+        font-size: 13px;
+        color: color-mix(in srgb, currentColor 30%, transparent);
+    }
+    .desc-name {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--wa-color-neutral-900, #1a1a1a);
+    }
+    .desc-text {
+        font-size: 13px;
+        line-height: 1.625;
+        color: var(--wa-color-neutral-600, #5a5a5a);
+    }
+
+    /* ── Tab group ────────────────────────────────────────────────── */
+    .resp-tabs {
+        display: block;
+        --wa-tab-font-size:              0.75rem;
+        --wa-tab-color:                  var(--wa-color-neutral-500, #888);
+        --wa-tab-color-active:           var(--wa-color-neutral-900, #1a1a1a);
+        --wa-tab-active-indicator-color: var(--wa-color-neutral-900, #1a1a1a);
+        --wa-tab-padding-inline:         1rem;
+        --wa-tab-padding-block:          0.4rem;
+    }
+
+    /* ── Code blocks ──────────────────────────────────────────────── */
+    .code-wrap {
+        display: block;
+    }
+    .code-block {
+        width: 100%;
+        margin: 0;
+        padding: 0.875rem 1rem;
+        font-size: 12px;
+        line-height: 1.75;
+        overflow-x: auto;
+        font-family: var(--wa-font-mono, ui-monospace, monospace);
+        color: var(--wa-color-neutral-600, #5a5a5a);
+        background: var(--wa-color-neutral-50, #f9f9f9);
+        border: none;
+        border-radius: 0;
+        tab-size: 2;
+    }
+    .code-block:focus-visible {
+        outline: 2px solid var(--wa-color-primary-500, #378ADD);
+        outline-offset: -2px;
+    }
+    .code-block code {
+        font: inherit;
+        background: none;
+        padding: 0;
+        white-space: pre;
+    }
+    .code-empty {
+        padding: 0.875rem 1rem;
+        font-size: 13px;
+        font-style: italic;
+        color: var(--wa-color-neutral-400, #aaa);
+        background: var(--wa-color-neutral-50, #f9f9f9);
+    }
+
+    /* ── Accessibility ────────────────────────────────────────────── */
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        white-space: nowrap;
+        border: 0;
+        clip: rect(0, 0, 0, 0);
+    }
+</style>
+
+<script>
+    function initResponseExamples(cardId: string) {
+        const card = document.getElementById(cardId);
+        if (!card) return;
+
+        const pills   = card.querySelectorAll<HTMLElement>(`[data-card="${cardId}"]`);
+        const descs   = card.querySelectorAll<HTMLElement>(`[data-desc="${cardId}"]`);
+        const bodies  = card.querySelectorAll<HTMLElement>(`[data-body="${cardId}"]`);
+        const headers = card.querySelectorAll<HTMLElement>(`[data-headers="${cardId}"]`);
+
+        function showIndex(index: number) {
+            pills.forEach((pill, i) => {
+                pill.setAttribute("aria-pressed", i === index ? "true" : "false");
+            });
+            [descs, bodies, headers].forEach(group => {
+                group.forEach((el, i) => {
+                    const active = i === index;
+                    el.style.display = active ? "" : "none";
+                    el.setAttribute("aria-hidden", active ? "false" : "true");
+                });
+            });
+        }
+
+        pills.forEach((pill) => {
+            pill.addEventListener("click", () => {
+                showIndex(parseInt(pill.dataset.index ?? "0", 10));
+            });
+            pill.addEventListener("keydown", (e: KeyboardEvent) => {
+                const current = parseInt(pill.dataset.index ?? "0", 10);
+                if (e.key === "ArrowRight") {
+                    e.preventDefault();
+                    const next = Math.min(current + 1, pills.length - 1);
+                    showIndex(next);
+                    (pills[next] as HTMLElement).focus();
+                } else if (e.key === "ArrowLeft") {
+                    e.preventDefault();
+                    const prev = Math.max(current - 1, 0);
+                    showIndex(prev);
+                    (pills[prev] as HTMLElement).focus();
+                }
+            });
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll<HTMLElement>(".card[id]").forEach(card => {
+            if (card.querySelector("[data-card]")) {
+                initResponseExamples(card.id);
+            }
+        });
+    });
+</script>
