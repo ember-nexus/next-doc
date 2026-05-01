@@ -1,0 +1,77 @@
+---
+import { Code } from "astro:components";
+import {
+    getHttpStatusCodeLabel,
+    getHttpStatusCodeFamily,
+} from "../../type";
+import type { ResponseExample } from "../../type";
+import ResponseContentTabs from "./ResponseContentTabs.astro";
+
+interface Props {
+    example: ResponseExample;
+    panelId: string;
+    isInitiallyActive: boolean;
+    parentTabId: string;
+}
+
+const { example, panelId, isInitiallyActive, parentTabId } = Astro.props;
+
+const statusLabel = getHttpStatusCodeLabel(example.httpStatusCode);
+const family = getHttpStatusCodeFamily(example.httpStatusCode);
+const variant = family >= 4 ? "error" : family === 3 ? "redirect" : "success";
+
+const hasBody = example.body !== null;
+const bodyPanelId = `${panelId}-panel-body`;
+const headersPanelId = `${panelId}-panel-headers`;
+---
+
+<section
+        id={panelId}
+        role="tabpanel"
+        aria-labelledby={parentTabId}
+        hidden={!isInitiallyActive}
+        data-status-code-panel
+        data-variant={variant}
+>
+    <header class="px-5 py-4 border-b border-[var(--surface-border)]">
+        <p class="text-[0.95em] font-semibold text-[var(--surface-fg)]">
+            <span>{example.httpStatusCode}</span>
+            <span class="mx-1.5 text-[var(--surface-fg-muted)]">·</span>
+            <span>{example.name ?? statusLabel}</span>
+        </p>
+        <p class="mt-1 text-[var(--surface-fg-muted)]">
+            {example.description}
+        </p>
+    </header>
+
+    <ResponseContentTabs panelId={panelId} hasBody={hasBody} />
+
+    {hasBody && (
+            <div
+                    id={bodyPanelId}
+                    role="tabpanel"
+                    data-content-panel
+                    class="p-5 [&>*]:!bg-transparent [&_pre]:!bg-transparent
+                   [&_pre]:!p-0 [&_pre]:!m-0 [&_pre]:text-[0.95em]
+                   [&_pre]:leading-relaxed"
+            >
+                {example.body!.type === "json" ? (
+                        <Code code={example.body!.content} lang="json" theme="github-light" />
+                ) : (
+                        <Code code={example.body!.content} lang="text" theme="github-light" />
+                )}
+            </div>
+    )}
+
+    <div
+            id={headersPanelId}
+            role="tabpanel"
+            hidden={hasBody}
+            data-content-panel
+            class="p-5 [&>*]:!bg-transparent [&_pre]:!bg-transparent
+               [&_pre]:!p-0 [&_pre]:!m-0 [&_pre]:text-[0.95em]
+               [&_pre]:leading-relaxed"
+    >
+        <Code code={example.headers} lang="http" theme="github-light" />
+    </div>
+</section>

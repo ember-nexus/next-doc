@@ -1,0 +1,64 @@
+---
+interface Props {
+    panelId: string;
+    hasBody: boolean;
+}
+
+const { panelId, hasBody } = Astro.props;
+
+const bodyTabId = `${panelId}-tab-body`;
+const headersTabId = `${panelId}-tab-headers`;
+const bodyPanelId = `${panelId}-panel-body`;
+const headersPanelId = `${panelId}-panel-headers`;
+
+const bodyInitiallyActive = hasBody;
+---
+
+<div
+        role="tablist"
+        aria-label="Response content tabs"
+        class="flex border-b border-[var(--surface-border)]"
+>
+    {hasBody && (
+            <button
+                    type="button"
+                    role="tab"
+                    id={bodyTabId}
+                    aria-selected={bodyInitiallyActive ? "true" : "false"}
+                    aria-controls={bodyPanelId}
+                    tabindex={bodyInitiallyActive ? 0 : -1}
+                    data-content-tab
+                    data-target={bodyPanelId}
+                    class="px-4 py-2.5 text-[0.95em] font-medium cursor-pointer
+                   border-b-2 border-transparent -mb-px
+                   text-[var(--surface-fg-muted)]
+                   hover:text-[var(--surface-fg)]
+                   aria-selected:border-[var(--surface-fg)]
+                   aria-selected:text-[var(--surface-fg)]
+                   focus-visible:outline-2 focus-visible:outline-offset-[-2px]
+                   focus-visible:outline-[var(--http-status-code-focus-ring)]"
+            >
+                Body
+            </button>
+    )}
+    <button
+            type="button"
+            role="tab"
+            id={headersTabId}
+            aria-selected={!bodyInitiallyActive ? "true" : "false"}
+            aria-controls={headersPanelId}
+            tabindex={!bodyInitiallyActive ? 0 : -1}
+            data-content-tab
+            data-target={headersPanelId}
+            class="px-4 py-2.5 text-[0.95em] font-medium cursor-pointer
+               border-b-2 border-transparent -mb-px
+               text-[var(--surface-fg-muted)]
+               hover:text-[var(--surface-fg)]
+               aria-selected:border-[var(--surface-fg)]
+               aria-selected:text-[var(--surface-fg)]
+               focus-visible:outline-2 focus-visible:outline-offset-[-2px]
+               focus-visible:outline-[var(--http-status-code-focus-ring)]"
+    >
+        Headers
+    </button>
+</div>

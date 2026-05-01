@@ -1,11 +1,51 @@
+@layer theme, base, components, vendor, utilities;
+
 @import "tailwindcss";
 
 @import "@awesome.me/webawesome/dist/styles/themes/default.css" layer(vendor);
 @import "@awesome.me/webawesome/dist/styles/webawesome.css" layer(vendor);
-/*@plugin "@tailwindcss/typography";*/
+@plugin "@tailwindcss/typography";
 
 :root {
-    font-size: 18px;
+    --base-font-size: 18px;
+
+    --surface-bg: #fafaf9;
+    --surface-border: #e7e5e4;
+    --surface-fg: #1c1917;
+    --surface-fg-muted: #78716c;
+
+    --http-status-code-success-fg: #166534;
+    --http-status-code-success-bg: #f0fdf4;
+    --http-status-code-success-bg-hover: #dcfce7;
+    --http-status-code-success-border: #bbf7d0;
+    --http-status-code-success-bg-active: #16a34a;
+    --http-status-code-success-fg-active: #ffffff;
+
+    --http-status-code-redirect-fg: #1e40af;
+    --http-status-code-redirect-bg: #eff6ff;
+    --http-status-code-redirect-bg-hover: #dbeafe;
+    --http-status-code-redirect-border: #bfdbfe;
+    --http-status-code-redirect-bg-active: #2563eb;
+    --http-status-code-redirect-fg-active: #ffffff;
+
+    --http-status-code-error-fg: #b91c1c;
+    --http-status-code-error-bg: #fef2f2;
+    --http-status-code-error-bg-hover: #fee2e2;
+    --http-status-code-error-border: #fecaca;
+    --http-status-code-error-bg-active: #dc2626;
+    --http-status-code-error-fg-active: #ffffff;
+
+    --http-status-code-focus-ring: #0a0a0a;
+}
+
+html {
+    font-size: var(--base-font-size);
+}
+
+body {
+    color: var(--surface-fg);
+    background: #ffffff;
+    -webkit-font-smoothing: antialiased;
 }
 
 @font-face {
@@ -60,4 +100,31 @@
 
 * {
     box-sizing: border-box;
+}
+
+[data-status-code-tab][data-variant="success"] {
+    --http-status-code-fg: var(--http-status-code-success-fg);
+    --http-status-code-bg: var(--http-status-code-success-bg);
+    --http-status-code-bg-hover: var(--http-status-code-success-bg-hover);
+    --http-status-code-border: var(--http-status-code-success-border);
+    --http-status-code-bg-active: var(--http-status-code-success-bg-active);
+    --http-status-code-fg-active: var(--http-status-code-success-fg-active);
+}
+
+[data-status-code-tab][data-variant="redirect"] {
+    --http-status-code-fg: var(--http-status-code-redirect-fg);
+    --http-status-code-bg: var(--http-status-code-redirect-bg);
+    --http-status-code-bg-hover: var(--http-status-code-redirect-bg-hover);
+    --http-status-code-border: var(--http-status-code-redirect-border);
+    --http-status-code-bg-active: var(--http-status-code-redirect-bg-active);
+    --http-status-code-fg-active: var(--http-status-code-redirect-fg-active);
+}
+
+[data-status-code-tab][data-variant="error"] {
+    --http-status-code-fg: var(--http-status-code-error-fg);
+    --http-status-code-bg: var(--http-status-code-error-bg);
+    --http-status-code-bg-hover: var(--http-status-code-error-bg-hover);
+    --http-status-code-border: var(--http-status-code-error-border);
+    --http-status-code-bg-active: var(--http-status-code-error-bg-active);
+    --http-status-code-fg-active: var(--http-status-code-error-fg-active);
 }

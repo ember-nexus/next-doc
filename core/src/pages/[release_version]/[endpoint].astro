@@ -4,7 +4,8 @@ import {getChangesByFeatureUpToVersion} from "../../repository/ChangeRepository.
 import {marked} from "marked";
 import Default from "../../layouts/Default.astro";
 import type {HttpStatusCode, ResponseExample} from "../../type";
-import ResponseExamplesCard from "../../component/ResponseExamplesCard.astro";
+// import ResponseExamplesCard from "../../component/ResponseExamplesCard.astro";
+import ResponseExampleCard from "../../component/ResponseExample/ResponseExampleCard.astro";
 
 export async function getStaticPaths() {
     const entries = await getCollection('endpoints');
@@ -126,7 +127,7 @@ X-Powered-By: Ember Nexus API`,
 <h3>History</h3>
 <Fragment set:html={changesHtml} />
 
-    <ResponseExamplesCard examples={examples} />
+    <ResponseExampleCard examples={examples} />
 
 <Content />
 </Default>
