@@ -34,14 +34,14 @@ function getLang(e: ResponseExample, c: typeof components[number]): string {
 
 <div
     x-data={`{ exampleId: '${exampleIds[0]}', componentId: 'body' }`}
-    class="bg-neutral-primary-soft block border border-default rounded-xl shadow-xs flex flex-col divide-y divide-gray-200">
+    class="bg-white block border border-default rounded-xl shadow-xs flex flex-col divide-y divide-gray-200">
 
     <div class="flex flex-wrap gap-2 p-4">
         {examples.map((e, i) => (
             <button
                 @click={`exampleId = '${exampleIds[i]}'`}
                 :class={`exampleId === '${exampleIds[i]}' ? 'active' : ''`}
-                class={`http-status-btn ${statusClass(e.httpStatusCode)} px-3 py-0.5 rounded-full text-sm font-medium border transition-colors cursor-pointer`}
+                class={`http-status-btn ${statusClass(e.httpStatusCode)} px-3 py-0.5 rounded-full text-sm font-medium border transition-colors cursor-pointer outline-offset-2`}
             >
                 {exampleIds[i]}
             </button>
@@ -52,14 +52,14 @@ function getLang(e: ResponseExample, c: typeof components[number]): string {
         <button
             @click={`componentId = 'body'`}
             :class={`componentId === 'body' ? 'border-gray-800 text-gray-800' : 'border-transparent text-gray-400 hover:text-gray-600'`}
-            class="px-4 py-2 text-sm -mb-px border-b-2 cursor-pointer transition-colors"
+            class="px-4 py-2 text-sm -mb-px border-b-2 cursor-pointer transition-colors outline-offset-2"
         >
             Body
         </button>
         <button
             @click={`componentId = 'headers'`}
             :class={`componentId === 'headers' ? 'border-gray-800 text-gray-800' : 'border-transparent text-gray-400 hover:text-gray-600'`}
-            class="px-4 py-2 text-sm -mb-px border-b-2 cursor-pointer transition-colors"
+            class="px-4 py-2 text-sm -mb-px border-b-2 cursor-pointer transition-colors outline-offset-2"
         >
             Headers
         </button>
@@ -75,7 +75,7 @@ function getLang(e: ResponseExample, c: typeof components[number]): string {
                         x-cloak={!isDefault || undefined}
                         class="text-gray-800 font-mono"
                     >
-                        <Code code={getContent(e, c)} lang={getLang(e, c)} theme="github-light" class="not-prose rounded-b-xl p-4" />
+                        <Code code={getContent(e, c)} lang={getLang(e, c)} theme="github-light" class="not-prose rounded-b-xl p-4 text-[0.8rem]" />
                     </div>
                 );
             })
