@@ -1,47 +1,56 @@
 ---
 import { Code } from "astro:components";
-const examples = ["A", "B", "C"];
-const components = ["content", "header"];
+const examples = ["200 node", "200 relation", "403", "500"];
+const components = ["body", "headers"];
 ---
 
 <div
-    x-data="{ exampleId: 'A', componentId: 'content' }"
+    x-data={`{ exampleId: '${examples[0]}', componentId: 'body' }`}
     class="bg-neutral-primary-soft block border border-default rounded-xl shadow-xs flex flex-col divide-y divide-gray-200">
 
-    <div class="flex gap-2 p-4">
+    <div class="flex flex-wrap gap-2 p-4">
         {examples.map(e => (
             <button
                 @click={`exampleId = '${e}'`}
-                :class={`exampleId === '${e}' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'`}
-                class="px-4 py-1 rounded-full font-medium transition-colors cursor-pointer"
+                :class={`exampleId === '${e}' ? 'bg-gray-700 text-white border-gray-700' : 'bg-transparent text-gray-600 border-gray-300 hover:border-gray-400'`}
+                class="px-3 py-0.5 rounded-full text-sm font-medium border transition-colors cursor-pointer"
             >
                 {e}
             </button>
         ))}
     </div>
 
-    <div class="flex gap-2 p-4">
-        {components.map(c => (
-            <button
-                @click={`componentId = '${c}'`}
-                :class={`componentId === '${c}' ? 'bg-emerald-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'`}
-                class="px-4 py-2 rounded font-medium transition-colors cursor-pointer"
-            >
-                {c}
-            </button>
-        ))}
+    <div class="flex border-b border-gray-200 px-4">
+        <button
+            @click={`componentId = 'body'`}
+            :class={`componentId === 'body' ? 'border-gray-800 text-gray-800' : 'border-transparent text-gray-400 hover:text-gray-600'`}
+            class="px-4 py-2 text-sm -mb-px border-b-2 cursor-pointer transition-colors"
+        >
+            Body
+        </button>
+        <button
+            @click={`componentId = 'headers'`}
+            :class={`componentId === 'headers' ? 'border-gray-800 text-gray-800' : 'border-transparent text-gray-400 hover:text-gray-600'`}
+            class="px-4 py-2 text-sm -mb-px border-b-2 cursor-pointer transition-colors"
+        >
+            Headers
+        </button>
     </div>
 
     <div>
         {examples.flatMap(e =>
-            components.map(c => (
-                <div
-                    x-show={`exampleId === '${e}' && componentId === '${c}'`}
-                    class="text-gray-800 font-mono"
-                >
-                    <Code code="test" lang="http" theme="github-light" class="not-prose rounded-b-xl p-4" />
-                </div>
-            ))
+            components.map(c => {
+                const isDefault = e === examples[0] && c === components[0];
+                return (
+                    <div
+                        x-show={`exampleId === '${e}' && componentId === '${c}'`}
+                        x-cloak={!isDefault || undefined}
+                        class="text-gray-800 font-mono"
+                    >
+                        <Code code="test" lang="http" theme="github-light" class="not-prose rounded-b-xl p-4" />
+                    </div>
+                );
+            })
         )}
     </div>
 
