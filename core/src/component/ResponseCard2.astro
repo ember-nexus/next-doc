@@ -1,21 +1,49 @@
 ---
 import { Code } from "astro:components";
-const examples = ["200 node", "200 relation", "403", "500"];
-const components = ["body", "headers"];
+import type { ResponseExample } from "../type";
+
+interface Props {
+    examples: ResponseExample[];
+}
+
+const { examples } = Astro.props;
+
+const exampleIds = examples.map((e) =>
+    e.name ? `${e.httpStatusCode} ${e.name}` : `${String(e.httpStatusCode)}`
+);
+const components = ["body", "headers"] as const;
+
+function statusClass(code: number): string {
+    if (code >= 200 && code < 300) return "http-status-2xx";
+    if (code >= 300 && code < 400) return "http-status-3xx";
+    if (code >= 400 && code < 500) return "http-status-4xx";
+    if (code >= 500 && code < 600) return "http-status-5xx";
+    return "http-status-other";
+}
+
+function getContent(e: ResponseExample, c: typeof components[number]): string {
+    if (c === "body") return e.body?.content ?? "";
+    return e.headers;
+}
+
+function getLang(e: ResponseExample, c: typeof components[number]): string {
+    if (c === "body") return e.body?.type ?? "plain";
+    return "http";
+}
 ---
 
 <div
-    x-data={`{ exampleId: '${examples[0]}', componentId: 'body' }`}
+    x-data={`{ exampleId: '${exampleIds[0]}', componentId: 'body' }`}
     class="bg-neutral-primary-soft block border border-default rounded-xl shadow-xs flex flex-col divide-y divide-gray-200">
 
     <div class="flex flex-wrap gap-2 p-4">
-        {examples.map(e => (
+        {examples.map((e, i) => (
             <button
-                @click={`exampleId = '${e}'`}
-                :class={`exampleId === '${e}' ? 'bg-gray-700 text-white border-gray-700' : 'bg-transparent text-gray-600 border-gray-300 hover:border-gray-400'`}
-                class="px-3 py-0.5 rounded-full text-sm font-medium border transition-colors cursor-pointer"
+                @click={`exampleId = '${exampleIds[i]}'`}
+                :class={`exampleId === '${exampleIds[i]}' ? 'active' : ''`}
+                class={`http-status-btn ${statusClass(e.httpStatusCode)} px-3 py-0.5 rounded-full text-sm font-medium border transition-colors cursor-pointer`}
             >
-                {e}
+                {exampleIds[i]}
             </button>
         ))}
     </div>
@@ -38,16 +66,16 @@ const components = ["body", "headers"];
     </div>
 
     <div>
-        {examples.flatMap(e =>
+        {examples.flatMap((e, i) =>
             components.map(c => {
-                const isDefault = e === examples[0] && c === components[0];
+                const isDefault = i === 0 && c === components[0];
                 return (
                     <div
-                        x-show={`exampleId === '${e}' && componentId === '${c}'`}
+                        x-show={`exampleId === '${exampleIds[i]}' && componentId === '${c}'`}
                         x-cloak={!isDefault || undefined}
                         class="text-gray-800 font-mono"
                     >
-                        <Code code="test" lang="http" theme="github-light" class="not-prose rounded-b-xl p-4" />
+                        <Code code={getContent(e, c)} lang={getLang(e, c)} theme="github-light" class="not-prose rounded-b-xl p-4" />
                     </div>
                 );
             })
