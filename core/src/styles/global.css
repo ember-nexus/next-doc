@@ -133,6 +133,53 @@ body {
     --status-active-border: #374151;
 }
 
+@media (prefers-color-scheme: dark) {
+    .http-status-2xx {
+        --status-color: #86efac;
+        --status-bg: #052e16;
+        --status-border: #166534;
+        --status-active-bg: #16a34a;
+        --status-active-color: #ffffff;
+        --status-active-border: #15803d;
+    }
+
+    .http-status-3xx {
+        --status-color: #93c5fd;
+        --status-bg: #0f1e3d;
+        --status-border: #1e40af;
+        --status-active-bg: #2563eb;
+        --status-active-color: #ffffff;
+        --status-active-border: #1d4ed8;
+    }
+
+    .http-status-4xx {
+        --status-color: #fca5a5;
+        --status-bg: #2d0a0a;
+        --status-border: #9a3412;
+        --status-active-bg: #dc2626;
+        --status-active-color: #ffffff;
+        --status-active-border: #b91c1c;
+    }
+
+    .http-status-5xx {
+        --status-color: #d8b4fe;
+        --status-bg: #1e0a2e;
+        --status-border: #6b21a8;
+        --status-active-bg: #9333ea;
+        --status-active-color: #ffffff;
+        --status-active-border: #7e22ce;
+    }
+
+    .http-status-other {
+        --status-color: #d1d5db;
+        --status-bg: #1f2937;
+        --status-border: #374151;
+        --status-active-bg: #4b5563;
+        --status-active-color: #ffffff;
+        --status-active-border: #6b7280;
+    }
+}
+
 /* Apply vars to the button */
 .http-status-btn {
     color: var(--status-color);

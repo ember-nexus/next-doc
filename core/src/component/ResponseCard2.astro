@@ -35,7 +35,7 @@ function getLang(e: ResponseExample, c: typeof components[number]): string {
 
 <div
     x-data={`{ exampleId: '${exampleIds[0]}', componentId: 'body' }`}
-    class="response-card bg-white dark:bg-black block border border-default rounded-xl shadow-xs flex flex-col divide-y divide-gray-200">
+    class="response-card bg-white dark:bg-black block border border-default rounded-xl shadow-xs flex flex-col divide-y divide-gray-200 dark:divide-gray-800">
 
     <div class="flex flex-wrap gap-2 p-4">
         {examples.map((e, i) => (
@@ -68,17 +68,17 @@ function getLang(e: ResponseExample, c: typeof components[number]): string {
         )}
     </div>
 
-    <div class="flex border-b border-gray-200 px-4">
+    <div class="flex border-b border-gray-200 dark:border-gray-800 px-4">
         <button
             @click={`componentId = 'body'`}
-            :class={`componentId === 'body' ? 'border-gray-800 text-gray-800' : 'border-transparent text-gray-400 hover:text-gray-600'`}
+            :class={`componentId === 'body' ? 'border-gray-800 dark:border-gray-200 text-gray-800 dark:text-gray-100' : 'border-transparent text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300'`}
             class="px-4 py-2 text-sm -mb-px border-b-2 cursor-pointer transition-colors outline-offset-2"
         >
             Body
         </button>
         <button
             @click={`componentId = 'headers'`}
-            :class={`componentId === 'headers' ? 'border-gray-800 text-gray-800' : 'border-transparent text-gray-400 hover:text-gray-600'`}
+            :class={`componentId === 'headers' ? 'border-gray-800 dark:border-gray-200 text-gray-800 dark:text-gray-100' : 'border-transparent text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300'`}
             class="px-4 py-2 text-sm -mb-px border-b-2 cursor-pointer transition-colors outline-offset-2"
         >
             Headers
