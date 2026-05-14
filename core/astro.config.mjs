@@ -8,6 +8,8 @@ import sitemap from '@astrojs/sitemap';
 
 import alpinejs from '@astrojs/alpinejs';
 
+import expressiveCode from 'astro-expressive-code';
+
 export default defineConfig({
   vite: {
     plugins: [tailwindcss()]
@@ -17,7 +19,16 @@ export default defineConfig({
     allowedHosts: ['localhost', 'astro', 'ember-nexus-org-astro']
   },
   site: 'https://soerenklein.dev',
-  integrations: [mdx(), sitemap(), alpinejs()],
+  integrations: [
+    expressiveCode(
+        {
+          themes: ['min-dark', 'min-light'],
+        }
+    ),
+    mdx(),
+    sitemap(),
+    alpinejs()
+  ],
   markdown: {
     shikiConfig: {
       theme: 'min-light',

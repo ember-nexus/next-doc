@@ -4,6 +4,8 @@
 
 :root {
     --base-font-size: 18px;
+    --font-mono: "Fira Code", monospace;
+    --ec-codeFontFml: "Fira Code", monospace !important;
 }
 
 html {
@@ -17,6 +19,17 @@ body {
 
 [x-cloak] {
     display: none !important;
+}
+
+.response-card {
+    --ec-frm-frameBoxShdCssVal: '';
+}
+
+.response-card .expressive-code pre {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: calc(var(--radius-xl) - 1px);
+    border-bottom-right-radius: calc(var(--radius-xl) - 1px);
 }
 
 @font-face {

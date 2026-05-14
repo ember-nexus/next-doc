@@ -1,6 +1,7 @@
 ---
-import { Code } from "astro:components";
-import type { ResponseExample } from "../type";
+import { Code } from 'astro-expressive-code/components';
+import { marked } from 'marked';
+import {getHttpStatusCodeLabel, type ResponseExample} from "../type";
 
 interface Props {
     examples: ResponseExample[];
@@ -34,7 +35,7 @@ function getLang(e: ResponseExample, c: typeof components[number]): string {
 
 <div
     x-data={`{ exampleId: '${exampleIds[0]}', componentId: 'body' }`}
-    class="bg-white block border border-default rounded-xl shadow-xs flex flex-col divide-y divide-gray-200">
+    class="response-card bg-white dark:bg-black block border border-default rounded-xl shadow-xs flex flex-col divide-y divide-gray-200">
 
     <div class="flex flex-wrap gap-2 p-4">
         {examples.map((e, i) => (
@@ -46,6 +47,25 @@ function getLang(e: ResponseExample, c: typeof components[number]): string {
                 {exampleIds[i]}
             </button>
         ))}
+    </div>
+
+    <div class="not-prose">
+        {examples.flatMap((e, i) =>
+            {
+                const isDefault = i === 0;
+                const descriptionAsHtml = marked.parse(e.description);
+                return (
+                    <div
+                        x-show={`exampleId === '${exampleIds[i]}'`}
+                        x-cloak={!isDefault || undefined}
+                        class="text-sm p-4"
+                    >
+                        <p class="font-bold">{e.httpStatusCode} · {e.name ?? getHttpStatusCodeLabel(e.httpStatusCode)}</p>
+                        <div class="mt-2" set:html={descriptionAsHtml} />
+                    </div>
+                );
+            }
+        )}
     </div>
 
     <div class="flex border-b border-gray-200 px-4">
@@ -75,7 +95,7 @@ function getLang(e: ResponseExample, c: typeof components[number]): string {
                         x-cloak={!isDefault || undefined}
                         class="text-gray-800 font-mono"
                     >
-                        <Code code={getContent(e, c)} lang={getLang(e, c)} theme="github-light" class="not-prose rounded-b-xl p-4 text-[0.8rem]" />
+                        <Code code={getContent(e, c)} lang={getLang(e, c)} class="not-prose rounded-b-xl text-[0.875rem]" />
                     </div>
                 );
             })
