@@ -1,0 +1,48 @@
+---
+import { Code } from "astro:components";
+const examples = ["A", "B", "C"];
+const components = ["content", "header"];
+---
+
+<div
+    x-data="{ exampleId: 'A', componentId: 'content' }"
+    class="bg-neutral-primary-soft block border border-default rounded-xl shadow-xs flex flex-col divide-y divide-gray-200">
+
+    <div class="flex gap-2 p-4">
+        {examples.map(e => (
+            <button
+                @click={`exampleId = '${e}'`}
+                :class={`exampleId === '${e}' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'`}
+                class="px-4 py-1 rounded-full font-medium transition-colors cursor-pointer"
+            >
+                {e}
+            </button>
+        ))}
+    </div>
+
+    <div class="flex gap-2 p-4">
+        {components.map(c => (
+            <button
+                @click={`componentId = '${c}'`}
+                :class={`componentId === '${c}' ? 'bg-emerald-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'`}
+                class="px-4 py-2 rounded font-medium transition-colors cursor-pointer"
+            >
+                {c}
+            </button>
+        ))}
+    </div>
+
+    <div>
+        {examples.flatMap(e =>
+            components.map(c => (
+                <div
+                    x-show={`exampleId === '${e}' && componentId === '${c}'`}
+                    class="text-gray-800 font-mono"
+                >
+                    <Code code="test" lang="http" theme="github-light" class="not-prose rounded-b-xl p-4" />
+                </div>
+            ))
+        )}
+    </div>
+
+</div>

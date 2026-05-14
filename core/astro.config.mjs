@@ -6,17 +6,18 @@ import tailwindcss from '@tailwindcss/vite';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
-// https://astro.build/config
+import alpinejs from '@astrojs/alpinejs';
+
 export default defineConfig({
   vite: {
-    // plugins: [tailwindcss()]
+    plugins: [tailwindcss()]
   },
   server: {
     host: true,
     allowedHosts: ['localhost', 'astro', 'ember-nexus-org-astro']
   },
   site: 'https://soerenklein.dev',
-  integrations: [mdx(), sitemap()],
+  integrations: [mdx(), sitemap(), alpinejs()],
   markdown: {
     shikiConfig: {
       theme: 'min-light',

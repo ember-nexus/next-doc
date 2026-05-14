@@ -6,6 +6,7 @@ import Default from "../../layouts/Default.astro";
 import type {HttpStatusCode, ResponseExample} from "../../type";
 // import ResponseExamplesCard from "../../component/ResponseExamplesCard.astro";
 import ResponseExampleCard from "../../component/ResponseExample/ResponseExampleCard.astro";
+import ResponseCard2 from "../../component/ResponseCard2.astro";
 
 export async function getStaticPaths() {
     const entries = await getCollection('endpoints');
@@ -127,7 +128,9 @@ X-Powered-By: Ember Nexus API`,
 <h3>History</h3>
 <Fragment set:html={changesHtml} />
 
-    <ResponseExampleCard examples={examples} />
-
+    <!--<ResponseExampleCard examples={examples} />-->
+    
+    <ResponseCard2 />
+    
 <Content />
 </Default>
