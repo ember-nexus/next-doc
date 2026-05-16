@@ -4,9 +4,9 @@ import {getChangesByFeatureUpToVersion} from "../../repository/ChangeRepository.
 import {marked} from "marked";
 import Default from "../../layouts/Default.astro";
 import type {HttpStatusCode, ResponseExample} from "../../type";
-// import ResponseExamplesCard from "../../component/ResponseExamplesCard.astro";
-import ResponseExampleCard from "../../component/ResponseExample/ResponseExampleCard.astro";
-import ResponseCard2 from "../../component/ResponseCard2.astro";
+import ResponseCard from "../../component/ResponseCard.astro";
+import type {HarRequest} from "httpsnippet";
+import RequestCard from "../../component/RequestCard.astro";
 
 export async function getStaticPaths() {
     const entries = await getCollection('endpoints');
@@ -120,6 +120,22 @@ X-Powered-By: Ember Nexus API --> != !==`,
     }
 ];
 
+const request: Partial<HarRequest> = {
+    method: "GET",
+    url: "https://api.localhost/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
+    httpVersion: "HTTP/1.1",
+    cookies: [],
+    headers: [
+        {
+            name: "Authorization",
+            value: "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        }
+    ],
+    queryString: [],
+    headersSize: -1,
+    bodySize: -1
+};
+
 ---
 <Default title={`${entry.data.endpoint} at version ${release_version}`}>
 <h1>{entry.data.endpoint}</h1>
@@ -130,7 +146,13 @@ X-Powered-By: Ember Nexus API --> != !==`,
 
     <!--<ResponseExampleCard examples={examples} />-->
     
-    <ResponseCard2 examples={examples} />
+    <div class="flex flex-col gap-4">
+        
+        <RequestCard request={request} />
+
+        <ResponseCard examples={examples} />
+        
+    </div>
     
 <Content />
 </Default>

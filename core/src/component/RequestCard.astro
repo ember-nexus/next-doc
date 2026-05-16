@@ -1,0 +1,49 @@
+---
+import { Code } from 'astro-expressive-code/components';
+import { type HarRequest, HTTPSnippet } from "httpsnippet";
+
+interface Props {
+    request: Partial<HarRequest>;
+}
+
+const { request } = Astro.props;
+const snippet = new HTTPSnippet(request);
+const opts = { indent: '\t' };
+
+const examples = [
+    { lang: 'shell',      library: 'curl',     astroLang: 'bash',   label: 'cli / curl',         cls: 'request-lang-shell'  },
+    { lang: 'python',     library: 'requests', astroLang: 'python', label: 'python / requests',  cls: 'request-lang-python' },
+    { lang: 'javascript', library: 'fetch',    astroLang: 'js',     label: 'js / fetch',         cls: 'request-lang-js'     },
+    { lang: 'php',        library: 'guzzle',   astroLang: 'php',    label: 'php / guzzle',       cls: 'request-lang-php'    },
+].map(e => ({ ...e, example: snippet.convert(e.lang, e.library, opts) as string }));
+---
+
+<div
+    x-data={`{ tab: '${examples[0].library}' }`}
+    class="request-card bg-white dark:bg-black block border border-default rounded-xl shadow-xs flex flex-col divide-y divide-gray-200 dark:divide-gray-800">
+
+    <div class="flex flex-wrap gap-2 p-4">
+        {examples.map(e => (
+            <button
+                @click={`tab = '${e.library}'`}
+                :class={`tab === '${e.library}' ? 'active' : ''`}
+                class={`request-lang-btn ${e.cls} px-3 py-0.5 rounded-full text-sm font-medium border transition-colors cursor-pointer outline-offset-2`}
+            >
+                {e.label}
+            </button>
+        ))}
+    </div>
+
+    <div>
+        {examples.map((e, i) => (
+            <div
+                x-show={`tab === '${e.library}'`}
+                x-cloak={i !== 0 || undefined}
+                class="text-gray-800 font-mono"
+            >
+                <Code code={e.example} lang={e.astroLang} frame="none" class="not-prose rounded-b-xl text-[0.875rem]" />
+            </div>
+        ))}
+    </div>
+
+</div>
