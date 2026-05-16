@@ -1,6 +1,7 @@
 ---
 import { Code } from 'astro-expressive-code/components';
-import { type HarRequest, HTTPSnippet } from "httpsnippet";
+import { Icon } from 'astro-icon/components';
+import {type HarRequest, HTTPSnippet, type TargetId, targets} from "httpsnippet";
 
 interface Props {
     request: Partial<HarRequest>;
@@ -11,29 +12,53 @@ const snippet = new HTTPSnippet(request);
 const opts = { indent: '\t' };
 
 const examples = [
-    { lang: 'shell',      library: 'curl',     astroLang: 'bash',   label: 'cli / curl',         cls: 'request-lang-shell'  },
-    { lang: 'python',     library: 'requests', astroLang: 'python', label: 'python / requests',  cls: 'request-lang-python' },
-    { lang: 'javascript', library: 'fetch',    astroLang: 'js',     label: 'js / fetch',         cls: 'request-lang-js'     },
-    { lang: 'php',        library: 'guzzle',   astroLang: 'php',    label: 'php / guzzle',       cls: 'request-lang-php'    },
-].map(e => ({ ...e, example: snippet.convert(e.lang, e.library, opts) as string }));
+    { lang: 'shell',      library: 'curl',     astroLang: 'bash',   label: 'cli',        sublabel: 'curl'     },
+    { lang: 'python',     library: 'requests', astroLang: 'python', label: 'python',     sublabel: 'requests' },
+    { lang: 'javascript', library: 'fetch',    astroLang: 'js',     label: 'js',         sublabel: 'fetch'    },
+    { lang: 'php',        library: 'guzzle',   astroLang: 'php',    label: 'php',        sublabel: 'guzzle'   },
+].map(e => ({ ...e, example: snippet.convert(e.lang as unknown as TargetId, e.library, opts) as string }));
 ---
 
 <div
-    x-data={`{ tab: '${examples[0].library}' }`}
+    x-data={`{ open: false, tab: '${examples[0].library}', get current() { return ${JSON.stringify(examples)}.find(e => e.library === this.tab) } }`}
     class="request-card bg-white dark:bg-black block border border-default rounded-xl shadow-xs flex flex-col divide-y divide-gray-200 dark:divide-gray-800">
 
-    <div class="flex flex-wrap gap-2 p-4">
-        {examples.map(e => (
+    <!-- Dropdown trigger -->
+    <div class="flex justify-end p-4">
+        <div class="relative">
             <button
-                @click={`tab = '${e.library}'`}
-                :class={`tab === '${e.library}' ? 'active' : ''`}
-                class={`request-lang-btn ${e.cls} px-3 py-0.5 rounded-full text-sm font-medium border transition-colors cursor-pointer outline-offset-2`}
+                @click="open = !open"
+                @keydown.escape="open = false"
+                class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-default text-sm font-medium cursor-pointer transition-colors"
             >
-                {e.label}
+                <span x-text="current.label" class="text-gray-500 dark:text-gray-400"></span>
+                <span class="text-gray-300 dark:text-gray-600">/</span>
+                <span x-text="current.sublabel"></span>
+                <Icon name="chevron-down" class="size-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" />
             </button>
-        ))}
+
+            <!-- Dropdown menu -->
+            <div
+                x-show="open"
+                @click.outside="open = false"
+                x-transition
+                class="absolute right-0 mt-1 w-44 bg-white dark:bg-black border border-default rounded-lg shadow-md overflow-hidden z-10"
+            >
+                {examples.map(e => (
+                    <button
+                        @click={`tab = '${e.library}'; open = false`}
+                        :class={`tab === '${e.library}' ? 'bg-gray-100 dark:bg-gray-900' : 'hover:bg-gray-50 dark:hover:bg-gray-950'`}
+                        class="w-full flex justify-between items-center px-3 py-2 text-sm cursor-pointer transition-colors"
+                    >
+                        <span class="text-gray-500 dark:text-gray-400">{e.label}</span>
+                        <span class="font-medium">{e.sublabel}</span>
+                    </button>
+                ))}
+            </div>
+        </div>
     </div>
 
+    <!-- Code blocks -->
     <div>
         {examples.map((e, i) => (
             <div
