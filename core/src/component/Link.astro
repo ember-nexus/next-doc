@@ -1,0 +1,17 @@
+---
+import { Icon } from 'astro-icon/components';
+import type { Link } from "../type";
+
+interface Props {
+    link: Link;
+}
+
+const { link } = Astro.props;
+
+const isLocal = link.target.startsWith("https://ember-nexus.github.io");
+const icon = isLocal ? "arrow-right" : "arrow-up-right";
+---
+<a href={link.target} class="text-sm text-blue-700 hover:underline inline-flex items-center gap-0.5">
+    {link.label}
+    <Icon name={icon} class="size-4" />
+</a>

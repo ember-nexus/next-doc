@@ -10,6 +10,8 @@ import alpinejs from '@astrojs/alpinejs';
 
 import expressiveCode from 'astro-expressive-code';
 
+import icon from 'astro-icon';
+
 export default defineConfig({
   vite: {
     plugins: [tailwindcss()]
@@ -19,16 +21,11 @@ export default defineConfig({
     allowedHosts: ['localhost', 'astro', 'ember-nexus-org-astro']
   },
   site: 'https://soerenklein.dev',
-  integrations: [
-    expressiveCode(
-        {
-          themes: ['min-dark', 'min-light'],
-        }
-    ),
-    mdx(),
-    sitemap(),
-    alpinejs()
-  ],
+  integrations: [expressiveCode(
+      {
+        themes: ['min-dark', 'min-light'],
+      }
+  ), mdx(), sitemap(), alpinejs(), icon()],
   markdown: {
     shikiConfig: {
       theme: 'min-light',

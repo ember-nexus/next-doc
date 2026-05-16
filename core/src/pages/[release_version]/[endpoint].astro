@@ -3,10 +3,12 @@ import { getCollection, render } from 'astro:content';
 import {getChangesByFeatureUpToVersion} from "../../repository/ChangeRepository.ts";
 import {marked} from "marked";
 import Default from "../../layouts/Default.astro";
-import type {HttpStatusCode, ResponseExample} from "../../type";
+import type {HttpStatusCode, Link, RequestHeader, ResponseExample, ResponseHeader} from "../../type";
 import ResponseCard from "../../component/ResponseCard.astro";
 import type {HarRequest} from "httpsnippet";
 import RequestCard from "../../component/RequestCard.astro";
+import RequestHeaderCard from "../../component/RequestHeaderCard.astro";
+import ResponseHeaderCard from "../../component/ResponseHeaderCard.astro";
 
 export async function getStaticPaths() {
     const entries = await getCollection('endpoints');
@@ -136,17 +138,120 @@ const request: Partial<HarRequest> = {
     bodySize: -1
 };
 
+const requestHeaders: RequestHeader[] = [
+    {
+        header: 'Authorization',
+        presence: 'optional',
+        description: 'Contains an authentication token.',
+        links: [
+            {
+                target: 'https://ember-nexus.github.io/api/#/concepts/authentication',
+                label: 'Authentication'
+            },
+            {
+                target: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Authorization',
+                label: 'MDN'
+            },
+            {
+                target: 'https://http.dev/authorization',
+                label: 'HTTP.dev'
+            },
+        ]
+    },
+    {
+        header: 'If-Match',
+        presence: 'optional',
+        description: 'The `If-Match`-header can be used to make the GET request conditional.',
+        links: [
+            {
+                target: 'https://ember-nexus.github.io/api/#/concepts/caching',
+                label: 'Caching'
+            },
+            {
+                target: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/If-Match',
+                label: 'MDN'
+            },
+            {
+                target: 'https://http.dev/if-match',
+                label: 'HTTP.dev'
+            },
+        ]
+    },
+    {
+        header: 'If-None-Match',
+        presence: 'optional',
+        description: 'The `If-None-Match`-header can be used to make the GET request conditional.',
+        links: [
+            {
+                target: 'https://ember-nexus.github.io/api/#/concepts/caching',
+                label: 'Caching'
+            },
+            {
+                target: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/If-None-Match',
+                label: 'MDN'
+            },
+            {
+                target: 'https://http.dev/if-none-match',
+                label: 'HTTP.dev'
+            },
+        ]
+    },
+];
+const responseHeaders: ResponseHeader[] = [
+    {
+        header: 'ETag',
+        presence: 'optional',
+        important: true,
+        description: 'The `ETag`, short for "entity tag", is used to identify a particular version of the element for caching purposes.',
+        links: [
+            {
+                target: 'https://ember-nexus.github.io/api/#/concepts/caching',
+                label: 'Caching'
+            },
+            {
+                target: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/ETag',
+                label: 'MDN'
+            },
+            {
+                target: 'https://http.dev/etag',
+                label: 'HTTP.dev'
+            },
+        ]
+    },
+    {
+        header: 'Content-Type',
+        presence: 'always',
+        important: false,
+        description: 'Placeholder text.',
+        links: [
+            {
+                target: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Type',
+                label: 'MDN'
+            },
+            {
+                target: 'https://http.dev/content-type',
+                label: 'HTTP.dev'
+            },
+        ]
+    },
+];
+
 ---
 <Default title={`${entry.data.endpoint} at version ${release_version}`}>
-<h1>{entry.data.endpoint}</h1>
-<p>Release: {release_version} | Version: {entry.data.endpoint_version}</p>
+    <div class="prose">
+        <h1>{entry.data.endpoint}</h1>
+        <p>Release: {release_version} | Version: {entry.data.endpoint_version}</p>
 
-<h3>History</h3>
-<Fragment set:html={changesHtml} />
+        <h3>History</h3>
+        <Fragment set:html={changesHtml} />
+    </div>
 
     <!--<ResponseExampleCard examples={examples} />-->
     
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-4 max-w-[40rem] mx-auto">
+        
+        <RequestHeaderCard headers={requestHeaders} />
+        <ResponseHeaderCard headers={responseHeaders} />
         
         <RequestCard request={request} />
 
