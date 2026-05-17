@@ -203,104 +203,6 @@ for (const [_, header] of Object.entries(endpointResponseHeaders)) {
 //     headersSize: -1,
 //     bodySize: -1
 // };
-//
-// const requestHeaders: RequestHeader[] = [
-//     {
-//         header: 'Authorization',
-//         presence: 'optional',
-//         description: 'Contains an authentication token.',
-//         links: [
-//             {
-//                 url: 'https://ember-nexus.github.io/api/#/concepts/authentication',
-//                 name: 'Authentication'
-//             },
-//             {
-//                 url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Authorization',
-//                 name: 'MDN'
-//             },
-//             {
-//                 url: 'https://http.dev/authorization',
-//                 name: 'HTTP.dev'
-//             },
-//         ]
-//     },
-//     {
-//         header: 'If-Match',
-//         presence: 'optional',
-//         description: 'The `If-Match`-header can be used to make the GET request conditional.',
-//         links: [
-//             {
-//                 url: 'https://ember-nexus.github.io/api/#/concepts/caching',
-//                 name: 'Caching'
-//             },
-//             {
-//                 url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/If-Match',
-//                 name: 'MDN'
-//             },
-//             {
-//                 url: 'https://http.dev/if-match',
-//                 name: 'HTTP.dev'
-//             },
-//         ]
-//     },
-//     {
-//         header: 'If-None-Match',
-//         presence: 'optional',
-//         description: 'The `If-None-Match`-header can be used to make the GET request conditional.',
-//         links: [
-//             {
-//                 url: 'https://ember-nexus.github.io/api/#/concepts/caching',
-//                 name: 'Caching'
-//             },
-//             {
-//                 url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/If-None-Match',
-//                 name: 'MDN'
-//             },
-//             {
-//                 url: 'https://http.dev/if-none-match',
-//                 name: 'HTTP.dev'
-//             },
-//         ]
-//     },
-// ];
-// const responseHeaders: ResponseHeader[] = [
-//     {
-//         header: 'ETag',
-//         presence: 'optional',
-//         important: true,
-//         description: 'The `ETag`, short for "entity tag", is used to identify a particular version of the element for caching purposes.',
-//         links: [
-//             {
-//                 url: 'https://ember-nexus.github.io/api/#/concepts/caching',
-//                 name: 'Caching'
-//             },
-//             {
-//                 url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/ETag',
-//                 name: 'MDN'
-//             },
-//             {
-//                 url: 'https://http.dev/etag',
-//                 name: 'HTTP.dev'
-//             },
-//         ]
-//     },
-//     {
-//         header: 'Content-Type',
-//         presence: 'always',
-//         important: false,
-//         description: 'Placeholder text.',
-//         links: [
-//             {
-//                 url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Type',
-//                 name: 'MDN'
-//             },
-//             {
-//                 url: 'https://http.dev/content-type',
-//                 name: 'HTTP.dev'
-//             },
-//         ]
-//     },
-// ];
 
 ---
 <Default title={`${entry.data.endpoint} at version ${release_version}`}>
@@ -311,8 +213,6 @@ for (const [_, header] of Object.entries(endpointResponseHeaders)) {
         <h3>History</h3>
         <Fragment set:html={changesHtml} />
     </div>
-
-    <!--<ResponseExampleCard examples={examples} />-->
 
     <div class="layout mb-4">
         <div class="region-content flex flex-col gap-4">
