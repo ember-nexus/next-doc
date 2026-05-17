@@ -73,7 +73,27 @@ function extractRequestHeaders(spec: OpenAPI.Document, path: string, method: str
         }));
 }
 
-const requestHeaders = extractRequestHeaders(spec, '/{uuid}', 'get');
+function extractAuthHeaders(spec: OpenAPI.Document, path: string, method: string): RequestHeader[] {
+    const op = (spec.paths?.[path] as any)?.[method];
+    const security: Record<string, string[]>[] = op?.security ?? [];
+    const schemes = (spec as any).components?.securitySchemes ?? {};
+
+    const isOptional = security.some((req) => Object.keys(req).length === 0);
+
+    return security
+        .flatMap(Object.keys)
+        .filter((name) => schemes[name]?.type === 'http' && schemes[name]?.scheme === 'bearer')
+        .map((name): RequestHeader => ({
+            header: 'Authorization',
+            presence: isOptional ? 'optional' : 'required',
+            description: schemes[name].description ?? 'Bearer token for authentication.',
+            links: schemes[name]['x-ember-nexus-links'] ?? [],
+        }));
+}
+const requestHeaders = [
+    ...extractAuthHeaders(spec, '/{uuid}', 'get'),
+    ...extractRequestHeaders(spec, '/{uuid}', 'get'),
+];
 const responseHeaders = extractResponseHeaders(spec, '/{uuid}', 'get');
 
 // const examples : ResponseExample[] = [
