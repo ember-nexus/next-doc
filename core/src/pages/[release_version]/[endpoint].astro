@@ -9,6 +9,10 @@ import type {HarRequest} from "httpsnippet";
 import RequestCard from "../../component/RequestCard.astro";
 import RequestHeaderCard from "../../component/RequestHeaderCard.astro";
 import ResponseHeaderCard from "../../component/ResponseHeaderCard.astro";
+import SwaggerParser from '@apidevtools/swagger-parser';
+import {OpenAPI} from "openapi-types";
+import equal from 'fast-deep-equal/es6';
+
 
 export async function getStaticPaths() {
     const entries = await getCollection('endpoints');
@@ -37,204 +41,266 @@ const markdownString = changes
 
 const changesHtml = await marked.parse(markdownString);
 
-const examples : ResponseExample[] = [
-    {
-        httpStatusCode: 200,
-        name: "Node",
-        description: 'The get element endpoint at `GET /<uuid>` is used to retrieve the data of a single element, which can be either a node or a relationship.',
-        body: {
-            content: `{
-  "type": "Comment",
-  "id": "74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-  "data": {
-    "created": "2025-09-27T10:39:51+00:00",
-    "name": "Blue",
-    "updated": "2025-09-27T10:39:51+00:00",
-    "content": "Blue is one of the three primary colours in the RYB colour model (traditional colour theory), as well as in the RGB (additive) colour model. It lies between violet and cyan on the spectrum of visible light. The eye perceives blue when observing light with a dominant wavelength between approximately 450 and 495 nanometres. Most blues contain a slight mixture of other colours; azure contains some green, while ultramarine contains some violet. The clear daytime sky and the deep sea appear blue because of an optical effect known as Rayleigh scattering. An optical effect called the Tyndall effect explains blue eyes. Distant objects appear more blue because of another optical effect called aerial perspective."
-  }
-}`,
-            type: "json",
-        },
-        headers: `Access-Control-Allow-Headers: Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method
-Access-Control-Allow-Methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
-Access-Control-Allow-Origin: *
-Access-Control-Expose-Headers: ETag, Location
-Allow: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
-Cache-Control: no-cache, private
-Content-Type: application/json; charset=utf-8
-Date: Fri, 06 Oct 2023 20:02:22 GMT
-Etag: "Fj0kUmVpX2T"
-Transfer-Encoding: chunked
-X-Powered-By: Ember Nexus API`,
-    },
-    {
-        httpStatusCode: 200,
-        name: "Relation",
-        description: 'The get element endpoint at `GET /<uuid>` is used to retrieve the data of a single element, which can be either a node or a relationship.',
-        body: {
-            content: `{
-  "type": "OWNS",
-  "id": "eb5d2879-c5e6-43a6-b8ce-2a1188ca7073",
-  "start": "56fda20c-b238-4034-b555-1df47c47e17a",
-  "end": "ce8abdea-2e6c-41d4-b779-87b803f77836",
-  "data": {
-    "created": "2025-09-27T10:39:58+00:00",
-    "updated": "2025-09-27T10:39:58+00:00"
-  }
-}`,
-            type: "json",
-        },
-        headers: `Access-Control-Allow-Headers: Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method
-Access-Control-Allow-Methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
-Access-Control-Allow-Origin: *
-Access-Control-Expose-Headers: ETag, Location
-Allow: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
-Cache-Control: no-cache, private
-Content-Type: application/json; charset=utf-8
-Date: Fri, 06 Oct 2023 20:02:22 GMT
-Etag: "Fj0kUmVpX2T"
-Transfer-Encoding: chunked
-X-Powered-By: Ember Nexus API`,
-    },
-    {
-        httpStatusCode: 404,
-        name: null,
-        description: 'blib blub',
-        body: {
-            content: `{
-  "type": "http://api/error/404/not-found",
-  "title": "Not found",
-  "status": 404,
-  "detail": "Requested element was not found."
-}`,
-            type: "json",
-        },
-        headers: `Access-Control-Allow-Headers: Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method
-Access-Control-Allow-Methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
-Access-Control-Allow-Origin: *
-Access-Control-Expose-Headers: ETag, Location
-Allow: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
-Cache-Control: no-cache, private
-Content-Type: application/problem+json; charset=utf-8
-Date: Fri, 06 Oct 2023 20:32:44 GMT
-Transfer-Encoding: chunked
-X-Powered-By: Ember Nexus API --> != !==`,
-    }
-];
 
-const request: Partial<HarRequest> = {
-    method: "GET",
-    url: "https://api.localhost/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-    httpVersion: "HTTP/1.1",
-    cookies: [],
-    headers: [
-        {
-            name: "Authorization",
-            value: "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+const spec = await SwaggerParser.dereference('./src/data/swagger/0.1.31.json');
+
+function getResponseHeaders(spec: OpenAPI.Document, path: string, method: string) {
+    const op = (spec.paths?.[path] as any)?.[method];
+
+    const result: { name: string; schema: any; codes: string[] }[] = [];
+
+    for (const [code, res] of Object.entries(op?.responses ?? {}) as any) {
+        for (const [name, schema] of Object.entries((res as any)?.headers ?? {})) {
+            const existing = result.find(
+                (r) => r.name === name && equal(r.schema, schema)
+            );
+            if (existing) {
+                existing.codes.push(code);
+            } else {
+                result.push({ name, schema, codes: [code] });
+            }
         }
-    ],
-    queryString: [],
-    headersSize: -1,
-    bodySize: -1
-};
+    }
 
-const requestHeaders: RequestHeader[] = [
-    {
-        header: 'Authorization',
-        presence: 'optional',
-        description: 'Contains an authentication token.',
-        links: [
-            {
-                url: 'https://ember-nexus.github.io/api/#/concepts/authentication',
-                name: 'Authentication'
-            },
-            {
-                url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Authorization',
-                name: 'MDN'
-            },
-            {
-                url: 'https://http.dev/authorization',
-                name: 'HTTP.dev'
-            },
-        ]
-    },
-    {
-        header: 'If-Match',
-        presence: 'optional',
-        description: 'The `If-Match`-header can be used to make the GET request conditional.',
-        links: [
-            {
-                url: 'https://ember-nexus.github.io/api/#/concepts/caching',
-                name: 'Caching'
-            },
-            {
-                url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/If-Match',
-                name: 'MDN'
-            },
-            {
-                url: 'https://http.dev/if-match',
-                name: 'HTTP.dev'
-            },
-        ]
-    },
-    {
-        header: 'If-None-Match',
-        presence: 'optional',
-        description: 'The `If-None-Match`-header can be used to make the GET request conditional.',
-        links: [
-            {
-                url: 'https://ember-nexus.github.io/api/#/concepts/caching',
-                name: 'Caching'
-            },
-            {
-                url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/If-None-Match',
-                name: 'MDN'
-            },
-            {
-                url: 'https://http.dev/if-none-match',
-                name: 'HTTP.dev'
-            },
-        ]
-    },
-];
-const responseHeaders: ResponseHeader[] = [
-    {
-        header: 'ETag',
-        presence: 'optional',
-        important: true,
-        description: 'The `ETag`, short for "entity tag", is used to identify a particular version of the element for caching purposes.',
-        links: [
-            {
-                url: 'https://ember-nexus.github.io/api/#/concepts/caching',
-                name: 'Caching'
-            },
-            {
-                url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/ETag',
-                name: 'MDN'
-            },
-            {
-                url: 'https://http.dev/etag',
-                name: 'HTTP.dev'
-            },
-        ]
-    },
-    {
-        header: 'Content-Type',
-        presence: 'always',
-        important: false,
-        description: 'Placeholder text.',
-        links: [
-            {
-                url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Type',
-                name: 'MDN'
-            },
-            {
-                url: 'https://http.dev/content-type',
-                name: 'HTTP.dev'
-            },
-        ]
-    },
-];
+    return result;
+}
+
+const endpointResponseHeaders = getResponseHeaders(spec, '/{uuid}', 'get');
+
+function getRequestHeaders(spec: OpenAPI.Document, path: string, method: string) {
+    const op = (spec.paths?.[path] as any)?.[method];
+
+    return (op?.parameters ?? [])
+        .filter((p: any) => p.in === 'header')
+        .map(({ in: _, ...rest }: any) => rest);
+}
+
+const endpointRequestHeaders = getRequestHeaders(spec, '/{uuid}', 'get');
+console.log(endpointRequestHeaders);
+
+let requestHeaders: RequestHeader[] = [];
+for (const [_, header] of Object.entries(endpointRequestHeaders)) {
+    requestHeaders.push({
+        header: header.name,
+        presence: header.required ? 'required' : 'optional',
+        description: header.description as string,
+        links: header['x-ember-nexus-links'] as Link[]
+    });
+}
+
+
+
+let responseHeaders: ResponseHeader[] = [];
+for (const [_, header] of Object.entries(endpointResponseHeaders)) {
+    responseHeaders.push({
+        header: header.name,
+        presence: header.schema.required ? 'always' : 'optional',
+        important: header.schema['x-ember-nexus-important'] ?? false,
+        description: header.schema.description,
+        links: header.schema['x-ember-nexus-links']
+    });
+}
+
+
+
+// const examples : ResponseExample[] = [
+//     {
+//         httpStatusCode: 200,
+//         name: "Node",
+//         description: 'The get element endpoint at `GET /<uuid>` is used to retrieve the data of a single element, which can be either a node or a relationship.',
+//         body: {
+//             content: `{
+//   "type": "Comment",
+//   "id": "74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
+//   "data": {
+//     "created": "2025-09-27T10:39:51+00:00",
+//     "name": "Blue",
+//     "updated": "2025-09-27T10:39:51+00:00",
+//     "content": "Blue is one of the three primary colours in the RYB colour model (traditional colour theory), as well as in the RGB (additive) colour model. It lies between violet and cyan on the spectrum of visible light. The eye perceives blue when observing light with a dominant wavelength between approximately 450 and 495 nanometres. Most blues contain a slight mixture of other colours; azure contains some green, while ultramarine contains some violet. The clear daytime sky and the deep sea appear blue because of an optical effect known as Rayleigh scattering. An optical effect called the Tyndall effect explains blue eyes. Distant objects appear more blue because of another optical effect called aerial perspective."
+//   }
+// }`,
+//             type: "json",
+//         },
+//         headers: `Access-Control-Allow-Headers: Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method
+// Access-Control-Allow-Methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
+// Access-Control-Allow-Origin: *
+// Access-Control-Expose-Headers: ETag, Location
+// Allow: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
+// Cache-Control: no-cache, private
+// Content-Type: application/json; charset=utf-8
+// Date: Fri, 06 Oct 2023 20:02:22 GMT
+// Etag: "Fj0kUmVpX2T"
+// Transfer-Encoding: chunked
+// X-Powered-By: Ember Nexus API`,
+//     },
+//     {
+//         httpStatusCode: 200,
+//         name: "Relation",
+//         description: 'The get element endpoint at `GET /<uuid>` is used to retrieve the data of a single element, which can be either a node or a relationship.',
+//         body: {
+//             content: `{
+//   "type": "OWNS",
+//   "id": "eb5d2879-c5e6-43a6-b8ce-2a1188ca7073",
+//   "start": "56fda20c-b238-4034-b555-1df47c47e17a",
+//   "end": "ce8abdea-2e6c-41d4-b779-87b803f77836",
+//   "data": {
+//     "created": "2025-09-27T10:39:58+00:00",
+//     "updated": "2025-09-27T10:39:58+00:00"
+//   }
+// }`,
+//             type: "json",
+//         },
+//         headers: `Access-Control-Allow-Headers: Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method
+// Access-Control-Allow-Methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
+// Access-Control-Allow-Origin: *
+// Access-Control-Expose-Headers: ETag, Location
+// Allow: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
+// Cache-Control: no-cache, private
+// Content-Type: application/json; charset=utf-8
+// Date: Fri, 06 Oct 2023 20:02:22 GMT
+// Etag: "Fj0kUmVpX2T"
+// Transfer-Encoding: chunked
+// X-Powered-By: Ember Nexus API`,
+//     },
+//     {
+//         httpStatusCode: 404,
+//         name: null,
+//         description: 'blib blub',
+//         body: {
+//             content: `{
+//   "type": "http://api/error/404/not-found",
+//   "title": "Not found",
+//   "status": 404,
+//   "detail": "Requested element was not found."
+// }`,
+//             type: "json",
+//         },
+//         headers: `Access-Control-Allow-Headers: Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method
+// Access-Control-Allow-Methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
+// Access-Control-Allow-Origin: *
+// Access-Control-Expose-Headers: ETag, Location
+// Allow: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
+// Cache-Control: no-cache, private
+// Content-Type: application/problem+json; charset=utf-8
+// Date: Fri, 06 Oct 2023 20:32:44 GMT
+// Transfer-Encoding: chunked
+// X-Powered-By: Ember Nexus API --> != !==`,
+//     }
+// ];
+//
+// const request: Partial<HarRequest> = {
+//     method: "GET",
+//     url: "https://api.localhost/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
+//     httpVersion: "HTTP/1.1",
+//     cookies: [],
+//     headers: [
+//         {
+//             name: "Authorization",
+//             value: "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+//         }
+//     ],
+//     queryString: [],
+//     headersSize: -1,
+//     bodySize: -1
+// };
+//
+// const requestHeaders: RequestHeader[] = [
+//     {
+//         header: 'Authorization',
+//         presence: 'optional',
+//         description: 'Contains an authentication token.',
+//         links: [
+//             {
+//                 url: 'https://ember-nexus.github.io/api/#/concepts/authentication',
+//                 name: 'Authentication'
+//             },
+//             {
+//                 url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Authorization',
+//                 name: 'MDN'
+//             },
+//             {
+//                 url: 'https://http.dev/authorization',
+//                 name: 'HTTP.dev'
+//             },
+//         ]
+//     },
+//     {
+//         header: 'If-Match',
+//         presence: 'optional',
+//         description: 'The `If-Match`-header can be used to make the GET request conditional.',
+//         links: [
+//             {
+//                 url: 'https://ember-nexus.github.io/api/#/concepts/caching',
+//                 name: 'Caching'
+//             },
+//             {
+//                 url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/If-Match',
+//                 name: 'MDN'
+//             },
+//             {
+//                 url: 'https://http.dev/if-match',
+//                 name: 'HTTP.dev'
+//             },
+//         ]
+//     },
+//     {
+//         header: 'If-None-Match',
+//         presence: 'optional',
+//         description: 'The `If-None-Match`-header can be used to make the GET request conditional.',
+//         links: [
+//             {
+//                 url: 'https://ember-nexus.github.io/api/#/concepts/caching',
+//                 name: 'Caching'
+//             },
+//             {
+//                 url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/If-None-Match',
+//                 name: 'MDN'
+//             },
+//             {
+//                 url: 'https://http.dev/if-none-match',
+//                 name: 'HTTP.dev'
+//             },
+//         ]
+//     },
+// ];
+// const responseHeaders: ResponseHeader[] = [
+//     {
+//         header: 'ETag',
+//         presence: 'optional',
+//         important: true,
+//         description: 'The `ETag`, short for "entity tag", is used to identify a particular version of the element for caching purposes.',
+//         links: [
+//             {
+//                 url: 'https://ember-nexus.github.io/api/#/concepts/caching',
+//                 name: 'Caching'
+//             },
+//             {
+//                 url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/ETag',
+//                 name: 'MDN'
+//             },
+//             {
+//                 url: 'https://http.dev/etag',
+//                 name: 'HTTP.dev'
+//             },
+//         ]
+//     },
+//     {
+//         header: 'Content-Type',
+//         presence: 'always',
+//         important: false,
+//         description: 'Placeholder text.',
+//         links: [
+//             {
+//                 url: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Type',
+//                 name: 'MDN'
+//             },
+//             {
+//                 url: 'https://http.dev/content-type',
+//                 name: 'HTTP.dev'
+//             },
+//         ]
+//     },
+// ];
 
 ---
 <Default title={`${entry.data.endpoint} at version ${release_version}`}>
@@ -254,8 +320,8 @@ const responseHeaders: ResponseHeader[] = [
             <ResponseHeaderCard headers={responseHeaders} />
         </div>
         <div class="region-example flex flex-col gap-4">
-            <RequestCard request={request} />
-            <ResponseCard examples={examples} />
+            <!--<RequestCard request={request} />-->
+            <!--<ResponseCard examples={examples} />-->
         </div>
     </div>
     
