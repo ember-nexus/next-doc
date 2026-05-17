@@ -1,5 +1,5 @@
 ---
-import { getCollection, render } from 'astro:content';
+import {getCollection, render} from 'astro:content';
 import {getChangesByFeatureUpToVersion} from "../../repository/ChangeRepository.ts";
 import {marked} from "marked";
 import Default from "../../layouts/Default.astro";
@@ -13,95 +13,68 @@ import SwaggerParser from '@apidevtools/swagger-parser';
 import {OpenAPI} from "openapi-types";
 import equal from 'fast-deep-equal/es6';
 
-
 export async function getStaticPaths() {
     const entries = await getCollection('endpoints');
-
-    // console.log(entries);
 
     return entries.map((entry) => ({
         params: {
             release_version: entry.data.release_version,
-            endpoint: entry.data.endpoint.replace(/\//g, '_'), // sanitize slashes in URL
+            endpoint: entry.data.endpoint.replace(/\//g, '_'),
         },
-        props: { entry },
+        props: {entry},
     }));
 }
 
-const { entry } = Astro.props;
-const { Content } = await render(entry);
-const release_version = entry.data.release_version;
-
+const {entry} = Astro.props;
+const {Content} = await render(entry);
+const {release_version} = entry.data;
 
 const changes = await getChangesByFeatureUpToVersion('api:get-element', release_version);
-
-const markdownString = changes
-    .map(({ title, version }) => `- ${title} (${version})`)
-    .join('\n');
-
-const changesHtml = await marked.parse(markdownString);
-
+const changesHtml = await marked.parse(
+    changes.map(({title, version}) => `- ${title} (${version})`).join('\n')
+);
 
 const spec = await SwaggerParser.dereference('./src/data/swagger/0.1.31.json');
 
-function getResponseHeaders(spec: OpenAPI.Document, path: string, method: string) {
+function extractResponseHeaders(spec: OpenAPI.Document, path: string, method: string): ResponseHeader[] {
     const op = (spec.paths?.[path] as any)?.[method];
-
-    const result: { name: string; schema: any; codes: string[] }[] = [];
+    const merged: { name: string; schema: any; codes: string[] }[] = [];
 
     for (const [code, res] of Object.entries(op?.responses ?? {}) as any) {
-        for (const [name, schema] of Object.entries((res as any)?.headers ?? {})) {
-            const existing = result.find(
-                (r) => r.name === name && equal(r.schema, schema)
-            );
+        for (const [name, schema] of Object.entries((res as any)?.headers ?? {}) as any) {
+            const existing = merged.find((r) => r.name === name && equal(r.schema, schema));
             if (existing) {
                 existing.codes.push(code);
             } else {
-                result.push({ name, schema, codes: [code] });
+                merged.push({name, schema, codes: [code]});
             }
         }
     }
 
-    return result;
+    return merged.map(({name, schema}) => ({
+        header: name,
+        presence: schema.required ? 'always' : 'optional',
+        important: schema['x-ember-nexus-important'] ?? false,
+        description: schema.description,
+        links: schema['x-ember-nexus-links'],
+    }));
 }
 
-const endpointResponseHeaders = getResponseHeaders(spec, '/{uuid}', 'get');
-
-function getRequestHeaders(spec: OpenAPI.Document, path: string, method: string) {
+function extractRequestHeaders(spec: OpenAPI.Document, path: string, method: string): RequestHeader[] {
     const op = (spec.paths?.[path] as any)?.[method];
 
     return (op?.parameters ?? [])
         .filter((p: any) => p.in === 'header')
-        .map(({ in: _, ...rest }: any) => rest);
+        .map(({name, required, description, 'x-ember-nexus-links': links}: any): RequestHeader => ({
+            header: name,
+            presence: required ? 'required' : 'optional',
+            description,
+            links,
+        }));
 }
 
-const endpointRequestHeaders = getRequestHeaders(spec, '/{uuid}', 'get');
-console.log(endpointRequestHeaders);
-
-let requestHeaders: RequestHeader[] = [];
-for (const [_, header] of Object.entries(endpointRequestHeaders)) {
-    requestHeaders.push({
-        header: header.name,
-        presence: header.required ? 'required' : 'optional',
-        description: header.description as string,
-        links: header['x-ember-nexus-links'] as Link[]
-    });
-}
-
-
-
-let responseHeaders: ResponseHeader[] = [];
-for (const [_, header] of Object.entries(endpointResponseHeaders)) {
-    responseHeaders.push({
-        header: header.name,
-        presence: header.schema.required ? 'always' : 'optional',
-        important: header.schema['x-ember-nexus-important'] ?? false,
-        description: header.schema.description,
-        links: header.schema['x-ember-nexus-links']
-    });
-}
-
-
+const requestHeaders = extractRequestHeaders(spec, '/{uuid}', 'get');
+const responseHeaders = extractResponseHeaders(spec, '/{uuid}', 'get');
 
 // const examples : ResponseExample[] = [
 //     {
@@ -203,7 +176,6 @@ for (const [_, header] of Object.entries(endpointResponseHeaders)) {
 //     headersSize: -1,
 //     bodySize: -1
 // };
-
 ---
 <Default title={`${entry.data.endpoint} at version ${release_version}`}>
     <div class="prose">
@@ -211,21 +183,21 @@ for (const [_, header] of Object.entries(endpointResponseHeaders)) {
         <p>Release: {release_version} | Version: {entry.data.endpoint_version}</p>
 
         <h3>History</h3>
-        <Fragment set:html={changesHtml} />
+        <Fragment set:html={changesHtml}/>
     </div>
 
     <div class="layout mb-4">
         <div class="region-content flex flex-col gap-4">
-            <RequestHeaderCard headers={requestHeaders} />
-            <ResponseHeaderCard headers={responseHeaders} />
+            <RequestHeaderCard headers={requestHeaders}/>
+            <ResponseHeaderCard headers={responseHeaders}/>
         </div>
         <div class="region-example flex flex-col gap-4">
             <!--<RequestCard request={request} />-->
             <!--<ResponseCard examples={examples} />-->
         </div>
     </div>
-    
-<Content />
+
+    <Content/>
 </Default>
 
 <style>
@@ -245,7 +217,8 @@ for (const [_, header] of Object.entries(endpointResponseHeaders)) {
         grid-area: example;
     }
 
-    @media (max-width: 87rem) { /* 50 + 35 + 1 + some breathing room */
+    @media (max-width: 87rem) {
+        /* 50 + 35 + 1 + some breathing room */
         .layout {
             grid-template-columns: 50rem;
             grid-template-areas:
