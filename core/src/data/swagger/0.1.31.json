@@ -5,6 +5,12 @@
     "version": "0.1.31"
   },
   "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
     "schemas": {
       "ElementId": {
         "type": "string",
@@ -93,8 +99,18 @@
         "name": "If-Match",
         "in": "header",
         "required": false,
-        "example": "\"blub\"",
-        "description": "Makes the GET request conditional. See caching for details.",
+        "example": "\"YgbFC4u5EgC\"",
+        "description": "Used primarily for optimistic concurrency control — the request is only executed if the resource's `ETag` matches the provided value.",
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/If-Match",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/if-match",
+            "name": "HTTP.dev"
+          }
+        ],
         "schema": {
           "type": "string"
         }
@@ -103,11 +119,185 @@
         "name": "If-None-Match",
         "in": "header",
         "required": false,
-        "x-scalar-ignore": true,
-        "description": "Makes the GET request conditional. Returns 304 if ETag matches.",
+        "example": "\"YgbFC4u5EgC\"",
+        "description": "Used primarily for caching — skips re-downloading an unchanged resource by returning `304 Not Modified` if the resource's `ETag` matches the provided value.",
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/If-None-Match",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/if-none-match",
+            "name": "HTTP.dev"
+          }
+        ],
         "schema": {
           "type": "string"
         }
+      }
+    },
+    "headers": {
+      "Access-Control-Allow-Headers": {
+        "description": "Specifies which HTTP headers can be used during a cross-origin request, returned in preflight responses.",
+        "schema": {
+          "type": "string",
+          "example": "Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Headers",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/access-control-allow-headers",
+            "name": "HTTP.dev"
+          }
+        ],
+        "required": true
+      },
+      "Access-Control-Allow-Methods": {
+        "description": "Indicates which HTTP methods are permitted for cross-origin requests, typically returned in preflight responses.",
+        "schema": {
+          "type": "string",
+          "example": "GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Methods",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/access-control-allow-methods",
+            "name": "HTTP.dev"
+          }
+        ],
+        "required": true
+      },
+      "Access-Control-Allow-Origin": {
+        "description": "Specifies which origin(s) may access the resource.",
+        "schema": {
+          "type": "string",
+          "example": "*"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Origin",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/access-control-allow-origin",
+            "name": "HTTP.dev"
+          }
+        ],
+        "required": true
+      },
+      "Access-Control-Expose-Headers": {
+        "description": "Lists the response headers that browsers are allowed to access from JavaScript beyond the default restricted set.",
+        "schema": {
+          "type": "string",
+          "example": "ETag, Location"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Expose-Headers",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/access-control-expose-headers",
+            "name": "HTTP.dev"
+          }
+        ],
+        "required": true
+      },
+      "Allow": {
+        "description": "Lists the HTTP methods supported by the endpoint; returned alongside a `405 Method Not Allowed` response.",
+        "schema": {
+          "type": "string",
+          "example": "GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Allow",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/allow",
+            "name": "HTTP.dev"
+          }
+        ],
+        "required": true
+      },
+      "Cache-Control": {
+        "description": "Directives controlling caching behavior for the response.",
+        "schema": {
+          "type": "string",
+          "example": "no-cache, private"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/cache-control",
+            "name": "HTTP.dev"
+          }
+        ],
+        "required": true
+      },
+      "ETag": {
+        "description": "Entity tag used for caching and optimistic concurrency control.",
+        "schema": {
+          "type": "string",
+          "example": "\"YgbFC4u5EgC\""
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/ETag",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/etag",
+            "name": "HTTP.dev"
+          }
+        ],
+        "required": true
+      },
+      "ETag-optional": {
+        "description": "Entity tag used for caching and optimistic concurrency control.",
+        "schema": {
+          "type": "string",
+          "example": "\"YgbFC4u5EgC\""
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/ETag",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/etag",
+            "name": "HTTP.dev"
+          }
+        ],
+        "required": false
+      },
+      "X-Powered-By": {
+        "description": "Identifies the underlying API implementation.",
+        "schema": {
+          "type": "string",
+          "example": "Ember Nexus API"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Powered-By",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/x-powered-by",
+            "name": "HTTP.dev"
+          }
+        ],
+        "required": true
       }
     }
   },
@@ -117,6 +307,12 @@
         "summary": "Get Element",
         "description": "Retrieves a single element (node or relationship) by UUID.",
         "operationId": "getElement",
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
         "parameters": [
           {
             "name": "uuid",
@@ -138,24 +334,29 @@
           "200": {
             "description": "Element found. Returns either a node or a relationship.",
             "headers": {
-              "ETag": {
-                "description": "Entity tag for caching purposes.",
-                "schema": {
-                  "type": "string",
-                  "example": "\"YgbFC4u5EgC\""
-                }
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
               },
               "Cache-Control": {
-                "schema": {
-                  "type": "string",
-                  "example": "no-cache, private"
-                }
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "ETag": {
+                "$ref": "#/components/headers/ETag-optional"
               },
               "X-Powered-By": {
-                "schema": {
-                  "type": "string",
-                  "example": "Ember Nexus API"
-                }
+                "$ref": "#/components/headers/X-Powered-By"
               }
             },
             "content": {
@@ -197,15 +398,57 @@
           "304": {
             "description": "Not modified. Returned when If-None-Match header matches current ETag.",
             "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
               "ETag": {
-                "schema": {
-                  "type": "string"
-                }
+                "$ref": "#/components/headers/ETag-optional"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
               }
             }
           },
           "401": {
             "description": "Unauthorized. Invalid or expired token.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
             "content": {
               "application/problem+json": {
                 "schema": {

@@ -8,10 +8,10 @@ interface Props {
 
 const { link } = Astro.props;
 
-const isLocal = link.target.startsWith("https://ember-nexus.github.io");
+const isLocal = link.url.startsWith("https://ember-nexus.github.io");
 const icon = isLocal ? "arrow-right" : "arrow-up-right";
 ---
-<a href={link.target} class="text-sm text-blue-700 hover:underline inline-flex items-center gap-0.5">
-    {link.label}
+<a href={link.url} class="text-sm text-blue-700 hover:underline inline-flex items-center gap-0.5">
+    {link.name}
     <Icon name={icon} class="size-4" />
 </a>
