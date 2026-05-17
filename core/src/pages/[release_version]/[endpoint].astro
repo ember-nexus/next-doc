@@ -247,17 +247,44 @@ const responseHeaders: ResponseHeader[] = [
     </div>
 
     <!--<ResponseExampleCard examples={examples} />-->
-    
-    <div class="flex flex-col gap-4 max-w-[40rem] mx-auto">
-        
-        <RequestHeaderCard headers={requestHeaders} />
-        <ResponseHeaderCard headers={responseHeaders} />
-        
-        <RequestCard request={request} />
 
-        <ResponseCard examples={examples} />
-        
+    <div class="layout mb-4">
+        <div class="region-content flex flex-col gap-4">
+            <RequestHeaderCard headers={requestHeaders} />
+            <ResponseHeaderCard headers={responseHeaders} />
+        </div>
+        <div class="region-example flex flex-col gap-4">
+            <RequestCard request={request} />
+            <ResponseCard examples={examples} />
+        </div>
     </div>
     
 <Content />
 </Default>
+
+<style>
+    .layout {
+        display: grid;
+        grid-template-columns: 50rem 35rem;
+        grid-template-areas: "content example";
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .region-content {
+        grid-area: content;
+    }
+
+    .region-example {
+        grid-area: example;
+    }
+
+    @media (max-width: 87rem) { /* 50 + 35 + 1 + some breathing room */
+        .layout {
+            grid-template-columns: 50rem;
+            grid-template-areas:
+        "content"
+        "example";
+        }
+    }
+</style>
