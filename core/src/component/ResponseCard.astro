@@ -2,6 +2,7 @@
 import { Code } from 'astro-expressive-code/components';
 import { marked } from 'marked';
 import { getHttpStatusCodeLabel, type ResponseExample } from "../type";
+import Link from "./Link.astro";
 
 interface Props {
     examples: ResponseExample[];
@@ -47,10 +48,19 @@ const firstId = exampleId(examples[0]);
             <div
                 x-show={`exampleId === '${exampleId(e)}'`}
                 x-cloak={i !== 0 || undefined}
-                class="text-sm p-4"
+                class="text-sm p-4 flex flex-col gap-2"
             >
                 <p class="font-bold">{e.httpStatusCode} · {e.name ?? getHttpStatusCodeLabel(e.httpStatusCode)}</p>
-                <div class="mt-2" set:html={marked.parse(e.description)} />
+                <div set:html={marked.parse(e.description)} />
+                {
+                    e.links.length > 1 ? (
+                        <div class="flex gap-4">
+                            {e.links.map((link) => (
+                                <Link link={link} />
+                            ))}
+                        </div>
+                    ) : null
+                }
             </div>
         ))}
     </div>

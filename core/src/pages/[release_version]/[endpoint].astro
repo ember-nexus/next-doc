@@ -111,12 +111,14 @@ function extractResponseExamples(
             .join('\n');
 
         const content = response?.content ?? {};
+        const links: Link[] = response['x-ember-nexus-links'] ?? [];
 
         if (Object.keys(content).length === 0) {
             results.push({
                 httpStatusCode: Number(statusCode) as HttpStatusCode,
                 name: null,
                 description: response.description ?? '',
+                links,
                 body: null,
                 headers,
             });
@@ -132,6 +134,7 @@ function extractResponseExamples(
                         httpStatusCode: Number(statusCode) as HttpStatusCode,
                         name: example['x-ember-nexus-name'] ?? key,
                         description: example.summary ?? response.description ?? '',
+                        links,
                         body: {
                             content: JSON.stringify(example.value, null, 2),
                             type: mimeType.includes('json') ? 'json' : 'plain',
@@ -144,6 +147,7 @@ function extractResponseExamples(
                     httpStatusCode: Number(statusCode) as HttpStatusCode,
                     name: null,
                     description: response.description ?? '',
+                    links,
                     body: null,
                     headers,
                 });
