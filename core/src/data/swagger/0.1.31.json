@@ -620,7 +620,7 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "notFound": {
+                  "preconditionFailed": {
                     "$ref": "#/components/examples/PreconditionFailedProblemExample"
                   }
                 }
@@ -667,7 +667,7 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "notFound": {
+                  "tooManyRequests": {
                     "$ref": "#/components/examples/TooManyRequestsProblemExample"
                   }
                 }
