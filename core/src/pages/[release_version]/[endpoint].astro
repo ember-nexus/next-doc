@@ -96,106 +96,82 @@ const requestHeaders = [
 ];
 const responseHeaders = extractResponseHeaders(spec, '/{uuid}', 'get');
 
-// const examples : ResponseExample[] = [
-//     {
-//         httpStatusCode: 200,
-//         name: "Node",
-//         description: 'The get element endpoint at `GET /<uuid>` is used to retrieve the data of a single element, which can be either a node or a relationship.',
-//         body: {
-//             content: `{
-//   "type": "Comment",
-//   "id": "74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-//   "data": {
-//     "created": "2025-09-27T10:39:51+00:00",
-//     "name": "Blue",
-//     "updated": "2025-09-27T10:39:51+00:00",
-//     "content": "Blue is one of the three primary colours in the RYB colour model (traditional colour theory), as well as in the RGB (additive) colour model. It lies between violet and cyan on the spectrum of visible light. The eye perceives blue when observing light with a dominant wavelength between approximately 450 and 495 nanometres. Most blues contain a slight mixture of other colours; azure contains some green, while ultramarine contains some violet. The clear daytime sky and the deep sea appear blue because of an optical effect known as Rayleigh scattering. An optical effect called the Tyndall effect explains blue eyes. Distant objects appear more blue because of another optical effect called aerial perspective."
-//   }
-// }`,
-//             type: "json",
-//         },
-//         headers: `Access-Control-Allow-Headers: Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method
-// Access-Control-Allow-Methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
-// Access-Control-Allow-Origin: *
-// Access-Control-Expose-Headers: ETag, Location
-// Allow: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
-// Cache-Control: no-cache, private
-// Content-Type: application/json; charset=utf-8
-// Date: Fri, 06 Oct 2023 20:02:22 GMT
-// Etag: "Fj0kUmVpX2T"
-// Transfer-Encoding: chunked
-// X-Powered-By: Ember Nexus API`,
-//     },
-//     {
-//         httpStatusCode: 200,
-//         name: "Relation",
-//         description: 'The get element endpoint at `GET /<uuid>` is used to retrieve the data of a single element, which can be either a node or a relationship.',
-//         body: {
-//             content: `{
-//   "type": "OWNS",
-//   "id": "eb5d2879-c5e6-43a6-b8ce-2a1188ca7073",
-//   "start": "56fda20c-b238-4034-b555-1df47c47e17a",
-//   "end": "ce8abdea-2e6c-41d4-b779-87b803f77836",
-//   "data": {
-//     "created": "2025-09-27T10:39:58+00:00",
-//     "updated": "2025-09-27T10:39:58+00:00"
-//   }
-// }`,
-//             type: "json",
-//         },
-//         headers: `Access-Control-Allow-Headers: Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method
-// Access-Control-Allow-Methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
-// Access-Control-Allow-Origin: *
-// Access-Control-Expose-Headers: ETag, Location
-// Allow: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
-// Cache-Control: no-cache, private
-// Content-Type: application/json; charset=utf-8
-// Date: Fri, 06 Oct 2023 20:02:22 GMT
-// Etag: "Fj0kUmVpX2T"
-// Transfer-Encoding: chunked
-// X-Powered-By: Ember Nexus API`,
-//     },
-//     {
-//         httpStatusCode: 404,
-//         name: null,
-//         description: 'blib blub',
-//         body: {
-//             content: `{
-//   "type": "http://api/error/404/not-found",
-//   "title": "Not found",
-//   "status": 404,
-//   "detail": "Requested element was not found."
-// }`,
-//             type: "json",
-//         },
-//         headers: `Access-Control-Allow-Headers: Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method
-// Access-Control-Allow-Methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
-// Access-Control-Allow-Origin: *
-// Access-Control-Expose-Headers: ETag, Location
-// Allow: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
-// Cache-Control: no-cache, private
-// Content-Type: application/problem+json; charset=utf-8
-// Date: Fri, 06 Oct 2023 20:32:44 GMT
-// Transfer-Encoding: chunked
-// X-Powered-By: Ember Nexus API --> != !==`,
-//     }
-// ];
-//
-// const request: Partial<HarRequest> = {
-//     method: "GET",
-//     url: "https://api.localhost/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-//     httpVersion: "HTTP/1.1",
-//     cookies: [],
-//     headers: [
-//         {
-//             name: "Authorization",
-//             value: "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-//         }
-//     ],
-//     queryString: [],
-//     headersSize: -1,
-//     bodySize: -1
-// };
+
+function extractResponseExamples(
+    spec: OpenAPI.Document,
+    path: string,
+    method: string
+): ResponseExample[] {
+    const op = (spec.paths?.[path] as any)?.[method];
+    const results: ResponseExample[] = [];
+
+    for (const [statusCode, response] of Object.entries(op?.responses ?? {}) as any) {
+        const headers = Object.entries(response?.headers ?? {})
+            .map(([name, schema]: any) => `${name}: ${schema.schema?.example ?? ''}`)
+            .join('\n');
+
+        const content = response?.content ?? {};
+
+        if (Object.keys(content).length === 0) {
+            results.push({
+                httpStatusCode: Number(statusCode) as HttpStatusCode,
+                name: null,
+                description: response.description ?? '',
+                body: null,
+                headers,
+            });
+            continue;
+        }
+
+        for (const [mimeType, mediaType] of Object.entries(content) as any) {
+            const examples = mediaType?.examples;
+
+            if (examples) {
+                for (const [key, example] of Object.entries(examples) as any) {
+                    results.push({
+                        httpStatusCode: Number(statusCode) as HttpStatusCode,
+                        name: example['x-ember-nexus-name'] ?? key,
+                        description: example.summary ?? response.description ?? '',
+                        body: {
+                            content: JSON.stringify(example.value, null, 2),
+                            type: mimeType.includes('json') ? 'json' : 'plain',
+                        },
+                        headers,
+                    });
+                }
+            } else {
+                results.push({
+                    httpStatusCode: Number(statusCode) as HttpStatusCode,
+                    name: null,
+                    description: response.description ?? '',
+                    body: null,
+                    headers,
+                });
+            }
+        }
+    }
+
+    return results;
+}
+
+const responseExamples = extractResponseExamples(spec, '/{uuid}', 'get');
+
+
+const request: Partial<HarRequest> = {
+    method: "GET",
+    url: "https://api.localhost/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
+    httpVersion: "HTTP/1.1",
+    cookies: [],
+    headers: [
+        {
+            name: "Authorization",
+            value: "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        }
+    ],
+    queryString: [],
+    headersSize: -1,
+    bodySize: -1
+};
 ---
 <Default title={`${entry.data.endpoint} at version ${release_version}`}>
     <div class="prose">
@@ -212,8 +188,8 @@ const responseHeaders = extractResponseHeaders(spec, '/{uuid}', 'get');
             <ResponseHeaderCard headers={responseHeaders}/>
         </div>
         <div class="region-example flex flex-col gap-4">
-            <!--<RequestCard request={request} />-->
-            <!--<ResponseCard examples={examples} />-->
+            <RequestCard request={request} />
+            <ResponseCard examples={responseExamples} />
         </div>
     </div>
 
