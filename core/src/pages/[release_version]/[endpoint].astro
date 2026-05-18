@@ -133,10 +133,10 @@ function extractResponseExamples(
                 : null;
 
             if (examples) {
-                for (const [key, example] of Object.entries(examples) as any) {
+                for (const [, example] of Object.entries(examples) as any) {
                     results.push({
                         httpStatusCode: Number(statusCode) as HttpStatusCode,
-                        name: example['x-ember-nexus-name'] ?? key,
+                        name: example['x-ember-nexus-name'] ?? null,
                         description: example.summary ?? response.description ?? '',
                         links,
                         body: {
@@ -223,12 +223,17 @@ const request: Partial<HarRequest> = {
     }
 
     @media (max-width: 87rem) {
-        /* 50 + 35 + 1 + some breathing room */
         .layout {
             grid-template-columns: 50rem;
             grid-template-areas:
-        "content"
-        "example";
+                "content"
+                "example";
+        }
+    }
+
+    @media (max-width: 50rem) {
+        .layout {
+            grid-template-columns: 100%;
         }
     }
 </style>
