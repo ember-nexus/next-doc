@@ -121,12 +121,16 @@ function extractResponseExamples(
                 links,
                 body: null,
                 headers,
+                schema: null
             });
             continue;
         }
 
         for (const [mimeType, mediaType] of Object.entries(content) as any) {
             const examples = mediaType?.examples;
+            const schema = mediaType?.schema
+                ? JSON.stringify(mediaType.schema, null, 2)
+                : null;
 
             if (examples) {
                 for (const [key, example] of Object.entries(examples) as any) {
@@ -140,6 +144,7 @@ function extractResponseExamples(
                             type: mimeType.includes('json') ? 'json' : 'plain',
                         },
                         headers,
+                        schema,
                     });
                 }
             } else {
@@ -150,6 +155,7 @@ function extractResponseExamples(
                     links,
                     body: null,
                     headers,
+                    schema,
                 });
             }
         }
@@ -159,7 +165,6 @@ function extractResponseExamples(
 }
 
 const responseExamples = extractResponseExamples(spec, '/{uuid}', 'get');
-
 
 const request: Partial<HarRequest> = {
     method: "GET",

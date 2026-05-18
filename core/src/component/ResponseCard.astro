@@ -29,7 +29,6 @@ const firstId = exampleId(examples[0]);
     x-data={`{ exampleId: '${firstId}', componentId: 'body' }`}
     class="response-card bg-white dark:bg-black block border border-default rounded-xl shadow-xs flex flex-col divide-y divide-gray-200 dark:divide-gray-800"
 >
-    <!-- Status code tabs -->
     <div class="flex flex-wrap gap-2 p-4">
         {examples.map((e) => (
             <button
@@ -42,7 +41,6 @@ const firstId = exampleId(examples[0]);
         ))}
     </div>
 
-    <!-- Description per example -->
     <div class="not-prose">
         {examples.map((e, i) => (
             <div
@@ -65,20 +63,12 @@ const firstId = exampleId(examples[0]);
         ))}
     </div>
 
-    <!-- Body / Headers tab switcher -->
     <div class="flex border-b border-gray-200 dark:border-gray-800 px-4">
-        {(['body', 'headers'] as const).map((tab) => (
-            <button
-                @click={`componentId = '${tab}'`}
-                :class={`componentId === '${tab}' ? 'border-gray-800 dark:border-gray-200 text-gray-800 dark:text-gray-100' : 'border-transparent text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300'`}
-                class="px-4 py-2 text-sm -mb-px border-b-2 cursor-pointer transition-colors outline-offset-2"
-            >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </button>
-        ))}
+        <button @click="componentId = 'body'" :class="componentId === 'body' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer">Body</button>
+        <button @click="componentId = 'headers'" :class="componentId === 'headers' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer">Headers</button>
+        <button @click="componentId = 'schema'" :class="componentId === 'schema' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer">Schema</button>
     </div>
 
-    <!-- Body content per example -->
     <div>
         {examples.map((e, i) => (
             <div
@@ -86,28 +76,40 @@ const firstId = exampleId(examples[0]);
                 x-cloak={i !== 0 || undefined}
                 class="text-gray-800 font-mono"
             >
-                {e.body === null
-                    ? <p class="p-4 text-sm">response has no body</p>
-                    : e.body?.content
-                        ? <Code code={e.body.content} lang={e.body.type ?? "plain"} class="not-prose rounded-b-xl text-[0.875rem]" />
-                        : null
-                }
+                {e.body === null && (
+                    <p class="p-4 text-sm">response has no body</p>
+                )}
+                {e.body !== null && e.body?.content && (
+                    <Code code={e.body.content} lang={e.body.type ?? "plain"} class="not-prose rounded-b-xl text-[0.875rem]" />
+                )}
             </div>
         ))}
-    </div>
-
-    <!-- Headers content per example -->
-    <div>
         {examples.map((e, i) => (
             <div
                 x-show={`exampleId === '${exampleId(e)}' && componentId === 'headers'`}
                 x-cloak={i !== 0 || undefined}
                 class="text-gray-800 font-mono"
             >
-                {e.headers
-                    ? <Code code={e.headers} lang="http" class="not-prose rounded-b-xl text-[0.875rem]" />
-                    : null
-                }
+                {e.headers && (
+                    <Code code={e.headers} lang="http" class="not-prose rounded-b-xl text-[0.875rem]" />
+                )}
+                {!e.headers && (
+                    <p class="p-4 text-sm">response has no headers</p>
+                )}
+            </div>
+        ))}
+        {examples.map((e, i) => (
+            <div
+                x-show={`exampleId === '${exampleId(e)}' && componentId === 'schema'`}
+                x-cloak={i !== 0 || undefined}
+                class="text-gray-800 font-mono"
+            >
+                {e.schema === null && (
+                    <p class="p-4 text-sm">no schema available</p>
+                )}
+                {e.schema !== null && (
+                    <Code code={e.schema} lang="json" class="not-prose rounded-b-xl text-[0.875rem]" />
+                )}
             </div>
         ))}
     </div>

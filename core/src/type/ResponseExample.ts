@@ -11,4 +11,5 @@ export interface ResponseExample {
         type: "plain" | "json";
     } | null;
     headers: string;
+    schema: string | null;
 }
