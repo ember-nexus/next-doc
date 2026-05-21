@@ -42,6 +42,19 @@ body {
     padding-bottom: var(--ec-codePadBlk) !important;
 }
 
+.prose {
+    h1, h2, h3, h4, h5, h6 {
+        font-family: "Qanelas Soft Custom";
+    }
+}
+
+@layer base {
+    .prose code::before,
+    .prose code::after {
+        content: none !important;
+    }
+}
+
 @font-face {
     font-family: "Qanelas Soft Custom";
     src: url("/fonts/qanelas-soft-custom-semi-bold.woff") format('woff');
