@@ -186,54 +186,39 @@ const request: Partial<HarRequest> = {
     <div class="prose">
         <h1>{entry.data.endpoint}</h1>
         <p>Release: {release_version} | Version: {entry.data.endpoint_version}</p>
+        
+        <Content/>
+    </div>
 
+    <div class="api-doc mt-3 mb-3">
+        <RequestHeaderCard headers={requestHeaders}/>
+        <ResponseHeaderCard headers={responseHeaders}/>
+        <RequestCard request={request} />
+        <ResponseCard examples={responseExamples} />
+    </div>
+    
+    <div class="prose">
         <h3>History</h3>
         <Fragment set:html={changesHtml}/>
     </div>
-
-    <div class="layout mb-4">
-        <div class="region-content flex flex-col gap-4">
-            <RequestHeaderCard headers={requestHeaders}/>
-            <ResponseHeaderCard headers={responseHeaders}/>
-        </div>
-        <div class="region-example flex flex-col gap-4">
-            <RequestCard request={request} />
-            <ResponseCard examples={responseExamples} />
-        </div>
-    </div>
-
-    <Content/>
 </Default>
 
 <style>
-    .layout {
-        display: grid;
-        grid-template-columns: 50rem 35rem;
-        grid-template-areas: "content example";
+    .prose,
+    .api-doc {
+        max-width: 58rem;
+        width: 100%;
+        margin-inline: auto;
+        display: flex;
+        flex-direction: column;
         gap: 1rem;
-        justify-content: center;
-    }
-
-    .region-content {
-        grid-area: content;
-    }
-
-    .region-example {
-        grid-area: example;
-    }
-
-    @media (max-width: 87rem) {
-        .layout {
-            grid-template-columns: 50rem;
-            grid-template-areas:
-                "content"
-                "example";
-        }
+        padding-inline: 1rem;
     }
 
     @media (max-width: 50rem) {
-        .layout {
-            grid-template-columns: 100%;
+        .prose,
+        .api-doc {
+            padding-inline: 0.75rem;
         }
     }
 </style>

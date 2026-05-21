@@ -33,6 +33,15 @@ body {
     border-bottom-right-radius: calc(var(--radius-xl) - 1px);
 }
 
+.response-card .expressive-code pre {
+    min-height: 250px;
+    max-height: 400px;
+}
+
+.response-card .expressive-code pre code .ec-line:last-child {
+    padding-bottom: var(--ec-codePadBlk) !important;
+}
+
 @font-face {
     font-family: "Qanelas Soft Custom";
     src: url("/fonts/qanelas-soft-custom-semi-bold.woff") format('woff');
