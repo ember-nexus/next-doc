@@ -71,46 +71,46 @@ const firstId = exampleId(examples[0]);
 
     <div>
         {examples.map((e, i) => (
-            <div
-                x-show={`exampleId === '${exampleId(e)}' && componentId === 'body'`}
-                x-cloak={i !== 0 || undefined}
-                class="text-gray-800 font-mono"
-            >
-                {e.body === null && (
-                    <p class="p-4 text-sm">response has no body</p>
-                )}
-                {e.body !== null && e.body?.content && (
-                    <Code code={e.body.content} lang={e.body.type ?? "plain"} class="not-prose rounded-b-xl text-[0.875rem]" />
-                )}
-            </div>
-        ))}
-        {examples.map((e, i) => (
-            <div
-                x-show={`exampleId === '${exampleId(e)}' && componentId === 'headers'`}
-                x-cloak={i !== 0 || undefined}
-                class="text-gray-800 font-mono"
-            >
-                {e.headers && (
-                    <Code code={e.headers} lang="http" class="not-prose rounded-b-xl text-[0.875rem]" />
-                )}
-                {!e.headers && (
-                    <p class="p-4 text-sm">response has no headers</p>
-                )}
-            </div>
-        ))}
-        {examples.map((e, i) => (
-            <div
-                x-show={`exampleId === '${exampleId(e)}' && componentId === 'schema'`}
-                x-cloak={i !== 0 || undefined}
-                class="text-gray-800 font-mono"
-            >
-                {e.schema === null && (
-                    <p class="p-4 text-sm">no schema available</p>
-                )}
-                {e.schema !== null && (
-                    <Code code={e.schema} lang="json" class="not-prose rounded-b-xl text-[0.875rem]" />
-                )}
-            </div>
+            <>
+                <div
+                    x-show={`exampleId === '${exampleId(e)}' && componentId === 'body'`}
+                    x-cloak={i !== 0 || undefined}
+                    class="text-gray-800 font-mono"
+                >
+                    {e.body === null && (
+                        <p class="p-4 text-sm">response has no body</p>
+                    )}
+                    {e.body !== null && e.body?.content && (
+                        <Code code={e.body.content} lang={e.body.type ?? "plain"} class="not-prose rounded-b-xl text-[0.875rem]" />
+                    )}
+                </div>
+
+                <div
+                    x-show={`exampleId === '${exampleId(e)}' && componentId === 'headers'`}
+                    x-cloak={i !== 0 || undefined}
+                    class="text-gray-800 font-mono"
+                >
+                    {e.headers && (
+                        <Code code={e.headers} lang="http" class="not-prose rounded-b-xl text-[0.875rem]" />
+                    )}
+                    {!e.headers && (
+                        <p class="p-4 text-sm">response has no headers</p>
+                    )}
+                </div>
+
+                <div
+                    x-show={`exampleId === '${exampleId(e)}' && componentId === 'schema'`}
+                    x-cloak={i !== 0 || undefined}
+                    class="text-gray-800 font-mono"
+                >
+                    {e.schema === null && (
+                        <p class="p-4 text-sm">no schema available</p>
+                    )}
+                    {e.schema !== null && (
+                        <Code code={e.schema} lang="json" class="not-prose rounded-b-xl text-[0.875rem]" />
+                    )}
+                </div>
+            </>
         ))}
     </div>
 </div>
