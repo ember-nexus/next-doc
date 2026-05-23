@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && ./build-summary.sh",
     "preview": "astro preview",
     "astro": "astro",
     "test": "PW_TEST_CONNECT_WS_ENDPOINT=ws://playwright-browser:3000/ yarn playwright test"
