@@ -78,7 +78,9 @@ const firstId = exampleId(examples[0]);
                     class="text-gray-800 font-mono"
                 >
                     {e.body === null && (
-                        <p class="p-4 text-sm">response has no body</p>
+                        <div class="p-4 min-h-[250px]">
+                            <p class="text-sm">response has no body</p>
+                        </div>
                     )}
                     {e.body !== null && e.body?.content && (
                         <Code code={e.body.content} lang={e.body.type ?? "plain"} class="not-prose rounded-b-xl text-[0.875rem]" />
@@ -94,7 +96,9 @@ const firstId = exampleId(examples[0]);
                         <Code code={e.headers} lang="http" class="not-prose rounded-b-xl text-[0.875rem]" />
                     )}
                     {!e.headers && (
-                        <p class="p-4 text-sm">response has no headers</p>
+                        <div class="p-4 min-h-[250px]">
+                            <p class="text-sm">response has no headers</p>
+                        </div>
                     )}
                 </div>
 
@@ -104,7 +108,9 @@ const firstId = exampleId(examples[0]);
                     class="text-gray-800 font-mono"
                 >
                     {e.schema === null && (
-                        <p class="p-4 text-sm">no schema available</p>
+                        <div class="p-4 min-h-[250px]">
+                            <p class="text-sm">no schema available</p>
+                        </div>
                     )}
                     {e.schema !== null && (
                         <Code code={e.schema} lang="json" class="not-prose rounded-b-xl text-[0.875rem]" />

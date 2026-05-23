@@ -41,6 +41,7 @@
     "moderndash": "^4.0.2",
     "open-props": "^1.7.23",
     "openapi-types": "^12.1.3",
+    "openapi3-ts": "^4.5.0",
     "postcss": "^8.5.14",
     "postcss-import": "^16.1.1",
     "qrcode": "^1.5.4",
