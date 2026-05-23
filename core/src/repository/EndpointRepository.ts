@@ -9,6 +9,7 @@ export async function getEndpointsByVersion(version: string): Promise<Endpoint[]
         SELECT e.endpoint, e.method, e.group, e.name
         FROM endpoints e
         WHERE release_version = $version
+        ORDER BY e.filename
     `, {
         version: version
     });

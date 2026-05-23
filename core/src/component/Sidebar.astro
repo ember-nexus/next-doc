@@ -18,10 +18,7 @@ const endpoints = await getEndpointsByVersion(version);
 const sidebarItems: SidebarItemDto[] = endpointsToSidebarItems(endpoints, version);
 ---
 
-<div class="flex flex-wrap gap-2 p-4">
-    {endpoints.map((e) => (
-        <a href={`/${version}/${e.group}/${e.endpoint}`}>{e.endpoint}</a>
-    ))}
+<div class="flex flex-col">
     <ul>
         {sidebarItems.map((item) => {
             if (item.type === 'endpoint') {

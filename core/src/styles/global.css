@@ -331,3 +331,26 @@ body {
     background-color: var(--lang-active-bg);
     border-color: var(--lang-active-border);
 }
+
+:root {
+    --method-get:    #0074E4;
+    --method-post:   #4CAF50;
+    --method-put:    #FFA726;
+    --method-patch:  #FFA726;
+    --method-delete: #E9685F;
+    --method-head:   #7E57C2;
+}
+
+:root[data-theme="light"] {
+    --method-get:    #0074E4;
+    --method-post:   #379C3D;
+    --method-put:    #C07900;
+    --method-patch:  #C07900;
+    --method-delete: #DE5E56;
+    --method-head:   #7E57C2;
+}
+
+
+
+
+

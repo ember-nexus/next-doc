@@ -1,5 +1,4 @@
 ---
-import {getEndpointsByVersion} from "../repository";
 import type {SidebarEndpointItemDto} from "../type";
 
 interface Props {
@@ -7,12 +6,23 @@ interface Props {
     active: boolean;
 }
 
-const { sidebarItem, active } = Astro.props;
+const {sidebarItem, active} = Astro.props;
+const method = sidebarItem?.method.toLowerCase();
 ---
 
-<li>
-    <a href={sidebarItem.url}>
-        <p>{sidebarItem.method} {sidebarItem.endpointUrl}</p>
-        <p>{sidebarItem.name}</p>
-    </a>
-</li>
+{sidebarItem && (
+    <li>
+        <a
+            href={sidebarItem.url}
+            aria-current={active ? "page" : undefined}
+            style={`--c: var(--method-${method}, var(--method-put))`}
+            class="block rounded-md px-3 py-1.5 text-[0.8125rem] no-underline text-zinc-900 dark:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/[0.06] aria-[current]:bg-black/[0.06] dark:aria-[current]:bg-white/[0.09]"
+        >
+            <p class="m-0 font-mono">
+                <b class="font-semibold text-[var(--c)] uppercase">{sidebarItem.method}</b>
+                {" "}{sidebarItem.endpointUrl}
+            </p>
+            <p class="mt-0.5 mb-0 font-mono text-zinc-900 dark:text-zinc-100">{sidebarItem.name}</p>
+        </a>
+    </li>
+)}
