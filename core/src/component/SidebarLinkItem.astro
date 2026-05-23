@@ -1,0 +1,17 @@
+---
+import {getEndpointsByVersion} from "../repository";
+import type {SidebarEndpointItemDto, SidebarLinkItemDto} from "../type";
+
+interface Props {
+    sidebarItem: SidebarLinkItemDto;
+    active: boolean;
+}
+
+const { sidebarItem, active } = Astro.props;
+---
+
+<li>
+    <a href={sidebarItem.url}>
+        <p>{sidebarItem.name}</p>
+    </a>
+</li>

@@ -11,6 +11,7 @@ const endpoints = defineCollection({
         release_version: z.string(),
         endpoint_version: z.string(),
         version: z.string(),
+        group: z.string()
     }),
 });
 

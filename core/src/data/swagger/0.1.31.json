@@ -344,7 +344,7 @@
       "get": {
         "summary": "Get Element",
         "description": "Retrieves a single element (node or relationship) by UUID.",
-        "operationId": "getElement",
+        "operationId": "get-element",
         "security": [
           {
             "BearerAuth": []

@@ -1,0 +1,38 @@
+---
+import {getEndpointsByVersion} from "../repository";
+import type {SidebarEndpointItemDto, SidebarGroupItemDto, SidebarItemDto, SidebarLinkItemDto} from "../type";
+import type {HttpMethod} from "../type";
+import {endpointsToSidebarItems} from "../util";
+import SidebarEndpointItem from "./SidebarEndpointItem.astro";
+import SidebarLinkItem from "./SidebarLinkItem.astro";
+import SidebarGroupItem from "./SidebarGroupItem.astro";
+
+interface Props {
+    version: string;
+}
+
+const { version } = Astro.props;
+
+const endpoints = await getEndpointsByVersion(version);
+
+const sidebarItems: SidebarItemDto[] = endpointsToSidebarItems(endpoints, version);
+---
+
+<div class="flex flex-wrap gap-2 p-4">
+    {endpoints.map((e) => (
+        <a href={`/${version}/${e.group}/${e.endpoint}`}>{e.endpoint}</a>
+    ))}
+    <ul>
+        {sidebarItems.map((item) => {
+            if (item.type === 'endpoint') {
+                return <SidebarEndpointItem sidebarItem={item as SidebarEndpointItemDto} active={false} />;
+            }
+            if (item.type === 'link') {
+                return <SidebarLinkItem sidebarItem={item as SidebarLinkItemDto} active={false} />;
+            }
+            if (item.type === 'group') {
+                return <SidebarGroupItem sidebarItem={item as SidebarGroupItemDto} open={false} />;
+            }
+        })}
+    </ul>
+</div>

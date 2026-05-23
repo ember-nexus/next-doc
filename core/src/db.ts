@@ -97,7 +97,10 @@ FROM (
                     e.endpoint,
                     e.version,
                     v.release_id,
-                    e.filename
+                    e.filename,
+                    e.group,
+                    e.method,
+                    e.name
                 FROM raw_endpoints e
                          LEFT JOIN versions v ON v.version = e.version
             ),
@@ -116,10 +119,13 @@ FROM (
                  )
             SELECT
                 evr.release_id,
-                evr.release_version,
+                er.group AS group,
                 evr.endpoint,
+                evr.release_version,
                 er.version AS endpoint_version,
-                er.filename AS filename
+                er.filename AS filename,
+                er.method AS method,
+                er.name AS name
             FROM endpoint_version_at_release evr
                      JOIN endpoint_releases er
                           ON er.endpoint = evr.endpoint

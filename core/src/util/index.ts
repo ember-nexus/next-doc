@@ -1,1 +1,2 @@
-export * from "./SwaggerUtil.ts";
+export * from "./SwaggerUtil.js";
+export * from "./SidebarUtil.js";

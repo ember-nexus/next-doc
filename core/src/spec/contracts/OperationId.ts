@@ -1,3 +1,3 @@
 export enum OperationId {
-    getElement = "getElement",
+    getElement = "get-element",
 }

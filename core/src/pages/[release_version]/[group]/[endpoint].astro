@@ -1,14 +1,15 @@
 ---
 import {getCollection, render} from 'astro:content';
-import {getChangesByFeatureUpToVersion} from "../../repository/ChangeRepository.ts";
+import {getChangesByFeatureUpToVersion} from "../../../repository";
 import {marked} from "marked";
 import SwaggerParser from '@apidevtools/swagger-parser';
-import Default from "../../layouts/Default.astro";
-import ResponseCard from "../../component/ResponseCard.astro";
-import RequestCard from "../../component/RequestCard.astro";
-import RequestHeaderCard from "../../component/RequestHeaderCard.astro";
-import ResponseHeaderCard from "../../component/ResponseHeaderCard.astro";
-import {extractHarExample, extractRequestHeaders, extractResponseExamples, extractResponseHeaders} from "../../util";
+import Default from "../../../layouts/Default.astro";
+import ResponseCard from "../../../component/ResponseCard.astro";
+import RequestCard from "../../../component/RequestCard.astro";
+import RequestHeaderCard from "../../../component/RequestHeaderCard.astro";
+import ResponseHeaderCard from "../../../component/ResponseHeaderCard.astro";
+import {extractHarExample, extractRequestHeaders, extractResponseExamples, extractResponseHeaders} from "../../../util";
+import Sidebar from "../../../component/Sidebar.astro";
 
 export async function getStaticPaths() {
     const entries = await getCollection('endpoints');
@@ -17,6 +18,7 @@ export async function getStaticPaths() {
         params: {
             release_version: entry.data.release_version,
             endpoint: entry.data.endpoint.replace(/\//g, '_'),
+            group: entry.data.group
         },
         props: {entry},
     }));
@@ -39,6 +41,7 @@ const requestHeaders = extractRequestHeaders(spec, '/{uuid}', 'get');
 const responseHeaders = extractResponseHeaders(spec, '/{uuid}', 'get');
 ---
 <Default title={`${entry.data.endpoint} at version ${release_version}`}>
+    <Sidebar version={release_version} />
     <div class="prose dark:prose-invert">
         <h1>{entry.data.endpoint}</h1>
         <p>Release: {release_version} | Version: {entry.data.endpoint_version}</p>
