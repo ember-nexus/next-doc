@@ -2,25 +2,23 @@
 import { Icon } from 'astro-icon/components';
 
 interface Props {
-    /** Lucide icon name to display (e.g. "panel-left", "menu"). */
     icon?: string;
-    /** Optional extra classes to position/style the button from the outside. */
-    class?: string;
 }
 
-const { icon = 'panel-left', class: className = '' } = Astro.props;
+const { icon = 'panel-left' } = Astro.props;
 ---
 
+<!--
+  Toggles sidebarOpen. When still null (untouched), resolve against the
+  breakpoint so the first click does the intuitive thing: close on desktop
+  (where it's open by default), open on mobile (where it's hidden).
+-->
 <button
     type="button"
-    @click="sidebarOpen = !sidebarOpen"
-    :aria-expanded="sidebarOpen"
-    aria-controls="primary-sidebar"
+    @click="sidebarOpen = !(sidebarOpen ?? window.matchMedia('(min-width: 640px)').matches)"
     aria-label="Toggle sidebar"
-    class:list={[
-        'inline-flex items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 dark:text-gray-200 dark:hover:bg-gray-800',
-        className,
-    ]}
+    aria-controls="primary-sidebar"
+    class="inline-flex items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 dark:text-gray-200 dark:hover:bg-gray-800"
 >
-    <Icon name={icon} class="size-4" />
+    <Icon name={icon} class="size-5" />
 </button>

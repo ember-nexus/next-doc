@@ -20,37 +20,17 @@ const { title, description = 'Ember Nexus API', version = 'latest' } = Astro.pro
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
-    <style>
-        /* Hide Alpine-controlled elements until Alpine initializes to avoid a flash. */
-        [x-cloak] { display: none !important; }
-
-        /* The sidebar is a fixed overlay; reserve space for it on desktop only,
-           via a media query so it reacts correctly to viewport resizes. */
-        @media (min-width: 640px) {
-            .content-shell[data-sidebar-open="true"] { padding-left: 16rem; }
-            .content-shell[data-sidebar-open="false"] { padding-left: 0; }
-        }
-
-        /* Only animate the padding after Alpine has initialized, so the
-           correct initial layout is painted instantly without a slide. */
-        .content-shell.is-ready {
-            transition: padding 200ms ease-in-out;
-        }
-    </style>
 </head>
 
 <body
-    x-data="{ sidebarOpen: true, ready: false }"
-    x-init="$nextTick(() => ready = true)"
+    x-data="{ sidebarOpen: null }"
     class="min-h-screen bg-white text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100"
 >
 <Sidebar version={version} />
 
 <div
-    class="content-shell flex min-h-screen flex-col"
-    data-sidebar-open="true"
-    :data-sidebar-open="sidebarOpen"
-    :class="{ 'is-ready': ready }"
+    class="flex min-h-screen flex-col transition-[padding] duration-200 ease-in-out max-sm:pl-0 sm:pl-64"
+    :class="{ 'sm:pl-64': sidebarOpen !== false, 'sm:!pl-0': sidebarOpen === false }"
 >
     <header class="flex items-center gap-2 px-5 py-4">
         <SidebarToggle icon="panel-left" />
