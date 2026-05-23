@@ -11,7 +11,10 @@ const endpoints = defineCollection({
         release_version: z.string(),
         endpoint_version: z.string(),
         version: z.string(),
-        group: z.string()
+        group: z.string(),
+        method: z.string(),
+        endpointUrl: z.string(),
+        name: z.string()
     }),
 });
 

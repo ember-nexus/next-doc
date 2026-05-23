@@ -26,7 +26,7 @@ export async function getStaticPaths() {
 
 const {entry} = Astro.props;
 const {Content} = await render(entry);
-const {release_version} = entry.data;
+const {release_version, method} = entry.data;
 
 const changes = await getChangesByFeatureUpToVersion('api:get-element', release_version);
 const changesHtml = await marked.parse(
@@ -41,11 +41,15 @@ const requestHeaders = extractRequestHeaders(spec, '/{uuid}', 'get');
 const responseHeaders = extractResponseHeaders(spec, '/{uuid}', 'get');
 ---
 <Default title={`${entry.data.endpoint} at version ${release_version}`} version={release_version}>
-    <div class="prose dark:prose-invert">
-        <h1>{entry.data.endpoint}</h1>
+    <div style={`--c: var(--method-${method}, var(--method-put))`}
+    >
+        <p class="text-4xl"><span class="font-mono"><span class="uppercase text-[var(--c)]">{method}</span> {entry.data.endpointUrl} - </span>{entry.data.name}</p>
+        <p></p>
         <p>Release: {release_version} | Version: {entry.data.endpoint_version}</p>
         
-        <Content/>
+        <div class="prose dark:prose-invert">
+            <Content/>
+        </div>
     </div>
 
     <div class="api-doc mt-3 mb-3 flex flex-col gap-4">
