@@ -3,4 +3,5 @@ export interface Endpoint {
     method: string;
     group: string;
     name: string;
+    endpointUrl: string;
 }

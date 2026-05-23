@@ -13,7 +13,7 @@ export function endpointsToSidebarItems(endpoints: Endpoint[], version: string):
             name: e.name,
             url: url,
             method: e.method as HttpMethod,
-            endpointUrl: e.endpoint,
+            endpointUrl: e.endpointUrl,
         };
 
         const existing = groups.get(e.group);
