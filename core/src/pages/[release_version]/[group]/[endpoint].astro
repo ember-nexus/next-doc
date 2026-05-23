@@ -43,7 +43,8 @@ const responseHeaders = extractResponseHeaders(spec, '/{uuid}', 'get');
 <Default title={`${entry.data.endpoint} at version ${release_version}`} version={release_version}>
     <div style={`--c: var(--method-${method}, var(--method-put))`}
     >
-        <p class="text-4xl"><span class="font-mono"><span class="uppercase text-[var(--c)]">{method}</span> {entry.data.endpointUrl} - </span>{entry.data.name}</p>
+        <p class="text-3xl sm:text-4xl mb-2 font-mono"><span class="uppercase text-[var(--c)]">{method}</span> {entry.data.endpointUrl}</p>
+        <p class="mb-10 text-2xl">{entry.data.name}</p>
         <p></p>
         <p>Release: {release_version} | Version: {entry.data.endpoint_version}</p>
         
