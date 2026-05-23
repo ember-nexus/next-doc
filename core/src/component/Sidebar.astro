@@ -13,31 +13,23 @@ interface Props {
 }
 
 const { version } = Astro.props;
-
 const endpoints = await getEndpointsByVersion(version);
-
 const sidebarItems: SidebarItemDto[] = endpointsToSidebarItems(endpoints, version);
 ---
-
-<!--
-  Default state is pure Tailwind: hidden <sm (max-sm:-translate-x-full),
-  shown ≥sm (translate-x-0). Alpine only overrides once sidebarOpen is set.
--->
 <aside
     id="primary-sidebar"
-    class="fixed inset-y-0 left-0 z-40 flex h-screen w-full flex-col overflow-y-auto border-r border-gray-200 bg-white p-4 transition-transform duration-200 ease-in-out max-sm:-translate-x-full dark:border-gray-800 dark:bg-gray-950 sm:w-64"
+    class="fixed inset-y-0 left-0 z-40 flex h-dvh w-full flex-col border-r border-gray-200 bg-white transition-transform duration-200 ease-in-out max-sm:-translate-x-full dark:border-gray-800 dark:bg-gray-950 sm:w-64"
     :class="{ '!translate-x-0': sidebarOpen === true, '!-translate-x-full': sidebarOpen === false }"
 >
     <button
         type="button"
         @click="sidebarOpen = false"
         aria-label="Close sidebar"
-        class="fixed right-4 top-4 z-50 inline-flex items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 dark:text-gray-200 dark:hover:bg-gray-800 sm:hidden"
+        class="absolute right-4 top-4 z-50 inline-flex items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 dark:text-gray-200 dark:hover:bg-gray-800 sm:hidden"
     >
         <Icon name="x" class="size-4" />
     </button>
-
-    <nav class="flex flex-col">
+    <nav class="flex-1 overflow-y-auto overscroll-contain p-4">
         <ul>
             {sidebarItems.map((item) => {
                 if (item.type === 'endpoint') {
