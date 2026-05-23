@@ -1,12 +1,15 @@
 ---
 import '../styles/global.css'
+import Sidebar from '../component/Sidebar.astro'
+import SidebarToggle from '../component/SidebarToggle.astro'
 
 interface Props {
     title: string
     description?: string
+    version?: string
 }
 
-const { title, description = 'My Astro App' } = Astro.props
+const { title, description = 'Ember Nexus API', version = '0.1.31' } = Astro.props
 ---
 
 <!doctype html>
@@ -20,10 +23,19 @@ const { title, description = 'My Astro App' } = Astro.props
 </head>
 
 <body
-    class="flex min-h-screen flex-col bg-white text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100"
+    x-data="{ sidebarOpen: true }"
+    class="flex min-h-screen bg-white text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100"
 >
-<main class="mx-auto w-full max-w-screen-xl flex-1 px-5 py-6">
-    <slot />
-</main>
+<Sidebar version={version} />
+
+<div class="flex min-w-0 flex-1 flex-col">
+    <header class="flex items-center gap-2 px-5 py-4">
+        <SidebarToggle icon="panel-left" />
+    </header>
+
+    <main class="mx-auto w-full max-w-screen-xl flex-1 px-5 py-6">
+        <slot />
+    </main>
+</div>
 </body>
 </html>

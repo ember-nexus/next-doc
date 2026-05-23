@@ -1,0 +1,26 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+    /** Lucide icon name to display (e.g. "panel-left", "menu"). */
+    icon?: string;
+    /** Optional extra classes to position/style the button from the outside. */
+    class?: string;
+}
+
+const { icon = 'panel-left', class: className = '' } = Astro.props;
+---
+
+<button
+    type="button"
+    @click="sidebarOpen = !sidebarOpen"
+    :aria-expanded="sidebarOpen"
+    aria-controls="primary-sidebar"
+    aria-label="Toggle sidebar"
+    class:list={[
+        'inline-flex items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 dark:text-gray-200 dark:hover:bg-gray-800',
+        className,
+    ]}
+>
+    <Icon name={icon} class="size-4" />
+</button>

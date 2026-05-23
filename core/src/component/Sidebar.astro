@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import {getEndpointsByVersion} from "../repository";
 import type {SidebarEndpointItemDto, SidebarGroupItemDto, SidebarItemDto, SidebarLinkItemDto} from "../type";
 import type {HttpMethod} from "../type";
@@ -18,18 +19,36 @@ const endpoints = await getEndpointsByVersion(version);
 const sidebarItems: SidebarItemDto[] = endpointsToSidebarItems(endpoints, version);
 ---
 
-<div class="flex flex-col">
-    <ul>
-        {sidebarItems.map((item) => {
-            if (item.type === 'endpoint') {
-                return <SidebarEndpointItem sidebarItem={item as SidebarEndpointItemDto} active={false} />;
-            }
-            if (item.type === 'link') {
-                return <SidebarLinkItem sidebarItem={item as SidebarLinkItemDto} active={false} />;
-            }
-            if (item.type === 'group') {
-                return <SidebarGroupItem sidebarItem={item as SidebarGroupItemDto} open={false} />;
-            }
-        })}
-    </ul>
-</div>
+<aside
+    id="primary-sidebar"
+    x-show="sidebarOpen"
+    x-cloak
+    x-transition.opacity
+    class="fixed inset-y-0 left-0 z-40 flex min-h-screen w-full flex-col overflow-y-auto border-r border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950 sm:sticky sm:top-0 sm:z-auto sm:h-screen sm:w-64 sm:shrink-0"
+>
+    <!-- Fixed close button, only visible on mobile -->
+    <button
+        type="button"
+        @click="sidebarOpen = false"
+        aria-label="Close sidebar"
+        class="fixed right-4 top-4 z-50 inline-flex items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 dark:text-gray-200 dark:hover:bg-gray-800 sm:hidden"
+    >
+        <Icon name="x" class="size-4" />
+    </button>
+
+    <nav class="flex flex-col">
+        <ul>
+            {sidebarItems.map((item) => {
+                if (item.type === 'endpoint') {
+                    return <SidebarEndpointItem sidebarItem={item as SidebarEndpointItemDto} active={false} />;
+                }
+                if (item.type === 'link') {
+                    return <SidebarLinkItem sidebarItem={item as SidebarLinkItemDto} active={false} />;
+                }
+                if (item.type === 'group') {
+                    return <SidebarGroupItem sidebarItem={item as SidebarGroupItemDto} open={false} />;
+                }
+            })}
+        </ul>
+    </nav>
+</aside>
