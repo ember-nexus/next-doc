@@ -2,6 +2,16 @@
 
 @plugin "@tailwindcss/typography";
 
+@theme {
+    --color-hairline: #e3e3e0;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-hairline: #2a2a2a;
+    }
+}
+
 :root {
     --base-font-size: 18px;
     --font-mono: "Fira Code", monospace;
@@ -25,12 +35,15 @@ body {
     --ec-frm-frameBoxShdCssVal: '';
 }
 
-.response-card .expressive-code pre,
-.request-card .expressive-code pre {
+.response-card .expressive-code pre {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     border-bottom-left-radius: calc(var(--radius-xl) - 1px);
     border-bottom-right-radius: calc(var(--radius-xl) - 1px);
+}
+
+.request-card .expressive-code pre {
+    border-radius: calc(var(--radius-xl) - 1px);
 }
 
 .response-card .expressive-code pre {
@@ -45,6 +58,22 @@ body {
 .prose {
     h1, h2, h3, h4, h5, h6 {
         font-family: "Qanelas Soft Custom";
+    }
+}
+
+.api-block-title {
+    font-family: "Qanelas Soft Custom";
+    font-size: 1.2rem;
+    color: inherit;
+    font-weight: normal;
+    line-height: 1.5;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+}
+
+@media (prefers-color-scheme: dark) {
+    .api-block-title {
+        color: #9ca3af;
     }
 }
 

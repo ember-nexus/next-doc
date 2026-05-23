@@ -3,6 +3,7 @@ import { Code } from 'astro-expressive-code/components';
 import { marked } from 'marked';
 import { getHttpStatusCodeLabel, type ResponseExample } from "../type";
 import Link from "./Link.astro";
+import CardTitle from "./CardTitle.astro";
 
 interface Props {
     examples: ResponseExample[];
@@ -24,99 +25,102 @@ function exampleId(e: ResponseExample): string {
 
 const firstId = exampleId(examples[0]);
 ---
+<div class="response-card">
+    <CardTitle title="Response"></CardTitle>
 
-<div
-    x-data={`{ exampleId: '${firstId}', componentId: 'body' }`}
-    class="response-card bg-white dark:bg-black block border border-default rounded-xl shadow-xs flex flex-col divide-y divide-gray-200 dark:divide-gray-800"
->
-    <div class="flex flex-wrap gap-2 p-4">
-        {examples.map((e) => (
-            <button
-                @click={`exampleId = '${exampleId(e)}'`}
-                :class={`exampleId === '${exampleId(e)}' ? 'active' : ''`}
-                class={`http-status-btn ${statusClass(e.httpStatusCode)} px-3 py-0.5 rounded-full text-sm font-medium border transition-colors cursor-pointer outline-offset-2`}
-            >
-                {exampleId(e)}
-            </button>
-        ))}
-    </div>
-
-    <div class="not-prose">
-        {examples.map((e, i) => (
-            <div
-                x-show={`exampleId === '${exampleId(e)}'`}
-                x-cloak={i !== 0 || undefined}
-                class="text-sm p-4 flex flex-col gap-2"
-            >
-                <p class="font-bold">{e.httpStatusCode} · {e.name ?? getHttpStatusCodeLabel(e.httpStatusCode)}</p>
-                <div set:html={marked.parse(e.description)} />
-                {
-                    e.links.length > 1 ? (
-                        <div class="flex gap-4">
-                            {e.links.map((link) => (
-                                <Link link={link} />
-                            ))}
-                        </div>
-                    ) : null
-                }
-            </div>
-        ))}
-    </div>
-
-    <div class="flex border-b border-gray-200 dark:border-gray-800 px-4">
-        <button @click="componentId = 'body'" :class="componentId === 'body' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer before:block before:h-0 before:invisible before:font-semibold before:content-['Body']">Body</button>
-        <button @click="componentId = 'headers'" :class="componentId === 'headers' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer before:block before:h-0 before:invisible before:font-semibold before:content-['Headers']">Headers</button>
-        <button @click="componentId = 'schema'" :class="componentId === 'schema' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer before:block before:h-0 before:invisible before:font-semibold before:content-['Schema']">Schema</button>
-    </div>
-
-    <div>
-        {examples.map((e, i) => (
-            <>
-                <div
-                    x-show={`exampleId === '${exampleId(e)}' && componentId === 'body'`}
-                    x-cloak={i !== 0 || undefined}
-                    class="text-gray-800 font-mono"
+    <div
+        x-data={`{ exampleId: '${firstId}', componentId: 'body' }`}
+        class="bg-white dark:bg-black block border border-hairline rounded-xl shadow-xs flex flex-col divide-y divide-gray-200 dark:divide-gray-800"
+    >
+        <div class="flex flex-wrap gap-2 p-4">
+            {examples.map((e) => (
+                <button
+                    @click={`exampleId = '${exampleId(e)}'`}
+                    :class={`exampleId === '${exampleId(e)}' ? 'active' : ''`}
+                    class={`http-status-btn ${statusClass(e.httpStatusCode)} px-3 py-0.5 rounded-full text-sm font-medium border transition-colors cursor-pointer outline-offset-2`}
                 >
-                    {e.body === null && (
-                        <div class="p-4 min-h-[250px]">
-                            <p class="text-sm">response has no body</p>
-                        </div>
-                    )}
-                    {e.body !== null && e.body?.content && (
-                        <Code code={e.body.content} lang={e.body.type ?? "plain"} class="not-prose rounded-b-xl text-[0.875rem]" />
-                    )}
-                </div>
+                    {exampleId(e)}
+                </button>
+            ))}
+        </div>
 
+        <div class="not-prose">
+            {examples.map((e, i) => (
                 <div
-                    x-show={`exampleId === '${exampleId(e)}' && componentId === 'headers'`}
+                    x-show={`exampleId === '${exampleId(e)}'`}
                     x-cloak={i !== 0 || undefined}
-                    class="text-gray-800 font-mono"
+                    class="text-sm p-4 flex flex-col gap-2"
                 >
-                    {e.headers && (
-                        <Code code={e.headers} lang="http" class="not-prose rounded-b-xl text-[0.875rem]" />
-                    )}
-                    {!e.headers && (
-                        <div class="p-4 min-h-[250px]">
-                            <p class="text-sm">response has no headers</p>
-                        </div>
-                    )}
+                    <p class="font-bold">{e.httpStatusCode} · {e.name ?? getHttpStatusCodeLabel(e.httpStatusCode)}</p>
+                    <div set:html={marked.parse(e.description)} />
+                    {
+                        e.links.length > 1 ? (
+                            <div class="flex gap-4">
+                                {e.links.map((link) => (
+                                    <Link link={link} />
+                                ))}
+                            </div>
+                        ) : null
+                    }
                 </div>
+            ))}
+        </div>
 
-                <div
-                    x-show={`exampleId === '${exampleId(e)}' && componentId === 'schema'`}
-                    x-cloak={i !== 0 || undefined}
-                    class="text-gray-800 font-mono"
-                >
-                    {e.schema === null && (
-                        <div class="p-4 min-h-[250px]">
-                            <p class="text-sm">no schema available</p>
-                        </div>
-                    )}
-                    {e.schema !== null && (
-                        <Code code={e.schema} lang="json" class="not-prose rounded-b-xl text-[0.875rem]" />
-                    )}
-                </div>
-            </>
-        ))}
+        <div class="flex border-b border-gray-200 dark:border-gray-800 px-4">
+            <button @click="componentId = 'body'" :class="componentId === 'body' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer before:block before:h-0 before:invisible before:font-semibold before:content-['Body']">Body</button>
+            <button @click="componentId = 'headers'" :class="componentId === 'headers' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer before:block before:h-0 before:invisible before:font-semibold before:content-['Headers']">Headers</button>
+            <button @click="componentId = 'schema'" :class="componentId === 'schema' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer before:block before:h-0 before:invisible before:font-semibold before:content-['Schema']">Schema</button>
+        </div>
+
+        <div>
+            {examples.map((e, i) => (
+                <>
+                    <div
+                        x-show={`exampleId === '${exampleId(e)}' && componentId === 'body'`}
+                        x-cloak={i !== 0 || undefined}
+                        class="text-gray-800 font-mono"
+                    >
+                        {e.body === null && (
+                            <div class="p-4 min-h-[250px]">
+                                <p class="text-sm">response has no body</p>
+                            </div>
+                        )}
+                        {e.body !== null && e.body?.content && (
+                            <Code code={e.body.content} lang={e.body.type ?? "plain"} class="not-prose rounded-b-xl text-[0.875rem]" />
+                        )}
+                    </div>
+
+                    <div
+                        x-show={`exampleId === '${exampleId(e)}' && componentId === 'headers'`}
+                        x-cloak={i !== 0 || undefined}
+                        class="text-gray-800 font-mono"
+                    >
+                        {e.headers && (
+                            <Code code={e.headers} lang="http" class="not-prose rounded-b-xl text-[0.875rem]" />
+                        )}
+                        {!e.headers && (
+                            <div class="p-4 min-h-[250px]">
+                                <p class="text-sm">response has no headers</p>
+                            </div>
+                        )}
+                    </div>
+
+                    <div
+                        x-show={`exampleId === '${exampleId(e)}' && componentId === 'schema'`}
+                        x-cloak={i !== 0 || undefined}
+                        class="text-gray-800 font-mono"
+                    >
+                        {e.schema === null && (
+                            <div class="p-4 min-h-[250px]">
+                                <p class="text-sm">no schema available</p>
+                            </div>
+                        )}
+                        {e.schema !== null && (
+                            <Code code={e.schema} lang="json" class="not-prose rounded-b-xl text-[0.875rem]" />
+                        )}
+                    </div>
+                </>
+            ))}
+        </div>
     </div>
 </div>

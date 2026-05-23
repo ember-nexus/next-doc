@@ -46,7 +46,7 @@ const responseHeaders = extractResponseHeaders(spec, '/{uuid}', 'get');
         <Content/>
     </div>
 
-    <div class="api-doc mt-3 mb-3">
+    <div class="api-doc mt-3 mb-3 flex flex-col gap-4">
         <RequestCard request={request} />
         <ResponseCard examples={responseExamples} />
         <RequestHeaderCard headers={requestHeaders}/>
