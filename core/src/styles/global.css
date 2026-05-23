@@ -23,7 +23,6 @@ html {
 }
 
 body {
-    background: #ffffff;
     -webkit-font-smoothing: antialiased;
 }
 
@@ -55,7 +54,12 @@ body {
     padding-bottom: var(--ec-codePadBlk) !important;
 }
 
+.response-card .expressive-code pre code {
+    padding-bottom: 0 !important;
+}
+
 .prose {
+    gap: 0 !important;
     h1, h2, h3, h4, h5, h6 {
         font-family: "Qanelas Soft Custom";
     }

@@ -1,31 +1,28 @@
 ---
 import '../styles/global.css'
+
 interface Props {
     title: string
     description?: string
 }
-const {
-    title,
-    description = 'My Astro App',
-} = Astro.props
+
+const { title, description = 'My Astro App' } = Astro.props
 ---
+
 <!doctype html>
-<html lang="de" dir="ltr" class="wa-theme-default wa-palette-default wa-brand-blue">
+<html lang="de" dir="ltr">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
-    <script>
-        import '@awesome.me/webawesome/dist/components/button/button.js';
-        import '@awesome.me/webawesome/dist/components/tab/tab.js';
-        import '@awesome.me/webawesome/dist/components/tab-group/tab-group.js';
-        import '@awesome.me/webawesome/dist/components/tab-panel/tab-panel.js';
-    </script>
 </head>
-<body class="min-h-screen flex flex-col bg-white text-gray-9 font-sans text-1 leading-3">
-<main class="flex-1 px-5 py-6 mx-auto w-full max-w-screen-xl">
+
+<body
+    class="flex min-h-screen flex-col bg-white text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100"
+>
+<main class="mx-auto w-full max-w-screen-xl flex-1 px-5 py-6">
     <slot />
 </main>
 </body>
