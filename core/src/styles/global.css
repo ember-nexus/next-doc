@@ -65,7 +65,8 @@ body {
     }
 }
 
-.api-block-title {
+.api-block-title,
+.sidebar-group-title {
     font-family: "Qanelas Soft Custom";
     font-size: 1.2rem;
     color: inherit;

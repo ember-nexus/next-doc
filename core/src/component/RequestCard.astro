@@ -28,7 +28,7 @@ const examples = [
             <button
                 @click="open = !open"
                 @keydown.escape="open = false"
-                class="flex w-full sm:w-auto items-center justify-between sm:justify-start gap-2 px-3 py-1.5 rounded-lg border border-hairline text-sm font-medium cursor-pointer transition-colors"
+                class="flex w-full sm:w-auto items-center justify-between sm:justify-start gap-2 px-3 py-1.5 rounded-xl sm:rounded-lg border border-hairline text-sm font-medium cursor-pointer transition-colors"
             >
                 <span class="flex items-center gap-2">
                     <span x-text="current.label" class="text-gray-500 dark:text-gray-400"></span>
@@ -42,7 +42,7 @@ const examples = [
                 x-show="open"
                 @click.outside="open = false"
                 x-transition
-                class="absolute right-0 mt-1 w-full sm:w-44 bg-white dark:bg-black border border-hairline rounded-lg shadow-md overflow-hidden z-10"
+                class="absolute right-0 mt-1 w-full sm:w-44 bg-white dark:bg-black border border-hairline rounded-xl sm:rounded-lg shadow-md overflow-hidden z-10"
             >
                 {examples.map(e => (
                     <button

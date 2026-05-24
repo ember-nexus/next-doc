@@ -13,7 +13,7 @@ const { sidebarItem, open } = Astro.props;
 ---
 
 <li>
-    <p>{sidebarItem.name}</p>
+    <p class="sidebar-group-title mt-3 px-3">{sidebarItem.name}</p>
     <ul>
         {sidebarItem.items.map((item) => {
             if (item.type === 'endpoint') {
