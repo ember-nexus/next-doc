@@ -1,0 +1,23 @@
+---
+import {getCollection, render} from 'astro:content';
+import Default from "../layouts/Default.astro";
+
+export async function getStaticPaths() {
+    const pages = await getCollection('pages');
+    return pages.map((page) => ({
+        params: { slug: page.data.slug },
+        props: { page },
+    }));
+}
+
+const { page } = Astro.props;
+const { Content } = await render(page);
+---
+
+<Default title={page.data.title}>
+    
+    <div class="prose dark:prose-invert">
+        <Content/>
+    </div>
+    
+</Default>
