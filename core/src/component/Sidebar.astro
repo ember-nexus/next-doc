@@ -3,10 +3,11 @@ import { Icon } from 'astro-icon/components';
 import {getEndpointsByVersion} from "../repository";
 import type {SidebarEndpointItemDto, SidebarGroupItemDto, SidebarItemDto, SidebarLinkItemDto} from "../type";
 import type {HttpMethod} from "../type";
-import {endpointsToSidebarItems} from "../util";
+import {buildSidebarPages, endpointsToSidebarItems} from "../util";
 import SidebarEndpointItem from "./SidebarEndpointItem.astro";
 import SidebarLinkItem from "./SidebarLinkItem.astro";
 import SidebarGroupItem from "./SidebarGroupItem.astro";
+import {getCollection} from "astro:content";
 
 interface Props {
     version: string;
@@ -14,7 +15,11 @@ interface Props {
 
 const { version } = Astro.props;
 const endpoints = await getEndpointsByVersion(version);
-const sidebarItems: SidebarItemDto[] = endpointsToSidebarItems(endpoints, version);
+const sidebarItems: SidebarItemDto[] = [
+    ...await buildSidebarPages(),
+    ...endpointsToSidebarItems(endpoints, version)
+];
+
 ---
 <aside
     id="primary-sidebar"

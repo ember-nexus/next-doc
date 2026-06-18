@@ -1,12 +1,13 @@
 ---
 import {getCollection, render} from 'astro:content';
 import Default from "../layouts/Default.astro";
+import {getRoutablePages} from "../util";
 
 export async function getStaticPaths() {
-    const pages = await getCollection('pages');
-    return pages.map((page) => ({
-        params: { slug: page.data.slug },
-        props: { page },
+    const pages = await getRoutablePages();
+    return pages.map((node) => ({
+        params: { slug: node.slug },
+        props: { page: node.entry! },
     }));
 }
 

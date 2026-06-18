@@ -1,7 +1,6 @@
 ---
 type: tutorial
 title: First steps for using Ember Nexus
-slug: tutorial/first-steps-for-using-ember-nexus
 ---
 
 ### Prerequisites
@@ -19,7 +18,7 @@ Execute the following curl command - just with the URL of your own Ember Nexus A
 
 You must choose the password - this will be your account's password going forward.
 
-```bash
+```bash frame="none"
 curl \
   -X POST \
   -H "Content-Type: application/json" \
@@ -37,7 +36,7 @@ The request should not return anything, unless an error happened.
 
 Then create a new API token, which is later included in all following requests:
 
-```bash
+```bash frame="none"
 curl \
   -X POST \
   -H "Content-Type: application/json" \
@@ -91,7 +90,7 @@ In Ember Nexus you have two options for creating a new element:
 
 As we do not yet have a top level element, we create one first:
 
-```bash
+```bash frame="none"
 curl \
   -X POST \
   -v \
@@ -126,7 +125,7 @@ Note that the response headers include a `location`-header: This absolute path i
 
 The just created element can be retrieved in a single API call:
 
-```bash
+```bash frame="none"
 curl \
   -H "Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP" \
   https://api.localhost/4030e226-086d-41c8-95dd-b4080af9d883 | jq
@@ -152,7 +151,7 @@ For updating an element, you will usually chose the `PATCH` operation - all prov
 
 **Important**: As only the data-attribute of an element can be modified after creation, the update-requests skip the element-data-wrapper. The full upload payload will be used as the new data object.
 
-```bash
+```bash frame="none"
 curl \
   -X PATCH \
   -H "Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP" \
@@ -163,7 +162,7 @@ curl \
 
 After execution, you can read the new data object back:
 
-```bash
+```bash frame="none"
 curl \
   -H "Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP" \
   https://api.localhost/4030e226-086d-41c8-95dd-b4080af9d883 | jq
@@ -187,7 +186,7 @@ Which will show, that the `hello`-property no longer shows `"world :D"`, but ins
 
 For replacing an element's data, use the `PUT` operation instead of `PATCH`:
 
-```bash
+```bash frame="none"
 curl \
   -X PUT \
   -H "Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP" \
@@ -198,7 +197,7 @@ curl \
 
 After executing, you can then again query the current representation of the element:
 
-```bash
+```bash frame="none"
 curl \
   -H "Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP" \
   https://api.localhost/4030e226-086d-41c8-95dd-b4080af9d883 | jq
@@ -224,7 +223,7 @@ Note: Some properties like `created` can not be replaced or be set back.
 
 Once you no longer need an element, you can delete it using the `DELETE` method:
 
-```bash
+```bash frame="none"
 curl \
   -X DELETE \
   -H "Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP" \
@@ -233,7 +232,7 @@ curl \
 
 When you now query the API for the deleted element, you will receive an 404 element not found problem response:
 
-```bash
+```bash frame="none"
 curl \
   -H "Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP" \
   https://api.localhost/4030e226-086d-41c8-95dd-b4080af9d883 | jq
@@ -256,7 +255,7 @@ In general the interactions with relations is the same as with nodes - you only 
 
 Before we can create such a relation, we need to create two nodes first:
 
-```bash
+```bash frame="none"
 curl \
   -X POST \
   -v \
@@ -272,7 +271,7 @@ curl \
 
 And the second node:
 
-```bash
+```bash frame="none"
 curl \
   -X POST \
   -v \
@@ -288,7 +287,7 @@ curl \
 
 Then you can create the relation:
 
-```bash
+```bash frame="none"
 curl \
   -X POST \
   -v \
@@ -304,7 +303,7 @@ curl \
 
 Finally you can retrieve the relation's representation using the already explained `GET` method:
 
-```bash
+```bash frame="none"
 curl \
   -H "Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP" \
   https://api.localhost/74c7f6a9-1439-4252-8ca0-4ec4e5f36029 | jq
