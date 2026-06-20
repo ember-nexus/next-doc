@@ -3,11 +3,13 @@ import type {HttpMethod} from "../type";
 import { getCollection, type CollectionEntry } from 'astro:content';
 
 
-export function endpointsToSidebarItems(endpoints: Endpoint[], version: string): SidebarItemDto[] {
+export async function endpointsToSidebarItems(): Promise<SidebarItemDto[]> {
     const groups = new Map<string, SidebarEndpointItemDto[]>();
 
+    const endpoints = await getCollection('endpoints');
+    
     for (const e of endpoints) {
-        const url = `/${version}/${e.group}/${e.endpoint}`;
+        const url = `/${e.group}/${e.endpoint}`;
 
         const item: SidebarEndpointItemDto = {
             type: 'endpoint',

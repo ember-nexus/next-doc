@@ -7,7 +7,7 @@ interface Props {
 }
 
 const {sidebarItem, active} = Astro.props;
-const method = sidebarItem?.method.toLowerCase();
+const method = sidebarItem?.method?.toLowerCase() ?? '-';
 ---
 
 {sidebarItem && (

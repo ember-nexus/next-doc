@@ -1,8 +1,6 @@
 import { defineCollection, z } from 'astro:content';
 
 
-import { endpointLoader } from './loaders/endpointLoader';
-import {versionLoader} from "./loaders/versionLoader";
 import { glob } from 'astro/loaders';
 
 const pages = defineCollection({
@@ -15,12 +13,9 @@ const pages = defineCollection({
 });
 
 const endpoints = defineCollection({
-    loader: endpointLoader(),
+    loader: glob({ base: './src/data/endpoints', pattern: '**/*.{md,mdx}' }),
     schema: z.object({
         endpoint: z.string(),
-        release_version: z.string(),
-        endpoint_version: z.string(),
-        version: z.string(),
         group: z.string(),
         method: z.string(),
         endpointUrl: z.string(),
@@ -28,11 +23,5 @@ const endpoints = defineCollection({
     }),
 });
 
-const versions = defineCollection({
-    loader: versionLoader(),
-    schema: z.object({
-        release_version: z.string(),
-    }),
-});
 
-export const collections = { pages, endpoints, versions };
+export const collections = { pages, endpoints };

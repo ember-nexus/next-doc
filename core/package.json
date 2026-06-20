@@ -15,7 +15,6 @@
     "@astrojs/mdx": "^5.0.6",
     "@astrojs/sitemap": "^3.7.2",
     "@awesome.me/webawesome": "^3.7.0",
-    "@duckdb/node-api": "1.5.2-r.1",
     "@lucide/astro": "^0.553.0",
     "@tailwindcss/postcss": "^4.3.0",
     "@tailwindcss/typography": "^0.5.19",
@@ -54,7 +53,6 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
     "@playwright/test": "^1.60.0",
-    "@types/node": "^25.8.0",
-    "daisyui": "^5.5.19"
+    "@types/node": "^25.8.0"
   }
 }

@@ -1,6 +1,5 @@
 ---
 import { Icon } from 'astro-icon/components';
-import {getEndpointsByVersion} from "../repository";
 import type {SidebarEndpointItemDto, SidebarGroupItemDto, SidebarItemDto, SidebarLinkItemDto} from "../type";
 import type {HttpMethod} from "../type";
 import {buildSidebarPages, endpointsToSidebarItems} from "../util";
@@ -14,10 +13,13 @@ interface Props {
 }
 
 const { version } = Astro.props;
-const endpoints = await getEndpointsByVersion(version);
+
+const items = await endpointsToSidebarItems();
+console.log(items);
+
 const sidebarItems: SidebarItemDto[] = [
     ...await buildSidebarPages(),
-    ...endpointsToSidebarItems(endpoints, version)
+    ...items
 ];
 
 ---
