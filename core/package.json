@@ -10,6 +10,7 @@
     "test": "PW_TEST_CONNECT_WS_ENDPOINT=ws://playwright-browser:3000/ yarn playwright test"
   },
   "dependencies": {
+    "@antv/g6": "^5.1.1",
     "@apidevtools/swagger-parser": "^12.1.0",
     "@astrojs/alpinejs": "^0.5.0",
     "@astrojs/mdx": "^5.0.6",
@@ -33,6 +34,7 @@
     "fast-glob": "^3.3.3",
     "glob": "^13.0.6",
     "httpsnippet": "^3.0.10",
+    "lit": "^3.3.3",
     "lodash": "^4.18.1",
     "lucide": "^1.16.0",
     "luxon": "^3.7.2",

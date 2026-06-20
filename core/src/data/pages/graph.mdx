@@ -1,0 +1,22 @@
+---
+type: tutorial
+title: Graph
+---
+
+Before graph
+
+<g6-graph style="height:300px">
+    <script type="application/json">{`
+    {
+      "nodes": [
+        { "id": "user1", "data": { "label": "User" } },
+        { "id": "data1", "data": { "label": "Data" } }
+      ],
+      "edges": [
+        { "source": "user1", "target": "data1", "data": { "label": "OWNS" } }
+      ]
+    }
+  `}</script>
+</g6-graph>
+
+After graph
