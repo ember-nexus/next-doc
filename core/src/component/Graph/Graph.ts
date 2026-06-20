@@ -2,6 +2,8 @@ import { LitElement, html, css } from 'lit';
 import {Graph} from '@antv/g6';
 import type {EdgeOptions} from "@antv/g6/src/spec/element/edge.ts";
 import type {NodeOptions} from "@antv/g6/src/spec/element/node.ts";
+import type {GraphOptions} from "@antv/g6/src/spec";
+import {iconNodeGeometry} from "./IconNode.ts";
 
 export class G6Graph extends LitElement {
     static styles = css`
@@ -22,17 +24,29 @@ export class G6Graph extends LitElement {
             container: this.renderRoot.querySelector('.canvas') as HTMLElement,
             data: data,
             autoFit: 'center',
+            zoomRange: [0.25, 1.5],
+            padding: 20,
             layout: {
                 type: 'antv-dagre',
                 rankdir: 'LR',
-                nodesep: 40,
+                nodesep: 60,
                 ranksep: 60
             },
             node: {
+                type: 'icon-node',
                 style: {
+                    fill: '#1f6feb',                                  // was cfg.style.fill
                     labelText: (d) => d.data?.label ?? d.id,
-                    labelPlacement: 'center',
-                    labelFill: '#fff',
+                    labelFill: '#fff',                                // was cfg.labelCfg.style.fill
+                    labelFontSize: 12,                                // was cfg.labelCfg.style.fontSize
+                    fontFamily: 'Fira Code',
+                    iconType: (d) => d.data?.icon ?? 'data',          // was cfg.icon
+                    iconSize: 24,
+                    // keep this in sync with the node's own measurement:
+                    size: (d) => 2 * iconNodeGeometry({
+                        labelText: d.data?.label ?? d.id,
+                        fontSize: 12, fontFamily: 'Fira Code', iconSize: 24,
+                    }).outerCircleRadius,
                 },
             } as NodeOptions,
             edge: {
@@ -42,7 +56,7 @@ export class G6Graph extends LitElement {
                 },
             } as EdgeOptions,
             behaviors: ['drag-canvas', 'zoom-canvas', 'drag-element'],
-        });
+        } satisfies GraphOptions);
         this._graph.render();
     }
 
