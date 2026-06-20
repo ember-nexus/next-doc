@@ -1,5 +1,5 @@
 import { Circle, register, ExtensionCategory } from '@antv/g6';
-import {getIcon} from './iconUtil.ts';
+import { getIcon } from './iconUtil.ts';
 
 // v4's getTextSize(group, ...) needed a G canvas group, which you don't have at
 // this point in v5. Measure with an offscreen 2D context instead (renderer-agnostic).
@@ -50,6 +50,7 @@ class IconNode extends Circle {
 
         // Let Circle draw the key shape (sized to the text), plus ports/states/halo.
         // size = 2*r; label:false suppresses the built-in label so it doesn't double up.
+        // `halo` flows through from attributes, so a halo shape only exists when highlight is on.
         super.render({ ...attributes, size: geo.outerCircleRadius * 2, label: false }, container);
 
         // The text (was group.addShape('text', ...)).
@@ -72,6 +73,19 @@ class IconNode extends Circle {
             height: geo.iconSize,
             src: getIcon(attributes.iconType ?? 'data', `${geo.iconSize}px`, attributes.labelFill ?? '#fff'),
         }, container);
+    }
+
+    // Pulsating highlight. The halo sub-shape only exists when `halo` is truthy,
+    // which Graph.ts sets per-node from `data.highlight`, so its presence is the signal.
+    onCreate() {
+        super.onCreate?.();
+        const halo = this.shapeMap?.halo;
+        if (halo && this.attributes.highlight) {
+            halo.animate(
+                [{ lineWidth: 0 }, { lineWidth: 12 }],
+                { duration: 1000, iterations: Infinity, direction: 'alternate' },
+            );
+        }
     }
 }
 

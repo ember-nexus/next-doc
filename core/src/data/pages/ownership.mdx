@@ -1,0 +1,20 @@
+---
+type: tutorial
+title: Ownership
+---
+
+Users can own other elements directly:
+
+<g6-graph style="height:300px">
+    <script type="application/json">{`
+    {
+        "elements": [
+            { "id": "user1", "type": "User", "data": { "name": "User" }},
+            { "id": "data1", "type": "Data", "data": { "name": "Data" }},
+            { "id": "owns1", "type": "OWNS", "start": "user1", "end": "data1" }
+        ]
+    }
+  `}</script>
+</g6-graph>
+
+After graph
