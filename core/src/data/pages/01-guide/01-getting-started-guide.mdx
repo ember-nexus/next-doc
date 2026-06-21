@@ -85,8 +85,8 @@ CRUD is always being used in the context of some data - which in Ember Nexus' ca
 
 In Ember Nexus you have two options for creating a new element:
 
-- POST `/`: A post request against `/`, i.e. root. This endpoint is required for creating new top level elements, as well as relations in general.
-- POST `/<id>`: A post request against an existing node, referenced by its id. This endpoint can only be used to create new nodes, which are automatically stored as child nodes from the referenced node. This endpoint should be preferred for organizational reasons, when possible. See tutorial [using relations to organize data](http://todo-link) for details.
+- `POST /`: A post request against `/`, i.e. root. This endpoint is required for creating new top level elements, as well as relations in general.
+- `POST /<id>`: A post request against an existing node, referenced by its id. This endpoint can only be used to create new nodes, which are automatically stored as child nodes from the referenced node. This endpoint should be preferred for organizational reasons, when possible. See tutorial [using relations to organize data](http://todo-link) for details.
 
 As we do not yet have a top level element, we create one first:
 
@@ -123,7 +123,7 @@ Note that the response headers include a `location`-header: This absolute path i
 
 ### Retrieving an element
 
-The just created element can be retrieved in a single API call:
+The just created element can be retrieved in a single API call using `GET`:
 
 ```bash frame="none"
 curl \

@@ -63,6 +63,40 @@ body {
     h1, h2, h3, h4, h5, h6 {
         font-family: "Qanelas Soft Custom";
     }
+    g6-graph {
+        margin-left: -10rem;
+        margin-right: -10rem;
+        width: calc(100% + 20rem);
+    }
+    .expressive-code figure {
+        box-shadow: none !important;
+        pre {
+            background: #fafafa;
+        }
+    }
+
+    .expressive-code + .expressive-code {
+        figure {
+            border-top: 1px solid #e5e7eb;
+            border-top-left-radius: 0 !important;
+            border-top-right-radius: 0 !important;
+            pre {
+                border-top-left-radius: 0 !important;
+                border-top-right-radius: 0 !important;
+            }
+        }
+    }
+
+    .expressive-code:has(+ .expressive-code) {
+        figure {
+            border-bottom-left-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+            pre {
+                border-bottom-left-radius: 0 !important;
+                border-bottom-right-radius: 0 !important;
+            }
+        }
+    }
 }
 
 .api-block-title,
@@ -99,6 +133,16 @@ body {
     font-family: 'Fira Code';
     src: url("/fonts/fira-code-medium.woff2") format("woff2"),
     url("/fonts/fira-code-medium.woff") format("woff");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Fira Code';
+    src: url("/fonts/fira-code-semibold.woff2") format("woff2"),
+    url("/fonts/fira-code-semibold.woff") format("woff");
+    font-weight: 600;
     font-style: normal;
     font-display: swap;
 }
@@ -349,6 +393,56 @@ body {
     --method-patch:  #C07900;
     --method-delete: #DE5E56;
     --method-head:   #7E57C2;
+}
+
+code:not(pre > code) {
+    padding: 0.25em;
+    border-radius: 0.5em;
+    background-color: #f4f4f5;
+}
+
+code span[data-method] {
+    padding: 0.25em;
+    border-top-left-radius: 0.5em;
+    border-bottom-left-radius: 0.5em;
+    margin-left: -0.25em;
+    margin-right: -0.25em;
+}
+
+code[data-method="GET"],
+code span[data-method="GET"] {
+    color: var(--method-get);
+    background-color: color-mix(in srgb, var(--method-get) 10%, white);
+}
+
+code[data-method="POST"],
+code span[data-method="POST"] {
+    color: var(--method-post);
+    background-color: color-mix(in srgb, var(--method-post) 10%, white);
+}
+
+code[data-method="PUT"],
+code span[data-method="PUT"] {
+    color: var(--method-put);
+    background-color: color-mix(in srgb, var(--method-put) 10%, white);
+}
+
+code[data-method="PATCH"],
+code span[data-method="PATCH"] {
+    color: var(--method-patch);
+    background-color: color-mix(in srgb, var(--method-patch) 10%, white);
+}
+
+code[data-method="DELETE"],
+code span[data-method="DELETE"] {
+    color: var(--method-delete);
+    background-color: color-mix(in srgb, var(--method-delete) 10%, white);
+}
+
+code[data-method="HEAD"],
+code span[data-method="HEAD"] {
+    color: var(--method-head);
+    background-color: color-mix(in srgb, var(--method-head) 10%, white);
 }
 
 

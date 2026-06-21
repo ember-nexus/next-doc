@@ -36,14 +36,24 @@ export class G6Graph extends LitElement {
         this._graph = new Graph({
             container: this.renderRoot.querySelector('.canvas') as HTMLElement,
             data,
-            autoFit: 'center',
+            autoFit: {
+                type: 'view',
+                options: {
+                    when: 'overflow'
+                },
+                animation: false
+            },
+            autoResize: true,
             zoomRange: [0.25, 1.5],
             padding: 20,
             layout: {
+                // type: 'antv-dagre',
                 type: 'antv-dagre',
                 rankdir: 'LR',
-                nodesep: 60,
-                ranksep: 60
+                nodesep: 30,
+                ranksep: 80,
+                controlPoints: true,
+                nodeSize: 120
             },
             node: {
                 type: 'icon-node',
@@ -55,8 +65,9 @@ export class G6Graph extends LitElement {
 
                     labelText: (d) => d.data?.name ?? d.data?.label ?? d.id,
                     labelFill: '#fff',
-                    labelFontSize: 12,
-                    fontFamily: 'Fira Code',
+                    labelFontSize: 14,
+                    labelFontWeight: 600,
+                    labelFontFamily: 'Fira Code',
 
                     // highlight -> breathing halo (animated in IconNode.onCreate)
                     highlight: (d) => !!d.data?.highlight,
@@ -67,18 +78,26 @@ export class G6Graph extends LitElement {
                     // keep this in sync with the node's own measurement:
                     size: (d) => 2 * iconNodeGeometry({
                         labelText: d.data?.name ?? d.data?.label ?? d.id,
-                        fontSize: 12, fontFamily: 'Fira Code', iconSize: 24,
+                        fontSize: 14, fontFamily: 'Fira Code', iconSize: 24,
                     }).outerCircleRadius,
                 },
             } as NodeOptions,
             edge: {
+                type: "polyline",
                 style: {
                     endArrow: true,
+                    endArrowType: 'triangle',
                     stroke: '#8b949e',
-                    labelText: (d) => d.data?.name ?? d.data?.label ?? '',
-                    labelFill: '#8b949e',
-                    labelFontSize: 11,
+                    lineWidth: 2,
+                    labelText: (d) => d.data?.name ?? d.data?.type ?? '',
+                    labelFill: '#3f3f46',
+                    labelFontSize: 14,
+                    labelFontWeight: 600,
                     labelFontFamily: 'Fira Code',
+                    radius: 20,
+                    labelBackground: true,
+                    labelPadding: 5,
+                    labelBackgroundFill: 'rgba(255, 255, 255, 0.9)',
                 },
             } as EdgeOptions,
             behaviors: ['drag-canvas', 'zoom-canvas', 'drag-element'],

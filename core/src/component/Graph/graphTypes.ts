@@ -40,16 +40,18 @@ export interface TypeStyle {
  * Add new categories here; unknown types fall back to DEFAULT_TYPE.
  */
 export const TYPE_STYLES: Record<string, TypeStyle> = {
-    User:     { color: '#3875f6', icon: 'user' },
-    Group:    { color: '#16a34a', icon: 'group' },
-    Data:     { color: '#1f6feb', icon: 'data' },
-    Token:    { color: '#0ea5a4', icon: 'token' },
-    Collection:    { color: '#0ea5a4', icon: 'collection' },
-    Search:    { color: '#0ea5a4', icon: 'search' },
-    File:    { color: '#0ea5a4', icon: 'file' },
+    User: {color: '#ef4444', icon: 'user'},
+    Group: {color: '#f59e0b', icon: 'group'},
+    Token: {color: '#d946ef', icon: 'token'},
+
+    Search: {color: '#6366f1', icon: 'search'},
+
+    Data: {color: '#2563eb', icon: 'data'},
+    Collection: {color: '#16a34a', icon: 'collection'},
+    File: {color: '#22d3ee', icon: 'file'},
 };
 
-export const DEFAULT_TYPE: TypeStyle = { color: '#6b7280', icon: 'data' };
+export const DEFAULT_TYPE: TypeStyle = {color: '#6b7280', icon: 'data'};
 
 export function typeStyle(type?: string): TypeStyle {
     return (type && TYPE_STYLES[type]) || DEFAULT_TYPE;
@@ -70,7 +72,7 @@ function firstDefined<T>(...vals: (T | undefined)[]): T | undefined {
 export function elementsToGraphData(payload: ElementsPayload): { nodes: any[]; edges: any[] } {
     // If someone still passes raw nodes/edges, pass them straight through.
     if (!payload?.elements && (payload?.nodes || payload?.edges)) {
-        return { nodes: payload.nodes ?? [], edges: payload.edges ?? [] };
+        return {nodes: payload.nodes ?? [], edges: payload.edges ?? []};
     }
 
     const elements = payload?.elements ?? [];
@@ -87,11 +89,11 @@ export function elementsToGraphData(payload: ElementsPayload): { nodes: any[]; e
         };
 
         if (isEdge(el)) {
-            edges.push({ id: el.id, source: el.start, target: el.end, data });
+            edges.push({id: el.id, source: el.start, target: el.end, data});
         } else {
-            nodes.push({ id: el.id, data });
+            nodes.push({id: el.id, data});
         }
     }
 
-    return { nodes, edges };
+    return {nodes, edges};
 }
