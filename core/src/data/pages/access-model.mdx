@@ -221,7 +221,7 @@ Users always have full access to their own user element.
 
 Permission lists, i.e. which users and groups have access to each element, are calculated and cached in the background.
 
-Adding new users to a group does only update a few cache entries internally, while giving an user direct access to a big tree of elements requires a somewhat expensive re-calculation of the whole tree. While this is done asynchronously in the background, it should be avoided.
+Adding new users to a group does only update a few cache entries internally, while giving a user direct access to a big tree of elements requires a somewhat expensive re-calculation of the whole tree. While this is done asynchronously in the background, it should be avoided.
 
 Therefore, you should always use a group as a proxy object for bigger trees you might want to share with others in the future.
 

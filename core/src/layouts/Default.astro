@@ -6,10 +6,11 @@ import SidebarToggle from '../component/SidebarToggle.astro'
 interface Props {
     title: string
     description?: string
-    version?: string
+    version?: string,
+    headings?: { depth: number; slug: string; text: string }[]
 }
 
-const { title, description = 'Ember Nexus API', version = 'latest' } = Astro.props
+const { title, description = 'Ember Nexus API', version = 'latest', headings = [] } = Astro.props
 ---
 
 <!doctype html>
@@ -36,6 +37,19 @@ const { title, description = 'Ember Nexus API', version = 'latest' } = Astro.pro
         <SidebarToggle icon="panel-left" />
     </header>
 
+    <nav>
+        <ul>
+            {headings
+                .filter(h => h.depth <= 3) // only h1–h3
+      .map(h => (
+                    <li style={`margin-left: ${(h.depth - 1)}rem`}>
+                        <a href={`#${h.slug}`}>{h.text}</a>
+                    </li>
+                ))
+            }
+        </ul>
+    </nav>
+    
     <main class="mx-auto w-full max-w-screen-xl flex-1 px-5 py-6">
         <slot />
     </main>

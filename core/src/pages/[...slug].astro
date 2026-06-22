@@ -12,10 +12,10 @@ export async function getStaticPaths() {
 }
 
 const { page } = Astro.props;
-const { Content } = await render(page);
+const { Content, headings } = await render(page);
 ---
 
-<Default title={page.data.title}>
+<Default title={page.data.title} headings={headings}>
     
     <div class="prose dark:prose-invert">
         <Content/>

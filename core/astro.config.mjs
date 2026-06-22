@@ -21,10 +21,13 @@ export default defineConfig({
     host: true,
     allowedHosts: ['localhost', 'astro', 'ember-nexus-org-astro']
   },
-  site: 'https://soerenklein.dev',
+  site: 'https://api.ember-nexus.dev',
   integrations: [expressiveCode(
       {
         themes: ['min-dark', 'min-light'],
+        defaultProps: {
+          frame: 'none',
+        }
       }
   ), mdx(), sitemap(), alpinejs(), icon()],
   markdown: {

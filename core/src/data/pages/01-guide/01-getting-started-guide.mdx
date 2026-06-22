@@ -10,7 +10,7 @@ You should have access to an Ember Nexus API instance. If not, you can read the 
 
 ### Preparation: Auth
 
-Ember Nexus can be used without an user account, but in most cases, you would want to store your own data in a private and secure manner. In this case, you will need to create an user account first.
+Ember Nexus can be used without a user account, but in most cases, you would want to store your own data in a private and secure manner. In this case, you will need to create a user account first.
 
 #### Creating a new user account
 
@@ -18,7 +18,7 @@ Execute the following curl command - just with the URL of your own Ember Nexus A
 
 You must choose the password - this will be your account's password going forward.
 
-```bash frame="none"
+```bash
 curl \
   -X POST \
   -H "Content-Type: application/json" \
@@ -36,7 +36,7 @@ The request should not return anything, unless an error happened.
 
 Then create a new API token, which is later included in all following requests:
 
-```bash frame="none"
+```bash
 curl \
   -X POST \
   -H "Content-Type: application/json" \
@@ -86,11 +86,11 @@ CRUD is always being used in the context of some data - which in Ember Nexus' ca
 In Ember Nexus you have two options for creating a new element:
 
 - `POST /`: A post request against `/`, i.e. root. This endpoint is required for creating new top level elements, as well as relations in general.
-- `POST /<id>`: A post request against an existing node, referenced by its id. This endpoint can only be used to create new nodes, which are automatically stored as child nodes from the referenced node. This endpoint should be preferred for organizational reasons, when possible. See tutorial [using relations to organize data](http://todo-link) for details.
+- `POST /<id>`: A post request against an existing node, referenced by its id. This endpoint can only be used to create new nodes, which are automatically stored as child nodes of the referenced node. This endpoint should be preferred for organizational reasons, when possible. See tutorial [using relations to organize data](http://todo-link) for details.
 
 As we do not yet have a top level element, we create one first:
 
-```bash frame="none"
+```bash
 curl \
   -X POST \
   -v \
@@ -102,7 +102,7 @@ curl \
 
 Which will return a response like this:
 
-```txt
+```txt /location:.*/
 < HTTP/2 201
 < access-control-allow-headers: Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method
 < access-control-allow-methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
@@ -125,7 +125,7 @@ Note that the response headers include a `location`-header: This absolute path i
 
 The just created element can be retrieved in a single API call using `GET`:
 
-```bash frame="none"
+```bash
 curl \
   -H "Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP" \
   https://api.localhost/4030e226-086d-41c8-95dd-b4080af9d883 | jq
@@ -151,7 +151,7 @@ For updating an element, you will usually chose the `PATCH` operation - all prov
 
 **Important**: As only the data-attribute of an element can be modified after creation, the update-requests skip the element-data-wrapper. The full upload payload will be used as the new data object.
 
-```bash frame="none"
+```bash
 curl \
   -X PATCH \
   -H "Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP" \
@@ -162,7 +162,7 @@ curl \
 
 After execution, you can read the new data object back:
 
-```bash frame="none"
+```bash
 curl \
   -H "Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP" \
   https://api.localhost/4030e226-086d-41c8-95dd-b4080af9d883 | jq
@@ -170,7 +170,7 @@ curl \
 
 Which will show, that the `hello`-property no longer shows `"world :D"`, but instead `"sea :]"`:
 
-```json
+```json /.hello.: .sea :]./
 {
   "type": "Data",
   "id": "4030e226-086d-41c8-95dd-b4080af9d883",
@@ -186,7 +186,7 @@ Which will show, that the `hello`-property no longer shows `"world :D"`, but ins
 
 For replacing an element's data, use the `PUT` operation instead of `PATCH`:
 
-```bash frame="none"
+```bash
 curl \
   -X PUT \
   -H "Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP" \
@@ -197,7 +197,7 @@ curl \
 
 After executing, you can then again query the current representation of the element:
 
-```bash frame="none"
+```bash
 curl \
   -H "Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP" \
   https://api.localhost/4030e226-086d-41c8-95dd-b4080af9d883 | jq
@@ -205,7 +205,7 @@ curl \
 
 The response will now not include `hello`, but instead the new `hi`-property:
 
-```json
+```json /.hi.: .world :D./
 {
   "type": "Data",
   "id": "4030e226-086d-41c8-95dd-b4080af9d883",
@@ -217,13 +217,13 @@ The response will now not include `hello`, but instead the new `hi`-property:
 }
 ```
 
-Note: Some properties like `created` can not be replaced or be set back.
+**Note**: Some properties like `created` can not be replaced or be set back.
 
 ### Deleting an element
 
 Once you no longer need an element, you can delete it using the `DELETE` method:
 
-```bash frame="none"
+```bash
 curl \
   -X DELETE \
   -H "Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP" \
@@ -232,7 +232,7 @@ curl \
 
 When you now query the API for the deleted element, you will receive an 404 element not found problem response:
 
-```bash frame="none"
+```bash
 curl \
   -H "Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP" \
   https://api.localhost/4030e226-086d-41c8-95dd-b4080af9d883 | jq
@@ -247,7 +247,7 @@ curl \
 }
 ```
 
-Note: If you delete a node, then all relations connected to the node are also being deleted.
+**Note**: If you delete a node, then all relations connected to the node are also being deleted.
 
 ## Relation examples
 
@@ -255,7 +255,7 @@ In general the interactions with relations is the same as with nodes - you only 
 
 Before we can create such a relation, we need to create two nodes first:
 
-```bash frame="none"
+```bash
 curl \
   -X POST \
   -v \
@@ -271,7 +271,7 @@ curl \
 
 And the second node:
 
-```bash frame="none"
+```bash
 curl \
   -X POST \
   -v \
@@ -287,7 +287,7 @@ curl \
 
 Then you can create the relation:
 
-```bash frame="none"
+```bash
 curl \
   -X POST \
   -v \
@@ -301,9 +301,9 @@ curl \
 < location: /74c7f6a9-1439-4252-8ca0-4ec4e5f36029
 ```
 
-Finally you can retrieve the relation's representation using the already explained `GET` method:
+Finally, you can retrieve the relation's representation using the already explained `GET` method:
 
-```bash frame="none"
+```bash
 curl \
   -H "Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP" \
   https://api.localhost/74c7f6a9-1439-4252-8ca0-4ec4e5f36029 | jq
