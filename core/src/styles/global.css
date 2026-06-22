@@ -95,6 +95,23 @@ body {
     }
 }
 
+
+@media (prefers-color-scheme: dark) {
+    .prose {
+        .expressive-code figure {
+            pre {
+                background: #18181b;
+            }
+        }
+
+        .expressive-code + .expressive-code {
+            figure {
+                border-top: 1px solid #27272a;
+            }
+        }
+    }
+}
+
 .api-block-title,
 .sidebar-group-title {
     font-family: "Qanelas Soft Custom";
@@ -405,6 +422,12 @@ code span[data-method] {
     margin-right: -0.25em;
 }
 
+@media (prefers-color-scheme: dark) {
+    code:not(pre > code) {
+        background-color: #27272a;
+    }
+}
+
 code[data-method="GET"],
 code span[data-method="GET"] {
     color: var(--method-get);
@@ -441,6 +464,44 @@ code span[data-method="HEAD"] {
     background-color: color-mix(in srgb, var(--method-head) 10%, white);
 }
 
+@media (prefers-color-scheme: dark) {
+
+    code[data-method="GET"],
+    code span[data-method="GET"] {
+        color: var(--method-get);
+        background-color: color-mix(in srgb, var(--method-get) 10%, #111827);
+    }
+
+    code[data-method="POST"],
+    code span[data-method="POST"] {
+        color: var(--method-post);
+        background-color: color-mix(in srgb, var(--method-post) 10%, #111827);
+    }
+
+    code[data-method="PUT"],
+    code span[data-method="PUT"] {
+        color: var(--method-put);
+        background-color: color-mix(in srgb, var(--method-put) 10%, #111827);
+    }
+
+    code[data-method="PATCH"],
+    code span[data-method="PATCH"] {
+        color: var(--method-patch);
+        background-color: color-mix(in srgb, var(--method-patch) 10%, #111827);
+    }
+
+    code[data-method="DELETE"],
+    code span[data-method="DELETE"] {
+        color: var(--method-delete);
+        background-color: color-mix(in srgb, var(--method-delete) 10%, #111827);
+    }
+
+    code[data-method="HEAD"],
+    code span[data-method="HEAD"] {
+        color: var(--method-head);
+        background-color: color-mix(in srgb, var(--method-head) 10%, #111827);
+    }
+}
 
 
 

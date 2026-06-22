@@ -25,6 +25,7 @@ export default defineConfig({
   integrations: [expressiveCode(
       {
         themes: ['min-dark', 'min-light'],
+        useDarkModeMediaQuery: true,
         defaultProps: {
           frame: 'none',
         }
