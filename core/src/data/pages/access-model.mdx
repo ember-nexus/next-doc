@@ -5,7 +5,7 @@ title: Access model
 
 # Access model
 
-<g6-graph style="height:500px">
+<g6-graph >
     <script type="application/json">{`
     {
         "elements": [
@@ -28,7 +28,7 @@ specific elements**.
 These permissions are **applied recursively**, i.e. if you own some element, then you also own all the element's
 children:
 
-<g6-graph style="height:300px">
+<g6-graph >
     <script type="application/json">{`
     {
         "elements": [
@@ -56,7 +56,7 @@ For a user being able to interact with some element at all, an access path betwe
 If no path can be found, or the element to be accessed is completely isolated, than the API responds to the user as if
 the element does not exist (404 error codes etc.):
 
-<g6-graph style="height:300px" direction="TD" >
+<g6-graph direction="TD" >
     <script type="application/json">{`
     {
         "elements": [
@@ -70,7 +70,7 @@ the element does not exist (404 error codes etc.):
 Within a single specific path, the lowest overall access wins, e.g. in the following example `HAS_READ_ACCESS` is the
 lowest common access permission across the path, therefore the user only has read access:
 
-<g6-graph style="height:300px">
+<g6-graph >
     <script type="application/json">{`
     {
         "elements": [
@@ -87,7 +87,7 @@ lowest common access permission across the path, therefore the user only has rea
 When multiple parallel paths exist, the path with the highest access wins. In the following example, a full `OWNS`-path
 exists, therefore lower access operations are ignored:
 
-<g6-graph style="height:300px">
+<g6-graph >
     <script type="application/json">{`
     {
         "elements": [
@@ -107,7 +107,7 @@ exists, therefore lower access operations are ignored:
 
 Nodes can be directly owned, as `OWNS`-relations can directly point to them:
 
-<g6-graph style="height:300px">
+<g6-graph >
     <script type="application/json">{`
     {
         "elements": [
@@ -127,7 +127,7 @@ Instead, a relation is "owned", when the user owns the relation's start and end 
 In the following example, the user has `OWNS`-access to both the start and end nodes, and therefore he also has
 `OWNS`-access to the `RELATION`:
 
-<g6-graph style="height:300px">
+<g6-graph >
     <script type="application/json">{`
     {
         "elements": [
@@ -153,7 +153,7 @@ Instead of giving many users direct access to some element, a group can be used 
 
 This will look then like this:
 
-<g6-graph style="height:450px">
+<g6-graph >
     <script type="application/json">{`
     {
         "elements": [
@@ -171,7 +171,7 @@ This will look then like this:
 
 To model more complex situations, a group can also be part of another group:
 
-<g6-graph style="height:300px">
+<g6-graph >
     <script type="application/json">{`
     {
         "elements": [
