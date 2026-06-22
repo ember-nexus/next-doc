@@ -1,0 +1,122 @@
+/* ─── Content Grid ─────────────────────────────────────────────────────────── *
+ *
+ *  Desktop column anatomy:
+ *
+ *  | 1fr | breakout-pad | main (max 65ch) | breakout-pad | gap | toc | 1fr |
+ *
+ *  Named grid lines:
+ *    full-start / full-end             → edge to edge
+ *    breakout-start / breakout-end     → main + breakout-pad on each side
+ *    main-start / main-end             → prose column, max 65ch, centered
+ *
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+.content-grid {
+    --breakout-pad: 8ch;
+    --main-width:   65ch;
+    --toc-gap:      1.5rem;
+    --toc-width:    20ch;
+
+    display: grid;
+    grid-template-columns:
+        [full-start]
+        1fr
+        [breakout-start]
+        var(--breakout-pad)
+        [main-start]
+        minmax(0, var(--main-width))
+        [main-end]
+        var(--breakout-pad)
+        [breakout-end]
+        var(--toc-gap)
+        [toc-start]
+        var(--toc-width)
+        [toc-end]
+        1fr
+        [full-end];
+
+    /* All direct children default to the main column */
+    & > * {
+        grid-column: main;
+    }
+
+    padding-block: 1.5rem;
+    row-gap: 1.5rem;
+}
+
+/* ─── Column placement utilities ───────────────────────────────────────────── */
+
+.col-main     { grid-column: main; }
+.col-breakout { grid-column: breakout; }
+.col-full     { grid-column: full; }
+
+/* ─── ToC sidebar ───────────────────────────────────────────────────────────── */
+
+.toc-sidebar {
+    grid-column: toc-start / toc-end;  /* explicitly in toc column, right-aligned */
+    grid-row: 1 / -1;
+    align-self: start;
+    position: sticky;
+    top: 1rem;
+}
+
+.toc-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.8rem;
+    line-height: 1.6;
+}
+
+.toc-nav a {
+    color: inherit;
+    text-decoration: none;
+    opacity: 0.6;
+    display: block;
+    padding-block: 0.1rem;
+    transition: opacity 0.15s ease;
+}
+
+.toc-nav a:hover {
+    opacity: 1;
+}
+
+/* ─── Prose reset inside grid ───────────────────────────────────────────────── */
+
+.content-grid .prose {
+    max-width: unset;
+    width: 100%;
+}
+
+/* ─── Web component breakout ────────────────────────────────────────────────── *
+ *
+ *  g6-graph sits at .content-grid > .prose > g6-graph, so grid-column
+ *  placement doesn't work. Use negative margins instead.
+ *  --breakout-pad cascades down from .content-grid.
+ *
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+.content-grid g6-graph {
+    display: block;
+    margin-inline: calc(-1 * var(--breakout-pad));
+    width: calc(100% + 2 * var(--breakout-pad));
+}
+
+/* ─── Mobile ────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .content-grid {
+        --breakout-pad: 0ch;
+        --toc-gap:      0rem;
+        --toc-width:    0ch;
+
+        grid-template-columns:
+            [full-start breakout-start main-start]
+            minmax(0, 1fr)
+            [main-end breakout-end toc-start toc-end full-end];
+    }
+
+    .toc-sidebar {
+        display: none;
+    }
+}

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "grid.css";
 
 @plugin "@tailwindcss/typography";
 
@@ -62,11 +63,6 @@ body {
     gap: 0 !important;
     h1, h2, h3, h4, h5, h6 {
         font-family: "Qanelas Soft Custom";
-    }
-    g6-graph {
-        margin-left: -10rem;
-        margin-right: -10rem;
-        width: calc(100% + 20rem);
     }
     .expressive-code figure {
         box-shadow: none !important;

@@ -12,8 +12,19 @@ export class G6Graph extends LitElement {
         .scroll { width: 100%; height: 100%; overflow: auto; }
         .canvas { width: 100%; height: 100%; }
     `;
+
+    static properties = {
+        direction: { type: String, reflect: true },
+    };
+
+    declare direction: 'LR' | 'TD';
+
+    constructor() {
+        super();
+        this.direction = 'LR';
+    }
+
     private _graph: Graph;
-    /** id -> tooltip text, only for elements that define one */
     private _tips = new Map<string, string>();
 
     render() {
@@ -26,7 +37,6 @@ export class G6Graph extends LitElement {
 
         const data = elementsToGraphData(payload);
 
-        // Build the tooltip lookup once.
         this._tips.clear();
         for (const item of [...data.nodes, ...data.edges]) {
             const tip = item?.data?.tooltip;
@@ -36,6 +46,7 @@ export class G6Graph extends LitElement {
         this._graph = new Graph({
             container: this.renderRoot.querySelector('.canvas') as HTMLElement,
             data,
+            animation: false,
             autoFit: {
                 type: 'view',
                 options: {
@@ -47,9 +58,8 @@ export class G6Graph extends LitElement {
             zoomRange: [0.25, 1.5],
             padding: 20,
             layout: {
-                // type: 'antv-dagre',
                 type: 'antv-dagre',
-                rankdir: 'LR',
+                rankdir: this.direction,
                 nodesep: 30,
                 ranksep: 80,
                 controlPoints: true,
@@ -57,25 +67,20 @@ export class G6Graph extends LitElement {
             },
             node: {
                 type: 'icon-node',
+                animation: false,
                 style: {
-                    // color + icon now come from the element's semantic `type`
                     fill: (d) => typeStyle(d.data?.type).color,
                     iconType: (d) => typeStyle(d.data?.type).icon,
                     iconSize: 24,
-
                     labelText: (d) => d.data?.name ?? d.data?.label ?? d.id,
                     labelFill: '#fff',
                     labelFontSize: 14,
                     labelFontWeight: 600,
                     labelFontFamily: 'Fira Code',
-
-                    // highlight -> breathing halo (animated in IconNode.onCreate)
                     highlight: (d) => !!d.data?.highlight,
                     halo: (d) => !!d.data?.highlight,
                     haloStroke: (d) => typeStyle(d.data?.type).color,
                     haloOpacity: 0.35,
-
-                    // keep this in sync with the node's own measurement:
                     size: (d) => 2 * iconNodeGeometry({
                         labelText: d.data?.name ?? d.data?.label ?? d.id,
                         fontSize: 14, fontFamily: 'Fira Code', iconSize: 24,
@@ -84,6 +89,7 @@ export class G6Graph extends LitElement {
             } as NodeOptions,
             edge: {
                 type: "polyline",
+                animation: false,
                 style: {
                     endArrow: true,
                     endArrowType: 'triangle',
@@ -104,12 +110,10 @@ export class G6Graph extends LitElement {
             plugins: [
                 {
                     type: 'tooltip',
-                    // only fire for elements that actually declared a tooltip
                     enable: (e: any, items?: any[]) => this._tips.has(this._eid(e, items)),
                     getContent: (e: any, items?: any[]) => {
                         const tip = this._tips.get(this._eid(e, items));
                         if (!tip) return '';
-                        // inline styles so it renders consistently inside the shadow root
                         return `<div style="padding:6px 9px;border-radius:6px;`
                             + `font:12px/1.4 'Fira Code',monospace;color:#fff;`
                             + `background:#1f2430;box-shadow:0 1px 6px rgba(0,0,0,.35);`
@@ -122,7 +126,6 @@ export class G6Graph extends LitElement {
         this._graph.render();
     }
 
-    /** resolve the element id from a g6 plugin event (items is preferred, falls back to target) */
     private _eid(e: any, items?: any[]): string | undefined {
         return items?.[0]?.id ?? e?.target?.id;
     }
@@ -137,7 +140,6 @@ export class G6Graph extends LitElement {
         const script = this.querySelector('script[type="application/json"]');
         let raw = (script ? script.textContent : this.textContent) || '';
         raw = raw.trim();
-        // tolerate template-literal wrappers like {` ... `} that some templating leaves behind
         raw = raw.replace(/^\{`/, '').replace(/`\}$/, '').trim();
         try { return JSON.parse(raw); } catch { return null; }
     }
