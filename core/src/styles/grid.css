@@ -1,16 +1,3 @@
-/* ─── Content Grid ─────────────────────────────────────────────────────────── *
- *
- *  Desktop column anatomy:
- *
- *  | 1fr | breakout-pad | main (max 65ch) | breakout-pad | gap | toc | 1fr |
- *
- *  Named grid lines:
- *    full-start / full-end             → edge to edge
- *    breakout-start / breakout-end     → main + breakout-pad on each side
- *    main-start / main-end             → prose column, max 65ch, centered
- *
- * ─────────────────────────────────────────────────────────────────────────── */
-
 .content-grid {
     --breakout-pad: 8ch;
     --main-width:   65ch;
@@ -35,7 +22,6 @@
         1fr
         [full-end];
 
-    /* All direct children default to the main column */
     & > * {
         grid-column: main;
     }
@@ -44,16 +30,12 @@
     row-gap: 1.5rem;
 }
 
-/* ─── Column placement utilities ───────────────────────────────────────────── */
-
 .col-main     { grid-column: main; }
 .col-breakout { grid-column: breakout; }
 .col-full     { grid-column: full; }
 
-/* ─── ToC sidebar ───────────────────────────────────────────────────────────── */
-
 .toc-sidebar {
-    grid-column: toc-start / toc-end;  /* explicitly in toc column, right-aligned */
+    grid-column: toc-start / toc-end;
     grid-row: 1 / -1;
     align-self: start;
     position: sticky;
@@ -81,28 +63,16 @@
     opacity: 1;
 }
 
-/* ─── Prose reset inside grid ───────────────────────────────────────────────── */
-
 .content-grid .prose {
     max-width: unset;
     width: 100%;
 }
-
-/* ─── Web component breakout ────────────────────────────────────────────────── *
- *
- *  g6-graph sits at .content-grid > .prose > g6-graph, so grid-column
- *  placement doesn't work. Use negative margins instead.
- *  --breakout-pad cascades down from .content-grid.
- *
- * ─────────────────────────────────────────────────────────────────────────── */
 
 .content-grid g6-graph {
     display: block;
     margin-inline: calc(-1 * var(--breakout-pad));
     width: calc(100% + 2 * var(--breakout-pad));
 }
-
-/* ─── Mobile ────────────────────────────────────────────────────────────────── */
 
 @media (max-width: 768px) {
     .content-grid {
@@ -111,9 +81,13 @@
         --toc-width:    0ch;
 
         grid-template-columns:
-            [full-start breakout-start main-start]
+            [full-start breakout-start]
+            1.5rem
+            [main-start]
             minmax(0, 1fr)
-            [main-end breakout-end toc-start toc-end full-end];
+            [main-end toc-start toc-end breakout-end]
+            1.5rem
+            [full-end];
     }
 
     .toc-sidebar {

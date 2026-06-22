@@ -8,9 +8,23 @@ import { elementsToGraphData, typeStyle, type ElementsPayload } from "./graphTyp
 
 export class G6Graph extends LitElement {
     static styles = css`
-        :host { display: block; width: 100%; height: 100%; }
-        .scroll { width: 100%; height: 100%; overflow: auto; }
-        .canvas { width: 100%; height: 100%; }
+        :host {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
     `;
 
     static properties = {
@@ -26,9 +40,10 @@ export class G6Graph extends LitElement {
 
     private _graph: Graph;
     private _tips = new Map<string, string>();
+    private _ro: ResizeObserver | null = null;
 
     render() {
-        return html`<div class="scroll"><div class="canvas"></div></div>`;
+        return html`<div class="wrapper"><div class="canvas"></div></div>`;
     }
 
     firstUpdated() {
@@ -47,15 +62,9 @@ export class G6Graph extends LitElement {
             container: this.renderRoot.querySelector('.canvas') as HTMLElement,
             data,
             animation: false,
-            autoFit: {
-                type: 'view',
-                options: {
-                    when: 'overflow'
-                },
-                animation: false
-            },
-            autoResize: true,
-            zoomRange: [0.25, 1.5],
+            autoFit: false,
+            autoResize: false,
+            zoomRange: [0.05, 1.5],
             padding: 20,
             layout: {
                 type: 'antv-dagre',
@@ -63,7 +72,7 @@ export class G6Graph extends LitElement {
                 nodesep: 30,
                 ranksep: 80,
                 controlPoints: true,
-                nodeSize: 120
+                nodeSize: 120,
             },
             node: {
                 type: 'icon-node',
@@ -83,7 +92,9 @@ export class G6Graph extends LitElement {
                     haloOpacity: 0.35,
                     size: (d) => 2 * iconNodeGeometry({
                         labelText: d.data?.name ?? d.data?.label ?? d.id,
-                        fontSize: 14, fontFamily: 'Fira Code', iconSize: 24,
+                        fontSize: 14,
+                        fontFamily: 'Fira Code',
+                        iconSize: 24,
                     }).outerCircleRadius,
                 },
             } as NodeOptions,
@@ -123,7 +134,48 @@ export class G6Graph extends LitElement {
                 },
             ],
         } satisfies GraphOptions);
-        this._graph.render();
+
+        this._graph.render().then(() => this._fitGraph());
+
+        this._ro = new ResizeObserver(() => this._fitGraph());
+        this._ro.observe(this.renderRoot.querySelector('.wrapper') as Element);
+    }
+
+    private _fitGraph() {
+        if (!this._graph) return;
+
+        const wrapper = this.renderRoot.querySelector('.wrapper') as HTMLElement;
+        if (!wrapper) return;
+
+        const containerW = wrapper.clientWidth;
+        const containerH = wrapper.clientHeight;
+        if (!containerW || !containerH) return;
+
+        const padding = 20;
+
+        // Use G6's built-in bbox retrieval — safe, no internal API access
+        const nodes = this._graph.getNodeData();
+        if (!nodes?.length) {
+            // No nodes: just fitView
+            this._graph.fitView({ padding });
+            return;
+        }
+
+        try {
+            // fitView with padding handles both centering and zoom-to-fit
+            // We then clamp the zoom to max 1 so small graphs don't over-zoom
+            this._graph.fitView({ padding }).then?.(() => {
+                const currentZoom = this._graph.getZoom();
+                if (currentZoom > 1) {
+                    // Graph is smaller than container — reset zoom to 1 and re-center
+                    this._graph.zoomTo(1);
+                    this._graph.fitCenter?.({ padding });
+                }
+            });
+        } catch {
+            // Silent fallback
+            this._graph.fitView({ padding });
+        }
     }
 
     private _eid(e: any, items?: any[]): string | undefined {
@@ -146,6 +198,7 @@ export class G6Graph extends LitElement {
 
     disconnectedCallback() {
         super.disconnectedCallback();
+        this._ro?.disconnect();
         this._graph?.destroy();
     }
 }
