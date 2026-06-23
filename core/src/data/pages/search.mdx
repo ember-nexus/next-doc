@@ -1,0 +1,35 @@
+---
+type: tutorial
+title: Search
+---
+
+# Search
+
+## General search process
+
+Every search request is written in **search steps** - smaller execution units, which are specialized for one specific
+database or technology. Results of earlier search steps are available to later search steps as input parameters,
+allowing **cross-database search logic**.
+
+**Note**: Due to security reasons, most search steps are limited in scope. Specific details and workarounds can be found
+on their detail pages.
+
+## Search steps
+
+### Elasticsearch Query DSL Mixin
+
+Executes search queries against **Elasticsearch**. Great for full text search, explorative search requests, small logic
+etc.
+
+### Cypher Path
+
+Executes search queries against **Neo4j**. Great for structural search, e.g. "list all comments on blog post X".
+
+### Element Hydration
+
+Converts a list of element ids to a collection response, containing elements and all their properties.  
+This step is mostly used to convert results of other search steps to collection responses usable by clients.
+
+## Examples
+
+
