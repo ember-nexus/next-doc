@@ -47,6 +47,9 @@ const THEMES: Record<Scheme, Theme> = {
     },
 };
 
+/** Supported layout variants, selected via the `layout` attribute. */
+type LayoutKind = 'antv-dagre-LR' | 'antv-dagre-TB' | 'grid' | 'force';
+
 /** Business data we attach under each element's `data` field. */
 interface NodeDatum { type?: string; name?: string; label?: string; highlight?: boolean; tooltip?: string; }
 interface EdgeDatum { name?: string; type?: string; tooltip?: string; }
@@ -80,17 +83,18 @@ export class G6Graph extends LitElement {
     `;
 
     static properties = {
-        direction: { type: String, reflect: true },
+        layout: { type: String, reflect: true },
         scheme: { type: String, reflect: true },
     };
 
-    declare direction: 'LR' | 'TD';
+    /** Layout variant. */
+    declare layout: LayoutKind;
     /** 'light' (default) | 'dark' | 'auto' (follow prefers-color-scheme). */
     declare scheme: 'light' | 'dark' | 'auto';
 
     constructor() {
         super();
-        this.direction = 'LR';
+        this.layout = 'antv-dagre-LR';
         this.scheme = 'auto';
     }
 
@@ -124,6 +128,44 @@ export class G6Graph extends LitElement {
         if (typeof window !== 'undefined' && window.matchMedia) {
             this._mql = window.matchMedia('(prefers-color-scheme: dark)');
             this._mql.addEventListener('change', this._onSchemeChange);
+        }
+    }
+
+    /** Build the layout spec for the current `layout` variant. */
+    private _layoutOptions(): GraphOptions['layout'] {
+        switch (this.layout) {
+            case 'antv-dagre-LR':
+                return {
+                    type: 'antv-dagre',
+                    rankdir: 'LR',
+                    nodesep: 30,
+                    ranksep: 80,
+                    controlPoints: true,
+                    nodeSize: 120,
+                };
+            case 'antv-dagre-TB':
+                return {
+                    type: 'antv-dagre',
+                    rankdir: 'TB',
+                    nodesep: 30,
+                    ranksep: 80,
+                    controlPoints: true,
+                    nodeSize: 120,
+                };
+            case 'force':
+                return {
+                    type: 'force',
+                    preventOverlap: true,
+                    nodeSize: 100,
+                };
+            case 'grid':
+            default:
+                return {
+                    type: 'grid',
+                    preventOverlap: true,
+                    nodeSize: 100,
+                    condense: false,
+                };
         }
     }
 
@@ -185,7 +227,7 @@ export class G6Graph extends LitElement {
         if (!payload) return;
 
         const data = elementsToGraphData(payload);
-        
+
         console.log(data);
 
         this._tips.clear();
@@ -201,14 +243,7 @@ export class G6Graph extends LitElement {
             autoResize: false,
             zoomRange: [0.05, 1.5],
             padding: PAD,
-            layout: {
-                type: 'antv-dagre',
-                rankdir: this.direction,
-                nodesep: 30,
-                ranksep: 80,
-                controlPoints: true,
-                nodeSize: 120,
-            },
+            layout: this._layoutOptions(),
             node: this._nodeOptions(),
             edge: this._edgeOptions(),
             behaviors: ['drag-canvas', 'zoom-canvas', 'drag-element'],
@@ -251,6 +286,8 @@ export class G6Graph extends LitElement {
         // React to runtime scheme changes (the initial scheme is already baked
         // into the first render via the option builders, so skip until painted).
         if (this._firstPaintDone && changed.has('scheme')) this._applyTheme();
+        // React to runtime layout changes: re-run layout, then refit/resize.
+        if (this._firstPaintDone && changed.has('layout')) this._applyLayout();
     }
 
     /** Re-skin the graph in place for the current scheme — no relayout. */
@@ -259,6 +296,14 @@ export class G6Graph extends LitElement {
         this._graph.setNode(this._nodeOptions());
         this._graph.setEdge(this._edgeOptions());
         await this._graph.draw(); // re-derives styles; camera/zoom preserved
+    }
+
+    /** Swap to the current `layout` variant and re-run layout in place. */
+    private async _applyLayout() {
+        if (!this._graph) return;
+        this._graph.setLayout(this._layoutOptions());
+        await this._graph.layout();
+        await this._fitAndSize();
     }
 
     private async _fitAndSize() {
