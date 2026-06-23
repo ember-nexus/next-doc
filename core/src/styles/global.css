@@ -203,11 +203,9 @@ body {
 .search-response-card {
     --ec-frm-frameBoxShdCssVal: '';
 }
-
 .search-response-card-body {
     overflow: hidden;
 }
-
 .search-response-card .expressive-code pre {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
@@ -216,15 +214,12 @@ body {
     min-height: 250px;
     max-height: 400px;
 }
-
 .search-response-card .expressive-code pre code .ec-line:last-child {
     padding-bottom: var(--ec-codePadBlk) !important;
 }
-
 .search-response-card .expressive-code pre code {
     padding-bottom: 0 !important;
 }
-
 .search-response-card button::before {
     content: attr(data-label);
     display: block;
@@ -232,6 +227,15 @@ body {
     visibility: hidden;
     font-weight: 600;
     overflow: hidden;
+}
+.search-response-card .search-response-card-body g6-graph {
+    display: block;
+    padding: 0;
+    margin: 0;
+    border-bottom-left-radius: calc(var(--radius-xl) - 1px);
+    border-bottom-right-radius: calc(var(--radius-xl) - 1px);
+    overflow: hidden;
+    min-height: 250px;
 }
 
 

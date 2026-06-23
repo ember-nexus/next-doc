@@ -91,7 +91,7 @@ const tabEntries = tabs.map(t => ({key: t, label: tabLabels[t] ?? t}));
             {hasGraph && (
                 <div
                     :class={`tab === 'graph' ? '' : 'invisible absolute inset-0 pointer-events-none overflow-hidden'`}
-                    class="p-4 min-h-[250px]"
+                    class="min-h-[250px]"
                 >
                     <g6-graph layout={graphLayout}>
                         <script type="application/json" set:html={graphElements}/>
