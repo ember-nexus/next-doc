@@ -32,4 +32,8 @@ This step is mostly used to convert results of other search steps to collection 
 
 ## Examples
 
+import data from './assets/search.json';
 
+<g6-graph>
+    <script type="application/json" set:html={JSON.stringify({'elements': data.results})} />
+</g6-graph>

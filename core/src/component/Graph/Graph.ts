@@ -185,6 +185,8 @@ export class G6Graph extends LitElement {
         if (!payload) return;
 
         const data = elementsToGraphData(payload);
+        
+        console.log(data);
 
         this._tips.clear();
         for (const item of [...data.nodes, ...data.edges]) {
@@ -314,10 +316,12 @@ export class G6Graph extends LitElement {
 
     _readData(): ElementsPayload | null {
         const script = this.querySelector('script[type="application/json"]');
+        console.log(script);
         let raw = (script ? script.textContent : this.textContent) || '';
         raw = raw.trim();
         raw = raw.replace(/^\{`/, '').replace(/`\}$/, '').trim();
-        try { return JSON.parse(raw); } catch { return null; }
+        let parsed = JSON.parse(raw);
+        return parsed;
     }
 
     disconnectedCallback() {

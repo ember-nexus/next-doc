@@ -49,6 +49,9 @@ export const TYPE_STYLES: Record<string, TypeStyle> = {
     Data: {color: '#2563eb', icon: 'data'},
     Collection: {color: '#16a34a', icon: 'collection'},
     File: {color: '#22d3ee', icon: 'file'},
+    
+    Taxon: {color: '#6b7280', icon: 'tag'},
+    Plant: {color: '#16a34a', icon: 'plant'},
 };
 
 export const DEFAULT_TYPE: TypeStyle = {color: '#6b7280', icon: 'data'};
