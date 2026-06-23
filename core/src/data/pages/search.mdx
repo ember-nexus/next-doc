@@ -39,26 +39,29 @@ This step is mostly used to convert results of other search steps to collection 
 import simpleFullTextSearch from './assets/simple-full-text-search.json';
 
 
-<SearchResponseCard responseBody={simpleFullTextSearch} responseHeaders={"hi"}></SearchResponseCard>
+<SearchResponseCard
+    responseBody={simpleFullTextSearch}
+    responseHeaders={"hi"}
+    graphLayout="grid"
+></SearchResponseCard>
 
-
-<g6-graph layout="grid">
-    <script type="application/json" set:html={JSON.stringify({'elements': simpleFullTextSearch.results})} />
-</g6-graph>
 
 ### Simple path search
 
 import simplePathSearch from './assets/simple-path-search.json';
 
-<g6-graph layout="force">
-    <script type="application/json" set:html={JSON.stringify({'elements': simplePathSearch.results})} />
-</g6-graph>
+<SearchResponseCard
+    responseBody={simplePathSearch}
+    responseHeaders={"hi"}
+    graphLayout="force"
+></SearchResponseCard>
 
 ### Combined full text and path search
 
 import combinedFullTextAndPathSearch from './assets/combined-full-text-and-path-search.json';
 
-<g6-graph>
-    <script type="application/json" set:html={JSON.stringify({'elements': combinedFullTextAndPathSearch.results})} />
-</g6-graph>
+<SearchResponseCard
+    responseBody={combinedFullTextAndPathSearch}
+    responseHeaders={"hi"}
+></SearchResponseCard>
 

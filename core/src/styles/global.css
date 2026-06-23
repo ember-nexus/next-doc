@@ -204,6 +204,10 @@ body {
     --ec-frm-frameBoxShdCssVal: '';
 }
 
+.search-response-card-body {
+    overflow: hidden;
+}
+
 .search-response-card .expressive-code pre {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
@@ -221,7 +225,6 @@ body {
     padding-bottom: 0 !important;
 }
 
-/* Bold pseudo-element prevents layout shift on tab activation */
 .search-response-card button::before {
     content: attr(data-label);
     display: block;
