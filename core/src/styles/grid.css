@@ -68,7 +68,8 @@
     width: 100%;
 }
 
-.content-grid g6-graph {
+.content-grid > g6-graph,
+.content-grid > > g6-graph {
     display: block;
     margin-inline: calc(-1 * var(--breakout-pad));
     width: calc(100% + 2 * var(--breakout-pad));

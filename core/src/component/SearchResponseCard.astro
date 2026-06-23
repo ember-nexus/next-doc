@@ -57,12 +57,11 @@ const graphElements = JSON.stringify({ elements: body?.results ?? [] });
         </div>
 
         <!-- Tab panels -->
-        <div>
-            {/* Graph: always mounted to prevent web component re-init, hidden via CSS */}
+        <div class="relative">
+            {/* Graph: always mounted, hidden via visibility to prevent G6 re-init & resize flash */}
             {hasGraph && (
                 <div
-                    x-show="tab === 'graph'"
-                    x-cloak
+                    :class={`tab === 'graph' ? '' : 'invisible absolute inset-0 pointer-events-none overflow-hidden'`}
                     class="p-4 min-h-[250px]"
                 >
                     <g6-graph layout={graphLayout}>
