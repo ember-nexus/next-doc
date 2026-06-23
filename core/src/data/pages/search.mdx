@@ -2,6 +2,8 @@
 type: tutorial
 title: Search
 ---
+import SearchResponseCard from '../../component/SearchResponseCard.astro';
+
 
 # Search
 
@@ -35,6 +37,10 @@ This step is mostly used to convert results of other search steps to collection 
 ### Simple full text search
 
 import simpleFullTextSearch from './assets/simple-full-text-search.json';
+
+
+<SearchResponseCard responseBody={simpleFullTextSearch} responseHeaders={"hi"}></SearchResponseCard>
+
 
 <g6-graph layout="grid">
     <script type="application/json" set:html={JSON.stringify({'elements': simpleFullTextSearch.results})} />

@@ -200,6 +200,37 @@ body {
     box-sizing: border-box;
 }
 
+.search-response-card {
+    --ec-frm-frameBoxShdCssVal: '';
+}
+
+.search-response-card .expressive-code pre {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: calc(var(--radius-xl) - 1px);
+    border-bottom-right-radius: calc(var(--radius-xl) - 1px);
+    min-height: 250px;
+    max-height: 400px;
+}
+
+.search-response-card .expressive-code pre code .ec-line:last-child {
+    padding-bottom: var(--ec-codePadBlk) !important;
+}
+
+.search-response-card .expressive-code pre code {
+    padding-bottom: 0 !important;
+}
+
+/* Bold pseudo-element prevents layout shift on tab activation */
+.search-response-card button::before {
+    content: attr(data-label);
+    display: block;
+    height: 0;
+    visibility: hidden;
+    font-weight: 600;
+    overflow: hidden;
+}
+
 
 /* Base vars per status class */
 .http-status-2xx {
