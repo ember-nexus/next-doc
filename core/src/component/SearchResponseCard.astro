@@ -12,6 +12,7 @@ interface Props {
 const {responseBody, responseHeaders, graphLayout = "antv-dagre-LR"} = Astro.props;
 
 const body = responseBody as any;
+const results = body?.results;
 const debugSteps = Array.isArray(body?.debug) ? body.debug : [];
 const lastDebugStep = debugSteps[debugSteps.length - 1];
 const hasGraph = lastDebugStep?.input?.type === "element-hydration";
@@ -100,7 +101,12 @@ const tabEntries = tabs.map(t => ({key: t, label: tabLabels[t] ?? t}));
             )}
 
             <div x-show="tab === 'table'" x-cloak class="p-4 min-h-[250px]">
-                <p class="text-sm text-gray-500">Table view coming soon.</p>
+                <json-table id="json-table-results">
+                    <script
+                        type="application/json"
+                        set:html={JSON.stringify(results)}
+                    ></script>
+                </json-table>
             </div>
 
             <div x-show="tab === 'debug'" x-cloak>
