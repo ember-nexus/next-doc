@@ -11,7 +11,7 @@ import {iconNodeGeometry} from "./IconNode.ts";
 import {elementsToGraphData, typeStyle, type ElementsPayload} from "./graphTypes.ts";
 
 const PAD = 48; // padding around content, both sides
-const ZOOM_RANGE: [number, number] = [0.05, 1.5]; // shared by zoomRange + manual pinch clamp
+const ZOOM_RANGE: [number, number] = [0.05, 2.0]; // shared by zoomRange + manual pinch clamp
 
 /* ------------------------------------------------------------------ *
  *  Color scheme tokens

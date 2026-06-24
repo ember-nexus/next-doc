@@ -1,4 +1,4 @@
-import { LitElement, html, css, type PropertyValues } from 'lit';
+import { LitElement, html, css } from 'lit';
 import '@vaadin/grid';
 import '@vaadin/grid/vaadin-grid-column.js';
 import { gridRowDetailsRenderer } from '@vaadin/grid/lit.js';
@@ -22,6 +22,7 @@ const isElement = (r: JsonRecord): r is Element =>
     typeof r.id === 'string' && typeof r.type === 'string';
 
 const CLIP_LENGTH = 60;
+const UUID_PREFIX_LENGTH = 8;
 
 const clip = (s: string): string =>
     s.length > CLIP_LENGTH ? s.slice(0, CLIP_LENGTH) + '…' : s;
@@ -40,6 +41,8 @@ interface ColDef {
     priority: number;   // lower = further left
 }
 
+const UUID_KEYS = new Set(['id', 'start', 'end']);
+
 /**
  * Derive column definitions from the records.
  *
@@ -53,6 +56,10 @@ interface ColDef {
  *
  * Nested objects (other than data.name) are rendered as clipped JSON.
  * The `data` bag is flattened one level: data.name → shown as "name", etc.
+ *
+ * The `start` / `end` columns are only emitted when at least one record
+ * actually carries those properties (i.e. there are relationships present).
+ * If every element is a plain node, those columns are omitted entirely.
  */
 function deriveColumns(records: JsonRecord[], hasElements: boolean): ColDef[] {
     const seen = new Map<string, ColDef>();
@@ -64,12 +71,16 @@ function deriveColumns(records: JsonRecord[], hasElements: boolean): ColDef[] {
     if (hasElements) {
         add('type', 'Type', 0);
         add('id', 'ID', 1);
-        add('start', 'Start', 2);
-        add('end', 'End', 3);
+
+        // Only show start/end if some record is actually a relationship.
+        const hasStart = records.some((r) => r.start !== undefined && r.start !== null);
+        const hasEnd = records.some((r) => r.end !== undefined && r.end !== null);
+        if (hasStart) add('start', 'Start', 2);
+        if (hasEnd) add('end', 'End', 3);
     }
 
     for (const rec of records) {
-        for (const [k, v] of Object.entries(rec)) {
+        for (const [k] of Object.entries(rec)) {
             if (['id', 'type', 'start', 'end', 'data'].includes(k)) continue;
             const p = k === 'name' ? 4 : 10;
             add(k, k, p);
@@ -77,7 +88,7 @@ function deriveColumns(records: JsonRecord[], hasElements: boolean): ColDef[] {
 
         // flatten data one level
         if (rec.data && typeof rec.data === 'object') {
-            for (const [k, v] of Object.entries(rec.data as JsonRecord)) {
+            for (const [k] of Object.entries(rec.data as JsonRecord)) {
                 const key = `data.${k}`;
                 const p = k === 'name' ? 4 : 10;
                 add(key, k, p);
@@ -130,52 +141,67 @@ export class JsonTable extends LitElement {
             max-height: 600px;
         }
 
+        /* Vertically centre cell content. Custom renderers otherwise leave the
+           slotted content top-aligned, which is why the rows looked off. */
+        vaadin-grid::part(cell) {
+            align-items: center;
+        }
+
+        /* The detail row is just the code block. Strip Vaadin's own padding and
+           match its background to the code block so the pre's rounded corners
+           don't reveal white pixels of the cell behind them. */
+        vaadin-grid::part(details-cell) {
+            padding: 0;
+            background: var(--json-bg, #1e293b);
+        }
+
         .cell {
             font-size: 0.8rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 240px;
+            /* Clip at the actual column edge rather than a fixed pixel width,
+               so wider columns reveal more text. */
+            max-width: 100%;
             display: block;
         }
 
-        .cell.type-badge {
+        /* Wrapper exists purely to give auto-width a few px of slack so the
+           badge's horizontal padding / rounded corners are never clipped. */
+        .type-cell {
+            display: inline-flex;
+            padding-right: 6px;
+        }
+
+        /* The type badge must always be shown in full — no clipping. */
+        .type-badge {
             display: inline-block;
-            padding: 1px 7px;
+            padding: 2px 9px;
             border-radius: 9999px;
             font-size: 0.72rem;
             font-weight: 600;
             background: var(--type-badge-bg, #334155);
             color: var(--type-badge-fg, #e2e8f0);
             letter-spacing: 0.03em;
+            white-space: nowrap;
         }
 
-        .cell.mono {
+        /* Truncated uuids: exactly 8 chars, never clipped (the column has a
+           fixed width wide enough to hold them). */
+        .mono-fixed {
             font-family: 'Fira Code', monospace;
             font-size: 0.72rem;
             color: var(--id-color, #94a3b8);
+            white-space: nowrap;
         }
 
         /* ── row details ── */
-        .detail-wrapper {
-            padding: 0.75rem 1rem 1rem;
-            background: var(--detail-bg, #0f172a);
-            border-top: 1px solid var(--detail-border, #1e293b);
-        }
-
-        .detail-wrapper h4 {
-            margin: 0 0 0.4rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--detail-heading, #64748b);
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-        }
-
         pre.json-detail {
             margin: 0;
             padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 0.5rem; /* enforced radius — tweak later if needed */
             background: var(--json-bg, #1e293b);
             color: var(--json-fg, #e2e8f0);
             font-size: 0.8rem;
@@ -208,6 +234,22 @@ export class JsonTable extends LitElement {
     connectedCallback() {
         super.connectedCallback();
         this._parseData();
+    }
+
+    firstUpdated() {
+        // The (auto-width) type column gets measured immediately, possibly
+        // before the 'Fira Code' web font has loaded. Re-measuring once fonts
+        // are ready prevents the type badge from being clipped.
+        const grid = this.renderRoot.querySelector('vaadin-grid') as
+            (HTMLElement & { recalculateColumnWidths?: () => void }) | null;
+        const recalc = () => grid?.recalculateColumnWidths?.();
+
+        const fonts = (document as unknown as { fonts?: { ready?: Promise<unknown> } }).fonts;
+        if (fonts?.ready?.then) {
+            fonts.ready.then(recalc);
+        } else {
+            requestAnimationFrame(recalc);
+        }
     }
 
     private _parseData() {
@@ -247,9 +289,9 @@ export class JsonTable extends LitElement {
                 @active-item-changed="${this._onActiveItemChanged}"
                 theme="row-stripes compact"
                 ${gridRowDetailsRenderer<JsonRecord>(
-            (rec) => this._renderDetail(rec),
-            []
-        )}
+                    (rec) => this._renderDetail(rec),
+                    []
+                )}
             >
                 ${this._columns.map((col) => this._renderColumn(col))}
             </vaadin-grid>
@@ -257,81 +299,94 @@ export class JsonTable extends LitElement {
     }
 
     private _renderColumn(col: ColDef) {
+        const isType = col.key === 'type';
+        const isUuid = UUID_KEYS.has(col.key);
+
+        // type  → auto-width, sized to the badge
+        // uuid  → fixed width, always shows the 8-char prefix
+        // other → 170px base, grows to fill
+        const width = isType ? undefined : isUuid ? '100px' : '170px';
+        const flexGrow = isType || isUuid ? 0 : 1;
+
         return html`
             <vaadin-grid-column
                 .header="${col.header}"
+                .autoWidth="${isType}"
+                .flexGrow="${flexGrow}"
+                .width="${width}"
                 .renderer="${(root: HTMLElement, _col: unknown, model: { item: JsonRecord }) => {
-            const val = readKey(model.item, col.key);
-            const text = clip(stringify(val));
+                    const val = readKey(model.item, col.key);
+                    const full = stringify(val);
 
-            if (col.key === 'type') {
-                root.innerHTML = `<span class="cell type-badge">${this._esc(text)}</span>`;
-            } else if (col.key === 'id' || col.key === 'start' || col.key === 'end') {
-                root.innerHTML = `<span class="cell mono" title="${this._esc(stringify(val))}">${this._esc(text)}</span>`;
-            } else {
-                root.innerHTML = `<span class="cell" title="${this._esc(stringify(val))}">${this._esc(text)}</span>`;
-            }
-        }}"
+                    if (isType) {
+                        // Full value, never clipped, with slack for the rounded badge.
+                        root.innerHTML =
+                            `<span class="type-cell"><span class="type-badge">${this._esc(full)}</span></span>`;
+                    } else if (isUuid) {
+                        // Only the first 8 chars of the uuid; full value in the tooltip.
+                        const short = full.slice(0, UUID_PREFIX_LENGTH);
+                        root.innerHTML = `<span class="mono-fixed" title="${this._esc(full)}">${this._esc(short)}</span>`;
+                    } else {
+                        root.innerHTML = `<span class="cell" title="${this._esc(full)}">${this._esc(clip(full))}</span>`;
+                    }
+                }}"
             ></vaadin-grid-column>
         `;
     }
 
     private _renderDetail(rec: JsonRecord) {
         return html`
-            <div class="detail-wrapper">
-                <h4>Full record</h4>
-                <pre class="json-detail">${this._highlightJson(JSON.stringify(rec, null, 2))}</pre>
-            </div>
+            <pre class="json-detail">${this._highlightJson(JSON.stringify(rec, null, 2))}</pre>
         `;
     }
 
-    // Very lightweight JSON syntax highlight — no deps.
-    private _highlightJson(json: string): unknown {
-        // We return a lit TemplateResult using unsafeHTML — but to avoid that
-        // dep, we do it purely via innerHTML inside a <pre>. Since _renderDetail
-        // already uses a <pre>, we set its innerHTML directly:
-        // Called via .innerHTML of the <pre> in updated().
-        // So we just return the HTML string here and set it via lit's `unsafeHTML`.
+    /**
+     * Lightweight, dependency-free JSON syntax highlighting.
+     *
+     * Implemented as a single-pass tokenizer rather than a series of
+     * replace() calls. The previous approach applied a `:\s*(\d+)` → `': $1'`
+     * rule across the whole blob, which rewrote colons *inside* string values
+     * (e.g. ISO timestamps like 2025-09-25T18:35:26+00:00 became
+     * "18: 35: 26+00: 00"). Matching whole string tokens first means the
+     * contents of a string are never re-processed.
+     */
+    private _highlightJson(json: string): Node {
+        // Order of alternatives matters: a complete string is matched as one
+        // token (so its inner colons/digits are left alone). A string token
+        // immediately followed by `:` is a key.
+        const tokenRe =
+            /("(?:\\.|[^"\\])*")(\s*:)?|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)|(true|false)|(null)/g;
 
-        // Actually — return as lit html using unsafeHTML-equivalent via a directive.
-        // Simplest safe approach: return plain text (no XSS risk with JSON.stringify output).
-        // We do a safe token-replace on the already-escaped string.
+        let out = '';
+        let lastIndex = 0;
+        let m: RegExpExecArray | null;
 
-        const escaped = json
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');
+        while ((m = tokenRe.exec(json)) !== null) {
+            // Structural characters / whitespace between tokens — escape verbatim.
+            out += this._esc(json.slice(lastIndex, m.index));
+            lastIndex = tokenRe.lastIndex;
 
-        const highlighted = escaped
-            // keys
-            .replace(
-                /(&quot;[^&]*&quot;)\s*:/g,
-                '<span class="json-key">$1</span>:'
-            )
-            // string values
-            .replace(
-                /:\s*(&quot;[^&]*&quot;)/g,
-                ': <span class="json-str">$1</span>'
-            )
-            // numbers
-            .replace(
-                /:\s*(-?\d+\.?\d*)/g,
-                ': <span class="json-num">$1</span>'
-            )
-            // booleans
-            .replace(
-                /:\s*(true|false)/g,
-                ': <span class="json-bool">$1</span>'
-            )
-            // null
-            .replace(
-                /:\s*(null)/g,
-                ': <span class="json-null">$1</span>'
-            );
+            if (m[1] !== undefined) {
+                // string token (optionally a key if followed by a colon)
+                const str = this._esc(m[1]);
+                if (m[2] !== undefined) {
+                    out += `<span class="json-key">${str}</span>${this._esc(m[2])}`;
+                } else {
+                    out += `<span class="json-str">${str}</span>`;
+                }
+            } else if (m[3] !== undefined) {
+                out += `<span class="json-num">${m[3]}</span>`;
+            } else if (m[4] !== undefined) {
+                out += `<span class="json-bool">${m[4]}</span>`;
+            } else if (m[5] !== undefined) {
+                out += `<span class="json-null">${m[5]}</span>`;
+            }
+        }
+        out += this._esc(json.slice(lastIndex));
 
-        // Inject as innerHTML via a temporary container trick in lit
+        // Build real nodes from the (safely escaped) highlighted markup.
         const tpl = document.createElement('template');
-        tpl.innerHTML = highlighted;
+        tpl.innerHTML = out;
         return tpl.content.cloneNode(true);
     }
 
