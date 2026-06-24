@@ -39,6 +39,12 @@ This step is mostly used to convert results of other search steps to collection 
 import simpleFullTextSearch from './assets/simple-full-text-search.json';
 import simpleFullTextSearchHeader from './assets/simple-full-text-search.txt?raw';
 
+In this example, only Elasticsearch is queried for all elements, whose `description`-property contains the word
+`lily`.  
+The `element-hydration`-step only makes sure, that the results from Elasticsearch are correctly hydrated and returned.
+
+See also [Elasticsearch's documentation about the match query clause](https://www.elastic.co/docs/reference/query-languages/query-dsl/query-dsl-match-query).
+
 
 ```json
 {
@@ -67,8 +73,13 @@ import simpleFullTextSearchHeader from './assets/simple-full-text-search.txt?raw
     graphLayout="grid"
 ></SearchResponseCard>
 
+As Elasticsearch only returns individual elements, no paths can be observed.
 
 ### Simple path search
+
+In this example, only Neo4j is queried for all paths, which satisfy `(:Plant)-[:HAS_TAG]->(:Tag {name: "blue"})` - i.e.
+all plants, which are tagged `blue`.  
+The `element-hydration`-step only makes sure, that the results from Neo4j are correctly hydrated and returned.
 
 import simplePathSearch from './assets/simple-path-search.json';
 import simplePathSearchHeader from './assets/simple-path-search.txt?raw';
@@ -94,7 +105,15 @@ import simplePathSearchHeader from './assets/simple-path-search.txt?raw';
     graphLayout="force"
 ></SearchResponseCard>
 
+The graph view can actually display a graph, because we queried relations and all paths share a common node - the tag
+`blue`.
+
 ### Combined full text and path search
+
+An example how results from Elasticsearch - all elements whose description contain the word `lily` - are feed as input
+parameters to Neo4j, which then expands the results to the path `(:Plant)-[:IS_MEMBER_OF*..]->(:Taxon)`.  
+Note that because we map Elasticsearch's results to only `:Plant`-nodes, we filter out other results from Elasticsearch,
+e.g. Taxons which also contain the word `lily`.
 
 import combinedFullTextAndPathSearch from './assets/combined-full-text-and-path-search.json';
 import combinedFullTextAndPathSearchHeader from './assets/combined-full-text-and-path-search.txt?raw';
@@ -129,3 +148,6 @@ import combinedFullTextAndPathSearchHeader from './assets/combined-full-text-and
     responseHeaders={combinedFullTextAndPathSearchHeader}
 ></SearchResponseCard>
 
+Due to the unlimited path length, the resulting graph can become quite big.
+
+Duplicated nodes etc. are already filtered out by the API itself, as can be seen in the debug view.

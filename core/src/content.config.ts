@@ -23,5 +23,16 @@ const endpoints = defineCollection({
     }),
 });
 
+const commands = defineCollection({
+    loader: glob({ base: './src/data/commands', pattern: '**/*.{md,mdx}' }),
+    schema: z.object({
+        command: z.string(),
+        helpCommand: z.string(),
+        helpOutput: z.string(),
+        exampleCommand: z.string(),
+        exampleOutput: z.string(),
+    }),
+});
 
-export const collections = { pages, endpoints };
+
+export const collections = { pages, endpoints, commands };
