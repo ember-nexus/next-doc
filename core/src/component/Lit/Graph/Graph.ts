@@ -1,5 +1,5 @@
-import { LitElement, html, css, type PropertyValues } from 'lit';
-import { Graph } from '@antv/g6';
+import {LitElement, html, css, type PropertyValues} from 'lit';
+import {Graph} from '@antv/g6';
 import type {
     GraphOptions,
     NodeOptions,
@@ -7,10 +7,11 @@ import type {
     NodeData,
     EdgeData,
 } from '@antv/g6';
-import { iconNodeGeometry } from "./IconNode.ts";
-import { elementsToGraphData, typeStyle, type ElementsPayload } from "./graphTypes.ts";
+import {iconNodeGeometry} from "./IconNode.ts";
+import {elementsToGraphData, typeStyle, type ElementsPayload} from "./graphTypes.ts";
 
 const PAD = 48; // padding around content, both sides
+const ZOOM_RANGE: [number, number] = [0.05, 1.5]; // shared by zoomRange + manual pinch clamp
 
 /* ------------------------------------------------------------------ *
  *  Color scheme tokens
@@ -51,8 +52,19 @@ const THEMES: Record<Scheme, Theme> = {
 type LayoutKind = 'antv-dagre-LR' | 'antv-dagre-TB' | 'grid' | 'force';
 
 /** Business data we attach under each element's `data` field. */
-interface NodeDatum { type?: string; name?: string; label?: string; highlight?: boolean; tooltip?: string; }
-interface EdgeDatum { name?: string; type?: string; tooltip?: string; }
+interface NodeDatum {
+    type?: string;
+    name?: string;
+    label?: string;
+    highlight?: boolean;
+    tooltip?: string;
+}
+
+interface EdgeDatum {
+    name?: string;
+    type?: string;
+    tooltip?: string;
+}
 
 const nodeDatum = (d: NodeData): NodeDatum => (d.data ?? {}) as NodeDatum;
 const edgeDatum = (d: EdgeData): EdgeDatum => (d.data ?? {}) as EdgeDatum;
@@ -68,23 +80,26 @@ export class G6Graph extends LitElement {
             width: 100%;
             min-height: 80px;
         }
+
         .wrapper {
             position: relative;
             width: 100%;
             height: 100%;
             overflow: hidden;
         }
+
         .canvas {
             position: absolute;
             inset: 0;
             width: 100%;
             height: 100%;
+            touch-action: none;
         }
     `;
 
     static properties = {
-        layout: { type: String, reflect: true },
-        scheme: { type: String, reflect: true },
+        layout: {type: String, reflect: true},
+        scheme: {type: String, reflect: true},
     };
 
     /** Layout variant. */
@@ -105,6 +120,17 @@ export class G6Graph extends LitElement {
     private _mql: MediaQueryList | null = null;
     private _firstPaintDone = false;
 
+    // --- Manual pinch-zoom state (scoped to THIS component's own canvas) ---
+    // We deliberately do NOT use G6's `trigger: ['pinch']` behavior: its touch
+    // gesture isn't cleanly scoped per-canvas, so with several graphs mounted a
+    // single pinch drives only the first graph and they appear linked. Handling
+    // pointer events on our own shadow-root canvas keeps each instance isolated.
+    private _canvasEl: HTMLElement | null = null;
+    private _pointers = new Map<number, { x: number; y: number }>();
+    private _pinchStartDist = 0;
+    private _pinchStartZoom = 1;
+    private _dragSuspended = false;
+
     // Stable reference so we can add/remove the same listener.
     private _onSchemeChange = () => {
         if (this.scheme === 'auto') this._applyTheme();
@@ -120,7 +146,10 @@ export class G6Graph extends LitElement {
     }
 
     render() {
-        return html`<div class="wrapper"><div class="canvas"></div></div>`;
+        return html`
+            <div class="wrapper">
+                <div class="canvas"></div>
+            </div>`;
     }
 
     connectedCallback() {
@@ -167,6 +196,16 @@ export class G6Graph extends LitElement {
                     condense: false,
                 };
         }
+    }
+
+    /** Behaviors. Wheel/trackpad zoom stays native; pinch is handled manually. */
+    private _behaviorOptions(): GraphOptions['behaviors'] {
+        return [
+            // Default trigger is the wheel; trackpad pinch arrives as wheel+ctrlKey,
+            // so desktop (mouse + laptop trackpad) is fully covered here.
+            {type: 'zoom-canvas', key: 'zoom-wheel'},
+            {type: 'drag-canvas', key: 'drag-canvas'},
+        ];
     }
 
     /** Build the node spec. Reused for initial render and theme swaps. */
@@ -241,12 +280,12 @@ export class G6Graph extends LitElement {
             data,
             animation: false,
             autoResize: false,
-            zoomRange: [0.05, 1.5],
+            zoomRange: ZOOM_RANGE,
             padding: PAD,
             layout: this._layoutOptions(),
             node: this._nodeOptions(),
             edge: this._edgeOptions(),
-            behaviors: ['drag-canvas', 'zoom-canvas', 'drag-element'],
+            behaviors: this._behaviorOptions(),
             plugins: [
                 {
                     type: 'tooltip',
@@ -272,6 +311,14 @@ export class G6Graph extends LitElement {
             this._firstPaintDone = true;
         });
 
+        // Manual pinch-zoom: bind pointer events to our own canvas element so the
+        // gesture stays isolated to this component instance.
+        this._canvasEl = this.renderRoot.querySelector('.canvas') as HTMLElement;
+        this._canvasEl.addEventListener('pointerdown', this._onPointerDown);
+        this._canvasEl.addEventListener('pointermove', this._onPointerMove, {passive: false});
+        this._canvasEl.addEventListener('pointerup', this._onPointerUp);
+        this._canvasEl.addEventListener('pointercancel', this._onPointerUp);
+
         // Only react to WIDTH changes to avoid feedback loop from our own height writes
         this._ro = new ResizeObserver((entries) => {
             const w = entries[0]?.contentBoxSize?.[0]?.inlineSize ?? this.clientWidth ?? 0;
@@ -289,6 +336,59 @@ export class G6Graph extends LitElement {
         // React to runtime layout changes: re-run layout, then refit/resize.
         if (this._firstPaintDone && changed.has('layout')) this._applyLayout();
     }
+
+    /* -------------------------------------------------------------- *
+     *  Manual pinch-zoom handlers
+     * -------------------------------------------------------------- */
+
+    private _onPointerDown = (e: PointerEvent) => {
+        if (e.pointerType !== 'touch') return;
+        this._canvasEl?.setPointerCapture?.(e.pointerId);
+        this._pointers.set(e.pointerId, {x: e.clientX, y: e.clientY});
+        if (this._pointers.size === 2) {
+            const [a, b] = [...this._pointers.values()];
+            this._pinchStartDist = Math.hypot(a.x - b.x, a.y - b.y);
+            this._pinchStartZoom = this._graph?.getZoom() ?? 1;
+            // Stop drag-canvas from panning off one finger mid-pinch.
+            if (this._graph && !this._dragSuspended) {
+                this._graph.updateBehavior({key: 'drag-canvas', enable: false});
+                this._dragSuspended = true;
+            }
+        }
+    };
+
+    private _onPointerMove = (e: PointerEvent) => {
+        if (!this._pointers.has(e.pointerId) || !this._graph) return;
+        this._pointers.set(e.pointerId, {x: e.clientX, y: e.clientY});
+        if (this._pointers.size !== 2 || this._pinchStartDist <= 0) return;
+
+        const [a, b] = [...this._pointers.values()];
+        const dist = Math.hypot(a.x - b.x, a.y - b.y);
+        const ratio = dist / this._pinchStartDist;
+
+        // Clamp to the graph's zoomRange.
+        const target = Math.min(ZOOM_RANGE[1], Math.max(ZOOM_RANGE[0], this._pinchStartZoom * ratio));
+
+        // Midpoint of the two fingers, in canvas-local (viewport) coordinates.
+        const rect = this._canvasEl!.getBoundingClientRect();
+        const ox = (a.x + b.x) / 2 - rect.left;
+        const oy = (a.y + b.y) / 2 - rect.top;
+
+        e.preventDefault();
+        // (ratio, animation, origin) — same arg order used elsewhere in this file.
+        this._graph.zoomTo(target, false, [ox, oy]);
+    };
+
+    private _onPointerUp = (e: PointerEvent) => {
+        this._pointers.delete(e.pointerId);
+        if (this._pointers.size < 2) {
+            this._pinchStartDist = 0;
+            if (this._graph && this._dragSuspended) {
+                this._graph.updateBehavior({key: 'drag-canvas', enable: true});
+                this._dragSuspended = false;
+            }
+        }
+    };
 
     /** Re-skin the graph in place for the current scheme — no relayout. */
     private async _applyTheme() {
@@ -330,7 +430,8 @@ export class G6Graph extends LitElement {
                 if (b.min[1] < minY) minY = b.min[1];
                 if (b.max[0] > maxX) maxX = b.max[0];
                 if (b.max[1] > maxY) maxY = b.max[1];
-            } catch { /* not yet rendered */ }
+            } catch { /* not yet rendered */
+            }
         }
         if (!isFinite(minY) || !isFinite(maxY)) return;
 
@@ -346,7 +447,7 @@ export class G6Graph extends LitElement {
 
         await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
 
-        await this._graph.fitView({ when: 'always', direction: 'both' });
+        await this._graph.fitView({when: 'always', direction: 'both'});
     }
 
     private _eid(e: any, items?: any[]): string | undefined {
@@ -355,7 +456,7 @@ export class G6Graph extends LitElement {
 
     private _esc(s: string): string {
         return String(s).replace(/[&<>"']/g, (c) => (
-            { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string
+            {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c] as string
         ));
     }
 
@@ -373,6 +474,15 @@ export class G6Graph extends LitElement {
         super.disconnectedCallback();
         this._mql?.removeEventListener('change', this._onSchemeChange);
         this._ro?.disconnect();
+
+        // Tear down manual pinch listeners.
+        this._canvasEl?.removeEventListener('pointerdown', this._onPointerDown);
+        this._canvasEl?.removeEventListener('pointermove', this._onPointerMove);
+        this._canvasEl?.removeEventListener('pointerup', this._onPointerUp);
+        this._canvasEl?.removeEventListener('pointercancel', this._onPointerUp);
+        this._pointers.clear();
+        this._canvasEl = null;
+
         this._graph?.destroy();
     }
 }
