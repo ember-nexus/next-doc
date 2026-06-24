@@ -36,40 +36,37 @@ const tabEntries = tabs.map(t => ({key: t, label: tabLabels[t] ?? t}));
 ---
 
 <div
-    class="search-response-card"
+    class="search-response-card mt-4"
     x-data={`{ tab: '${firstTab}', open: false, get currentLabel() { return ${JSON.stringify(tabEntries)}.find(t => t.key === this.tab)?.label ?? this.tab } }`}
 >
-    <CardTitle title="Search response">
-        <!-- Dropdown: mobile only -->
-        <div class="sm:hidden relative w-full">
-            <button
-                @click="open = !open"
-                @keydown.escape="open = false"
-                class="flex w-full items-center justify-between gap-2 px-3 py-1.5 rounded-xl border border-hairline text-sm font-medium cursor-pointer transition-colors"
-            >
-                <span x-text="currentLabel" class="text-gray-800 dark:text-gray-200 text-left flex-1"></span>
-                <Icon name="chevron-down" class="size-4 text-gray-400 transition-transform duration-200 shrink-0"
-                      :class="open ? 'rotate-180' : ''"/>
-            </button>
+    <div class="sm:hidden relative w-full mb-2">
+        <button
+            @click="open = !open"
+            @keydown.escape="open = false"
+            class="flex w-full items-center justify-between gap-2 px-3 py-1.5 rounded-xl border border-hairline text-sm font-medium cursor-pointer transition-colors"
+        >
+            <span x-text="currentLabel" class="text-gray-800 dark:text-gray-200 text-left flex-1"></span>
+            <Icon name="chevron-down" class="size-4 text-gray-400 transition-transform duration-200 shrink-0"
+                  :class="open ? 'rotate-180' : ''"/>
+        </button>
 
-            <div
-                x-show="open"
-                @click.outside="open = false"
-                x-transition
-                class="absolute left-0 right-0 mt-1 bg-white dark:bg-black border border-hairline rounded-xl shadow-md overflow-hidden z-10"
-            >
-                {tabEntries.map(({key, label}) => (
-                    <button
-                        @click={`tab = '${key}'; open = false`}
-                        :class={`tab === '${key}' ? 'bg-gray-100 dark:bg-gray-900' : 'hover:bg-gray-50 dark:hover:bg-gray-950'`}
-                        class="w-full flex items-center px-3 py-2 text-sm cursor-pointer transition-colors"
-                    >
-                        <span class="font-medium">{label}</span>
-                    </button>
-                ))}
-            </div>
+        <div
+            x-show="open"
+            @click.outside="open = false"
+            x-transition
+            class="absolute left-0 right-0 mt-1 bg-white dark:bg-black border border-hairline rounded-xl shadow-md overflow-hidden z-10"
+        >
+            {tabEntries.map(({key, label}) => (
+                <button
+                    @click={`tab = '${key}'; open = false`}
+                    :class={`tab === '${key}' ? 'bg-gray-100 dark:bg-gray-900' : 'hover:bg-gray-50 dark:hover:bg-gray-950'`}
+                    class="w-full flex items-center px-3 py-2 text-sm cursor-pointer transition-colors"
+                >
+                    <span class="font-medium">{label}</span>
+                </button>
+            ))}
         </div>
-    </CardTitle>
+    </div>
 
     <div
         class="search-response-card-body bg-white dark:bg-black block border border-hairline rounded-xl shadow-xs flex flex-col divide-y divide-gray-200 dark:divide-gray-800">
