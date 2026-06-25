@@ -49,7 +49,7 @@ const isActive = (url: string): boolean =>
         style={`--c: var(--method-${item.method}, var(--method-put))`}
         class="block rounded-md px-3 py-1.5 text-[0.8125rem] no-underline text-zinc-900 dark:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/[0.06] aria-[current]:bg-black/[0.06] dark:aria-[current]:bg-white/[0.09]"
     >
-        <p class="m-0 font-mono">
+        <p class="m-0 font-mono truncate" title={item.endpointUrl}>
             <b class="font-semibold text-[var(--c)] uppercase">{item.method}</b>
             {" "}{item.endpointUrl}
         </p>
