@@ -1,0 +1,81 @@
+---
+// Moved from [group]/[endpoint].astro to api/[endpoint].astro.
+// Endpoint ids are unique, so `group` no longer needs to be in the URL — it is
+// used only to group items in the sidebar.
+import { getCollection, render } from 'astro:content';
+import SwaggerParser from '@apidevtools/swagger-parser';
+import Default from '../../layouts/Default.astro';
+import ResponseCard from '../../component/ResponseCard.astro';
+import RequestCard from '../../component/RequestCard.astro';
+import RequestHeaderCard from '../../component/RequestHeaderCard.astro';
+import ResponseHeaderCard from '../../component/ResponseHeaderCard.astro';
+import {
+    extractHarExample,
+    extractRequestHeaders,
+    extractResponseExamples,
+    extractResponseHeaders,
+} from '../../util';
+import { endpointParam } from '../../lib';
+
+export async function getStaticPaths() {
+    const entries = await getCollection('endpoints');
+    return entries.map((entry) => ({
+        // Same helper the sidebar uses for hrefs.
+        params: { endpoint: endpointParam(entry.data.endpoint) },
+        props: { entry },
+    }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { endpoint, method, endpointUrl, name } = entry.data;
+
+// NOTE: '/{uuid}' / 'get' are placeholders carried over from the original file.
+// Swap these for values derived from `entry.data` once your swagger paths line up.
+const spec = await SwaggerParser.dereference('./src/data/swagger.json');
+const request = extractHarExample(spec, '/{uuid}', 'get');
+const responseExamples = extractResponseExamples(spec, '/{uuid}', 'get');
+const requestHeaders = extractRequestHeaders(spec, '/{uuid}', 'get');
+const responseHeaders = extractResponseHeaders(spec, '/{uuid}', 'get');
+---
+
+<Default title={`${endpoint} — ${name}`}>
+    <div style={`--c: var(--method-${method.toLowerCase()}, var(--method-put))`}>
+        <p class="text-3xl sm:text-4xl mb-2 font-mono">
+            <span class="uppercase text-[var(--c)]">{method}</span> {endpointUrl}
+        </p>
+        <p class="mb-3 text-2xl">{name}</p>
+        <div class="w-full border-t border-hairline mb-10"></div>
+
+        <div class="prose dark:prose-invert">
+            <Content />
+        </div>
+    </div>
+
+    <div class="api-doc mt-3 mb-3 flex flex-col gap-4">
+        <RequestCard request={request} />
+        <ResponseCard examples={responseExamples} />
+        <RequestHeaderCard headers={requestHeaders} />
+        <ResponseHeaderCard headers={responseHeaders} />
+    </div>
+</Default>
+
+<style>
+    .prose,
+    .api-doc {
+        max-width: 58rem;
+        width: 100%;
+        margin-inline: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding-inline: 1rem;
+    }
+
+    @media (max-width: 50rem) {
+        .prose,
+        .api-doc {
+            padding-inline: 0.75rem;
+        }
+    }
+</style>

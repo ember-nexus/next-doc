@@ -1,21 +1,22 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Default from '../layouts/Default.astro';
-import { getRoutablePages } from '../util';
+import { pageSlug } from '../lib';
 
 export async function getStaticPaths() {
-    const pages = await getRoutablePages();
-    return pages.map((node) => ({
-        params: { slug: node.slug },
-        props: { page: node.entry! },
+    const pages = await getCollection('pages');
+    return pages.map((entry) => ({
+        // Same helper the sidebar uses for hrefs -> routes & links can't drift.
+        params: { slug: pageSlug(entry.id) },
+        props: { entry },
     }));
 }
 
-const { page } = Astro.props;
-const { Content, headings } = await render(page);
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
 ---
 
-<Default title={page.data.title} headings={headings}>
+<Default title={entry.data.title} headings={headings}>
     <div class="prose dark:prose-invert">
         <Content />
     </div>

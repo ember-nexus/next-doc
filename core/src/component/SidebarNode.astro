@@ -1,0 +1,59 @@
+---
+// Recursive renderer for one sidebar node. Replaces SidebarLinkItem.astro,
+// SidebarEndpointItem.astro and SidebarGroupItem.astro plus the manual
+// `if (type === …) <X as Dto>` dispatch in Sidebar.astro.
+//
+// Because SidebarItem is a discriminated union, `item.type` narrows the type in
+// each branch — no casts needed. Groups recurse via <Astro.self />.
+import type { SidebarItem } from '../type/Sidebar';
+
+interface Props {
+    item: SidebarItem;
+    currentPath: string;
+}
+
+const { item, currentPath } = Astro.props;
+
+const isActive = (url: string): boolean =>
+    currentPath === url || currentPath === `${url}/`;
+---
+
+{item.type === 'group' && (
+<li>
+    <p class="sidebar-group-title mt-3 px-3">{item.name}</p>
+    <ul>
+        {item.items.map((child) => (
+            <Astro.self item={child} currentPath={currentPath} />
+        ))}
+    </ul>
+</li>
+    )}
+
+{item.type === 'link' && (
+<li>
+    <a
+        href={item.url}
+        aria-current={isActive(item.url) ? 'page' : undefined}
+        class="block rounded-md px-3 py-1.5 text-[0.8125rem] no-underline text-zinc-900 dark:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/[0.06] aria-[current]:bg-black/[0.06] dark:aria-[current]:bg-white/[0.09]"
+    >
+        {item.name}
+    </a>
+</li>
+    )}
+
+{item.type === 'endpoint' && (
+<li>
+    <a
+        href={item.url}
+        aria-current={isActive(item.url) ? 'page' : undefined}
+        style={`--c: var(--method-${item.method}, var(--method-put))`}
+        class="block rounded-md px-3 py-1.5 text-[0.8125rem] no-underline text-zinc-900 dark:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/[0.06] aria-[current]:bg-black/[0.06] dark:aria-[current]:bg-white/[0.09]"
+    >
+        <p class="m-0 font-mono">
+            <b class="font-semibold text-[var(--c)] uppercase">{item.method}</b>
+            {" "}{item.endpointUrl}
+        </p>
+        <p class="mb-0 font-mono text-zinc-900 dark:text-zinc-100">{item.name}</p>
+    </a>
+</li>
+    )}
