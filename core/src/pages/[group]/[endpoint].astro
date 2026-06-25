@@ -15,8 +15,8 @@ export async function getStaticPaths() {
 
     return entries.map((entry) => ({
         params: {
-            endpoint: entry.data.endpoint.replace(/\//g, '_'),
-            group: entry.data.group
+            group: entry.data.group,
+            endpoint: entry.data.endpoint.replace(/\//g, '_')
         },
         props: {entry},
     }));
