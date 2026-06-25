@@ -17,3 +17,11 @@ tasks:
   dev:cli:
     cmds:
       - docker compose -f ./tools/docker-compose.yml exec core /bin/bash
+
+  prod:build:
+    cmds:
+      - docker build -f tools/Dockerfile --target prod -t ember-nexus-api-docs:latest .
+
+  prod:run:
+    cmds:
+      - docker run -p 80:80 ember-nexus-api-docs:latest

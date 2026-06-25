@@ -13,6 +13,7 @@ import expressiveCode from 'astro-expressive-code';
 import icon from 'astro-icon';
 import httpMethodAugmentation from "./src/rehype/httpMethodAugmentation.ts";
 
+
 export default defineConfig({
   vite: {
     plugins: [tailwindcss()]
@@ -22,7 +23,8 @@ export default defineConfig({
     allowedHosts: ['localhost', 'astro', 'ember-nexus-org-astro']
   },
   site: 'https://api.ember-nexus.dev',
-  integrations: [expressiveCode(
+  integrations: [
+    expressiveCode(
       {
         themes: ['min-dark', 'min-light'],
         useDarkModeMediaQuery: true,
@@ -30,7 +32,13 @@ export default defineConfig({
           frame: 'none',
         }
       }
-  ), mdx(), sitemap(), alpinejs(), icon()],
+    ),
+    mdx(),
+    sitemap(),
+    alpinejs(),
+    icon(),
+    (await import("@playform/compress")).default()
+  ],
   markdown: {
     shikiConfig: {
       theme: 'min-light',

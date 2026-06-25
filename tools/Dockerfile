@@ -11,12 +11,12 @@ RUN apk add bash
 
 FROM core AS prod-build
 WORKDIR /core
-USER astro
 RUN cd /core
-COPY . .
+COPY core .
+ENV CI=true
 RUN pnpm install && pnpm run build
 
-FROM nginx:alpine3.23 AS prod
-COPY ./tools/nginx.conf /etc/nginx/nginx.conf
-COPY --from=prod-build /core/dist /usr/share/nginx/html
+FROM caddy:2.11.4-alpine AS prod
+COPY --from=prod-build /core/dist /srv
+COPY ./tools/Caddyfile /etc/caddy/Caddyfile
 EXPOSE 80
