@@ -26,6 +26,9 @@ importers:
       '@awesome.me/webawesome':
         specifier: ^3.9.0
         version: 3.9.0(@floating-ui/utils@0.2.11)(@types/node@25.9.4)(@types/react@19.2.14)
+      '@expressive-code/plugin-collapsible-sections':
+        specifier: ^0.44.0
+        version: 0.44.0
       '@lucide/astro':
         specifier: ^0.553.0
         version: 0.553.0(astro@6.4.8(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.2)(terser@5.46.1)(yaml@2.9.0))
@@ -488,6 +491,12 @@ packages:
 
   '@expressive-code/core@0.42.0':
     resolution: {integrity: sha512-MN11+9nfmaC7sYu2BZJXAXqwkBRt8t1xTSqP+Ti1NfTEskgl6xUnzDxoaiQkg0BMzpglA0pys4dpDKquP/cyIw==}
+
+  '@expressive-code/core@0.44.0':
+    resolution: {integrity: sha512-xgiF2P6tYUbrhi3+x0S8xHZWT1t3Bvb3U91tAtRbLb9HLejLvYc5GZUqKICKLaUN4iSGhhNJu2fM/aH8e5yCMg==}
+
+  '@expressive-code/plugin-collapsible-sections@0.44.0':
+    resolution: {integrity: sha512-dK8axLBt0uXPaifZUZ0ZxVL/QjlqSatBds8xdXh8ecLsjXO55uQ+igK9yyI+BtU/gb/sZggcST8Ya5VNyCjH0g==}
 
   '@expressive-code/plugin-frames@0.42.0':
     resolution: {integrity: sha512-XtkPm+941Uta7Y+81Acv+OA/20F1NJmJhCX6UYGKpqEIGqplNh3PTOhcURp6tcruhlzJcWcvpWy6Oigz3SrjqA==}
@@ -3798,6 +3807,22 @@ snapshots:
       postcss-nested: 6.2.0(postcss@8.5.15)
       unist-util-visit: 5.1.0
       unist-util-visit-parents: 6.0.2
+
+  '@expressive-code/core@0.44.0':
+    dependencies:
+      '@ctrl/tinycolor': 4.2.0
+      hast-util-select: 6.0.4
+      hast-util-to-html: 9.0.5
+      hast-util-to-text: 4.0.2
+      hastscript: 9.0.1
+      postcss: 8.5.15
+      postcss-nested: 6.2.0(postcss@8.5.15)
+      unist-util-visit: 5.1.0
+      unist-util-visit-parents: 6.0.2
+
+  '@expressive-code/plugin-collapsible-sections@0.44.0':
+    dependencies:
+      '@expressive-code/core': 0.44.0
 
   '@expressive-code/plugin-frames@0.42.0':
     dependencies:

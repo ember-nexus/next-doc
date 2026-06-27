@@ -72,7 +72,11 @@ export function linkAugmentation() {
                 );
             }
 
-            node.children = [...node.children, makeIconNode(iconName)];
+            // Wrap icon in a no-break span to prevent gap+icon from orphaning onto its own line
+            node.children = [
+                ...node.children,
+                h("span", { class: "link-icon-wrap" }, [makeIconNode(iconName)]),
+            ];
         });
     };
 }

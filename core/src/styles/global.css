@@ -96,30 +96,36 @@ body {
 
     a {
         color: var(--color-blue-700);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.125em;
+        display: inline;
         text-decoration: underline;
         text-underline-offset: 0.2em;
+        text-decoration-thickness: 1.5px;
         border-radius: 0.15em;
         transition: color 0.2s ease, text-decoration-color 0.2s ease;
+        font-weight: inherit;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
     }
-
     a:hover {
         color: var(--color-violet-600);
         text-decoration-color: var(--color-violet-600);
     }
-
     a:focus-visible {
         outline: 2px solid var(--color-amber-500);
         outline-offset: 2px;
     }
 
+    a .link-icon-wrap {
+        display: inline-block;
+        white-space: nowrap;
+    }
+
     a .link-icon {
+        display: inline-block;
         width: 1.33em;
         height: 1.33em;
-        flex-shrink: 0;
-        margin: -0.33em 0;
+        vertical-align: middle;
+        margin-left: 0.125em;
         overflow: visible;
         shape-rendering: geometricPrecision;
         vector-effect: non-scaling-stroke;

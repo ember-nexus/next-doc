@@ -10,6 +10,13 @@ Ember Nexus is available on [Docker](https://hub.docker.com/r/embernexus/api) fo
 Additional architectures like RISC V are planned to be supported at some point in the future, but require additional
 work in upstream dependencies.
 
+## Requirements
+
+**Hardware requirements**: Normal deployments will likely consume 12-16 GB of memory. Trimming memory-heavy services
+like Neo4j and Elasticsearch down is possible, but might result in lower performance.
+
+**Software requirements**: Docker is required.
+
 ## Dependencies
 
 Ember Nexus requires several databases to be available:
@@ -61,7 +68,6 @@ services:
   elasticsearch:
     container_name: elasticsearch
     image: elasticsearch:8.16.1
-    mem_limit: 4gb
     ports:
       - "9200:9200"
     environment:
@@ -109,7 +115,7 @@ Ember Nexus is designed to be used behind a reverse proxy like [Traefik](https:/
 [Caddy](https://caddyserver.com/), and for that reason, it does not offer options to configure TLS and similar settings
 itself.
 
-## High available setup (HA)
+## High-availability setup (HA)
 
 Ember Nexus can be scaled up without any further configuration. Simply add additional containers with the same database
 access, configuration and ENV variables, and everything works out of the box :D

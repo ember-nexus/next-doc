@@ -16,6 +16,7 @@
     "@astrojs/mdx": "^5.0.6",
     "@astrojs/sitemap": "^3.7.3",
     "@awesome.me/webawesome": "^3.9.0",
+    "@expressive-code/plugin-collapsible-sections": "^0.44.0",
     "@lucide/astro": "^0.553.0",
     "@playform/compress": "^0.2.3",
     "@tailwindcss/postcss": "^4.3.1",

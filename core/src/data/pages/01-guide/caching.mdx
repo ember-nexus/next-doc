@@ -24,9 +24,9 @@ Ember Nexus API supports the headers to determine whether cached content is stil
 - `If-Match`, see [MDN's documentation](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/If-Match).
 - `If-None-Match`, see [MDN's documentation](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/If-None-Match).
 
-The value of the `ETag` header is calculated as the XXH3 hash from the identifiers and `updatedAt` timestamps of all
+The value of the `ETag` header is calculated as the XXH3 hash from the identifiers and `updated` timestamps of all
 involved elements.  
-As the `updatedAt` timestamp uses microsecond precision, the resulting `ETag` will be different as long as updates
+As the `updated` timestamp uses microsecond precision, the resulting `ETag` will be different as long as updates
 happen at least one microsecond apart.
 
 See also:
@@ -49,7 +49,7 @@ curl \
 The response then contains the `ETag`-header.  
 Note that the **ETag itself contains quotes**; they are part of the ETag value.
 
-```txt /ETag:.*/
+```txt /ETag:.*/ collapse={1-5}
 Access-Control-Allow-Headers: Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method
 Access-Control-Allow-Methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
 Access-Control-Allow-Origin: *
@@ -91,7 +91,7 @@ curl \
 
 Response:
 
-```txt /ETag:.*/
+```txt /ETag:.*/ collapse={1-5}
 Access-Control-Allow-Headers: Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method
 Access-Control-Allow-Methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
 Access-Control-Allow-Origin: *
@@ -122,7 +122,7 @@ curl \
 
 Response:
 
-```txt /ETag:.*/
+```txt /ETag:.*/ collapse={1-5}
 Access-Control-Allow-Headers: Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method
 Access-Control-Allow-Methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
 Access-Control-Allow-Origin: *

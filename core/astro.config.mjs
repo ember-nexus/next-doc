@@ -25,15 +25,7 @@ export default defineConfig({
   },
   site: 'https://api.ember-nexus.dev',
   integrations: [
-    expressiveCode(
-      {
-        themes: ['min-dark', 'min-light'],
-        useDarkModeMediaQuery: true,
-        defaultProps: {
-          frame: 'none',
-        }
-      }
-    ),
+    expressiveCode(),
     mdx(),
     sitemap(),
     alpinejs(),
