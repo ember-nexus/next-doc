@@ -93,6 +93,37 @@ body {
             }
         }
     }
+
+    a {
+        color: var(--color-blue-700);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.125em;
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
+        border-radius: 0.15em;
+        transition: color 0.2s ease, text-decoration-color 0.2s ease;
+    }
+
+    a:hover {
+        color: var(--color-violet-600);
+        text-decoration-color: var(--color-violet-600);
+    }
+
+    a:focus-visible {
+        outline: 2px solid var(--color-amber-500);
+        outline-offset: 2px;
+    }
+
+    a .link-icon {
+        width: 1.33em;
+        height: 1.33em;
+        flex-shrink: 0;
+        margin: -0.33em 0;
+        overflow: visible;
+        shape-rendering: geometricPrecision;
+        vector-effect: non-scaling-stroke;
+    }
 }
 
 

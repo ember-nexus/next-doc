@@ -3,7 +3,7 @@ import { h } from 'hastscript';
 
 const HTTP_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'];
 
-export default function httpMethodAugmentation() {
+export function httpMethodAugmentation() {
     return (tree) => {
         walk(tree, null);
     };
