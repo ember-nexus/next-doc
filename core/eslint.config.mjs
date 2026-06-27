@@ -27,7 +27,6 @@ const files = ['**/*.ts'];
 export default [
     pluginPromise.configs['flat/recommended'],
     compat.configs['flat/recommended'],
-    ...flatCompat.plugins('require-extensions'),
     ...flatCompat
         .extends(
             'eslint:recommended',
@@ -58,13 +57,13 @@ export default [
             ecmaVersion: 2020,
             sourceType: 'module',
             parserOptions: {
-                project: 'tsconfig.test.json',
+                project: 'tsconfig.json',
             },
         },
         settings: {
             'import/resolver': {
                 typescript: {
-                    project: './tsconfig.test.json',
+                    project: './tsconfig.json',
                 },
             },
         },
@@ -129,8 +128,7 @@ export default [
             'promise/valid-params': 'warn',
             'require-atomic-updates': 'warn',
             'require-await': 'error',
-            'require-extensions/require-extensions': 'error',
-            'require-extensions/require-index': 'error',
+            'import/extensions': ['error', 'ignorePackages', { ts: 'always' }],
             'sort-imports': [
                 'error',
                 {

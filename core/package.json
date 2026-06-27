@@ -7,7 +7,9 @@
     "build": "astro build && ./build-summary.sh",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "PW_TEST_CONNECT_WS_ENDPOINT=ws://playwright-browser:3000/ yarn playwright test"
+    "test": "PW_TEST_CONNECT_WS_ENDPOINT=ws://playwright-browser:3000/ yarn playwright test",
+    "cs": "eslint ./src",
+    "cs:fix": "eslint ./src --fix"
   },
   "dependencies": {
     "@antv/g6": "^5.1.1",
@@ -77,6 +79,6 @@
     "eslint-plugin-perfectionist": "^5.9.1",
     "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-promise": "^7.3.0",
-    "eslint-plugin-require-extensions": "^0.1.3"
+    "globals": "^17.7.0"
   }
 }
