@@ -1,7 +1,7 @@
-import type {DateTime} from "luxon";
+import type { DateTime } from "luxon";
 
 export interface Version {
-    version: string;
-    releaseDate: DateTime | null;
-    url: string | null;
+  version: string;
+  releaseDate: DateTime | null;
+  url: string | null;
 }

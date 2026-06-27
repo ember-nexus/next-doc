@@ -15,39 +15,39 @@
  * If you have a legitimate page like "2024-report.md", drop this call.
  */
 export const cleanSegment = (segment: string): string =>
-    segment.replace(/^\d+[-_]/, '');
+  segment.replace(/^\d+[-_]/, "");
 
 /** "getting-started" -> "Getting started" (used for folder/group headings). */
 export const humanize = (segment: string): string => {
-    const s = cleanSegment(segment).replace(/[-_]/g, ' ').trim();
-    return s.charAt(0).toUpperCase() + s.slice(1);
+  const s = cleanSegment(segment).replace(/[-_]/g, " ").trim();
+  return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
 // --- pages: routed by [...slug], slug === the (cleaned) collection id ----------
 
 /** "guides/01-auth" -> "guides/auth" */
 export const pageSlug = (id: string): string =>
-    id.split('/').map(cleanSegment).join('/');
+  id.split("/").map(cleanSegment).join("/");
 
 /** "guides/01-auth" -> "/guides/auth" */
-export const pagePath = (id: string): string => '/' + pageSlug(id);
+export const pagePath = (id: string): string => "/" + pageSlug(id);
 
 // --- commands: routed by command/[command] ------------------------------------
 
 /** "config:set" -> "config-set" */
 export const commandParam = (command: string): string =>
-    command.replace(/:/g, '-');
+  command.replace(/:/g, "-");
 
 /** "config:set" -> "/command/config-set" */
 export const commandPath = (command: string): string =>
-    '/command/' + commandParam(command);
+  "/command/" + commandParam(command);
 
 // --- endpoints: routed by api/[endpoint] (group is NOT in the URL) ------------
 
 /** "users/{uuid}" -> "users_{uuid}" */
 export const endpointParam = (endpoint: string): string =>
-    endpoint.replace(/\//g, '_');
+  endpoint.replace(/\//g, "_");
 
 /** "users/{uuid}" -> "/api/users_{uuid}" */
 export const endpointPath = (endpoint: string): string =>
-    '/api/' + endpointParam(endpoint);
+  "/api/" + endpointParam(endpoint);

@@ -1,3 +1,3 @@
 export enum Tag {
-    element = "Element",
+  element = "Element",
 }

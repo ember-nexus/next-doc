@@ -5,26 +5,26 @@
 // rendering code never needs `as SidebarXDto` casts.
 
 export type HttpMethod =
-    | 'get' | 'post' | 'put' | 'patch' | 'delete' | 'head' | 'options';
+  "get" | "post" | "put" | "patch" | "delete" | "head" | "options";
 
 export interface SidebarLink {
-    type: 'link';
-    name: string;
-    url: string;
+  type: "link";
+  name: string;
+  url: string;
 }
 
 export interface SidebarEndpoint {
-    type: 'endpoint';
-    name: string;
-    url: string;
-    method: HttpMethod;
-    endpointUrl: string;
+  type: "endpoint";
+  name: string;
+  url: string;
+  method: HttpMethod;
+  endpointUrl: string;
 }
 
 export interface SidebarGroup {
-    type: 'group';
-    name: string;
-    items: SidebarItem[];
+  type: "group";
+  name: string;
+  items: SidebarItem[];
 }
 
 export type SidebarItem = SidebarLink | SidebarEndpoint | SidebarGroup;

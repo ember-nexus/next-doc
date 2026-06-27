@@ -1,8 +1,8 @@
-export type ChangeType = 'add' | 'change' | 'remove';
+export type ChangeType = "add" | "change" | "remove";
 
 export interface Change {
-    version: string;
-    type: ChangeType;
-    title: string;
-    features: string[]
+  version: string;
+  type: ChangeType;
+  title: string;
+  features: string[];
 }
