@@ -15,17 +15,17 @@ export function extractCommonRequestHeaders(
   path: string,
   method: string,
 ): RequestHeader[] {
-  const op = (spec.paths?.[path] as any)?.[method];
+  const op = (spec.paths?.[path] as unknown)?.[method];
 
   return (op?.parameters ?? [])
-    .filter((p: any) => p.in === "header")
+    .filter((p: unknown) => p.in === "header")
     .map(
       ({
         name,
         required,
         description,
         "x-ember-nexus-links": links,
-      }: any): RequestHeader => ({
+      }: unknown): RequestHeader => ({
         header: name,
         presence: required ? "required" : "optional",
         description,
@@ -39,9 +39,9 @@ export function extractAuthHeaders(
   path: string,
   method: string,
 ): RequestHeader[] {
-  const op = (spec.paths?.[path] as any)?.[method];
+  const op = (spec.paths?.[path] as unknown)?.[method];
   const security: Record<string, string[]>[] = op?.security ?? [];
-  const schemes = (spec as any).components?.securitySchemes ?? {};
+  const schemes = (spec as unknown).components?.securitySchemes ?? {};
 
   const isOptional = security.some((req) => Object.keys(req).length === 0);
 
@@ -76,7 +76,7 @@ export function extractHarExample(
   path: string,
   method: string,
 ): null | Partial<HarRequest> {
-  const op = (spec.paths?.[path] as any)?.[method];
+  const op = (spec.paths?.[path] as unknown)?.[method];
   if (!("x-ember-nexus-har-example" in op)) {
     return null;
   }
@@ -88,13 +88,13 @@ export function extractResponseHeaders(
   path: string,
   method: string,
 ): ResponseHeader[] {
-  const op = (spec.paths?.[path] as any)?.[method];
-  const merged: { name: string; schema: any; codes: string[] }[] = [];
+  const op = (spec.paths?.[path] as unknown)?.[method];
+  const merged: { name: string; schema: unknown; codes: string[] }[] = [];
 
-  for (const [code, res] of Object.entries(op?.responses ?? {}) as any) {
+  for (const [code, res] of Object.entries(op?.responses ?? {}) as unknown) {
     for (const [name, schema] of Object.entries(
-      (res as any)?.headers ?? {},
-    ) as any) {
+      (res as unknown)?.headers ?? {},
+    ) as unknown) {
       const existing = merged.find(
         (r) => r.name === name && equal(r.schema, schema),
       );
@@ -123,14 +123,16 @@ export function extractResponseExamples(
   path: string,
   method: string,
 ): ResponseExample[] {
-  const op = (spec.paths?.[path] as any)?.[method];
+  const op = (spec.paths?.[path] as unknown)?.[method];
   const results: ResponseExample[] = [];
 
   for (const [statusCode, response] of Object.entries(
     op?.responses ?? {},
-  ) as any) {
+  ) as unknown) {
     const headers = Object.entries(response?.headers ?? {})
-      .map(([name, schema]: any) => `${name}: ${schema.schema?.example ?? ""}`)
+      .map(
+        ([name, schema]: unknown) => `${name}: ${schema.schema?.example ?? ""}`,
+      )
       .join("\n");
 
     const content = response?.content ?? {};
@@ -149,14 +151,14 @@ export function extractResponseExamples(
       continue;
     }
 
-    for (const [mimeType, mediaType] of Object.entries(content) as any) {
+    for (const [mimeType, mediaType] of Object.entries(content) as unknown) {
       const examples = mediaType?.examples;
       const schema = mediaType?.schema
         ? JSON.stringify(mediaType.schema, null, 2)
         : null;
 
       if (examples) {
-        for (const [, example] of Object.entries(examples) as any) {
+        for (const [, example] of Object.entries(examples) as unknown) {
           results.push({
             httpStatusCode: Number(statusCode) as HttpStatusCode,
             name: example["x-ember-nexus-name"] ?? null,

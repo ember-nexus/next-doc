@@ -1,5 +1,10 @@
-import type { Endpoint } from "../../contracts";
-import { Method, OperationId, SecurityScheme, Tag } from "../../contracts";
+import type { Endpoint } from "../../contracts/index.ts";
+import {
+  Method,
+  OperationId,
+  SecurityScheme,
+  Tag,
+} from "../../contracts/index.ts";
 
 export const getElement: Endpoint = {
   path: "/{uuid}",

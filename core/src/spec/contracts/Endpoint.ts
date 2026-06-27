@@ -13,7 +13,7 @@ export type Endpoint = {
   operationId: OperationId;
   securityScheme: SecurityScheme;
   tags: Tag[];
-  parameters: any[];
+  parameters: unknown[];
   "x-ember-nexus-har-example": Partial<HarRequest>;
-  responses: any[];
+  responses: unknown[];
 };

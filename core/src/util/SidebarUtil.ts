@@ -1,7 +1,6 @@
 import { type CollectionEntry, getCollection } from "astro:content";
 
 import type {
-  Endpoint,
   SidebarEndpointItemDto,
   SidebarGroupItemDto,
   SidebarItemDto,
