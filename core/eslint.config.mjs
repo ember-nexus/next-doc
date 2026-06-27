@@ -77,7 +77,7 @@ export default [
             'camelcase': 'error',
             'dot-notation': 'warn',
             'eqeqeq': ['error', 'always'],
-            'import/no-unresolved': 'error',
+            'import/no-unresolved': ["error", { ignore: ["^astro:"] }],
             'import/order': [
                 'error',
                 {

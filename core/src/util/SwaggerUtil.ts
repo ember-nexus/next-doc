@@ -1,6 +1,16 @@
 import equal from "fast-deep-equal/es6";
 import type { HarRequest } from "httpsnippet";
-import type { OpenAPIObject } from "openapi3-ts/oas31";
+import {
+  type ContentObject,
+  type HeaderObject,
+  type OpenAPIObject,
+  type OperationObject,
+  type PathItemObject,
+  type ResponseObject,
+  type ResponsesObject,
+  type SecuritySchemeObject,
+  isReferenceObject,
+} from "openapi3-ts/oas31";
 
 import type {
   HttpStatusCode,
@@ -10,28 +20,41 @@ import type {
   ResponseHeader,
 } from "../type";
 
+/**
+ * Resolve the operation object for a given path + HTTP method.
+ *
+ * `PathItemObject` keys are typed per method (get/post/...), so indexing with a
+ * free-form `method` string requires a narrowing cast.
+ */
+function getOperation(
+  spec: OpenAPIObject,
+  path: string,
+  method: string,
+): OperationObject | undefined {
+  const pathItem = spec.paths?.[path];
+  return pathItem?.[method as keyof PathItemObject] as
+    OperationObject | undefined;
+}
+
 export function extractCommonRequestHeaders(
   spec: OpenAPIObject,
   path: string,
   method: string,
 ): RequestHeader[] {
-  const op = (spec.paths?.[path] as unknown)?.[method];
+  const op = getOperation(spec, path, method);
 
   return (op?.parameters ?? [])
-    .filter((p: unknown) => p.in === "header")
-    .map(
-      ({
-        name,
-        required,
-        description,
-        "x-ember-nexus-links": links,
-      }: unknown): RequestHeader => ({
-        header: name,
-        presence: required ? "required" : "optional",
-        description,
-        links,
-      }),
-    );
+    .filter((p) => !isReferenceObject(p) && p.in === "header")
+    .map((p): RequestHeader => {
+      // Narrowed above: refs are filtered out, so `p` is a ParameterObject.
+      const param = p as Exclude<typeof p, { $ref: string }>;
+      return {
+        header: param.name,
+        presence: param.required ? "required" : "optional",
+        description: param.description,
+        links: param["x-ember-nexus-links"] as Link[] | undefined,
+      };
+    });
 }
 
 export function extractAuthHeaders(
@@ -39,24 +62,27 @@ export function extractAuthHeaders(
   path: string,
   method: string,
 ): RequestHeader[] {
-  const op = (spec.paths?.[path] as unknown)?.[method];
-  const security: Record<string, string[]>[] = op?.security ?? [];
-  const schemes = (spec as unknown).components?.securitySchemes ?? {};
+  const op = getOperation(spec, path, method);
+  const security = op?.security ?? [];
+  const schemes = spec.components?.securitySchemes ?? {};
 
   const isOptional = security.some((req) => Object.keys(req).length === 0);
 
   return security
-    .flatMap(Object.keys)
+    .flatMap((requirement) => Object.keys(requirement))
+    .map((name) => schemes[name])
     .filter(
-      (name) =>
-        schemes[name]?.type === "http" && schemes[name]?.scheme === "bearer",
+      (scheme): scheme is SecuritySchemeObject =>
+        scheme !== undefined &&
+        !isReferenceObject(scheme) &&
+        scheme.type === "http" &&
+        scheme.scheme === "bearer",
     )
-    .map((name): RequestHeader => ({
+    .map((scheme): RequestHeader => ({
       header: "Authorization",
       presence: isOptional ? "optional" : "required",
-      description:
-        schemes[name].description ?? "Bearer token for authentication.",
-      links: schemes[name]["x-ember-nexus-links"] ?? [],
+      description: scheme.description ?? "Bearer token for authentication.",
+      links: (scheme["x-ember-nexus-links"] as Link[] | undefined) ?? [],
     }));
 }
 
@@ -76,11 +102,11 @@ export function extractHarExample(
   path: string,
   method: string,
 ): null | Partial<HarRequest> {
-  const op = (spec.paths?.[path] as unknown)?.[method];
-  if (!("x-ember-nexus-har-example" in op)) {
+  const op = getOperation(spec, path, method);
+  if (!op || !("x-ember-nexus-har-example" in op)) {
     return null;
   }
-  return op["x-ember-nexus-har-example"] satisfies Partial<HarRequest>;
+  return op["x-ember-nexus-har-example"] as Partial<HarRequest>;
 }
 
 export function extractResponseHeaders(
@@ -88,34 +114,41 @@ export function extractResponseHeaders(
   path: string,
   method: string,
 ): ResponseHeader[] {
-  const op = (spec.paths?.[path] as unknown)?.[method];
-  const merged: { name: string; schema: unknown; codes: string[] }[] = [];
+  const op = getOperation(spec, path, method);
+  const merged: { name: string; header: HeaderObject; codes: string[] }[] = [];
 
-  for (const [code, res] of Object.entries(op?.responses ?? {}) as unknown) {
-    for (const [name, schema] of Object.entries(
-      (res as unknown)?.headers ?? {},
-    ) as unknown) {
+  const responses = (op?.responses ?? {}) as ResponsesObject;
+  for (const [code, responseOrRef] of Object.entries(responses)) {
+    if (isReferenceObject(responseOrRef)) {
+      continue;
+    }
+    const response = responseOrRef as ResponseObject;
+
+    for (const [name, headerOrRef] of Object.entries(response.headers ?? {})) {
+      if (isReferenceObject(headerOrRef)) {
+        continue;
+      }
+      const header = headerOrRef;
+
       const existing = merged.find(
-        (r) => r.name === name && equal(r.schema, schema),
+        (entry) => entry.name === name && equal(entry.header, header),
       );
       if (existing) {
         existing.codes.push(code);
       } else {
-        merged.push({ name, schema, codes: [code] });
+        merged.push({ name, header, codes: [code] });
       }
     }
   }
 
-  return merged.map(
-    ({ name, schema }) =>
-      ({
-        header: name,
-        presence: schema.required ? "always" : "optional",
-        important: (schema["x-ember-nexus-important"] as boolean) ?? false,
-        description: schema.description as string,
-        links: schema["x-ember-nexus-links"] as Link[],
-      }) satisfies ResponseHeader,
-  );
+  return merged.map(({ name, header }): ResponseHeader => ({
+    header: name,
+    presence: header.required ? "always" : "optional",
+    important:
+      (header["x-ember-nexus-important"] as boolean | undefined) ?? false,
+    description: header.description ?? "",
+    links: (header["x-ember-nexus-links"] as Link[] | undefined) ?? [],
+  }));
 }
 
 export function extractResponseExamples(
@@ -123,20 +156,31 @@ export function extractResponseExamples(
   path: string,
   method: string,
 ): ResponseExample[] {
-  const op = (spec.paths?.[path] as unknown)?.[method];
+  const op = getOperation(spec, path, method);
   const results: ResponseExample[] = [];
 
-  for (const [statusCode, response] of Object.entries(
-    op?.responses ?? {},
-  ) as unknown) {
-    const headers = Object.entries(response?.headers ?? {})
-      .map(
-        ([name, schema]: unknown) => `${name}: ${schema.schema?.example ?? ""}`,
-      )
+  const responses = (op?.responses ?? {}) as ResponsesObject;
+  for (const [statusCode, responseOrRef] of Object.entries(responses)) {
+    if (isReferenceObject(responseOrRef)) {
+      continue;
+    }
+    const response = responseOrRef as ResponseObject;
+
+    const headers = Object.entries(response.headers ?? {})
+      .map(([name, headerOrRef]) => {
+        let example = "";
+        if (!isReferenceObject(headerOrRef)) {
+          const headerSchema = headerOrRef.schema;
+          if (headerSchema && !isReferenceObject(headerSchema)) {
+            example = String(headerSchema.example ?? "");
+          }
+        }
+        return `${name}: ${example}`;
+      })
       .join("\n");
 
-    const content = response?.content ?? {};
-    const links: Link[] = response["x-ember-nexus-links"] ?? [];
+    const content: ContentObject = response.content ?? {};
+    const links = (response["x-ember-nexus-links"] as Link[] | undefined) ?? [];
 
     if (Object.keys(content).length === 0) {
       results.push({
@@ -151,17 +195,21 @@ export function extractResponseExamples(
       continue;
     }
 
-    for (const [mimeType, mediaType] of Object.entries(content) as unknown) {
-      const examples = mediaType?.examples;
-      const schema = mediaType?.schema
+    for (const [mimeType, mediaType] of Object.entries(content)) {
+      const examples = mediaType.examples;
+      const schema = mediaType.schema
         ? JSON.stringify(mediaType.schema, null, 2)
         : null;
 
       if (examples) {
-        for (const [, example] of Object.entries(examples) as unknown) {
+        for (const [, exampleOrRef] of Object.entries(examples)) {
+          if (isReferenceObject(exampleOrRef)) {
+            continue;
+          }
+          const example = exampleOrRef;
           results.push({
             httpStatusCode: Number(statusCode) as HttpStatusCode,
-            name: example["x-ember-nexus-name"] ?? null,
+            name: (example["x-ember-nexus-name"] as string | undefined) ?? null,
             description: example.summary ?? response.description ?? "",
             links,
             body: {
