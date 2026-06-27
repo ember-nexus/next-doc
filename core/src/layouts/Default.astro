@@ -2,6 +2,7 @@
 import '../styles/global.css'
 import Sidebar from '../component/Sidebar.astro'
 import SidebarToggle from '../component/SidebarToggle.astro'
+import Search from "astro-pagefind/components/Search.astro";
 
 interface Props {
     title: string
@@ -41,9 +42,10 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
 >
     <header class="flex items-center gap-2 px-5 py-4">
         <SidebarToggle icon="panel-left" />
+        <Search instance="search" className="pagefind-ui" searchboxOptions={{ placeholder: "search" }} />
     </header>
 
-    <main class="content-grid">
+    <main class="content-grid" data-pagefind-body>
         {headings.length > 0 && (
             <aside class="toc-sidebar" aria-label="Table of contents">
                 <nav class="toc-nav">

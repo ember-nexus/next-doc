@@ -12,6 +12,7 @@ import expressiveCode from 'astro-expressive-code';
 
 import icon from 'astro-icon';
 import httpMethodAugmentation from "./src/rehype/httpMethodAugmentation.ts";
+import pagefind from "astro-pagefind";
 
 
 export default defineConfig({
@@ -37,6 +38,7 @@ export default defineConfig({
     sitemap(),
     alpinejs(),
     icon(),
+    pagefind(),
     (await import("@playform/compress")).default()
   ],
   markdown: {

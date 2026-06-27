@@ -38,6 +38,7 @@ const tabEntries = tabs.map(t => ({key: t, label: tabLabels[t] ?? t}));
 <div
     class="search-response-card mt-4"
     x-data={`{ tab: '${firstTab}', open: false, get currentLabel() { return ${JSON.stringify(tabEntries)}.find(t => t.key === this.tab)?.label ?? this.tab } }`}
+    data-pagefind-ignore="all"
 >
     <div class="sm:hidden relative w-full mb-2">
         <button
