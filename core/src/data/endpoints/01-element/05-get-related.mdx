@@ -9,14 +9,14 @@ endpointUrl: /<uuid>/related
 Endpoint returns all nodes directly connected to a given central node, as well as the relations between the central and
 outer nodes, regardless of type.
 
-In the following example the id of the `Center`-node is used in the `/<uuid>/related` endpoint, which will return the
+In the following example the id of the `Center {.hl-2}`-node is used in the `/<uuid>/related` endpoint, which will return the
 following elements in the endpoint's response:
 
-- `Parent`
-- `Child`
-- `Outer 1` and `Outer 2`
-- both `OWNS`-relations
-- both `RELATED`-relations
+- `Parent {.hl-1}`
+- `Child {.hl-1}`
+- `Outer 1 {.hl-1}` and `Outer 2 {.hl-1}`
+- both `OWNS {.hl-1}`-relations
+- both `RELATED {.hl-1}`-relations
 
 <g6-graph layout="antv-dagre-LR">
     <script type="application/json">{`

@@ -1,0 +1,14 @@
+
+
+.highlight-1, .hl-1 {
+    color: var(--color-blue-600);
+}
+
+.highlight-2, .hl-2 {
+    color: var(--color-orange-600);
+}
+
+.highlight-muted, .hl-m {
+    color: var(--color-zinc-700);
+}
+
