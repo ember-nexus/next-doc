@@ -25,3 +25,7 @@ tasks:
   prod:run:
     cmds:
       - docker run -p 80:80 ember-nexus-api-docs:latest
+
+  swagger:generate:
+    cmds:
+      - find ./core/src/data/swagger -name '*.json' -print0 | xargs -0 jq -s 'reduce .[1:][] as $x (.[0]; . * $x)' > ./core/src/data/swagger.json
