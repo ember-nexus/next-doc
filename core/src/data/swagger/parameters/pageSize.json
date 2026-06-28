@@ -1,12 +1,12 @@
 {
   "components": {
     "parameters": {
-      "page": {
-        "name": "page",
+      "pageSize": {
+        "name": "pageSize",
         "in": "query",
         "required": false,
-        "example": 1,
-        "description": "Index of the page to be accessed. First page / index is 1.",
+        "example": 25,
+        "description": "Number of elements to be returned in a single page.",
         "x-ember-nexus-links": [
           {
             "url": "/guide/pagination-todo",
@@ -16,7 +16,7 @@
         "schema": {
           "type": "integer",
           "minimum": 1,
-          "default": 1
+          "default": 100
         }
       }
     }

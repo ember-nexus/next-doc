@@ -160,7 +160,7 @@
         "required": true
       },
       "ETag-optional": {
-        "description": "Entity tag used for caching and optimistic concurrency control.",
+        "description": "Entity tag used for caching and optimistic concurrency control.\n\n**Note**: ETag is not included for collections which are too big.",
         "schema": {
           "type": "string",
           "example": "\"YgbFC4u5EgC\""
@@ -173,6 +173,10 @@
           {
             "url": "https://http.dev/etag",
             "name": "HTTP.dev"
+          },
+          {
+            "url": "/guide/caching-guide-todo",
+            "name": "Caching guide"
           }
         ],
         "x-ember-nexus-important": true,
@@ -228,6 +232,10 @@
           {
             "url": "https://http.dev/etag",
             "name": "HTTP.dev"
+          },
+          {
+            "url": "/guide/caching-guide-todo",
+            "name": "Caching guide"
           }
         ],
         "x-ember-nexus-important": true,
@@ -319,11 +327,51 @@
           {
             "url": "https://http.dev/authorization",
             "name": "HTTP.dev"
+          },
+          {
+            "url": "/guide/getting-started-guide-todo",
+            "name": "Getting started guide"
           }
         ]
       }
     },
     "parameters": {
+      "page": {
+        "name": "page",
+        "in": "query",
+        "required": false,
+        "example": 1,
+        "description": "Index of the page to be accessed. First page / index is 1.",
+        "x-ember-nexus-links": [
+          {
+            "url": "/guide/pagination-todo",
+            "name": "Pagination tutorial"
+          }
+        ],
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        }
+      },
+      "pageSize": {
+        "name": "pageSize",
+        "in": "query",
+        "required": false,
+        "example": 25,
+        "description": "Number of elements to be returned in a single page.",
+        "x-ember-nexus-links": [
+          {
+            "url": "/guide/pagination-todo",
+            "name": "Pagination tutorial"
+          }
+        ],
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100
+        }
+      },
       "If-Match": {
         "name": "If-Match",
         "in": "header",
@@ -338,6 +386,10 @@
           {
             "url": "https://http.dev/if-match",
             "name": "HTTP.dev"
+          },
+          {
+            "url": "/guide/caching-guide-todo",
+            "name": "Caching guide"
           }
         ],
         "schema": {
@@ -358,6 +410,10 @@
           {
             "url": "https://http.dev/if-none-match",
             "name": "HTTP.dev"
+          },
+          {
+            "url": "/guide/caching-guide-todo",
+            "name": "Caching guide"
           }
         ],
         "schema": {
@@ -433,7 +489,7 @@
                 "$ref": "#/components/headers/Cache-Control"
               },
               "ETag": {
-                "$ref": "#/components/headers/ETag"
+                "$ref": "#/components/headers/ETag-optional"
               },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
@@ -1240,7 +1296,7 @@
                 "$ref": "#/components/headers/Cache-Control"
               },
               "ETag": {
-                "$ref": "#/components/headers/ETag"
+                "$ref": "#/components/headers/ETag-optional"
               },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
@@ -1415,7 +1471,7 @@
                 "$ref": "#/components/headers/Cache-Control"
               },
               "ETag": {
-                "$ref": "#/components/headers/ETag"
+                "$ref": "#/components/headers/ETag-optional"
               },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
@@ -1785,6 +1841,12 @@
             }
           },
           {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
+          },
+          {
             "$ref": "#/components/parameters/If-Match"
           },
           {
@@ -2050,7 +2112,7 @@
                 "$ref": "#/components/headers/Cache-Control"
               },
               "ETag": {
-                "$ref": "#/components/headers/ETag"
+                "$ref": "#/components/headers/ETag-optional"
               },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"

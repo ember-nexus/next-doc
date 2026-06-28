@@ -18,6 +18,10 @@
           {
             "url": "https://http.dev/authorization",
             "name": "HTTP.dev"
+          },
+          {
+            "url": "/guide/getting-started-guide-todo",
+            "name": "Getting started guide"
           }
         ]
       }

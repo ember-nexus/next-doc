@@ -15,6 +15,10 @@
           {
             "url": "https://http.dev/if-match",
             "name": "HTTP.dev"
+          },
+          {
+            "url": "/guide/caching-guide-todo",
+            "name": "Caching guide"
           }
         ],
         "schema": {

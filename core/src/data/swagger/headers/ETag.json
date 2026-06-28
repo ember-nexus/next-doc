@@ -15,6 +15,10 @@
           {
             "url": "https://http.dev/etag",
             "name": "HTTP.dev"
+          },
+          {
+            "url": "/guide/caching-guide-todo",
+            "name": "Caching guide"
           }
         ],
         "x-ember-nexus-important": true,
