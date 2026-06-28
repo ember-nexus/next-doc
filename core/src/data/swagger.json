@@ -574,7 +574,7 @@
                 "$ref": "#/components/headers/Cache-Control"
               },
               "ETag": {
-                "$ref": "#/components/headers/ETag"
+                "$ref": "#/components/headers/ETag-optional"
               },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
@@ -1209,7 +1209,7 @@
                 "$ref": "#/components/headers/Cache-Control"
               },
               "ETag": {
-                "$ref": "#/components/headers/ETag"
+                "$ref": "#/components/headers/ETag-optional"
               },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
@@ -1752,7 +1752,7 @@
                 "$ref": "#/components/headers/Cache-Control"
               },
               "ETag": {
-                "$ref": "#/components/headers/ETag"
+                "$ref": "#/components/headers/ETag-optional"
               },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
@@ -1979,7 +1979,7 @@
                 "$ref": "#/components/headers/Cache-Control"
               },
               "ETag": {
-                "$ref": "#/components/headers/ETag"
+                "$ref": "#/components/headers/ETag-optional"
               },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
