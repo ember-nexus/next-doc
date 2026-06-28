@@ -2,6 +2,8 @@
 type: tutorial
 title: Organizing and sharing data
 ---
+import ComparisonCard from '../../component/ComparisonCard.astro';
+import TwoColumn from '../../component/TwoColumn.astro';
 
 # Organizing and sharing data
 
@@ -15,59 +17,51 @@ Organizing your data is important because:
     the same parent node, then you will have more than 8.000 elements after just a month. In order to reduce this load
     on the parent node, you can use time based sub-groupings:
 
-Bad:
+<TwoColumn>
+    <ComparisonCard variant="bad" title="Bad">
+        <g6-graph layout="antv-dagre-TB" variant="bad">
+            <script type="application/json">{`
+        {
+            "elements": [
+                { "id": "parent", "type": "Collection", "data": { "name": "Parent" }},
+                { "id": "report1", "type": "Report", "data": { "name": "Report 2026.01.01" }},
+                { "id": "report2", "type": "Report", "data": { "name": "Report 2026.01.15" }},
+                { "id": "report3", "type": "Report", "data": { "name": "Report 2026.02.01" }},
+                { "id": "report4", "type": "Report", "data": { "name": "Report 2026.02.15" }},
+                { "id": "owns1", "type": "OWNS", "start": "parent", "end": "report1" },
+                { "id": "owns2", "type": "OWNS", "start": "parent", "end": "report2" },
+                { "id": "owns3", "type": "OWNS", "start": "parent", "end": "report3" },
+                { "id": "owns4", "type": "OWNS", "start": "parent", "end": "report4" }
+            ]
+        }
+      `}</script>
+        </g6-graph>
+    </ComparisonCard>
 
-<g6-graph layout="force">
-    <script type="application/json">{`
-    {
-        "elements": [
-            { "id": "parent", "type": "Collection", "data": { "name": "Parent" }},
-            { "id": "report1", "type": "Report", "data": { "name": "Report 2026.01.01" }},
-            { "id": "report2", "type": "Report", "data": { "name": "Report 2026.01.15" }},
-            { "id": "report3", "type": "Report", "data": { "name": "Report 2026.02.01" }},
-            { "id": "report4", "type": "Report", "data": { "name": "Report 2026.02.15" }},
-            { "id": "report5", "type": "Report", "data": { "name": "Report 2026.03.01" }},
-            { "id": "report6", "type": "Report", "data": { "name": "Report 2026.03.15" }},
-            { "id": "owns1", "type": "OWNS", "start": "parent", "end": "report1" },
-            { "id": "owns2", "type": "OWNS", "start": "parent", "end": "report2" },
-            { "id": "owns3", "type": "OWNS", "start": "parent", "end": "report3" },
-            { "id": "owns4", "type": "OWNS", "start": "parent", "end": "report4" },
-            { "id": "owns5", "type": "OWNS", "start": "parent", "end": "report5" },
-            { "id": "owns6", "type": "OWNS", "start": "parent", "end": "report6" }
-        ]
-    }
-  `}</script>
-</g6-graph>
-
-Better:
-
-<g6-graph layout="antv-dagre-TB">
-    <script type="application/json">{`
-    {
-        "elements": [
-            { "id": "parent", "type": "Collection", "data": { "name": "Parent" }},
-            { "id": "collection1", "type": "Collection", "data": { "name": "Reports 2026.01" }},
-            { "id": "collection2", "type": "Collection", "data": { "name": "Reports 2026.02" }},
-            { "id": "collection3", "type": "Collection", "data": { "name": "Reports 2026.03" }},
-            { "id": "report1", "type": "Report", "data": { "name": "Report 2026.01.01" }},
-            { "id": "report2", "type": "Report", "data": { "name": "Report 2026.01.15" }},
-            { "id": "report3", "type": "Report", "data": { "name": "Report 2026.02.01" }},
-            { "id": "report4", "type": "Report", "data": { "name": "Report 2026.02.15" }},
-            { "id": "report5", "type": "Report", "data": { "name": "Report 2026.03.01" }},
-            { "id": "report6", "type": "Report", "data": { "name": "Report 2026.03.15" }},
-            { "id": "ownsCollection1", "type": "OWNS", "start": "parent", "end": "collection1" },
-            { "id": "ownsCollection2", "type": "OWNS", "start": "parent", "end": "collection2" },
-            { "id": "ownsCollection3", "type": "OWNS", "start": "parent", "end": "collection3" },
-            { "id": "owns1", "type": "OWNS", "start": "collection1", "end": "report1" },
-            { "id": "owns2", "type": "OWNS", "start": "collection1", "end": "report2" },
-            { "id": "owns3", "type": "OWNS", "start": "collection2", "end": "report3" },
-            { "id": "owns4", "type": "OWNS", "start": "collection2", "end": "report4" },
-            { "id": "owns5", "type": "OWNS", "start": "collection3", "end": "report5" },
-            { "id": "owns6", "type": "OWNS", "start": "collection3", "end": "report6" }
-        ]
-    }
-  `}</script>
-</g6-graph>
+    <ComparisonCard variant="good" title="Good">
+        <g6-graph layout="antv-dagre-TB" variant="good">
+            <script type="application/json">{`
+        {
+            "elements": [
+                { "id": "parent", "type": "Collection", "data": { "name": "Parent" }},
+                { "id": "collection1", "type": "Collection", "data": { "name": "Reports 2026.01" }},
+                { "id": "collection2", "type": "Collection", "data": { "name": "Reports 2026.02" }},
+                { "id": "report1", "type": "Report", "data": { "name": "Report 2026.01.01" }},
+                { "id": "report2", "type": "Report", "data": { "name": "Report 2026.01.15" }},
+                { "id": "report3", "type": "Report", "data": { "name": "Report 2026.02.01" }},
+                { "id": "report4", "type": "Report", "data": { "name": "Report 2026.02.15" }},
+                { "id": "ownsCollection1", "type": "OWNS", "start": "parent", "end": "collection1" },
+                { "id": "ownsCollection2", "type": "OWNS", "start": "parent", "end": "collection2" },
+                { "id": "owns1", "type": "OWNS", "start": "collection1", "end": "report1" },
+                { "id": "owns2", "type": "OWNS", "start": "collection1", "end": "report2" },
+                { "id": "owns3", "type": "OWNS", "start": "collection2", "end": "report3" },
+                { "id": "owns4", "type": "OWNS", "start": "collection2", "end": "report4" }
+            ]
+        }
+      `}</script>
+        </g6-graph>
+    </ComparisonCard>
+</TwoColumn>
 
 ## General tips
 
@@ -81,50 +75,50 @@ Better:
 - Do not grant individual users access to specific elements, groups or similar. Instead, create a `Group`, add the user
   to the group, and grant the group access to the element.
 
-Bad:
-
-<g6-graph layout="force">
-    <script type="application/json">{`
-    {
-        "elements": [
-            { "id": "user1", "type": "User", "data": { "name": "User 1" }},
-            { "id": "user2", "type": "User", "data": { "name": "User 2" }},
-            { "id": "user3", "type": "User", "data": { "name": "User 3" }},
-            { "id": "user4", "type": "User", "data": { "name": "User 4" }},
-            { "id": "user5", "type": "User", "data": { "name": "User 5" }},
-            { "id": "data", "type": "Data", "data": { "name": "Data" }},
-            { "id": "owns1", "type": "OWNS", "start": "user1", "end": "data" },
-            { "id": "owns2", "type": "OWNS", "start": "user2", "end": "data" },
-            { "id": "owns3", "type": "OWNS", "start": "user3", "end": "data" },
-            { "id": "owns4", "type": "OWNS", "start": "user4", "end": "data" },
-            { "id": "owns5", "type": "OWNS", "start": "user5", "end": "data" }
-        ]
-    }
-  `}</script>
-</g6-graph>
-
-Better:
-
-<g6-graph layout="force">
-    <script type="application/json">{`
-    {
-        "elements": [
-            { "id": "user1", "type": "User", "data": { "name": "User 1" }},
-            { "id": "user2", "type": "User", "data": { "name": "User 2" }},
-            { "id": "user3", "type": "User", "data": { "name": "User 3" }},
-            { "id": "user4", "type": "User", "data": { "name": "User 4" }},
-            { "id": "user5", "type": "User", "data": { "name": "User 5" }},
-            { "id": "data", "type": "Data", "data": { "name": "Data" }},
-            { "id": "group", "type": "Group", "data": { "name": "Group" }},
-            { "id": "owns", "type": "OWNS", "start": "group", "end": "data" },
-            { "id": "isInGroup1", "type": "IS_IN_GROUP", "start": "user1", "end": "group" },
-            { "id": "isInGroup2", "type": "IS_IN_GROUP", "start": "user2", "end": "group" },
-            { "id": "isInGroup3", "type": "IS_IN_GROUP", "start": "user3", "end": "group" },
-            { "id": "isInGroup4", "type": "IS_IN_GROUP", "start": "user4", "end": "group" },
-            { "id": "isInGroup5", "type": "IS_IN_GROUP", "start": "user5", "end": "group" }
-        ]
-    }
-  `}</script>
-</g6-graph>
-
-
+<TwoColumn>
+    <ComparisonCard variant="bad" title="Bad">
+        <g6-graph layout="force" variant="bad">
+            <script type="application/json">{`
+            {
+                "elements": [
+                    { "id": "user1", "type": "User", "data": { "name": "User 1" }},
+                    { "id": "user2", "type": "User", "data": { "name": "User 2" }},
+                    { "id": "user3", "type": "User", "data": { "name": "User 3" }},
+                    { "id": "user4", "type": "User", "data": { "name": "User 4" }},
+                    { "id": "user5", "type": "User", "data": { "name": "User 5" }},
+                    { "id": "data", "type": "Data", "data": { "name": "Data" }},
+                    { "id": "owns1", "type": "OWNS", "start": "user1", "end": "data" },
+                    { "id": "owns2", "type": "OWNS", "start": "user2", "end": "data" },
+                    { "id": "owns3", "type": "OWNS", "start": "user3", "end": "data" },
+                    { "id": "owns4", "type": "OWNS", "start": "user4", "end": "data" },
+                    { "id": "owns5", "type": "OWNS", "start": "user5", "end": "data" }
+                ]
+            }
+          `}</script>
+        </g6-graph>
+    </ComparisonCard>
+    
+    <ComparisonCard variant="good" title="Good">
+        <g6-graph layout="force" variant="good">
+            <script type="application/json">{`
+            {
+                "elements": [
+                    { "id": "user1", "type": "User", "data": { "name": "User 1" }},
+                    { "id": "user2", "type": "User", "data": { "name": "User 2" }},
+                    { "id": "user3", "type": "User", "data": { "name": "User 3" }},
+                    { "id": "user4", "type": "User", "data": { "name": "User 4" }},
+                    { "id": "user5", "type": "User", "data": { "name": "User 5" }},
+                    { "id": "data", "type": "Data", "data": { "name": "Data" }},
+                    { "id": "group", "type": "Group", "data": { "name": "Group" }},
+                    { "id": "owns", "type": "OWNS", "start": "group", "end": "data" },
+                    { "id": "isInGroup1", "type": "IS_IN_GROUP", "start": "user1", "end": "group" },
+                    { "id": "isInGroup2", "type": "IS_IN_GROUP", "start": "user2", "end": "group" },
+                    { "id": "isInGroup3", "type": "IS_IN_GROUP", "start": "user3", "end": "group" },
+                    { "id": "isInGroup4", "type": "IS_IN_GROUP", "start": "user4", "end": "group" },
+                    { "id": "isInGroup5", "type": "IS_IN_GROUP", "start": "user5", "end": "group" }
+                ]
+            }
+          `}</script>
+        </g6-graph>
+    </ComparisonCard>
+</TwoColumn>

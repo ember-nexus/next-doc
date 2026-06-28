@@ -100,17 +100,34 @@ export class G6Graph extends LitElement {
       height: 100%;
       touch-action: none;
     }
+
+    :host([variant="good"]) .wrapper {
+      background-color: color-mix(in oklab, var(--color-green-50) 50%, white);
+    }
+    :host([variant="bad"]) .wrapper {
+      background-color: color-mix(in oklab, var(--color-red-50) 50%, white);
+    }
+    @media (prefers-color-scheme: dark) {
+      :host([variant="good"]) .wrapper {
+        background-color: color-mix(in oklab, var(--color-green-950) 62.5%, black);
+      }
+      :host([variant="bad"]) .wrapper {
+        background-color: color-mix(in oklab, var(--color-red-950) 62.5%, black);
+      }
+    }
   `;
 
   static properties = {
     layout: { type: String, reflect: true },
     scheme: { type: String, reflect: true },
+    variant: { type: String, reflect: true },
   };
 
   /** Layout variant. */
   declare layout: LayoutKind;
   /** 'light' (default) | 'dark' | 'auto' (follow prefers-color-scheme). */
   declare scheme: "light" | "dark" | "auto";
+  declare variant?: "good" | "bad";
 
   constructor() {
     super();

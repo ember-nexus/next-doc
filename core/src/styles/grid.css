@@ -69,8 +69,14 @@
 }
 
 .content-grid > g6-graph,
-.content-grid > > g6-graph {
+.content-grid > * > g6-graph{
     display: block;
+    margin-inline: calc(-1 * var(--breakout-pad));
+    width: calc(100% + 2 * var(--breakout-pad));
+}
+
+.content-grid > .two-column,
+.content-grid > * > .two-column {
     margin-inline: calc(-1 * var(--breakout-pad));
     width: calc(100% + 2 * var(--breakout-pad));
 }

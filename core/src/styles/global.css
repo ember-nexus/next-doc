@@ -130,6 +130,10 @@ body {
         shape-rendering: geometricPrecision;
         vector-effect: non-scaling-stroke;
     }
+    
+    .comparison-card {
+        margin-top: 1rem;
+    }
 }
 
 
