@@ -14,11 +14,18 @@ export interface GraphElement {
   highlight?: boolean;
   /** hover tooltip text; may also be set inside `data` */
   tooltip?: string;
+  /** optional data payload; carried through to nodes and relations alike */
   data?: {
     name?: string;
     label?: string; // legacy fallback
     highlight?: boolean;
     tooltip?: string;
+    /**
+     * manual-mode highlight key (see HIGHLIGHTS in Graph.ts). Only used when
+     * the <g6-graph> is in `mode="manual"`. Simple int|string, e.g. 1, "1",
+     * 2, "m". Absent/unknown → muted.
+     */
+    hl?: number | string;
     [key: string]: unknown;
   };
 }
@@ -69,8 +76,9 @@ function firstDefined<T>(...vals: (T | undefined)[]): T | undefined {
 
 /**
  * Normalises a payload into g6's { nodes, edges } shape. Each produced item
- * carries a normalised `data` block: { ...original, type, name, highlight, tooltip }
- * so the style callbacks and tooltip plugin only ever read from one place.
+ * carries a normalised `data` block: { ...original, type, name, highlight,
+ * tooltip }. `data.hl` (when present) flows through untouched via the spread,
+ * for both nodes and relations.
  */
 export function elementsToGraphData(payload: ElementsPayload): {
   nodes: any[];

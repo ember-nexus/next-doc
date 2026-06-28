@@ -53,8 +53,67 @@ const THEMES: Record<Scheme, Theme> = {
   },
 };
 
+/* ------------------------------------------------------------------ *
+ *  Manual ("filter") mode highlight registry
+ *
+ *  In `mode="manual"` every element is muted by default, and an element
+ *  with `data.hl` set adopts the matching color below. Keep these hex
+ *  values in sync with the prose CSS classes (.hl-1 / .hl-2 / .hl-m) so
+ *  a node and its inline reference read as "the same thing".
+ *
+ *  Mirrors the Tailwind tokens you author with:
+ *    hl-1 -> blue-600   (light)  / blue-500   (dark)
+ *    hl-2 -> orange-600 (light)  / orange-500 (dark)
+ *    hl-m -> zinc-700   (light)  / zinc-400   (dark)   <- muted fallback
+ *
+ *  `hl` is a simple int|string key (e.g. 1, "1", 2, "m"). Unknown or
+ *  absent keys fall back to muted.
+ * ------------------------------------------------------------------ */
+interface HlStyle {
+  light: string;
+  dark: string;
+}
+
+const HL_MUTED = "m";
+
+const HIGHLIGHTS: Record<string, HlStyle> = {
+  m: { light: "#3f3f46", dark: "#a1a1aa" }, // zinc-700  / zinc-400  (muted)
+  1: { light: "#2563eb", dark: "#3b82f6" }, // blue-600  / blue-500  (hl-1)
+  2: { light: "#ea580c", dark: "#f97316" }, // orange-600 / orange-500 (hl-2)
+};
+
+/** Resolve an `hl` key to a fill color for the active scheme. */
+function hlColor(hl: unknown, scheme: Scheme): string {
+  const key = hl == null || hl === "" ? HL_MUTED : String(hl);
+  return (HIGHLIGHTS[key] ?? HIGHLIGHTS[HL_MUTED])[scheme];
+}
+
+/** WCAG relative luminance of a #rrggbb color. */
+function luminance(hex: string): number {
+  const h = hex.replace("#", "");
+  const toLin = (c: number) =>
+      c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  const r = toLin(parseInt(h.slice(0, 2), 16) / 255);
+  const g = toLin(parseInt(h.slice(2, 4), 16) / 255);
+  const b = toLin(parseInt(h.slice(4, 6), 16) / 255);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/**
+ * Pick a label/icon color that stays legible on `bg`. White on the
+ * saturated/dark fills, near-black only on genuinely light fills (i.e.
+ * the muted gray in dark mode). Threshold sits between orange-500 and
+ * zinc-400 so only the light gray flips to dark text.
+ */
+function readableOn(bg: string): string {
+  return luminance(bg) > 0.34 ? "#18181b" : "#ffffff"; // zinc-900 vs white
+}
+
 /** Supported layout variants, selected via the `layout` attribute. */
 type LayoutKind = "antv-dagre-LR" | "antv-dagre-TB" | "grid" | "force";
+
+/** Highlight mode, selected via the `mode` attribute. */
+type StyleMode = "auto" | "manual";
 
 /** Business data we attach under each element's `data` field. */
 interface NodeDatum {
@@ -63,12 +122,14 @@ interface NodeDatum {
   label?: string;
   highlight?: boolean;
   tooltip?: string;
+  hl?: number | string;
 }
 
 interface EdgeDatum {
   name?: string;
   type?: string;
   tooltip?: string;
+  hl?: number | string;
 }
 
 const nodeDatum = (d: NodeData): NodeDatum => (d.data ?? {}) as NodeDatum;
@@ -121,6 +182,7 @@ export class G6Graph extends LitElement {
     layout: { type: String, reflect: true },
     scheme: { type: String, reflect: true },
     variant: { type: String, reflect: true },
+    mode: { type: String, reflect: true },
   };
 
   /** Layout variant. */
@@ -128,11 +190,17 @@ export class G6Graph extends LitElement {
   /** 'light' (default) | 'dark' | 'auto' (follow prefers-color-scheme). */
   declare scheme: "light" | "dark" | "auto";
   declare variant?: "good" | "bad";
+  /**
+   * 'auto' (default): type-driven colors + icons (original behavior).
+   * 'manual': everything muted; `data.hl` drives the highlight color.
+   */
+  declare mode: StyleMode;
 
   constructor() {
     super();
     this.layout = "antv-dagre-LR";
     this.scheme = "auto";
+    this.mode = "auto";
   }
 
   private _graph: Graph;
@@ -168,14 +236,16 @@ export class G6Graph extends LitElement {
   };
 
   /** Resolve the effective scheme, honoring OS preference when 'auto'. */
-  private get _theme(): Theme {
+  private get _scheme(): Scheme {
     const prefersDark = this._mql
         ? this._mql.matches
         : typeof window !== "undefined" &&
         Boolean(window.matchMedia?.("(prefers-color-scheme: dark)").matches);
-    const s: Scheme =
-        this.scheme === "auto" ? (prefersDark ? "dark" : "light") : this.scheme;
-    return THEMES[s];
+    return this.scheme === "auto" ? (prefersDark ? "dark" : "light") : this.scheme;
+  }
+
+  private get _theme(): Theme {
+    return THEMES[this._scheme];
   }
 
   render() {
@@ -240,24 +310,41 @@ export class G6Graph extends LitElement {
     ];
   }
 
+  /**
+   * Per-node fill. In manual mode this is the `hl` color (muted fallback);
+   * in auto mode it's the type color. Shared by `fill` and `haloStroke`.
+   */
+  private _nodeFill(d: NodeData, scheme: Scheme): string {
+    return this.mode === "manual"
+        ? hlColor(nodeDatum(d).hl, scheme)
+        : typeStyle(nodeDatum(d).type).color;
+  }
+
   /** Build the node spec. Reused for initial render and theme swaps. */
   private _nodeOptions(): NodeOptions {
     const t = this._theme;
+    const scheme = this._scheme;
+    const manual = this.mode === "manual";
+
     return {
       type: "icon-node",
       animation: false,
       style: {
-        fill: (d: NodeData) => typeStyle(nodeDatum(d).type).color,
+        fill: (d: NodeData) => this._nodeFill(d, scheme),
+        // Icon shape always reflects the type; only its color is themed below.
         iconType: (d: NodeData) => typeStyle(nodeDatum(d).type).icon,
         iconSize: 24,
         labelText: (d: NodeData) => nodeLabel(d),
-        labelFill: t.nodeLabelFill,
+        // Auto mode keeps the original white label; manual mode auto-contrasts
+        // against the resolved fill (so the light muted gray gets dark text).
+        labelFill: (d: NodeData) =>
+            manual ? readableOn(this._nodeFill(d, scheme)) : t.nodeLabelFill,
         labelFontSize: 14,
         labelFontWeight: 600,
         labelFontFamily: "Fira Code",
         highlight: (d: NodeData) => Boolean(nodeDatum(d).highlight),
         halo: (d: NodeData) => Boolean(nodeDatum(d).highlight),
-        haloStroke: (d: NodeData) => typeStyle(nodeDatum(d).type).color,
+        haloStroke: (d: NodeData) => this._nodeFill(d, scheme),
         haloOpacity: 0.35,
         size: (d: NodeData) =>
             2 *
@@ -274,17 +361,25 @@ export class G6Graph extends LitElement {
   /** Build the edge spec. Reused for initial render and theme swaps. */
   private _edgeOptions(): EdgeOptions {
     const t = this._theme;
+    const scheme = this._scheme;
+    const manual = this.mode === "manual";
+
+    // In manual mode the stroke (and the arrow, which inherits it) takes the
+    // edge's `hl` color; the label text is tinted to match for prose unity.
+    const strokeOf = (d: EdgeData) =>
+        manual ? hlColor(edgeDatum(d).hl, scheme) : t.edgeStroke;
+
     return {
       type: "polyline",
       animation: false,
       style: {
         endArrow: true,
         endArrowType: "triangle",
-        stroke: t.edgeStroke,
+        stroke: strokeOf,
         lineWidth: 2,
         labelText: (d: EdgeData) =>
             edgeDatum(d).name ?? edgeDatum(d).type ?? "",
-        labelFill: t.edgeLabelFill,
+        labelFill: manual ? strokeOf : t.edgeLabelFill,
         labelFontSize: 14,
         labelFontWeight: 600,
         labelFontFamily: "Fira Code",
@@ -301,8 +396,6 @@ export class G6Graph extends LitElement {
     if (!payload) return;
 
     const data = elementsToGraphData(payload);
-
-    console.log(data);
 
     this._tips.clear();
     for (const item of [...data.nodes, ...data.edges]) {
@@ -375,6 +468,8 @@ export class G6Graph extends LitElement {
     // React to runtime scheme changes (the initial scheme is already baked
     // into the first render via the option builders, so skip until painted).
     if (this._firstPaintDone && changed.has("scheme")) this._applyTheme();
+    // React to runtime mode changes the same way: rebuild node/edge specs.
+    if (this._firstPaintDone && changed.has("mode")) this._applyTheme();
     // React to runtime layout changes: re-run layout, then refit/resize.
     if (this._firstPaintDone && changed.has("layout")) this._applyLayout();
   }
@@ -435,7 +530,7 @@ export class G6Graph extends LitElement {
     }
   };
 
-  /** Re-skin the graph in place for the current scheme — no relayout. */
+  /** Re-skin the graph in place for the current scheme/mode — no relayout. */
   private async _applyTheme() {
     if (!this._graph) return;
     this._graph.setNode(this._nodeOptions());
@@ -585,7 +680,6 @@ export class G6Graph extends LitElement {
 
   _readData(): ElementsPayload | null {
     const script = this.querySelector('script[type="application/json"]');
-    console.log(script);
     let raw = (script ? script.textContent : this.textContent) || "";
     raw = raw.trim();
     raw = raw.replace(/^\{`/, "").replace(/`\}$/, "").trim();

@@ -36,8 +36,8 @@ const { endpoint, method, endpointUrl, name } = entry.data;
 // Swap these for values derived from `entry.data` once your swagger paths line up.
 const spec = await SwaggerParser.dereference('./src/data/swagger.json');
 
-// const path = '/';
-const path = '/{uuid}/children';
+const path = '/';
+// const path = '/{uuid}/children';
 const method2 = 'get';
 
 const request = extractHarExample(spec, path, method2);

@@ -12,26 +12,29 @@ outer nodes, regardless of type.
 In the following example the id of the `Center {.hl-2}`-node is used in the `/<uuid>/related` endpoint, which will return the
 following elements in the endpoint's response:
 
-- `Parent {.hl-1}`
-- `Child {.hl-1}`
-- `Outer 1 {.hl-1}` and `Outer 2 {.hl-1}`
+- the nodes `Parent {.hl-1}`, `Child {.hl-1}`, `Outer 1 {.hl-1}` and `Outer 2 {.hl-1}`
 - both `OWNS {.hl-1}`-relations
 - both `RELATED {.hl-1}`-relations
 
-<g6-graph layout="antv-dagre-LR">
+<g6-graph mode="manual" layout="antv-dagre-LR">
     <script type="application/json">{`
     {
         "elements": [
-            { "id": "center", "type": "Data", "data": { "name": "Center" }},
-            { "id": "parent", "type": "Data", "data": { "name": "Parent" }},
-            { "id": "child", "type": "Data", "data": { "name": "Child" }},
-            { "id": "outer1", "type": "Data", "data": { "name": "Outer 1" }},
-            { "id": "outer2", "type": "Data", "data": { "name": "Outer 2" }},
-            { "id": "owns1", "type": "OWNS", "start": "parent", "end": "center" },
-            { "id": "owns2", "type": "OWNS", "start": "center", "end": "child" },
-            { "id": "related1", "type": "RELATED", "start": "outer1", "end": "center" },
-            { "id": "related2", "type": "RELATED", "start": "center", "end": "outer2" }
+            { "id": "center", "type": "Data", "data": { "name": "Center", "hl": "2" }},
+            { "id": "parent", "type": "Data", "data": { "name": "Parent", "hl": "1" }},
+            { "id": "child", "type": "Data", "data": { "name": "Child", "hl": "1" }},
+            { "id": "outer1", "type": "Data", "data": { "name": "Outer 1", "hl": "1" }},
+            { "id": "outer2", "type": "Data", "data": { "name": "Outer 2", "hl": "1" }},
+            { "id": "owns1", "type": "OWNS", "start": "parent", "end": "center", "data": { "hl": "1" }},
+            { "id": "owns2", "type": "OWNS", "start": "center", "end": "child", "data": { "hl": "1" }},
+            { "id": "related1", "type": "RELATED", "start": "outer1", "end": "center", "data": { "hl": "1" }},
+            { "id": "related2", "type": "RELATED", "start": "center", "end": "outer2", "data": { "hl": "1" }}
         ]
     }
   `}</script>
 </g6-graph>
+
+As the get related endpoint returns all nodes and relations regardless of type, it means that it can be considered to be
+a **superset** of the get children and get parents endpoint. However, as this endpoint returns _every_ element directly
+connected, the overall number of elements can be way higher.  
+Use the specialized get children and get parents endpoint in situations, where only the ownership relation is relevant.

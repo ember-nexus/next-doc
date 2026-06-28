@@ -8,7 +8,7 @@ const currentPath = Astro.url.pathname;
 ---
 <aside
     id="primary-sidebar"
-    class="fixed inset-y-0 left-0 z-40 flex h-dvh w-full flex-col border-r border-gray-200 bg-white transition-transform duration-200 ease-in-out max-sm:-translate-x-full dark:border-gray-800 dark:bg-gray-950 sm:w-64"
+    class="fixed inset-y-0 left-0 z-40 flex h-dvh w-full flex-col border-r border-gray-200 bg-white transition-transform duration-200 ease-in-out max-sm:-translate-x-full dark:border-gray-800 dark:bg-gray-950 sm:w-64 print:hidden"
     :class="{ '!translate-x-0': sidebarOpen === true, '!-translate-x-full': sidebarOpen === false }"
     x-init="
     $nextTick(() => requestAnimationFrame(() => {
