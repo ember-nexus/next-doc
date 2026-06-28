@@ -1,7 +1,7 @@
 ---
 import { Code } from 'astro-expressive-code/components';
 import { Icon } from 'astro-icon/components';
-import {type HarRequest, HTTPSnippet, type TargetId, targets} from "httpsnippet";
+import { type HarRequest, HTTPSnippet, type TargetId, targets } from "httpsnippet";
 import CardTitle from "./CardTitle.astro";
 
 interface Props {
@@ -9,20 +9,28 @@ interface Props {
 }
 
 const { request } = Astro.props;
+
 const snippet = new HTTPSnippet(request);
 const opts = { indent: '\t' };
 
 const examples = [
-    { lang: 'shell',      library: 'curl',     astroLang: 'bash',   label: 'cli',        sublabel: 'curl'     },
-    { lang: 'python',     library: 'requests', astroLang: 'python', label: 'python',     sublabel: 'requests' },
-    { lang: 'javascript', library: 'fetch',    astroLang: 'js',     label: 'js',         sublabel: 'fetch'    },
-    { lang: 'php',        library: 'guzzle',   astroLang: 'php',    label: 'php',        sublabel: 'guzzle'   },
-].map(e => ({ ...e, example: snippet.convert(e.lang as unknown as TargetId, e.library, opts) as string }));
+    { lang: 'shell', library: 'curl', astroLang: 'bash', label: 'cli', sublabel: 'curl' },
+    { lang: 'python', library: 'requests', astroLang: 'python', label: 'python', sublabel: 'requests' },
+    { lang: 'javascript', library: 'fetch', astroLang: 'js', label: 'js', sublabel: 'fetch' },
+    { lang: 'php', library: 'guzzle', astroLang: 'php', label: 'php', sublabel: 'guzzle' },
+].map(e => ({
+    ...e,
+    example: snippet.convert(e.lang as unknown as TargetId, e.library, opts) as string
+}));
 ---
 
-<div
-    x-data={`{ open: false, tab: '${examples[0].library}', get current() { return ${JSON.stringify(examples)}.find(e => e.library === this.tab) } }`}>
-
+<div x-data={`{
+	open: false,
+	tab: '${examples[0].library}',
+	get current() {
+		return ${JSON.stringify(examples)}.find(e => e.library === this.tab)
+	}
+}`}>
     <CardTitle title="Request">
         <div class="relative w-full sm:w-auto">
             <button
@@ -30,16 +38,17 @@ const examples = [
                 @keydown.escape="open = false"
                 class="flex w-full sm:w-auto items-center justify-between sm:justify-start gap-2 px-3 py-1.5 rounded-xl sm:rounded-lg border border-hairline text-sm font-medium cursor-pointer transition-colors"
             >
-                <span class="flex items-center gap-2">
-                    <span x-text="current.label" class="text-gray-500 dark:text-gray-400"></span>
-                    <span class="text-gray-300 dark:text-gray-600">/</span>
-                    <span x-text="current.sublabel"></span>
-                </span>
+				<span class="flex items-center gap-2">
+					<span x-text="current.label" class="text-gray-500 dark:text-gray-400"></span>
+					<span class="text-gray-300 dark:text-gray-600">/</span>
+					<span x-text="current.sublabel"></span>
+				</span>
                 <Icon name="chevron-down" class="size-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" />
             </button>
 
             <div
                 x-show="open"
+                x-cloak
                 @click.outside="open = false"
                 x-transition
                 class="absolute right-0 mt-1 w-full sm:w-44 bg-white dark:bg-black border border-hairline rounded-xl sm:rounded-lg shadow-md overflow-hidden z-10"
@@ -69,5 +78,4 @@ const examples = [
             </div>
         ))}
     </div>
-
 </div>
