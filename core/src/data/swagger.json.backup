@@ -1,4 +1,344 @@
 {
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Ember Nexus API",
+    "version": "0.1.31"
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Bearer token for user authentication. If omitted, the request is processed as an anonymous user; if provided, the associated user account is used.",
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Authorization",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/authorization",
+            "name": "HTTP.dev"
+          }
+        ]
+      }
+    },
+    "schemas": {
+      "ElementId": {
+        "type": "string",
+        "format": "uuid",
+        "example": "00000000-0000-0000-0000-000000000000",
+        "description": "Global unique identifier for any element"
+      },
+      "Element": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "data"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "Data"
+          },
+          "id": {
+            "$ref": "#/components/schemas/ElementId"
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": true,
+            "example": {
+              "created": "2025-09-27T10:39:51+00:00",
+              "updated": "2025-09-27T10:39:51+00:00",
+              "name": "some name"
+            }
+          },
+          "file": {
+            "type": "object",
+            "additionalProperties": true,
+            "readOnly": true,
+            "example": {
+              "contentLength": 63933,
+              "extension": "jpg",
+              "mimeType": "image/jpeg"
+            }
+          },
+          "start": {
+            "$ref": "#/components/schemas/ElementId",
+            "description": "UUID of the start node. Required if end is present."
+          },
+          "end": {
+            "$ref": "#/components/schemas/ElementId",
+            "description": "UUID of the end node. Required if start is present."
+          }
+        }
+      },
+      "Problem": {
+        "$schema": "https://spec.openapis.org/oas/3.0/schema/2021-09-28#/definitions/Schema",
+        "type": "object",
+        "description": "RFC 7807 Problem Details object.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "uri"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "examples": {
+      "NotFoundProblemExample": {
+        "value": {
+          "type": "http://api/error/404/not-found",
+          "title": "Not Found",
+          "status": 404,
+          "detail": "Requested element was not found."
+        }
+      },
+      "UnauthorizedProblemExample": {
+        "value": {
+          "type": "http://api/error/401/unauthorized",
+          "title": "Unauthorized",
+          "status": 401,
+          "detail": "Authorization for the request failed due to possible problems with the token (incorrect or expired), password (incorrect or changed), the user's unique identifier, or the user's status (e.g., missing, blocked, or deleted)."
+        }
+      },
+      "PreconditionFailedProblemExample": {
+        "summary": "Precondition failed. `If-Match` or `If-None-Match` condition not met.",
+        "value": {
+          "type": "http://api/error/412/precondition-failed",
+          "title": "Precondition Failed",
+          "status": 412,
+          "detail": "Precondition does not match."
+        }
+      },
+      "TooManyRequestsProblemExample": {
+        "summary": "Too many requests. Rate limit exceeded.",
+        "value": {
+          "type": "http://api/error/429/too-many-requests",
+          "title": "Too Many Requests",
+          "status": 429,
+          "detail": "The client sent too many requests in a given timeframe; rate limiting is active."
+        }
+      }
+    },
+    "parameters": {
+      "If-Match": {
+        "name": "If-Match",
+        "in": "header",
+        "required": false,
+        "example": "\"YgbFC4u5EgC\"",
+        "description": "Used primarily for optimistic concurrency control — the request is only executed if the resource's `ETag` matches the provided value.",
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/If-Match",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/if-match",
+            "name": "HTTP.dev"
+          }
+        ],
+        "schema": {
+          "type": "string"
+        }
+      },
+      "If-None-Match": {
+        "name": "If-None-Match",
+        "in": "header",
+        "required": false,
+        "example": "\"YgbFC4u5EgC\"",
+        "description": "Used primarily for caching — skips re-downloading an unchanged resource by returning `304 Not Modified` if the resource's `ETag` matches the provided value.",
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/If-None-Match",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/if-none-match",
+            "name": "HTTP.dev"
+          }
+        ],
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "headers": {
+      "Access-Control-Allow-Headers": {
+        "description": "Specifies which HTTP headers can be used during a cross-origin request, returned in preflight responses.",
+        "schema": {
+          "type": "string",
+          "example": "Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Headers",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/access-control-allow-headers",
+            "name": "HTTP.dev"
+          }
+        ],
+        "required": true
+      },
+      "Access-Control-Allow-Methods": {
+        "description": "Indicates which HTTP methods are permitted for cross-origin requests, typically returned in preflight responses.",
+        "schema": {
+          "type": "string",
+          "example": "GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Methods",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/access-control-allow-methods",
+            "name": "HTTP.dev"
+          }
+        ],
+        "required": true
+      },
+      "Access-Control-Allow-Origin": {
+        "description": "Specifies which origin(s) may access the resource.",
+        "schema": {
+          "type": "string",
+          "example": "*"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Origin",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/access-control-allow-origin",
+            "name": "HTTP.dev"
+          }
+        ],
+        "required": true
+      },
+      "Access-Control-Expose-Headers": {
+        "description": "Lists the response headers that browsers are allowed to access from JavaScript beyond the default restricted set.",
+        "schema": {
+          "type": "string",
+          "example": "ETag, Location"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Expose-Headers",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/access-control-expose-headers",
+            "name": "HTTP.dev"
+          }
+        ],
+        "required": true
+      },
+      "Allow": {
+        "description": "Lists the HTTP methods supported by the endpoint; returned alongside a `405 Method Not Allowed` response.",
+        "schema": {
+          "type": "string",
+          "example": "GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Allow",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/allow",
+            "name": "HTTP.dev"
+          }
+        ],
+        "required": true
+      },
+      "Cache-Control": {
+        "description": "Directives controlling caching behavior for the response.",
+        "schema": {
+          "type": "string",
+          "example": "no-cache, private"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/cache-control",
+            "name": "HTTP.dev"
+          }
+        ],
+        "required": true
+      },
+      "ETag": {
+        "description": "Entity tag used for caching and optimistic concurrency control.",
+        "schema": {
+          "type": "string",
+          "example": "\"YgbFC4u5EgC\""
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/ETag",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/etag",
+            "name": "HTTP.dev"
+          }
+        ],
+        "x-ember-nexus-important": true,
+        "required": true
+      },
+      "ETag-optional": {
+        "description": "Entity tag used for caching and optimistic concurrency control.",
+        "schema": {
+          "type": "string",
+          "example": "\"YgbFC4u5EgC\""
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/ETag",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/etag",
+            "name": "HTTP.dev"
+          }
+        ],
+        "x-ember-nexus-important": true,
+        "required": false
+      },
+      "X-Powered-By": {
+        "description": "Identifies the underlying API implementation.",
+        "schema": {
+          "type": "string",
+          "example": "Ember Nexus API"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Powered-By",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/x-powered-by",
+            "name": "HTTP.dev"
+          }
+        ],
+        "required": true
+      }
+    }
+  },
   "paths": {
     "/{uuid}": {
       "get": {

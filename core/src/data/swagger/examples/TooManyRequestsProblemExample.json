@@ -1,0 +1,15 @@
+{
+  "components": {
+    "examples": {
+      "TooManyRequestsProblemExample": {
+        "summary": "Too many requests. Rate limit exceeded.",
+        "value": {
+          "type": "http://api/error/429/too-many-requests",
+          "title": "Too Many Requests",
+          "status": 429,
+          "detail": "The client sent too many requests in a given timeframe; rate limiting is active."
+        }
+      }
+    }
+  }
+}
