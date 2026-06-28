@@ -77,6 +77,9 @@ export function linkAugmentation() {
         ...node.children,
         h("span", { class: "link-icon-wrap" }, [makeIconNode(iconName)]),
       ];
+      if (isExternal) {
+        node.properties.target = '_blank';
+      }
     });
   };
 }
