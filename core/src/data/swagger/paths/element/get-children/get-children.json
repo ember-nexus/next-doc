@@ -22,7 +22,8 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
+            },
+            "description": "Id of the parent node. Response contains its children."
           },
           {
             "$ref": "#/components/parameters/page"

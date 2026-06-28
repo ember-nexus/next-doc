@@ -7,11 +7,13 @@ import SwaggerParser from '@apidevtools/swagger-parser';
 import Default from '../../layouts/Default.astro';
 import ResponseCard from '../../component/ResponseCard.astro';
 import RequestCard from '../../component/RequestCard.astro';
+import RequestParameterCard from '../../component/RequestParameterCard.astro';
 import RequestHeaderCard from '../../component/RequestHeaderCard.astro';
 import ResponseHeaderCard from '../../component/ResponseHeaderCard.astro';
 import {
     extractHarExample,
     extractRequestHeaders,
+    extractRequestParameters,
     extractResponseExamples,
     extractResponseHeaders,
 } from '../../util';
@@ -40,6 +42,7 @@ const method2 = 'get';
 
 const request = extractHarExample(spec, path, method2);
 const responseExamples = extractResponseExamples(spec, path, method2);
+const requestParameters = extractRequestParameters(spec, path, method2);
 const requestHeaders = extractRequestHeaders(spec, path, method2);
 const responseHeaders = extractResponseHeaders(spec, path, method2);
 ---
@@ -60,6 +63,7 @@ const responseHeaders = extractResponseHeaders(spec, path, method2);
     <div class="api-doc mt-3 mb-3 flex flex-col gap-4">
         <RequestCard request={request} />
         <ResponseCard examples={responseExamples} />
+        <RequestParameterCard parameters={requestParameters} />
         <RequestHeaderCard headers={requestHeaders} />
         <ResponseHeaderCard headers={responseHeaders} />
     </div>

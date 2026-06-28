@@ -6,5 +6,26 @@ name: Get parents
 endpointUrl: /<uuid>/parents
 ---
 
-Documentation of the current version.
+Endpoint returns all parents of a given child element, as well as the `OWNS`-relations between the parent nodes and the
+child node.
 
+Usually only one parent node and onw `OWNS` relation is returned.
+
+In the following example, the response would include the nodes `Parent 1` and `Parent 2`, as well as the two
+`OWNS`-relations, when the id of the `Child`-node is used in the `/<uuid>/parents` endpoint:
+
+<g6-graph layout="antv-dagre-LR">
+    <script type="application/json">{`
+    {
+        "elements": [
+            { "id": "child", "type": "Data", "data": { "name": "Child" }},
+            { "id": "parent1", "type": "Data", "data": { "name": "Parent 1" }},
+            { "id": "parent2", "type": "Data", "data": { "name": "Parent 2" }},
+            { "id": "owns1", "type": "OWNS", "start": "parent1", "end": "child" },
+            { "id": "owns2", "type": "OWNS", "start": "parent2", "end": "child" }
+        ]
+    }
+  `}</script>
+</g6-graph>
+
+The inverse operation is the `GET /<uuid>/children` endpoint: [Get children endpoint](/api/get-children).

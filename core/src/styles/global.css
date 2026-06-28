@@ -31,6 +31,10 @@ body {
     display: none !important;
 }
 
+[data-tab-panel]:not([data-active]) {
+    display: none;
+}
+
 .response-card, .request-card {
     --ec-frm-frameBoxShdCssVal: '';
 }
@@ -60,7 +64,14 @@ body {
 }
 
 .prose {
-    gap: 0 !important;
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    
+    > * {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
     h1, h2, h3, h4, h5, h6 {
         font-family: "Qanelas Soft Custom";
     }
