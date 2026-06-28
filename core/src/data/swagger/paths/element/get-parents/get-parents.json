@@ -1,10 +1,10 @@
 {
   "paths": {
-    "/{uuid}": {
+    "/{uuid}/parents": {
       "get": {
-        "summary": "Get element",
-        "description": "Retrieves a single element (node or relationship) by UUID.",
-        "operationId": "get-element",
+        "summary": "Get parents",
+        "description": "Retrieves all parents of the specified node.",
+        "operationId": "get-parents",
         "tags": [
           "Element"
         ],
@@ -33,7 +33,7 @@
         ],
         "x-ember-nexus-har-example": {
           "method": "GET",
-          "url": "https://api.localhost/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
+          "url": "https://api.localhost/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac/parents",
           "httpVersion": "HTTP/1.1",
           "cookies": [],
           "headers": [

@@ -1,10 +1,10 @@
 {
   "paths": {
-    "/{uuid}": {
+    "/": {
       "get": {
-        "summary": "Get element",
-        "description": "Retrieves a single element (node or relationship) by UUID.",
-        "operationId": "get-element",
+        "summary": "Get index",
+        "description": "Retrieves all index elements - those which are directly owned by the current user.",
+        "operationId": "get-index",
         "tags": [
           "Element"
         ],
@@ -16,15 +16,6 @@
         ],
         "parameters": [
           {
-            "name": "uuid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
             "$ref": "#/components/parameters/If-Match"
           },
           {
@@ -33,7 +24,7 @@
         ],
         "x-ember-nexus-har-example": {
           "method": "GET",
-          "url": "https://api.localhost/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
+          "url": "https://api.localhost/",
           "httpVersion": "HTTP/1.1",
           "cookies": [],
           "headers": [

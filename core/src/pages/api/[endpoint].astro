@@ -33,10 +33,15 @@ const { endpoint, method, endpointUrl, name } = entry.data;
 // NOTE: '/{uuid}' / 'get' are placeholders carried over from the original file.
 // Swap these for values derived from `entry.data` once your swagger paths line up.
 const spec = await SwaggerParser.dereference('./src/data/swagger.json');
-const request = extractHarExample(spec, '/{uuid}', 'get');
-const responseExamples = extractResponseExamples(spec, '/{uuid}', 'get');
-const requestHeaders = extractRequestHeaders(spec, '/{uuid}', 'get');
-const responseHeaders = extractResponseHeaders(spec, '/{uuid}', 'get');
+
+const path = '/';
+// const path = '/{uuid}/related';
+const method2 = 'get';
+
+const request = extractHarExample(spec, path, method2);
+const responseExamples = extractResponseExamples(spec, path, method2);
+const requestHeaders = extractRequestHeaders(spec, path, method2);
+const responseHeaders = extractResponseHeaders(spec, path, method2);
 ---
 
 <Default title={`${endpoint} — ${name}`}>
