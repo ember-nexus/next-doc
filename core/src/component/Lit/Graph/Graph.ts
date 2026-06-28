@@ -142,6 +142,15 @@ export class G6Graph extends LitElement {
   private _mql: MediaQueryList | null = null;
   private _firstPaintDone = false;
 
+  // --- Cross-instance height sync (for side-by-side comparison cards) ---
+  // Each instance computes its own "ideal" height from its own content at
+  // zoom 1. When sitting inside a `.two-column` group on a wide viewport,
+  // instances agree on the tallest ideal height among the group and all
+  // resize/refit to that shared height, so a smaller graph grows to match
+  // its sibling instead of leaving (or causing) mismatched card heights.
+  private _idealH = 0;
+  private _appliedH = 0;
+
   // --- Manual pinch-zoom state (scoped to THIS component's own canvas) ---
   // We deliberately do NOT use G6's `trigger: ['pinch']` behavior: its touch
   // gesture isn't cleanly scoped per-canvas, so with several graphs mounted a
@@ -161,11 +170,11 @@ export class G6Graph extends LitElement {
   /** Resolve the effective scheme, honoring OS preference when 'auto'. */
   private get _theme(): Theme {
     const prefersDark = this._mql
-      ? this._mql.matches
-      : typeof window !== "undefined" &&
+        ? this._mql.matches
+        : typeof window !== "undefined" &&
         Boolean(window.matchMedia?.("(prefers-color-scheme: dark)").matches);
     const s: Scheme =
-      this.scheme === "auto" ? (prefersDark ? "dark" : "light") : this.scheme;
+        this.scheme === "auto" ? (prefersDark ? "dark" : "light") : this.scheme;
     return THEMES[s];
   }
 
@@ -251,13 +260,13 @@ export class G6Graph extends LitElement {
         haloStroke: (d: NodeData) => typeStyle(nodeDatum(d).type).color,
         haloOpacity: 0.35,
         size: (d: NodeData) =>
-          2 *
-          iconNodeGeometry({
-            labelText: nodeLabel(d),
-            fontSize: 14,
-            fontFamily: "Fira Code",
-            iconSize: 24,
-          }).outerCircleRadius,
+            2 *
+            iconNodeGeometry({
+              labelText: nodeLabel(d),
+              fontSize: 14,
+              fontFamily: "Fira Code",
+              iconSize: 24,
+            }).outerCircleRadius,
       },
     };
   }
@@ -274,7 +283,7 @@ export class G6Graph extends LitElement {
         stroke: t.edgeStroke,
         lineWidth: 2,
         labelText: (d: EdgeData) =>
-          edgeDatum(d).name ?? edgeDatum(d).type ?? "",
+            edgeDatum(d).name ?? edgeDatum(d).type ?? "",
         labelFill: t.edgeLabelFill,
         labelFontSize: 14,
         labelFontWeight: 600,
@@ -316,18 +325,18 @@ export class G6Graph extends LitElement {
         {
           type: "tooltip",
           enable: (e: any, items?: any[]) =>
-            this._tips.has(this._eid(e, items) ?? ""),
+              this._tips.has(this._eid(e, items) ?? ""),
           getContent: (e: any, items?: any[]) => {
             const tip = this._tips.get(this._eid(e, items) ?? "");
             if (!tip) return "";
             const t = this._theme;
             return (
-              `<div style="padding:6px 9px;border-radius:6px;` +
-              `font:12px/1.4 'Fira Code',monospace;color:${t.tooltipFill};` +
-              `background:${t.tooltipBg};box-shadow:0 1px 6px rgba(0,0,0,.35);` +
-              `max-width:240px;white-space:normal;">` +
-              this._esc(tip) +
-              `</div>`
+                `<div style="padding:6px 9px;border-radius:6px;` +
+                `font:12px/1.4 'Fira Code',monospace;color:${t.tooltipFill};` +
+                `background:${t.tooltipBg};box-shadow:0 1px 6px rgba(0,0,0,.35);` +
+                `max-width:240px;white-space:normal;">` +
+                this._esc(tip) +
+                `</div>`
             );
           },
         },
@@ -354,7 +363,7 @@ export class G6Graph extends LitElement {
     // Only react to WIDTH changes to avoid feedback loop from our own height writes
     this._ro = new ResizeObserver((entries) => {
       const w =
-        entries[0]?.contentBoxSize?.[0]?.inlineSize ?? this.clientWidth ?? 0;
+          entries[0]?.contentBoxSize?.[0]?.inlineSize ?? this.clientWidth ?? 0;
       if (Math.abs(w - this._lastWidth) < 1) return; // height-only change → ignore
       this._lastWidth = w;
       this._fitAndSize();
@@ -401,8 +410,8 @@ export class G6Graph extends LitElement {
 
     // Clamp to the graph's zoomRange.
     const target = Math.min(
-      ZOOM_RANGE[1],
-      Math.max(ZOOM_RANGE[0], this._pinchStartZoom * ratio),
+        ZOOM_RANGE[1],
+        Math.max(ZOOM_RANGE[0], this._pinchStartZoom * ratio),
     );
 
     // Midpoint of the two fingers, in canvas-local (viewport) coordinates.
@@ -442,6 +451,75 @@ export class G6Graph extends LitElement {
     await this._fitAndSize();
   }
 
+  /* -------------------------------------------------------------- *
+   *  Cross-instance height sync
+   * -------------------------------------------------------------- */
+
+  /** True when sibling comparison columns are laid out side by side. */
+  private _isSideBySide(): boolean {
+    // Matches the `md:` breakpoint used by TwoColumn.astro's `flex-col md:flex-row`.
+    return (
+        typeof window !== "undefined" &&
+        window.matchMedia("(min-width: 768px)").matches
+    );
+  }
+
+  /** Other <g6-graph> instances sharing this element's `.two-column` group. */
+  private _groupMembers(): G6Graph[] {
+    const group = this.closest(".two-column");
+    return group
+        ? (Array.from(group.querySelectorAll("g6-graph")) as G6Graph[])
+        : [this];
+  }
+
+  /**
+   * Agree with sibling graphs in the same `.two-column` group on a shared
+   * height (the tallest "ideal" height among the group), then have every
+   * member refit its content into that height. On narrow viewports (cards
+   * stacked, not side by side) each instance just uses its own ideal height.
+   *
+   * Safe to call repeatedly/concurrently: whichever instance currently has
+   * the tallest ideal height wins and re-applies to the whole group, so a
+   * late-finishing taller sibling still corrects an already-sized shorter one.
+   */
+  private async _syncGroupHeight(localIdeal: number) {
+    this._idealH = localIdeal;
+
+    if (!this._isSideBySide()) {
+      await this._applyHeight(localIdeal);
+      return;
+    }
+
+    const members = this._groupMembers();
+    const target = Math.max(...members.map((m) => m._idealH || 0));
+
+    await Promise.all(
+        members
+            .filter((m) => m._appliedH !== target)
+            .map((m) => m._applyHeight(target)),
+    );
+  }
+
+  /** Apply a (possibly externally-decided) height and refit content into it. */
+  private async _applyHeight(h: number) {
+    this._appliedH = h;
+    this.style.height = `${h}px`;
+
+    if (!this._graph) return; // not initialized yet — it will resync once it is
+
+    const wrapper = this.renderRoot.querySelector(".wrapper") as HTMLElement;
+    const containerW = wrapper?.clientWidth ?? this.clientWidth;
+    if (!containerW) return;
+
+    this._graph.setSize(containerW, h);
+
+    await new Promise<void>((r) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => r())),
+    );
+
+    await this._graph.fitView({ when: "always", direction: "both" });
+  }
+
   private async _fitAndSize() {
     if (!this._graph) return;
 
@@ -458,9 +536,9 @@ export class G6Graph extends LitElement {
     await new Promise<void>((r) => requestAnimationFrame(() => r()));
 
     let minX = Infinity,
-      minY = Infinity,
-      maxX = -Infinity,
-      maxY = -Infinity;
+        minY = Infinity,
+        maxX = -Infinity,
+        maxY = -Infinity;
     for (const node of nodes) {
       try {
         const b = this._graph.getElementRenderBounds(node.id);
@@ -482,14 +560,9 @@ export class G6Graph extends LitElement {
     const zoomFromWidth = contentW > 0 ? Math.min(availW / contentW, 1) : 1;
     const neededH = Math.ceil(contentH * zoomFromWidth) + PAD * 2;
 
-    this.style.height = `${neededH}px`;
-    this._graph.setSize(containerW, neededH);
-
-    await new Promise<void>((r) =>
-      requestAnimationFrame(() => requestAnimationFrame(() => r())),
-    );
-
-    await this._graph.fitView({ when: "always", direction: "both" });
+    // Instead of applying neededH directly, reconcile with sibling graphs in
+    // the same .two-column group so both sides end up the same height.
+    await this._syncGroupHeight(neededH);
   }
 
   private _eid(e: any, items?: any[]): string | undefined {
@@ -498,15 +571,15 @@ export class G6Graph extends LitElement {
 
   private _esc(s: string): string {
     return String(s).replace(
-      /[&<>"']/g,
-      (c) =>
-        ({
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#39;",
-        })[c] as string,
+        /[&<>"']/g,
+        (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c] as string,
     );
   }
 
