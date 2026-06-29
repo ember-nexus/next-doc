@@ -218,6 +218,25 @@
         ],
         "required": true
       },
+      "Location-created": {
+        "description": "URL of the newly created resource.",
+        "schema": {
+          "type": "string",
+          "example": "/455a89b9-4ec7-4b02-b023-bcfbcbba9a9f"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Location",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/location",
+            "name": "HTTP.dev"
+          }
+        ],
+        "x-ember-nexus-important": true,
+        "required": true
+      },
       "ETag": {
         "description": "Entity tag used for caching and optimistic concurrency control.",
         "schema": {
@@ -758,6 +777,12 @@
             }
           },
           {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
+          },
+          {
             "$ref": "#/components/parameters/If-Match"
           },
           {
@@ -1086,6 +1111,604 @@
           "queryString": [],
           "headersSize": -1,
           "bodySize": -1
+        }
+      }
+    },
+    "/": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Index elements found. Returns a collection.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location-created"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/201",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/201",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartialCollection"
+                },
+                "examples": {
+                  "node": {
+                    "summary": "201 response.",
+                    "value": {
+                      "type": "_PartialCollection",
+                      "id": "/",
+                      "totalNodes": 3,
+                      "links": {
+                        "first": "/",
+                        "previous": null,
+                        "next": null,
+                        "last": "/"
+                      },
+                      "nodes": [
+                        {
+                          "type": "Sphere",
+                          "id": "56fda20c-b238-4034-b555-1df47c47e17a",
+                          "data": {
+                            "created": "2025-09-27T10:26:49+00:00",
+                            "name": "Tag",
+                            "updated": "2025-09-27T10:26:49+00:00"
+                          }
+                        },
+                        {
+                          "type": "Sphere",
+                          "id": "7b80b203-2b82-40f5-accd-c7089fe6114e",
+                          "data": {
+                            "created": "2025-09-27T10:26:49+00:00",
+                            "name": "Comment",
+                            "updated": "2025-09-27T10:26:49+00:00"
+                          }
+                        },
+                        {
+                          "type": "Token",
+                          "id": "e3b81351-fe0c-4f8f-ad22-78b6157edde8",
+                          "data": {
+                            "created": "2025-09-27T10:26:49+00:00",
+                            "updated": "2025-09-27T10:26:49+00:00",
+                            "note": "Token contains token only due to testing purposes.",
+                            "state": "ACTIVE"
+                          }
+                        }
+                      ],
+                      "relations": []
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The provided token is either invalid or expired.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/401",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "unauthorized": {
+                    "$ref": "#/components/examples/UnauthorizedProblemExample"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The provided token is either invalid or expired.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/401",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "unauthorized": {
+                    "$ref": "#/components/examples/UnauthorizedProblemExample"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The provided token is either invalid or expired.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/401",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "unauthorized": {
+                    "$ref": "#/components/examples/UnauthorizedProblemExample"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Post index",
+        "description": "Creates a new element - either a new root level element, or a new relation.",
+        "operationId": "post-index",
+        "tags": [
+          "Element"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "type",
+                  "data"
+                ],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "The type of element to be created.",
+                    "example": "Demo"
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "The element's UUID. Auto-generated if not provided.",
+                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
+                  },
+                  "start": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "The start node's UUID. Required for relations.",
+                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
+                  },
+                  "end": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "The end node's UUID. Required for relations.",
+                    "example": "ecfe46ff-d3c7-4ca7-9b41-9be5476d36e0"
+                  },
+                  "data": {
+                    "type": "object",
+                    "description": "Arbitrary data related to the element.",
+                    "additionalProperties": true,
+                    "example": {
+                      "hello": "world :D"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-ember-nexus-har-example": {
+          "method": "POST",
+          "url": "https://api.localhost/",
+          "httpVersion": "HTTP/1.1",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Authorization",
+              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "queryString": [],
+          "headersSize": -1,
+          "bodySize": -1,
+          "postData": {
+            "mimeType": "application/json",
+            "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get index",
+        "description": "Retrieves all index elements - those which are directly owned by the current user.",
+        "operationId": "get-index",
+        "tags": [
+          "Element"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
+          },
+          {
+            "$ref": "#/components/parameters/If-Match"
+          },
+          {
+            "$ref": "#/components/parameters/If-None-Match"
+          }
+        ],
+        "x-ember-nexus-har-example": {
+          "method": "GET",
+          "url": "https://api.localhost/",
+          "httpVersion": "HTTP/1.1",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Authorization",
+              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+            }
+          ],
+          "queryString": [],
+          "headersSize": -1,
+          "bodySize": -1
+        },
+        "responses": {
+          "304": {
+            "description": "Not modified. Returned when `If-None-Match` header matches current `ETag`.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "ETag": {
+                "$ref": "#/components/headers/ETag-optional"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/304",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/304",
+                "name": "HTTP.dev"
+              }
+            ]
+          },
+          "401": {
+            "description": "The provided token is either invalid or expired.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/401",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "unauthorized": {
+                    "$ref": "#/components/examples/UnauthorizedProblemExample"
+                  }
+                }
+              }
+            }
+          },
+          "412": {
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/412",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/412",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "preconditionFailed": {
+                    "$ref": "#/components/examples/PreconditionFailedProblemExample"
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Index elements found. Returns a collection.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "ETag": {
+                "$ref": "#/components/headers/ETag-optional"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartialCollection"
+                },
+                "examples": {
+                  "node": {
+                    "summary": "200 response.",
+                    "value": {
+                      "type": "_PartialCollection",
+                      "id": "/",
+                      "totalNodes": 3,
+                      "links": {
+                        "first": "/",
+                        "previous": null,
+                        "next": null,
+                        "last": "/"
+                      },
+                      "nodes": [
+                        {
+                          "type": "Sphere",
+                          "id": "56fda20c-b238-4034-b555-1df47c47e17a",
+                          "data": {
+                            "created": "2025-09-27T10:26:49+00:00",
+                            "name": "Tag",
+                            "updated": "2025-09-27T10:26:49+00:00"
+                          }
+                        },
+                        {
+                          "type": "Sphere",
+                          "id": "7b80b203-2b82-40f5-accd-c7089fe6114e",
+                          "data": {
+                            "created": "2025-09-27T10:26:49+00:00",
+                            "name": "Comment",
+                            "updated": "2025-09-27T10:26:49+00:00"
+                          }
+                        },
+                        {
+                          "type": "Token",
+                          "id": "e3b81351-fe0c-4f8f-ad22-78b6157edde8",
+                          "data": {
+                            "created": "2025-09-27T10:26:49+00:00",
+                            "updated": "2025-09-27T10:26:49+00:00",
+                            "note": "Token contains token only due to testing purposes.",
+                            "state": "ACTIVE"
+                          }
+                        }
+                      ],
+                      "relations": []
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -1421,6 +2044,12 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
           },
           {
             "$ref": "#/components/parameters/If-Match"
@@ -1868,274 +2497,6 @@
           "queryString": [],
           "headersSize": -1,
           "bodySize": -1
-        }
-      }
-    },
-    "/": {
-      "get": {
-        "summary": "Get index",
-        "description": "Retrieves all index elements - those which are directly owned by the current user.",
-        "operationId": "get-index",
-        "tags": [
-          "Element"
-        ],
-        "security": [
-          {
-            "BearerAuth": []
-          },
-          {}
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/If-Match"
-          },
-          {
-            "$ref": "#/components/parameters/If-None-Match"
-          }
-        ],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.localhost/",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        },
-        "responses": {
-          "304": {
-            "description": "Not modified. Returned when `If-None-Match` header matches current `ETag`.",
-            "headers": {
-              "Access-Control-Allow-Headers": {
-                "$ref": "#/components/headers/Access-Control-Allow-Headers"
-              },
-              "Access-Control-Allow-Methods": {
-                "$ref": "#/components/headers/Access-Control-Allow-Methods"
-              },
-              "Access-Control-Allow-Origin": {
-                "$ref": "#/components/headers/Access-Control-Allow-Origin"
-              },
-              "Access-Control-Expose-Headers": {
-                "$ref": "#/components/headers/Access-Control-Expose-Headers"
-              },
-              "Allow": {
-                "$ref": "#/components/headers/Allow"
-              },
-              "Cache-Control": {
-                "$ref": "#/components/headers/Cache-Control"
-              },
-              "ETag": {
-                "$ref": "#/components/headers/ETag-optional"
-              },
-              "X-Powered-By": {
-                "$ref": "#/components/headers/X-Powered-By"
-              }
-            },
-            "x-ember-nexus-links": [
-              {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/304",
-                "name": "MDN"
-              },
-              {
-                "url": "https://http.dev/304",
-                "name": "HTTP.dev"
-              }
-            ]
-          },
-          "401": {
-            "description": "The provided token is either invalid or expired.",
-            "headers": {
-              "Access-Control-Allow-Headers": {
-                "$ref": "#/components/headers/Access-Control-Allow-Headers"
-              },
-              "Access-Control-Allow-Methods": {
-                "$ref": "#/components/headers/Access-Control-Allow-Methods"
-              },
-              "Access-Control-Allow-Origin": {
-                "$ref": "#/components/headers/Access-Control-Allow-Origin"
-              },
-              "Access-Control-Expose-Headers": {
-                "$ref": "#/components/headers/Access-Control-Expose-Headers"
-              },
-              "Allow": {
-                "$ref": "#/components/headers/Allow"
-              },
-              "Cache-Control": {
-                "$ref": "#/components/headers/Cache-Control"
-              },
-              "X-Powered-By": {
-                "$ref": "#/components/headers/X-Powered-By"
-              }
-            },
-            "x-ember-nexus-links": [
-              {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401",
-                "name": "MDN"
-              },
-              {
-                "url": "https://http.dev/401",
-                "name": "HTTP.dev"
-              }
-            ],
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                },
-                "examples": {
-                  "unauthorized": {
-                    "$ref": "#/components/examples/UnauthorizedProblemExample"
-                  }
-                }
-              }
-            }
-          },
-          "412": {
-            "headers": {
-              "Access-Control-Allow-Headers": {
-                "$ref": "#/components/headers/Access-Control-Allow-Headers"
-              },
-              "Access-Control-Allow-Methods": {
-                "$ref": "#/components/headers/Access-Control-Allow-Methods"
-              },
-              "Access-Control-Allow-Origin": {
-                "$ref": "#/components/headers/Access-Control-Allow-Origin"
-              },
-              "Access-Control-Expose-Headers": {
-                "$ref": "#/components/headers/Access-Control-Expose-Headers"
-              },
-              "Allow": {
-                "$ref": "#/components/headers/Allow"
-              },
-              "Cache-Control": {
-                "$ref": "#/components/headers/Cache-Control"
-              },
-              "X-Powered-By": {
-                "$ref": "#/components/headers/X-Powered-By"
-              }
-            },
-            "x-ember-nexus-links": [
-              {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/412",
-                "name": "MDN"
-              },
-              {
-                "url": "https://http.dev/412",
-                "name": "HTTP.dev"
-              }
-            ],
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                },
-                "examples": {
-                  "preconditionFailed": {
-                    "$ref": "#/components/examples/PreconditionFailedProblemExample"
-                  }
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Index elements found. Returns a collection.",
-            "headers": {
-              "Access-Control-Allow-Headers": {
-                "$ref": "#/components/headers/Access-Control-Allow-Headers"
-              },
-              "Access-Control-Allow-Methods": {
-                "$ref": "#/components/headers/Access-Control-Allow-Methods"
-              },
-              "Access-Control-Allow-Origin": {
-                "$ref": "#/components/headers/Access-Control-Allow-Origin"
-              },
-              "Access-Control-Expose-Headers": {
-                "$ref": "#/components/headers/Access-Control-Expose-Headers"
-              },
-              "Allow": {
-                "$ref": "#/components/headers/Allow"
-              },
-              "Cache-Control": {
-                "$ref": "#/components/headers/Cache-Control"
-              },
-              "ETag": {
-                "$ref": "#/components/headers/ETag-optional"
-              },
-              "X-Powered-By": {
-                "$ref": "#/components/headers/X-Powered-By"
-              }
-            },
-            "x-ember-nexus-links": [
-              {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
-                "name": "MDN"
-              },
-              {
-                "url": "https://http.dev/200",
-                "name": "HTTP.dev"
-              }
-            ],
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PartialCollection"
-                },
-                "examples": {
-                  "node": {
-                    "summary": "200 response.",
-                    "value": {
-                      "type": "_PartialCollection",
-                      "id": "/",
-                      "totalNodes": 3,
-                      "links": {
-                        "first": "/",
-                        "previous": null,
-                        "next": null,
-                        "last": "/"
-                      },
-                      "nodes": [
-                        {
-                          "type": "Sphere",
-                          "id": "56fda20c-b238-4034-b555-1df47c47e17a",
-                          "data": {
-                            "created": "2025-09-27T10:26:49+00:00",
-                            "name": "Tag",
-                            "updated": "2025-09-27T10:26:49+00:00"
-                          }
-                        },
-                        {
-                          "type": "Sphere",
-                          "id": "7b80b203-2b82-40f5-accd-c7089fe6114e",
-                          "data": {
-                            "created": "2025-09-27T10:26:49+00:00",
-                            "name": "Comment",
-                            "updated": "2025-09-27T10:26:49+00:00"
-                          }
-                        },
-                        {
-                          "type": "Token",
-                          "id": "e3b81351-fe0c-4f8f-ad22-78b6157edde8",
-                          "data": {
-                            "created": "2025-09-27T10:26:49+00:00",
-                            "updated": "2025-09-27T10:26:49+00:00",
-                            "note": "Token contains token only due to testing purposes.",
-                            "state": "ACTIVE"
-                          }
-                        }
-                      ],
-                      "relations": []
-                    }
-                  }
-                }
-              }
-            }
-          }
         }
       }
     }

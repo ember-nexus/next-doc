@@ -38,7 +38,7 @@ const spec = await SwaggerParser.dereference('./src/data/swagger.json');
 
 const path = '/';
 // const path = '/{uuid}/children';
-const method2 = 'get';
+const method2 = 'post';
 
 const request = extractHarExample(spec, path, method2);
 const responseExamples = extractResponseExamples(spec, path, method2);
