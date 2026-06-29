@@ -36,11 +36,12 @@ body {
     display: none;
 }
 
-.response-card, .request-card {
+.response-card, .request-card, .request-body-card {
     --ec-frm-frameBoxShdCssVal: '';
 }
 
-.response-card .expressive-code pre {
+.response-card .expressive-code pre,
+.request-body-card .expressive-code pre {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     border-bottom-left-radius: calc(var(--radius-xl) - 1px);

@@ -6,4 +6,5 @@ export * from "./RequestHeader.ts";
 export * from "./ResponseExample.ts";
 export * from "./ResponseHeader.ts";
 export * from "./Version.ts";
-export * from "./RequestParameter.js";
+export * from "./RequestParameter.ts";
+export * from "./RequestBody.ts";

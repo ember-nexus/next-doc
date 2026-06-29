@@ -17,6 +17,8 @@ import {
 import type {
   HttpStatusCode,
   Link,
+  RequestBody,
+  RequestBodyContent,
   RequestHeader,
   RequestParameter,
   ResponseExample,
@@ -220,6 +222,102 @@ export function extractRequestParameters(
           links: (param["x-ember-nexus-links"] as Link[] | undefined) ?? [],
         };
       });
+}
+
+/**
+ * Build a representative example value for a schema. Resolution order: an
+ * explicit `example` on the schema, otherwise — for objects — an object
+ * assembled from the immediate properties' own `example`s. Intentionally
+ * shallow: this is a presentation helper, not a full example generator.
+ */
+function exampleFromSchema(schema: SchemaObject | undefined): unknown {
+  if (!schema) {
+    return undefined;
+  }
+  if (schema.example !== undefined) {
+    return schema.example;
+  }
+  if (schema.type === "object" && schema.properties) {
+    const obj: Record<string, unknown> = {};
+    for (const [key, propOrRef] of Object.entries(schema.properties)) {
+      if (isReferenceObject(propOrRef)) {
+        continue;
+      }
+      if (propOrRef.example !== undefined) {
+        obj[key] = propOrRef.example;
+      }
+    }
+    return Object.keys(obj).length > 0 ? obj : undefined;
+  }
+  return undefined;
+}
+
+/**
+ * Extract the request body of an operation as a flat list of content-type
+ * variants. Every declared content type is surfaced at once (no switcher);
+ * each carries its schema and a best-effort example. Returns `null` when the
+ * operation declares no body.
+ */
+export function extractRequestBody(
+    spec: OpenAPIObject,
+    path: string,
+    method: string,
+): RequestBody | null {
+  const op = getOperation(spec, path, method);
+  const requestBody = op?.requestBody;
+
+  if (!requestBody || isReferenceObject(requestBody)) {
+    return null;
+  }
+
+  const content: ContentObject = requestBody.content ?? {};
+
+  const contents: RequestBodyContent[] = Object.entries(content).map(
+      ([mimeType, mediaType]): RequestBodyContent => {
+        const schema =
+            mediaType.schema && !isReferenceObject(mediaType.schema)
+                ? (mediaType.schema as SchemaObject)
+                : undefined;
+
+        // Example resolution: media-type `example` → first named `examples`
+        // entry → synthesized from the schema.
+        let exampleValue: unknown = mediaType.example;
+        if (exampleValue === undefined && mediaType.examples) {
+          const named = Object.values(mediaType.examples).find(
+              (e) => !isReferenceObject(e),
+          );
+          exampleValue =
+              named && !isReferenceObject(named) ? named.value : undefined;
+        }
+        if (exampleValue === undefined) {
+          exampleValue = exampleFromSchema(schema);
+        }
+
+        const isJson = mimeType.includes("json");
+
+        return {
+          mimeType,
+          schema: mediaType.schema
+              ? JSON.stringify(mediaType.schema, null, 2)
+              : null,
+          example:
+              exampleValue === undefined
+                  ? null
+                  : {
+                    content: isJson
+                        ? JSON.stringify(exampleValue, null, 2)
+                        : String(exampleValue),
+                    type: isJson ? "json" : "plain",
+                  },
+        };
+      },
+  );
+
+  return {
+    required: requestBody.required ?? false,
+    description: requestBody.description ?? "",
+    contents,
+  };
 }
 
 export function extractHarExample(
