@@ -92,7 +92,7 @@ function hlColor(hl: unknown, scheme: Scheme): string {
 function luminance(hex: string): number {
   const h = hex.replace("#", "");
   const toLin = (c: number) =>
-      c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
   const r = toLin(parseInt(h.slice(0, 2), 16) / 255);
   const g = toLin(parseInt(h.slice(2, 4), 16) / 255);
   const b = toLin(parseInt(h.slice(4, 6), 16) / 255);
@@ -170,10 +170,18 @@ export class G6Graph extends LitElement {
     }
     @media (prefers-color-scheme: dark) {
       :host([variant="good"]) .wrapper {
-        background-color: color-mix(in oklab, var(--color-green-950) 62.5%, black);
+        background-color: color-mix(
+          in oklab,
+          var(--color-green-950) 62.5%,
+          black
+        );
       }
       :host([variant="bad"]) .wrapper {
-        background-color: color-mix(in oklab, var(--color-red-950) 62.5%, black);
+        background-color: color-mix(
+          in oklab,
+          var(--color-red-950) 62.5%,
+          black
+        );
       }
     }
   `;
@@ -238,10 +246,14 @@ export class G6Graph extends LitElement {
   /** Resolve the effective scheme, honoring OS preference when 'auto'. */
   private get _scheme(): Scheme {
     const prefersDark = this._mql
-        ? this._mql.matches
-        : typeof window !== "undefined" &&
+      ? this._mql.matches
+      : typeof window !== "undefined" &&
         Boolean(window.matchMedia?.("(prefers-color-scheme: dark)").matches);
-    return this.scheme === "auto" ? (prefersDark ? "dark" : "light") : this.scheme;
+    return this.scheme === "auto"
+      ? prefersDark
+        ? "dark"
+        : "light"
+      : this.scheme;
   }
 
   private get _theme(): Theme {
@@ -316,8 +328,8 @@ export class G6Graph extends LitElement {
    */
   private _nodeFill(d: NodeData, scheme: Scheme): string {
     return this.mode === "manual"
-        ? hlColor(nodeDatum(d).hl, scheme)
-        : typeStyle(nodeDatum(d).type).color;
+      ? hlColor(nodeDatum(d).hl, scheme)
+      : typeStyle(nodeDatum(d).type).color;
   }
 
   /** Build the node spec. Reused for initial render and theme swaps. */
@@ -338,7 +350,7 @@ export class G6Graph extends LitElement {
         // Auto mode keeps the original white label; manual mode auto-contrasts
         // against the resolved fill (so the light muted gray gets dark text).
         labelFill: (d: NodeData) =>
-            manual ? readableOn(this._nodeFill(d, scheme)) : t.nodeLabelFill,
+          manual ? readableOn(this._nodeFill(d, scheme)) : t.nodeLabelFill,
         labelFontSize: 14,
         labelFontWeight: 600,
         labelFontFamily: "Fira Code",
@@ -347,13 +359,13 @@ export class G6Graph extends LitElement {
         haloStroke: (d: NodeData) => this._nodeFill(d, scheme),
         haloOpacity: 0.35,
         size: (d: NodeData) =>
-            2 *
-            iconNodeGeometry({
-              labelText: nodeLabel(d),
-              fontSize: 14,
-              fontFamily: "Fira Code",
-              iconSize: 24,
-            }).outerCircleRadius,
+          2 *
+          iconNodeGeometry({
+            labelText: nodeLabel(d),
+            fontSize: 14,
+            fontFamily: "Fira Code",
+            iconSize: 24,
+          }).outerCircleRadius,
       },
     };
   }
@@ -367,7 +379,7 @@ export class G6Graph extends LitElement {
     // In manual mode the stroke (and the arrow, which inherits it) takes the
     // edge's `hl` color; the label text is tinted to match for prose unity.
     const strokeOf = (d: EdgeData) =>
-        manual ? hlColor(edgeDatum(d).hl, scheme) : t.edgeStroke;
+      manual ? hlColor(edgeDatum(d).hl, scheme) : t.edgeStroke;
 
     return {
       type: "polyline",
@@ -378,7 +390,7 @@ export class G6Graph extends LitElement {
         stroke: strokeOf,
         lineWidth: 2,
         labelText: (d: EdgeData) =>
-            edgeDatum(d).name ?? edgeDatum(d).type ?? "",
+          edgeDatum(d).name ?? edgeDatum(d).type ?? "",
         labelFill: manual ? strokeOf : t.edgeLabelFill,
         labelFontSize: 14,
         labelFontWeight: 600,
@@ -418,18 +430,18 @@ export class G6Graph extends LitElement {
         {
           type: "tooltip",
           enable: (e: any, items?: any[]) =>
-              this._tips.has(this._eid(e, items) ?? ""),
+            this._tips.has(this._eid(e, items) ?? ""),
           getContent: (e: any, items?: any[]) => {
             const tip = this._tips.get(this._eid(e, items) ?? "");
             if (!tip) return "";
             const t = this._theme;
             return (
-                `<div style="padding:6px 9px;border-radius:6px;` +
-                `font:12px/1.4 'Fira Code',monospace;color:${t.tooltipFill};` +
-                `background:${t.tooltipBg};box-shadow:0 1px 6px rgba(0,0,0,.35);` +
-                `max-width:240px;white-space:normal;">` +
-                this._esc(tip) +
-                `</div>`
+              `<div style="padding:6px 9px;border-radius:6px;` +
+              `font:12px/1.4 'Fira Code',monospace;color:${t.tooltipFill};` +
+              `background:${t.tooltipBg};box-shadow:0 1px 6px rgba(0,0,0,.35);` +
+              `max-width:240px;white-space:normal;">` +
+              this._esc(tip) +
+              `</div>`
             );
           },
         },
@@ -456,7 +468,7 @@ export class G6Graph extends LitElement {
     // Only react to WIDTH changes to avoid feedback loop from our own height writes
     this._ro = new ResizeObserver((entries) => {
       const w =
-          entries[0]?.contentBoxSize?.[0]?.inlineSize ?? this.clientWidth ?? 0;
+        entries[0]?.contentBoxSize?.[0]?.inlineSize ?? this.clientWidth ?? 0;
       if (Math.abs(w - this._lastWidth) < 1) return; // height-only change → ignore
       this._lastWidth = w;
       this._fitAndSize();
@@ -505,8 +517,8 @@ export class G6Graph extends LitElement {
 
     // Clamp to the graph's zoomRange.
     const target = Math.min(
-        ZOOM_RANGE[1],
-        Math.max(ZOOM_RANGE[0], this._pinchStartZoom * ratio),
+      ZOOM_RANGE[1],
+      Math.max(ZOOM_RANGE[0], this._pinchStartZoom * ratio),
     );
 
     // Midpoint of the two fingers, in canvas-local (viewport) coordinates.
@@ -554,8 +566,8 @@ export class G6Graph extends LitElement {
   private _isSideBySide(): boolean {
     // Matches the `md:` breakpoint used by TwoColumn.astro's `flex-col md:flex-row`.
     return (
-        typeof window !== "undefined" &&
-        window.matchMedia("(min-width: 768px)").matches
+      typeof window !== "undefined" &&
+      window.matchMedia("(min-width: 768px)").matches
     );
   }
 
@@ -563,8 +575,8 @@ export class G6Graph extends LitElement {
   private _groupMembers(): G6Graph[] {
     const group = this.closest(".two-column");
     return group
-        ? (Array.from(group.querySelectorAll("g6-graph")) as G6Graph[])
-        : [this];
+      ? (Array.from(group.querySelectorAll("g6-graph")) as G6Graph[])
+      : [this];
   }
 
   /**
@@ -589,9 +601,9 @@ export class G6Graph extends LitElement {
     const target = Math.max(...members.map((m) => m._idealH || 0));
 
     await Promise.all(
-        members
-            .filter((m) => m._appliedH !== target)
-            .map((m) => m._applyHeight(target)),
+      members
+        .filter((m) => m._appliedH !== target)
+        .map((m) => m._applyHeight(target)),
     );
   }
 
@@ -609,7 +621,7 @@ export class G6Graph extends LitElement {
     this._graph.setSize(containerW, h);
 
     await new Promise<void>((r) =>
-        requestAnimationFrame(() => requestAnimationFrame(() => r())),
+      requestAnimationFrame(() => requestAnimationFrame(() => r())),
     );
 
     await this._graph.fitView({ when: "always", direction: "both" });
@@ -631,9 +643,9 @@ export class G6Graph extends LitElement {
     await new Promise<void>((r) => requestAnimationFrame(() => r()));
 
     let minX = Infinity,
-        minY = Infinity,
-        maxX = -Infinity,
-        maxY = -Infinity;
+      minY = Infinity,
+      maxX = -Infinity,
+      maxY = -Infinity;
     for (const node of nodes) {
       try {
         const b = this._graph.getElementRenderBounds(node.id);
@@ -666,15 +678,15 @@ export class G6Graph extends LitElement {
 
   private _esc(s: string): string {
     return String(s).replace(
-        /[&<>"']/g,
-        (c) =>
-            ({
-              "&": "&amp;",
-              "<": "&lt;",
-              ">": "&gt;",
-              '"': "&quot;",
-              "'": "&#39;",
-            })[c] as string,
+      /[&<>"']/g,
+      (c) =>
+        ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        })[c] as string,
     );
   }
 

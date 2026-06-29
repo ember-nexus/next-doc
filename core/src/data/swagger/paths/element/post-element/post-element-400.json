@@ -1,10 +1,10 @@
 {
   "paths": {
-    "/": {
+    "/{uuid}": {
       "post": {
         "responses": {
-          "404": {
-            "description": "The referenced parent node does not exist.",
+          "400": {
+            "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -44,8 +44,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "notFound": {
-                    "$ref": "#/components/examples/NotFoundProblemExample"
+                  "missingProperty": {
+                    "$ref": "#/components/examples/MissingPropertyProblemExample"
                   }
                 }
               }

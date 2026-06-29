@@ -5,22 +5,22 @@
  * switcher.
  */
 export interface RequestBodyContent {
-    /** MIME type, e.g. `"application/json"`. */
-    mimeType: string;
-    /** Pretty-printed JSON schema for this content type, or `null`. */
-    schema: string | null;
-    /** Representative example body for this content type, or `null`. */
-    example: {
-        content: string;
-        type: "plain" | "json";
-    } | null;
+  /** MIME type, e.g. `"application/json"`. */
+  mimeType: string;
+  /** Pretty-printed JSON schema for this content type, or `null`. */
+  schema: string | null;
+  /** Representative example body for this content type, or `null`. */
+  example: {
+    content: string;
+    type: "plain" | "json";
+  } | null;
 }
 
 export interface RequestBody {
-    /** Whether the body must be sent. */
-    required: boolean;
-    /** Operation-level body description (markdown). */
-    description: string;
-    /** One entry per declared content type. */
-    contents: RequestBodyContent[];
+  /** Whether the body must be sent. */
+  required: boolean;
+  /** Operation-level body description (markdown). */
+  description: string;
+  /** One entry per declared content type. */
+  contents: RequestBodyContent[];
 }

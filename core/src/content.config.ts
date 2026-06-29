@@ -17,6 +17,7 @@ const endpoints = defineCollection({
     group: z.string(),
     method: z.string(),
     endpointUrl: z.string(),
+    swaggerUrl: z.string().optional(),
     name: z.string(),
   }),
 });

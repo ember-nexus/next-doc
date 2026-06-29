@@ -441,6 +441,14 @@
       }
     },
     "examples": {
+      "MissingPropertyProblemExample": {
+        "value": {
+          "type": "http://api/error/400/missing-property",
+          "title": "Missing property",
+          "status": 400,
+          "detail": "Endpoint requires that the request contains property 'type' to be set to a valid type."
+        }
+      },
       "NotFoundProblemExample": {
         "value": {
           "type": "http://api/error/404/not-found",
@@ -1112,13 +1120,59 @@
           "headersSize": -1,
           "bodySize": -1
         }
-      }
-    },
-    "/": {
+      },
       "post": {
         "responses": {
-          "200": {
-            "description": "Index elements found. Returns a collection.",
+          "400": {
+            "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/401",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "missingProperty": {
+                    "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Node was created successfully.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -1154,57 +1208,51 @@
                 "url": "https://http.dev/201",
                 "name": "HTTP.dev"
               }
+            ]
+          },
+          "404": {
+            "description": "At least one of the referenced nodes (start / end) does not exist, relevant only for relations.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/401",
+                "name": "HTTP.dev"
+              }
             ],
             "content": {
-              "application/json": {
+              "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PartialCollection"
+                  "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "node": {
-                    "summary": "201 response.",
-                    "value": {
-                      "type": "_PartialCollection",
-                      "id": "/",
-                      "totalNodes": 3,
-                      "links": {
-                        "first": "/",
-                        "previous": null,
-                        "next": null,
-                        "last": "/"
-                      },
-                      "nodes": [
-                        {
-                          "type": "Sphere",
-                          "id": "56fda20c-b238-4034-b555-1df47c47e17a",
-                          "data": {
-                            "created": "2025-09-27T10:26:49+00:00",
-                            "name": "Tag",
-                            "updated": "2025-09-27T10:26:49+00:00"
-                          }
-                        },
-                        {
-                          "type": "Sphere",
-                          "id": "7b80b203-2b82-40f5-accd-c7089fe6114e",
-                          "data": {
-                            "created": "2025-09-27T10:26:49+00:00",
-                            "name": "Comment",
-                            "updated": "2025-09-27T10:26:49+00:00"
-                          }
-                        },
-                        {
-                          "type": "Token",
-                          "id": "e3b81351-fe0c-4f8f-ad22-78b6157edde8",
-                          "data": {
-                            "created": "2025-09-27T10:26:49+00:00",
-                            "updated": "2025-09-27T10:26:49+00:00",
-                            "note": "Token contains token only due to testing purposes.",
-                            "state": "ACTIVE"
-                          }
-                        }
-                      ],
-                      "relations": []
-                    }
+                  "notFound": {
+                    "$ref": "#/components/examples/NotFoundProblemExample"
                   }
                 }
               }
@@ -1257,8 +1305,124 @@
                 }
               }
             }
+          }
+        },
+        "summary": "Post element",
+        "description": "Creates a new child node, attached to the referenced parent node. Endpoint can not be used to create relations.",
+        "operationId": "post-element",
+        "tags": [
+          "Element"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
           },
-          "404": {
+          {}
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "type",
+                  "data"
+                ],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "The type of element to be created.",
+                    "example": "Demo"
+                  },
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "The element's UUID. Auto-generated if not provided.",
+                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
+                  },
+                  "data": {
+                    "type": "object",
+                    "description": "Arbitrary data related to the element.",
+                    "additionalProperties": true,
+                    "example": {
+                      "hello": "world :D"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-ember-nexus-har-example": {
+          "method": "POST",
+          "url": "https://api.localhost/7b80b203-2b82-40f5-accd-c7089fe6114e",
+          "httpVersion": "HTTP/1.1",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Authorization",
+              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "queryString": [],
+          "headersSize": -1,
+          "bodySize": -1,
+          "postData": {
+            "mimeType": "application/json",
+            "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
+          }
+        }
+      }
+    },
+    "/": {
+      "post": {
+        "responses": {
+          "204": {
+            "description": "Element was created successfully.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location-created"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/201",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/201",
+                "name": "HTTP.dev"
+              }
+            ]
+          },
+          "401": {
             "description": "The provided token is either invalid or expired.",
             "headers": {
               "Access-Control-Allow-Headers": {
@@ -1306,8 +1470,8 @@
               }
             }
           },
-          "400": {
-            "description": "The provided token is either invalid or expired.",
+          "404": {
+            "description": "The referenced parent node does not exist.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -1347,8 +1511,56 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "unauthorized": {
-                    "$ref": "#/components/examples/UnauthorizedProblemExample"
+                  "notFound": {
+                    "$ref": "#/components/examples/NotFoundProblemExample"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/401",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "missingProperty": {
+                    "$ref": "#/components/examples/MissingPropertyProblemExample"
                   }
                 }
               }

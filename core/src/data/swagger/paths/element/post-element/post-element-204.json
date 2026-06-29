@@ -1,10 +1,10 @@
 {
   "paths": {
-    "/": {
+    "/{uuid}": {
       "post": {
         "responses": {
-          "404": {
-            "description": "The referenced parent node does not exist.",
+          "204": {
+            "description": "Node was created successfully.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -24,32 +24,23 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
+              "Location": {
+                "$ref": "#/components/headers/Location-created"
+              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/201",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/401",
+                "url": "https://http.dev/201",
                 "name": "HTTP.dev"
               }
-            ],
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                },
-                "examples": {
-                  "notFound": {
-                    "$ref": "#/components/examples/NotFoundProblemExample"
-                  }
-                }
-              }
-            }
+            ]
           }
         }
       }

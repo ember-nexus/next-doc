@@ -32,20 +32,19 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { endpoint, method, endpointUrl, name } = entry.data;
+const { endpoint, method, endpointUrl, swaggerUrl, name } = entry.data;
 
 // NOTE: '/{uuid}' / 'get' are placeholders carried over from the original file.
 // Swap these for values derived from `entry.data` once your swagger paths line up.
 const spec = await SwaggerParser.dereference('./src/data/swagger.json');
 
-const path = '/';
-// const path = '/{uuid}/children';
-const method2 = 'post';
+const path = swaggerUrl ?? '/';
+const method2 = swaggerUrl == null ? 'get' : method;
 
 const request = extractHarExample(spec, path, method2);
 const requestParameters = extractRequestParameters(spec, path, method2);
 const requestHeaders = extractRequestHeaders(spec, path, method2);
-const requestBody = extractRequestBody(spec, path, method);
+const requestBody = extractRequestBody(spec, path, method2);
 const responseHeaders = extractResponseHeaders(spec, path, method2);
 const responseExamples = extractResponseExamples(spec, path, method2);
 ---

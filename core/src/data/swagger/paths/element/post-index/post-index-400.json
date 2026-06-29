@@ -4,7 +4,7 @@
       "post": {
         "responses": {
           "400": {
-            "description": "The provided token is either invalid or expired.",
+            "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -44,8 +44,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "unauthorized": {
-                    "$ref": "#/components/examples/UnauthorizedProblemExample"
+                  "missingProperty": {
+                    "$ref": "#/components/examples/MissingPropertyProblemExample"
                   }
                 }
               }
