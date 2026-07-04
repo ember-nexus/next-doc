@@ -14,7 +14,18 @@
           },
           {}
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Id of the element to be deleted."
+          }
+        ],
         "x-ember-nexus-har-example": {
           "method": "DELETE",
           "url": "https://api.localhost/7b80b203-2b82-40f5-accd-c7089fe6114e",
