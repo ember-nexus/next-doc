@@ -46,6 +46,125 @@
           }
         }
       },
+      "SearchStep": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CypherPathSubsetStep"
+          },
+          {
+            "$ref": "#/components/schemas/ElasticsearchQueryDslMixinStep"
+          },
+          {
+            "$ref": "#/components/schemas/ElementHydrationStep"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "cypher-path-subset": "#/components/schemas/CypherPathSubsetStep",
+            "elasticsearch-query-dsl-mixin": "#/components/schemas/ElasticsearchQueryDslMixinStep",
+            "element-hydration": "#/components/schemas/ElementHydrationStep"
+          }
+        }
+      },
+      "BaseStep": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "parameters": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Step-local parameters. Overwrites global parameters for this step."
+          }
+        }
+      },
+      "CypherPathSubsetStep": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseStep"
+          },
+          {
+            "type": "object",
+            "required": [
+              "type",
+              "query"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "cypher-path-subset"
+                ]
+              },
+              "query": {
+                "type": "string",
+                "description": "A Cypher query string returning paths.",
+                "example": "MATCH path=((:Plant)-[:HAS_TAG]->(:Tag {name: \"blue\"})) RETURN path"
+              }
+            }
+          }
+        ]
+      },
+      "ElasticsearchQueryDslMixinStep": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseStep"
+          },
+          {
+            "type": "object",
+            "required": [
+              "type",
+              "query"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "elasticsearch-query-dsl-mixin"
+                ]
+              },
+              "query": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "An Elasticsearch Query DSL object.",
+                "example": {
+                  "match": {
+                    "description": {
+                      "query": "lily"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ElementHydrationStep": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseStep"
+          },
+          {
+            "type": "object",
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "element-hydration"
+                ]
+              },
+              "query": {
+                "not": {}
+              }
+            }
+          }
+        ]
+      },
       "Problem": {
         "$schema": "https://spec.openapis.org/oas/3.0/schema/2021-09-28#/definitions/Schema",
         "type": "object",
@@ -3493,6 +3612,215 @@
           "queryString": [],
           "headersSize": -1,
           "bodySize": -1
+        }
+      }
+    },
+    "/search": {
+      "post": {
+        "responses": {
+          "204": {
+            "description": "Search result was successful.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ]
+          },
+          "401": {
+            "description": "The provided token is either invalid or expired.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/401",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "unauthorized": {
+                    "$ref": "#/components/examples/UnauthorizedProblemExample"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/400",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/400",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "missingProperty": {
+                    "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Post search",
+        "description": "Executes a search request.",
+        "operationId": "post-search",
+        "tags": [
+          "Search"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "steps"
+                ],
+                "properties": {
+                  "steps": {
+                    "type": "array",
+                    "description": "List of search steps, which should be executed sequentially.",
+                    "items": {
+                      "type": "#/components/schemas/SearchStep"
+                    }
+                  },
+                  "parameters": {
+                    "type": "object",
+                    "description": "Arbitrary data, injected as global parameters to the individual search steps during execution; useful to provide static data.",
+                    "additionalProperties": true,
+                    "example": {
+                      "query": "some custom query content"
+                    }
+                  },
+                  "debug": {
+                    "type": "boolean",
+                    "description": "If true, search response will include additional debug and meta data.",
+                    "example": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-ember-nexus-har-example": {
+          "method": "POST",
+          "url": "https://api.localhost/search",
+          "httpVersion": "HTTP/1.1",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Authorization",
+              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "queryString": [],
+          "headersSize": -1,
+          "bodySize": -1,
+          "postData": {
+            "mimeType": "application/json",
+            "text": "{\"debug\":true,\"steps\":[{\"type\":\"elasticsearch-query-dsl-mixin\",\"query\":{\"match\":{\"description\":{\"query\":\"lily\"}}}},{\"type\":\"element-hydration\"}]}"
+          }
         }
       }
     }
