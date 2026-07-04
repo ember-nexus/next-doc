@@ -1,10 +1,10 @@
 {
   "paths": {
     "/{uuid}": {
-      "post": {
+      "patch": {
         "responses": {
           "404": {
-            "description": "At least one of the referenced nodes (start / end) does not exist, relevant only for relations.",
+            "description": "The referenced element does not exist.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"

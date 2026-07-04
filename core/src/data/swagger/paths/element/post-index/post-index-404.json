@@ -30,11 +30,11 @@
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/404",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/401",
+                "url": "https://http.dev/404",
                 "name": "HTTP.dev"
               }
             ],

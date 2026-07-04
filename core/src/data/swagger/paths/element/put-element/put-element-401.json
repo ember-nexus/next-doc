@@ -1,10 +1,10 @@
 {
   "paths": {
     "/{uuid}": {
-      "post": {
+      "put": {
         "responses": {
-          "404": {
-            "description": "At least one of the referenced nodes (start / end) does not exist, relevant only for relations.",
+          "401": {
+            "description": "The provided token is either invalid or expired.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -30,11 +30,11 @@
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/404",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/404",
+                "url": "https://http.dev/401",
                 "name": "HTTP.dev"
               }
             ],
@@ -44,8 +44,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "notFound": {
-                    "$ref": "#/components/examples/NotFoundProblemExample"
+                  "unauthorized": {
+                    "$ref": "#/components/examples/UnauthorizedProblemExample"
                   }
                 }
               }
