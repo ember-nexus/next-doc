@@ -1,10 +1,10 @@
 {
   "paths": {
-    "/{uuid}/file": {
+    "/upload/{uuid}": {
       "delete": {
         "responses": {
           "204": {
-            "description": "Element was deleted successfully.",
+            "description": "Resumable upload was deleted successfully.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"

@@ -1,0 +1,47 @@
+{
+  "paths": {
+    "/upload/{uuid}": {
+      "delete": {
+        "summary": "Delete upload",
+        "description": "Deletes resumable upload instance.",
+        "operationId": "delete-upload",
+        "tags": [
+          "File"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Id of the element to be deleted."
+          }
+        ],
+        "x-ember-nexus-har-example": {
+          "method": "DELETE",
+          "url": "https://api.localhost/upload/7b80b203-2b82-40f5-accd-c7089fe6114e",
+          "httpVersion": "HTTP/1.1",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Authorization",
+              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+            }
+          ],
+          "queryString": [],
+          "headersSize": -1,
+          "bodySize": -1
+        }
+      }
+    }
+  }
+}

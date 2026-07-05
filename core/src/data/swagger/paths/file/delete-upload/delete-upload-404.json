@@ -1,10 +1,10 @@
 {
   "paths": {
-    "/{uuid}/file": {
+    "/upload/{uuid}": {
       "delete": {
         "responses": {
-          "204": {
-            "description": "Element was deleted successfully.",
+          "404": {
+            "description": "The referenced element does not exist.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -30,14 +30,26 @@
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/204",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/404",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/204",
+                "url": "https://http.dev/404",
                 "name": "HTTP.dev"
               }
-            ]
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "notFound": {
+                    "$ref": "#/components/examples/NotFoundProblemExample"
+                  }
+                }
+              }
+            }
           }
         }
       }

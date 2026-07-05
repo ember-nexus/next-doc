@@ -1,0 +1,46 @@
+{
+  "paths": {
+    "/upload/{uuid}": {
+      "head": {
+        "summary": "Head upload",
+        "description": "Retrieves metadata of a single resumable upload process.",
+        "operationId": "head-upload",
+        "tags": [
+          "File"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "x-ember-nexus-har-example": {
+          "method": "HEAD",
+          "url": "https://api.localhost/upload/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
+          "httpVersion": "HTTP/1.1",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Authorization",
+              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+            }
+          ],
+          "queryString": [],
+          "headersSize": -1,
+          "bodySize": -1
+        }
+      }
+    }
+  }
+}

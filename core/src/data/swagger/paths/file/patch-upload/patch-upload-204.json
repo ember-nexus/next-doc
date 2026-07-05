@@ -1,10 +1,10 @@
 {
   "paths": {
-    "/{uuid}/file": {
-      "delete": {
+    "/upload/{uuid}": {
+      "patch": {
         "responses": {
           "204": {
-            "description": "Element was deleted successfully.",
+            "description": "Element's data was updated successfully.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"

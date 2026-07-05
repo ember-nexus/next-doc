@@ -1,10 +1,10 @@
 {
   "paths": {
-    "/{uuid}/file": {
-      "delete": {
+    "/upload/{uuid}": {
+      "head": {
         "responses": {
-          "204": {
-            "description": "Element was deleted successfully.",
+          "304": {
+            "description": "Not modified. Returned when `If-None-Match` header matches current `ETag`.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -24,17 +24,20 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/204",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/304",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/204",
+                "url": "https://http.dev/304",
                 "name": "HTTP.dev"
               }
             ]

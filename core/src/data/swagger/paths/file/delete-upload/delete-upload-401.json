@@ -1,10 +1,10 @@
 {
   "paths": {
-    "/{uuid}/file": {
+    "/upload/{uuid}": {
       "delete": {
         "responses": {
-          "204": {
-            "description": "Element was deleted successfully.",
+          "401": {
+            "description": "The provided token is either invalid or expired.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -30,14 +30,26 @@
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/204",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/204",
+                "url": "https://http.dev/401",
                 "name": "HTTP.dev"
               }
-            ]
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "unauthorized": {
+                    "$ref": "#/components/examples/UnauthorizedProblemExample"
+                  }
+                }
+              }
+            }
           }
         }
       }
