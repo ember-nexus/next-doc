@@ -48,7 +48,7 @@
                 },
                 "examples": {
                   "node": {
-                    "summary": "Node response.",
+                    "summary": "Element found, which happens to be a node.",
                     "x-ember-nexus-name": "Node",
                     "value": {
                       "type": "Comment",
@@ -62,7 +62,7 @@
                     }
                   },
                   "relationship": {
-                    "summary": "Relation response.\n\n**Note**: The properties `start` and `end` are defined, as they are required for relations.",
+                    "summary": "Element found, which happens to be a relation.\n\n**Note**: The properties `start` and `end` are defined, as they are required for relations.",
                     "x-ember-nexus-name": "Relation",
                     "value": {
                       "type": "OWNS",

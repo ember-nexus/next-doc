@@ -4,7 +4,7 @@
       "put": {
         "responses": {
           "201": {
-            "description": "`PUT` element file request was successful. Specific meaning depends on request:\n\n- When a complete file was uploaded: The file was successfully replaced.\n- When a resumable file upload was requested: The resumable file upload was created successfully, see `Location`-header for its URL.",
+            "description": "`PUT` element file request was successful.  \nSpecific meaning depends on request:\n\n- When a complete file was uploaded: The element's file was successfully replaced.\n- When a resumable file upload was requested: The resumable file upload was created successfully, and its URL is written to the `Location` response header.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"

@@ -4,7 +4,7 @@
       "patch": {
         "responses": {
           "204": {
-            "description": "Element's data was updated successfully.",
+            "description": "Resumable upload was updated successfully.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"

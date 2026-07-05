@@ -47,8 +47,8 @@
                   "$ref": "#/components/schemas/PartialCollection"
                 },
                 "examples": {
-                  "node": {
-                    "summary": "200 response.",
+                  "default": {
+                    "summary": "Parent element found and returning its children in a collection response.",
                     "value": {
                       "type": "_PartialCollection",
                       "id": "/56fda20c-b238-4034-b555-1df47c47e17a/children",

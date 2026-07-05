@@ -4,7 +4,7 @@
       "delete": {
         "responses": {
           "204": {
-            "description": "Element was deleted successfully.",
+            "description": "File was deleted successfully.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"

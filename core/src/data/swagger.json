@@ -301,6 +301,25 @@
         "x-ember-nexus-important": true,
         "required": false
       },
+      "Content-Disposition": {
+        "description": "Provides the original filename, as well as additional file attributes. Non-ASCII filenames can be encoded using UTF-8, but require special escape sequences - see spec/docs for details.",
+        "schema": {
+          "type": "string",
+          "example": "attachment; filename=image.jpg"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/content-disposition",
+            "name": "HTTP.dev"
+          }
+        ],
+        "x-ember-nexus-important": true,
+        "required": true
+      },
       "X-Powered-By": {
         "description": "Identifies the underlying API implementation.",
         "schema": {
@@ -657,8 +676,8 @@
                   "$ref": "#/components/schemas/PartialCollection"
                 },
                 "examples": {
-                  "node": {
-                    "summary": "200 response.",
+                  "default": {
+                    "summary": "Child element found and returning its parents in a collection response.",
                     "value": {
                       "type": "_PartialCollection",
                       "id": "/45482998-274a-43d0-a466-f31d0b24cc0a/parents",
@@ -981,7 +1000,7 @@
                 },
                 "examples": {
                   "node": {
-                    "summary": "Node response.",
+                    "summary": "Element found, which happens to be a node.",
                     "x-ember-nexus-name": "Node",
                     "value": {
                       "type": "Comment",
@@ -995,7 +1014,7 @@
                     }
                   },
                   "relationship": {
-                    "summary": "Relation response.\n\n**Note**: The properties `start` and `end` are defined, as they are required for relations.",
+                    "summary": "Element found, which happens to be a relation.\n\n**Note**: The properties `start` and `end` are defined, as they are required for relations.",
                     "x-ember-nexus-name": "Relation",
                     "value": {
                       "type": "OWNS",
@@ -2805,8 +2824,8 @@
                   "$ref": "#/components/schemas/PartialCollection"
                 },
                 "examples": {
-                  "node": {
-                    "summary": "200 response.",
+                  "default": {
+                    "summary": "Returning root nodes in a collection response.",
                     "value": {
                       "type": "_PartialCollection",
                       "id": "/",
@@ -3086,8 +3105,8 @@
                   "$ref": "#/components/schemas/PartialCollection"
                 },
                 "examples": {
-                  "node": {
-                    "summary": "200 response.",
+                  "default": {
+                    "summary": "Center element found and returning its related elements in a collection response.",
                     "value": {
                       "type": "_PartialCollection",
                       "id": "/45482998-274a-43d0-a466-f31d0b24cc0a/related",
@@ -3267,8 +3286,8 @@
                   "$ref": "#/components/schemas/PartialCollection"
                 },
                 "examples": {
-                  "node": {
-                    "summary": "200 response.",
+                  "default": {
+                    "summary": "Parent element found and returning its children in a collection response.",
                     "value": {
                       "type": "_PartialCollection",
                       "id": "/56fda20c-b238-4034-b555-1df47c47e17a/children",
@@ -3840,7 +3859,7 @@
             }
           },
           "204": {
-            "description": "Element's data was updated successfully.",
+            "description": "Resumable upload was updated successfully.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -4162,7 +4181,7 @@
             ]
           },
           "200": {
-            "description": "Element found. Returns either a node or a relationship.",
+            "description": "Resumable upload found. Response headers include meta data about the upload.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -4202,8 +4221,8 @@
                   "$ref": "#/components/schemas/Element"
                 },
                 "examples": {
-                  "node": {
-                    "summary": "Node response.",
+                  "default": {
+                    "summary": "Resumable upload found, returning its meta data in the response headers.",
                     "x-ember-nexus-name": "Node",
                     "value": {
                       "type": "Comment",
@@ -4616,7 +4635,7 @@
             }
           },
           "201": {
-            "description": "File was created successfully.",
+            "description": "`POST` element file request was successful.  \nSpecific meaning depends on request:\n\n- When a complete file was uploaded: The element's file was successfully created.\n- When a resumable file upload was requested: The resumable file upload was created successfully, and its URL is written to the `Location` response header.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -4707,7 +4726,7 @@
       "delete": {
         "responses": {
           "204": {
-            "description": "Element was deleted successfully.",
+            "description": "File was deleted successfully.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -4929,7 +4948,7 @@
       "put": {
         "responses": {
           "201": {
-            "description": "`PUT` element file request was successful. Specific meaning depends on request:\n\n- When a complete file was uploaded: The file was successfully replaced.\n- When a resumable file upload was requested: The resumable file upload was created successfully, see `Location`-header for its URL.",
+            "description": "`PUT` element file request was successful.  \nSpecific meaning depends on request:\n\n- When a complete file was uploaded: The element's file was successfully replaced.\n- When a resumable file upload was requested: The resumable file upload was created successfully, and its URL is written to the `Location` response header.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -5272,7 +5291,7 @@
             }
           },
           "200": {
-            "description": "File found.",
+            "description": "File found and returned as a stream.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -5292,6 +5311,9 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
+              "Content-Disposition": {
+                "$ref": "#/components/headers/Content-Disposition"
+              },
               "ETag": {
                 "$ref": "#/components/headers/ETag"
               },
@@ -5310,18 +5332,10 @@
               }
             ],
             "content": {
-              "application/json": {
+              "application/octet-stream": {
                 "schema": {
-                  "$ref": "#/components/schemas/Element"
-                },
-                "examples": {
-                  "file": {
-                    "summary": "File response.",
-                    "x-ember-nexus-name": "File",
-                    "value": {
-                      "type": "blub todo"
-                    }
-                  }
+                  "type": "string",
+                  "format": "binary"
                 }
               }
             }

@@ -4,7 +4,7 @@
       "head": {
         "responses": {
           "200": {
-            "description": "Element found. Returns either a node or a relationship.",
+            "description": "Resumable upload found. Response headers include meta data about the upload.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -44,8 +44,8 @@
                   "$ref": "#/components/schemas/Element"
                 },
                 "examples": {
-                  "node": {
-                    "summary": "Node response.",
+                  "default": {
+                    "summary": "Resumable upload found, returning its meta data in the response headers.",
                     "x-ember-nexus-name": "Node",
                     "value": {
                       "type": "Comment",

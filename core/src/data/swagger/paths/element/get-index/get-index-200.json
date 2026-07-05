@@ -47,8 +47,8 @@
                   "$ref": "#/components/schemas/PartialCollection"
                 },
                 "examples": {
-                  "node": {
-                    "summary": "200 response.",
+                  "default": {
+                    "summary": "Returning root nodes in a collection response.",
                     "value": {
                       "type": "_PartialCollection",
                       "id": "/",

@@ -4,7 +4,7 @@
       "get": {
         "responses": {
           "200": {
-            "description": "File found.",
+            "description": "File found and returned as a stream.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -24,6 +24,9 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
+              "Content-Disposition": {
+                "$ref": "#/components/headers/Content-Disposition"
+              },
               "ETag": {
                 "$ref": "#/components/headers/ETag"
               },
@@ -42,18 +45,10 @@
               }
             ],
             "content": {
-              "application/json": {
+              "application/octet-stream": {
                 "schema": {
-                  "$ref": "#/components/schemas/Element"
-                },
-                "examples": {
-                  "file": {
-                    "summary": "File response.",
-                    "x-ember-nexus-name": "File",
-                    "value": {
-                      "type": "blub todo"
-                    }
-                  }
+                  "type": "string",
+                  "format": "binary"
                 }
               }
             }
