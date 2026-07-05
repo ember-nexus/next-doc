@@ -1,0 +1,36 @@
+{
+  "paths": {
+    "/instance-configuration": {
+      "get": {
+        "summary": "Get instance configuration",
+        "description": "Returns instance configuration settings, limits etc.",
+        "operationId": "get-instance-configuration",
+        "tags": [
+          "System"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": {
+          "method": "GET",
+          "url": "https://api.localhost/instance-configuration",
+          "httpVersion": "HTTP/1.1",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Authorization",
+              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+            }
+          ],
+          "queryString": [],
+          "headersSize": -1,
+          "bodySize": -1
+        }
+      }
+    }
+  }
+}

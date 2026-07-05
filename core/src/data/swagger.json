@@ -5508,6 +5508,378 @@
         }
       }
     },
+    "/graph-structure": {
+      "get": {
+        "responses": {
+          "401": {
+            "description": "The provided token is either invalid or expired.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/401",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "unauthorized": {
+                    "$ref": "#/components/examples/UnauthorizedProblemExample"
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Token found. Returns a node.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Element"
+                },
+                "examples": {
+                  "node": {
+                    "type": "Token",
+                    "id": "74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
+                    "data": {
+                      "created": "2025-09-27T10:39:51+00:00",
+                      "updated": "2025-09-27T10:39:51+00:00",
+                      "name": "Blue",
+                      "content": "Blue is one of the three primary colours in the RYB colour model...\n"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get graph structure",
+        "description": "Returns the types of nodes and relations present in the whole graph.",
+        "operationId": "get-graph-structure",
+        "tags": [
+          "System"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": {
+          "method": "GET",
+          "url": "https://api.localhost/graph-structure",
+          "httpVersion": "HTTP/1.1",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Authorization",
+              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+            }
+          ],
+          "queryString": [],
+          "headersSize": -1,
+          "bodySize": -1
+        }
+      }
+    },
+    "/instance-configuration": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Token found. Returns a node.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Element"
+                },
+                "examples": {
+                  "node": {
+                    "type": "Token",
+                    "id": "74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
+                    "data": {
+                      "created": "2025-09-27T10:39:51+00:00",
+                      "updated": "2025-09-27T10:39:51+00:00",
+                      "name": "Blue",
+                      "content": "Blue is one of the three primary colours in the RYB colour model...\n"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The provided token is either invalid or expired.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/401",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "unauthorized": {
+                    "$ref": "#/components/examples/UnauthorizedProblemExample"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get instance configuration",
+        "description": "Returns instance configuration settings, limits etc.",
+        "operationId": "get-instance-configuration",
+        "tags": [
+          "System"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": {
+          "method": "GET",
+          "url": "https://api.localhost/instance-configuration",
+          "httpVersion": "HTTP/1.1",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Authorization",
+              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+            }
+          ],
+          "queryString": [],
+          "headersSize": -1,
+          "bodySize": -1
+        }
+      }
+    },
+    "/.well-known/security.txt": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Token found. Returns a node.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Element"
+                },
+                "examples": {
+                  "node": {
+                    "type": "Token",
+                    "id": "74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
+                    "data": {
+                      "created": "2025-09-27T10:39:51+00:00",
+                      "updated": "2025-09-27T10:39:51+00:00",
+                      "name": "Blue",
+                      "content": "Blue is one of the three primary colours in the RYB colour model...\n"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get well-known security.txt",
+        "description": "Returns a text document containing security disclosure information.",
+        "operationId": "get-well-known-security",
+        "tags": [
+          "System"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": {
+          "method": "GET",
+          "url": "https://api.localhost/.well-known/security.txt",
+          "httpVersion": "HTTP/1.1",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Authorization",
+              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+            }
+          ],
+          "queryString": [],
+          "headersSize": -1,
+          "bodySize": -1
+        }
+      }
+    },
     "/search": {
       "post": {
         "responses": {
