@@ -1,0 +1,47 @@
+{
+  "paths": {
+    "/{uuid}/file": {
+      "delete": {
+        "summary": "Delete element file",
+        "description": "Deletes the file of an given element.",
+        "operationId": "delete-element-file",
+        "tags": [
+          "File"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Id of the element to be deleted."
+          }
+        ],
+        "x-ember-nexus-har-example": {
+          "method": "DELETE",
+          "url": "https://api.localhost/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
+          "httpVersion": "HTTP/1.1",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Authorization",
+              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+            }
+          ],
+          "queryString": [],
+          "headersSize": -1,
+          "bodySize": -1
+        }
+      }
+    }
+  }
+}

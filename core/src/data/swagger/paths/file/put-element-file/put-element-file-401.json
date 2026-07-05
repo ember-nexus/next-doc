@@ -1,10 +1,10 @@
 {
   "paths": {
-    "/{uuid}": {
-      "post": {
+    "/{uuid}/file": {
+      "put": {
         "responses": {
-          "201": {
-            "description": "Node was created successfully.",
+          "401": {
+            "description": "The provided token is either invalid or expired.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -24,23 +24,32 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
-              "Location": {
-                "$ref": "#/components/headers/Location-created"
-              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/201",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/201",
+                "url": "https://http.dev/401",
                 "name": "HTTP.dev"
               }
-            ]
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "unauthorized": {
+                    "$ref": "#/components/examples/UnauthorizedProblemExample"
+                  }
+                }
+              }
+            }
           }
         }
       }

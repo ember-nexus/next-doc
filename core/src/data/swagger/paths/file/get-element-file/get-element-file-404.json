@@ -1,10 +1,10 @@
 {
   "paths": {
-    "/{uuid}": {
-      "post": {
+    "/{uuid}/file": {
+      "get": {
         "responses": {
-          "201": {
-            "description": "Node was created successfully.",
+          "404": {
+            "description": "Element does not exist, or the current user does not have permissions to access the element.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -24,23 +24,32 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
-              "Location": {
-                "$ref": "#/components/headers/Location-created"
-              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/201",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/404",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/201",
+                "url": "https://http.dev/404",
                 "name": "HTTP.dev"
               }
-            ]
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "notFound": {
+                    "$ref": "#/components/examples/NotFoundProblemExample"
+                  }
+                }
+              }
+            }
           }
         }
       }

@@ -1,10 +1,10 @@
 {
   "paths": {
-    "/{uuid}": {
-      "post": {
+    "/{uuid}/file": {
+      "get": {
         "responses": {
-          "201": {
-            "description": "Node was created successfully.",
+          "200": {
+            "description": "File found.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -24,8 +24,8 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
-              "Location": {
-                "$ref": "#/components/headers/Location-created"
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
               },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
@@ -33,14 +33,30 @@
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/201",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/201",
+                "url": "https://http.dev/200",
                 "name": "HTTP.dev"
               }
-            ]
+            ],
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Element"
+                },
+                "examples": {
+                  "file": {
+                    "summary": "File response.",
+                    "x-ember-nexus-name": "File",
+                    "value": {
+                      "type": "blub todo"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
