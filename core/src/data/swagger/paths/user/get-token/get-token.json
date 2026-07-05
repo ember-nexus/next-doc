@@ -1,0 +1,43 @@
+{
+  "paths": {
+    "/token": {
+      "get": {
+        "summary": "Get token",
+        "description": "Alias endpoint, returns the current sessions's token element.",
+        "operationId": "get-token",
+        "tags": [
+          "User"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/If-Match"
+          },
+          {
+            "$ref": "#/components/parameters/If-None-Match"
+          }
+        ],
+        "x-ember-nexus-har-example": {
+          "method": "GET",
+          "url": "https://api.localhost/token",
+          "httpVersion": "HTTP/1.1",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Authorization",
+              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+            }
+          ],
+          "queryString": [],
+          "headersSize": -1,
+          "bodySize": -1
+        }
+      }
+    }
+  }
+}
