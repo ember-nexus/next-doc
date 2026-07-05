@@ -3,8 +3,8 @@
     "/{uuid}/file": {
       "put": {
         "responses": {
-          "204": {
-            "description": "Element's data was replaced successfully.",
+          "201": {
+            "description": "`PUT` element file request was successful. Specific meaning depends on request:\n\n- When a complete file was uploaded: The file was successfully replaced.\n- When a resumable file upload was requested: The resumable file upload was created successfully, see `Location`-header for its URL.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
