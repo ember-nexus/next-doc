@@ -85,12 +85,17 @@ const firstId = exampleId(examples[0]);
                         x-cloak={i !== 0 || undefined}
                         class="text-gray-800 font-mono"
                     >
+                        {e.body?.type === "binary" && (
+                            <div class="p-4 min-h-[250px]">
+                                <p class="text-sm">binary response / raw file</p>
+                            </div>
+                        )}
                         {e.body === null && (
                             <div class="p-4 min-h-[250px]">
                                 <p class="text-sm">response has no body</p>
                             </div>
                         )}
-                        {e.body !== null && e.body?.content && (
+                        {e.body !== null && e.body.type !== "binary" && e.body.content && (
                             <Code code={e.body.content} lang={e.body.type ?? "plain"} class="not-prose rounded-b-xl text-[0.875rem]" />
                         )}
                     </div>

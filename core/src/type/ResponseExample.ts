@@ -6,10 +6,15 @@ export interface ResponseExample {
   name: string | null;
   description: string;
   links: Link[];
-  body: {
+  body:
+      | {
     content: string;
     type: "plain" | "json";
-  } | null;
+  }
+      | {
+    type: "binary";
+  }
+      | null;
   headers: string;
   schema: string | null;
 }
