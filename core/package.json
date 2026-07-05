@@ -8,7 +8,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "test:playwright": "PW_TEST_CONNECT_WS_ENDPOINT=ws://playwright-browser:3000/ yarn playwright test",
-    "test": "vitest run swagger", 
+    "test": "vitest run swagger",
     "cs": "eslint ./src",
     "cs:fix": "eslint ./src --fix"
   },
@@ -63,6 +63,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@astrojs/markdown-remark": "^7.2.1",
     "@axe-core/playwright": "^4.12.1",
     "@eslint/compat": "^2.1.0",
     "@eslint/eslintrc": "^3.3.5",

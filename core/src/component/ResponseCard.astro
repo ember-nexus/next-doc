@@ -1,6 +1,6 @@
 ---
 import { Code } from 'astro-expressive-code/components';
-import { marked } from 'marked';
+import { renderMarkdown } from '../util';
 import { getHttpStatusCodeLabel, type ResponseExample } from "../type";
 import Link from "./Link.astro";
 import CardTitle from "./CardTitle.astro";
@@ -23,6 +23,11 @@ function exampleId(e: ResponseExample): string {
     return e.name ? `${e.httpStatusCode} ${e.name}` : `${e.httpStatusCode}`;
 }
 
+// Pre-render markdown descriptions (renderMarkdown is async).
+const renderedDescriptions = await Promise.all(
+    examples.map((e) => renderMarkdown(e.description)),
+);
+
 const firstId = exampleId(examples[0]);
 ---
 <div class="response-card">
@@ -44,7 +49,7 @@ const firstId = exampleId(examples[0]);
             ))}
         </div>
 
-        <div class="not-prose">
+        <div>
             {examples.map((e, i) => (
                 <div
                     x-show={`exampleId === '${exampleId(e)}'`}
@@ -52,7 +57,7 @@ const firstId = exampleId(examples[0]);
                     class="text-sm p-4 flex flex-col gap-2"
                 >
                     <p class="font-bold">{e.httpStatusCode} · {e.name ?? getHttpStatusCodeLabel(e.httpStatusCode)}</p>
-                    <div class="prose fix-this-prose-block-pls" set:html={marked.parse(e.description)} />
+                    <div class="prose prose-sm max-w-none" set:html={renderedDescriptions[i]} />
                     {
                         e.links.length > 1 ? (
                             <div class="flex gap-4">

@@ -12,6 +12,7 @@ import expressiveCode from 'astro-expressive-code';
 
 import icon from 'astro-icon';
 import {httpMethodAugmentation, inlineCodeAttrs, linkAugmentation} from "./src/rehype";
+import { unified } from "@astrojs/markdown-remark";
 import pagefind from "astro-pagefind";
 
 
@@ -37,10 +38,12 @@ export default defineConfig({
     shikiConfig: {
       theme: 'min-light',
       langs: [
-          "json",
-          "text"
+        "json",
+        "text"
       ]
     },
-    rehypePlugins: [httpMethodAugmentation, linkAugmentation, inlineCodeAttrs],
+    processor: unified({
+      rehypePlugins: [httpMethodAugmentation, linkAugmentation, inlineCodeAttrs],
+    }),
   }
 });
