@@ -23,6 +23,7 @@ import type {
   RequestParameter,
   ResponseExample,
   ResponseHeader,
+  Schema
 } from "../type";
 
 /**
@@ -470,4 +471,34 @@ export function extractResponseExamples(
   }
 
   return results;
+}
+
+export function schemaParam(name: string): string {
+  return name
+      .replace(/([a-z0-9])([A-Z])/g, "$1-$2") // camelCase / PascalCase boundary
+      .replace(/[^a-zA-Z0-9]+/g, "-") // any other separator → dash
+      .toLowerCase()
+      .replace(/^-+|-+$/g, ""); // trim leading/trailing dashes
+}
+
+export function extractSchemas(spec: OpenAPIObject): Schema[] {
+  const schemas = spec.components?.schemas ?? {};
+  return Object.entries(schemas).map(
+      ([name, schema]): Schema => ({
+        id: schemaParam(name),
+        name,
+        schema,
+      }),
+  );
+}
+
+export function extractSchema(
+    spec: OpenAPIObject,
+    name: string,
+): Schema | undefined {
+  const schema = spec.components?.schemas?.[name];
+  if (schema === undefined) {
+    return undefined;
+  }
+  return { id: schemaParam(name), name, schema };
 }
