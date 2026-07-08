@@ -23,7 +23,7 @@ import type {
   RequestParameter,
   ResponseExample,
   ResponseHeader,
-  Schema
+  Schema,
 } from "../type";
 
 /**
@@ -33,13 +33,13 @@ import type {
  * free-form `method` string requires a narrowing cast.
  */
 function getOperation(
-    spec: OpenAPIObject,
-    path: string,
-    method: string,
+  spec: OpenAPIObject,
+  path: string,
+  method: string,
 ): OperationObject | undefined {
   const pathItem = spec.paths?.[path];
   return pathItem?.[method as keyof PathItemObject] as
-      OperationObject | undefined;
+    OperationObject | undefined;
 }
 
 /**
@@ -50,15 +50,15 @@ function getOperation(
  * spec is dereferenced before it reaches here.
  */
 function resolveParameters(
-    spec: OpenAPIObject,
-    path: string,
-    method: string,
+  spec: OpenAPIObject,
+  path: string,
+  method: string,
 ): ParameterObject[] {
   const pathItem = spec.paths?.[path] as PathItemObject | undefined;
   const op = getOperation(spec, path, method);
 
   const concrete = (params: PathItemObject["parameters"] = []) =>
-      params.filter((p): p is ParameterObject => !isReferenceObject(p));
+    params.filter((p): p is ParameterObject => !isReferenceObject(p));
 
   const byKey = new Map<string, ParameterObject>();
   // Path-level first, then let operation-level overwrite on collision.
@@ -118,37 +118,37 @@ function describeConstraints(schema: SchemaObject | undefined): string[] {
   }
   if (Array.isArray(schema.enum)) {
     chips.push(
-        `one of: ${schema.enum.map((v) => stringifyValue(v)).join(", ")}`,
+      `one of: ${schema.enum.map((v) => stringifyValue(v)).join(", ")}`,
     );
   }
   return chips;
 }
 
 export function extractCommonRequestHeaders(
-    spec: OpenAPIObject,
-    path: string,
-    method: string,
+  spec: OpenAPIObject,
+  path: string,
+  method: string,
 ): RequestHeader[] {
   const op = getOperation(spec, path, method);
 
   return (op?.parameters ?? [])
-      .filter((p) => !isReferenceObject(p) && p.in === "header")
-      .map((p): RequestHeader => {
-        // Narrowed above: refs are filtered out, so `p` is a ParameterObject.
-        const param = p as Exclude<typeof p, { $ref: string }>;
-        return {
-          header: param.name,
-          presence: param.required ? "required" : "optional",
-          description: param.description,
-          links: param["x-ember-nexus-links"] as Link[] | undefined,
-        };
-      });
+    .filter((p) => !isReferenceObject(p) && p.in === "header")
+    .map((p): RequestHeader => {
+      // Narrowed above: refs are filtered out, so `p` is a ParameterObject.
+      const param = p as Exclude<typeof p, { $ref: string }>;
+      return {
+        header: param.name,
+        presence: param.required ? "required" : "optional",
+        description: param.description,
+        links: param["x-ember-nexus-links"] as Link[] | undefined,
+      };
+    });
 }
 
 export function extractAuthHeaders(
-    spec: OpenAPIObject,
-    path: string,
-    method: string,
+  spec: OpenAPIObject,
+  path: string,
+  method: string,
 ): RequestHeader[] {
   const op = getOperation(spec, path, method);
   const security = op?.security ?? [];
@@ -157,27 +157,27 @@ export function extractAuthHeaders(
   const isOptional = security.some((req) => Object.keys(req).length === 0);
 
   return security
-      .flatMap((requirement) => Object.keys(requirement))
-      .map((name) => schemes[name])
-      .filter(
-          (scheme): scheme is SecuritySchemeObject =>
-              scheme !== undefined &&
-              !isReferenceObject(scheme) &&
-              scheme.type === "http" &&
-              scheme.scheme === "bearer",
-      )
-      .map((scheme): RequestHeader => ({
-        header: "Authorization",
-        presence: isOptional ? "optional" : "required",
-        description: scheme.description ?? "Bearer token for authentication.",
-        links: (scheme["x-ember-nexus-links"] as Link[] | undefined) ?? [],
-      }));
+    .flatMap((requirement) => Object.keys(requirement))
+    .map((name) => schemes[name])
+    .filter(
+      (scheme): scheme is SecuritySchemeObject =>
+        scheme !== undefined &&
+        !isReferenceObject(scheme) &&
+        scheme.type === "http" &&
+        scheme.scheme === "bearer",
+    )
+    .map((scheme): RequestHeader => ({
+      header: "Authorization",
+      presence: isOptional ? "optional" : "required",
+      description: scheme.description ?? "Bearer token for authentication.",
+      links: (scheme["x-ember-nexus-links"] as Link[] | undefined) ?? [],
+    }));
 }
 
 export function extractRequestHeaders(
-    spec: OpenAPIObject,
-    path: string,
-    method: string,
+  spec: OpenAPIObject,
+  path: string,
+  method: string,
 ): RequestHeader[] {
   return [
     ...extractAuthHeaders(spec, path, method),
@@ -191,38 +191,38 @@ export function extractRequestHeaders(
  * via `extractRequestHeaders`.
  */
 export function extractRequestParameters(
-    spec: OpenAPIObject,
-    path: string,
-    method: string,
+  spec: OpenAPIObject,
+  path: string,
+  method: string,
 ): RequestParameter[] {
   return resolveParameters(spec, path, method)
-      .filter(
-          (p): p is ParameterObject & { in: "path" | "query" | "cookie" } =>
-              p.in === "path" || p.in === "query" || p.in === "cookie",
-      )
-      .map((param): RequestParameter => {
-        const schema =
-            param.schema && !isReferenceObject(param.schema)
-                ? (param.schema as SchemaObject)
-                : undefined;
+    .filter(
+      (p): p is ParameterObject & { in: "path" | "query" | "cookie" } =>
+        p.in === "path" || p.in === "query" || p.in === "cookie",
+    )
+    .map((param): RequestParameter => {
+      const schema =
+        param.schema && !isReferenceObject(param.schema)
+          ? (param.schema as SchemaObject)
+          : undefined;
 
-        const type = schema?.type;
+      const type = schema?.type;
 
-        return {
-          name: param.name,
-          location: param.in,
-          // Path parameters are always required per the OpenAPI spec.
-          presence:
-              param.in === "path" || param.required ? "required" : "optional",
-          description: param.description ?? "",
-          type: Array.isArray(type) ? type.join(" | ") : (type ?? null),
-          format: schema?.format ?? null,
-          defaultValue: stringifyValue(schema?.default),
-          example: stringifyValue(param.example ?? schema?.example),
-          constraints: describeConstraints(schema),
-          links: (param["x-ember-nexus-links"] as Link[] | undefined) ?? [],
-        };
-      });
+      return {
+        name: param.name,
+        location: param.in,
+        // Path parameters are always required per the OpenAPI spec.
+        presence:
+          param.in === "path" || param.required ? "required" : "optional",
+        description: param.description ?? "",
+        type: Array.isArray(type) ? type.join(" | ") : (type ?? null),
+        format: schema?.format ?? null,
+        defaultValue: stringifyValue(schema?.default),
+        example: stringifyValue(param.example ?? schema?.example),
+        constraints: describeConstraints(schema),
+        links: (param["x-ember-nexus-links"] as Link[] | undefined) ?? [],
+      };
+    });
 }
 
 /**
@@ -260,9 +260,9 @@ function exampleFromSchema(schema: SchemaObject | undefined): unknown {
  * operation declares no body.
  */
 export function extractRequestBody(
-    spec: OpenAPIObject,
-    path: string,
-    method: string,
+  spec: OpenAPIObject,
+  path: string,
+  method: string,
 ): RequestBody | null {
   const op = getOperation(spec, path, method);
   const requestBody = op?.requestBody;
@@ -274,44 +274,44 @@ export function extractRequestBody(
   const content: ContentObject = requestBody.content ?? {};
 
   const contents: RequestBodyContent[] = Object.entries(content).map(
-      ([mimeType, mediaType]): RequestBodyContent => {
-        const schema =
-            mediaType.schema && !isReferenceObject(mediaType.schema)
-                ? (mediaType.schema as SchemaObject)
-                : undefined;
+    ([mimeType, mediaType]): RequestBodyContent => {
+      const schema =
+        mediaType.schema && !isReferenceObject(mediaType.schema)
+          ? (mediaType.schema as SchemaObject)
+          : undefined;
 
-        // Example resolution: media-type `example` → first named `examples`
-        // entry → synthesized from the schema.
-        let exampleValue: unknown = mediaType.example;
-        if (exampleValue === undefined && mediaType.examples) {
-          const named = Object.values(mediaType.examples).find(
-              (e) => !isReferenceObject(e),
-          );
-          exampleValue =
-              named && !isReferenceObject(named) ? named.value : undefined;
-        }
-        if (exampleValue === undefined) {
-          exampleValue = exampleFromSchema(schema);
-        }
+      // Example resolution: media-type `example` → first named `examples`
+      // entry → synthesized from the schema.
+      let exampleValue: unknown = mediaType.example;
+      if (exampleValue === undefined && mediaType.examples) {
+        const named = Object.values(mediaType.examples).find(
+          (e) => !isReferenceObject(e),
+        );
+        exampleValue =
+          named && !isReferenceObject(named) ? named.value : undefined;
+      }
+      if (exampleValue === undefined) {
+        exampleValue = exampleFromSchema(schema);
+      }
 
-        const isJson = mimeType.includes("json");
+      const isJson = mimeType.includes("json");
 
-        return {
-          mimeType,
-          schema: mediaType.schema
-              ? JSON.stringify(mediaType.schema, null, 2)
-              : null,
-          example:
-              exampleValue === undefined
-                  ? null
-                  : {
-                    content: isJson
-                        ? JSON.stringify(exampleValue, null, 2)
-                        : String(exampleValue),
-                    type: isJson ? "json" : "plain",
-                  },
-        };
-      },
+      return {
+        mimeType,
+        schema: mediaType.schema
+          ? JSON.stringify(mediaType.schema, null, 2)
+          : null,
+        example:
+          exampleValue === undefined
+            ? null
+            : {
+                content: isJson
+                  ? JSON.stringify(exampleValue, null, 2)
+                  : String(exampleValue),
+                type: isJson ? "json" : "plain",
+              },
+      };
+    },
   );
 
   return {
@@ -322,9 +322,9 @@ export function extractRequestBody(
 }
 
 export function extractHarExample(
-    spec: OpenAPIObject,
-    path: string,
-    method: string,
+  spec: OpenAPIObject,
+  path: string,
+  method: string,
 ): null | Partial<HarRequest> {
   const op = getOperation(spec, path, method);
   if (!op || !("x-ember-nexus-har-example" in op)) {
@@ -334,9 +334,9 @@ export function extractHarExample(
 }
 
 export function extractResponseHeaders(
-    spec: OpenAPIObject,
-    path: string,
-    method: string,
+  spec: OpenAPIObject,
+  path: string,
+  method: string,
 ): ResponseHeader[] {
   const op = getOperation(spec, path, method);
   const merged: { name: string; header: HeaderObject; codes: string[] }[] = [];
@@ -355,7 +355,7 @@ export function extractResponseHeaders(
       const header = headerOrRef;
 
       const existing = merged.find(
-          (entry) => entry.name === name && equal(entry.header, header),
+        (entry) => entry.name === name && equal(entry.header, header),
       );
       if (existing) {
         existing.codes.push(code);
@@ -369,16 +369,16 @@ export function extractResponseHeaders(
     header: name,
     presence: header.required ? "always" : "optional",
     important:
-        (header["x-ember-nexus-important"] as boolean | undefined) ?? false,
+      (header["x-ember-nexus-important"] as boolean | undefined) ?? false,
     description: header.description ?? "",
     links: (header["x-ember-nexus-links"] as Link[] | undefined) ?? [],
   }));
 }
 
 export function extractResponseExamples(
-    spec: OpenAPIObject,
-    path: string,
-    method: string,
+  spec: OpenAPIObject,
+  path: string,
+  method: string,
 ): ResponseExample[] {
   const op = getOperation(spec, path, method);
   const results: ResponseExample[] = [];
@@ -391,17 +391,17 @@ export function extractResponseExamples(
     const response = responseOrRef as ResponseObject;
 
     const headers = Object.entries(response.headers ?? {})
-        .map(([name, headerOrRef]) => {
-          let example = "";
-          if (!isReferenceObject(headerOrRef)) {
-            const headerSchema = headerOrRef.schema;
-            if (headerSchema && !isReferenceObject(headerSchema)) {
-              example = String(headerSchema.example ?? "");
-            }
+      .map(([name, headerOrRef]) => {
+        let example = "";
+        if (!isReferenceObject(headerOrRef)) {
+          const headerSchema = headerOrRef.schema;
+          if (headerSchema && !isReferenceObject(headerSchema)) {
+            example = String(headerSchema.example ?? "");
           }
-          return `${name}: ${example}`;
-        })
-        .join("\n");
+        }
+        return `${name}: ${example}`;
+      })
+      .join("\n");
 
     const content: ContentObject = response.content ?? {};
     const links = (response["x-ember-nexus-links"] as Link[] | undefined) ?? [];
@@ -422,8 +422,8 @@ export function extractResponseExamples(
     for (const [mimeType, mediaType] of Object.entries(content)) {
       const examples = mediaType.examples;
       const schema = mediaType.schema
-          ? JSON.stringify(mediaType.schema, null, 2)
-          : null;
+        ? JSON.stringify(mediaType.schema, null, 2)
+        : null;
 
       if (examples) {
         for (const [, exampleOrRef] of Object.entries(examples)) {
@@ -452,9 +452,9 @@ export function extractResponseExamples(
         // rather than the mime type so it also catches binary `image/*`
         // etc.
         const schemaObject =
-            mediaType.schema && !isReferenceObject(mediaType.schema)
-                ? (mediaType.schema as SchemaObject)
-                : undefined;
+          mediaType.schema && !isReferenceObject(mediaType.schema)
+            ? (mediaType.schema as SchemaObject)
+            : undefined;
         const isBinary = schemaObject?.format === "binary";
 
         results.push({
@@ -475,26 +475,24 @@ export function extractResponseExamples(
 
 export function schemaParam(name: string): string {
   return name
-      .replace(/([a-z0-9])([A-Z])/g, "$1-$2") // camelCase / PascalCase boundary
-      .replace(/[^a-zA-Z0-9]+/g, "-") // any other separator → dash
-      .toLowerCase()
-      .replace(/^-+|-+$/g, ""); // trim leading/trailing dashes
+    .replace(/([a-z0-9])([A-Z])/g, "$1-$2") // camelCase / PascalCase boundary
+    .replace(/[^a-zA-Z0-9]+/g, "-") // any other separator → dash
+    .toLowerCase()
+    .replace(/^-+|-+$/g, ""); // trim leading/trailing dashes
 }
 
 export function extractSchemas(spec: OpenAPIObject): Schema[] {
   const schemas = spec.components?.schemas ?? {};
-  return Object.entries(schemas).map(
-      ([name, schema]): Schema => ({
-        id: schemaParam(name),
-        name,
-        schema,
-      }),
-  );
+  return Object.entries(schemas).map(([name, schema]): Schema => ({
+    id: schemaParam(name),
+    name,
+    schema,
+  }));
 }
 
 export function extractSchema(
-    spec: OpenAPIObject,
-    name: string,
+  spec: OpenAPIObject,
+  name: string,
 ): Schema | undefined {
   const schema = spec.components?.schemas?.[name];
   if (schema === undefined) {

@@ -3,6 +3,7 @@ import "@vaadin/grid";
 import "@vaadin/grid/vaadin-grid-column.js";
 import { gridRowDetailsRenderer } from "@vaadin/grid/lit.js";
 import type { GridActiveItemChangedEvent } from "@vaadin/grid";
+
 import { escapeHtml } from "../../util/htmlUtil.ts";
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -415,7 +416,6 @@ ${this._highlightJson(JSON.stringify(rec, null, 2))}</pre>
     this._openItems = item ? [item] : [];
     this.requestUpdate();
   }
-
 }
 
 customElements.define("json-table", JsonTable);

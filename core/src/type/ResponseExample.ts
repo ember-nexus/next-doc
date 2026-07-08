@@ -7,14 +7,14 @@ export interface ResponseExample {
   description: string;
   links: Link[];
   body:
-      | {
-    content: string;
-    type: "plain" | "json";
-  }
-      | {
-    type: "binary";
-  }
-      | null;
+    | {
+        content: string;
+        type: "plain" | "json";
+      }
+    | {
+        type: "binary";
+      }
+    | null;
   headers: string;
   schema: string | null;
 }
