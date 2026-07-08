@@ -39,8 +39,14 @@ body {
 .response-card,
 .request-card,
 .request-body-card,
-.search-response-card {
+.search-response-card,
+.schema-example-block {
     --ec-frm-frameBoxShdCssVal: '';
+}
+
+.schema-example-block .expressive-code pre {
+    border-radius: calc(var(--radius-lg) - 1px);
+    margin: 0;
 }
 
 /* Tabs sit flush above the code block — strip the top radii */
@@ -137,6 +143,13 @@ body {
     a:focus-visible {
         outline: 2px solid var(--color-amber-500);
         outline-offset: 2px;
+    }
+
+    /* EC schema-ref links inside code blocks must keep the token colour */
+    a.ec-schema-ref,
+    a.ec-schema-ref:hover {
+        color: inherit;
+        text-decoration-color: inherit;
     }
 
     a .link-icon-wrap {
