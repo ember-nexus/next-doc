@@ -12,10 +12,7 @@ import expressiveCode from 'astro-expressive-code';
 
 import icon from 'astro-icon';
 import {httpMethodAugmentation, inlineCodeAttrs, linkAugmentation} from "./src/rehype";
-import { unified } from "@astrojs/markdown-remark";
 import pagefind from "astro-pagefind";
-
-const customRehypePlugins = [httpMethodAugmentation, linkAugmentation, inlineCodeAttrs];
 
 export default defineConfig({
   vite: {
@@ -28,9 +25,7 @@ export default defineConfig({
   site: 'https://api.ember-nexus.dev',
   integrations: [
     expressiveCode(),
-    mdx({
-      rehypePlugins: customRehypePlugins,
-    }),
+    mdx(),
     sitemap(),
     alpinejs(),
     icon(),
@@ -45,8 +40,12 @@ export default defineConfig({
         "text"
       ]
     },
-    processor: unified({
-      rehypePlugins: customRehypePlugins,
-    }),
+    // These are picked up by both pipelines:
+    // - @astrojs/mdx reads config.markdown.rehypePlugins via extendMarkdownConfig:true
+    // - Astro's legacy migration moves them into the default processor for .md files
+    // astro-expressive-code appends its own rehypeExpressiveCode plugin via the same
+    // mechanism, so it always runs after our plugins. The deprecation warning about
+    // this legacy field is an upstream issue in astro-expressive-code.
+    rehypePlugins: [httpMethodAugmentation, linkAugmentation, inlineCodeAttrs],
   }
 });
