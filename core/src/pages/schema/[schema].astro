@@ -7,8 +7,10 @@
 // self-referential schemas (e.g. Element → Element) don't expand forever.
 import SwaggerParser from '@apidevtools/swagger-parser';
 import type { OpenAPIObject } from 'openapi3-ts/oas31';
+import { Code } from 'astro-expressive-code/components';
 import Default from '../../layouts/Default.astro';
-import { extractSchemas, schemaParam } from '../../util';
+import SchemaPropertyList from '../../component/SchemaPropertyList.astro';
+import { extractSchemas } from '../../util';
 import type { Schema } from '../../type';
 
 export async function getStaticPaths() {
@@ -28,170 +30,36 @@ interface Props {
 
 const { schema } = Astro.props;
 
-// The raw schema is intentionally `unknown`; treat it as a loose bag here.
 const raw = (schema.schema ?? {}) as Record<string, unknown>;
 
-const description =
-    typeof raw.description === 'string' ? raw.description : null;
-const type = typeof raw.type === 'string' ? raw.type : null;
+const description = typeof raw.description === 'string' ? raw.description : null;
 
-// Which compositional keyword (if any) this schema is built from.
-const composition = (['oneOf', 'anyOf', 'allOf'] as const).find(
-    (key) => Array.isArray(raw[key]),
-);
-
-/** Pull `Element` out of `#/components/schemas/Element`. */
-function refName(ref: unknown): string | null {
-    if (typeof ref !== 'string') return null;
-    const match = /#\/components\/schemas\/(.+)$/.exec(ref);
-    return match ? match[1] : null;
-}
-
-/** Human-readable type label for a property/items node, plus any ref target. */
-function describeType(node: unknown): { label: string; ref: string | null } {
-    if (node == null || typeof node !== 'object') {
-        return { label: '—', ref: null };
-    }
-    const n = node as Record<string, unknown>;
-
-    const direct = refName(n.$ref);
-    if (direct) return { label: direct, ref: direct };
-
-    if (n.type === 'array' && n.items) {
-        const inner = describeType(n.items);
-        return { label: `${inner.label}[]`, ref: inner.ref };
-    }
-    if (Array.isArray(n.enum)) {
-        return { label: 'enum', ref: null };
-    }
-    if (typeof n.type === 'string') {
-        const label = n.format ? `${n.type} <${n.format}>` : n.type;
-        return { label, ref: null };
-    }
-    return { label: 'object', ref: null };
-}
-
-interface PropertyRow {
-    name: string;
-    required: boolean;
-    typeLabel: string;
-    refSlug: string | null;
-    description: string | null;
-}
-
-const requiredNames = new Set(
-    Array.isArray(raw.required) ? (raw.required as string[]) : [],
-);
-
-const properties: PropertyRow[] =
-    raw.type === 'object' && raw.properties && typeof raw.properties === 'object'
-        ? Object.entries(raw.properties as Record<string, unknown>).map(
-            ([name, prop]) => {
-                const { label, ref } = describeType(prop);
-                const p = (prop ?? {}) as Record<string, unknown>;
-                return {
-                    name,
-                    required: requiredNames.has(name),
-                    typeLabel: label,
-                    refSlug: ref ? schemaParam(ref) : null,
-                    description:
-                        typeof p.description === 'string'
-                            ? p.description
-                            : null,
-                };
-            },
-        )
-        : [];
-
-// Referenced schemas for compositional (oneOf/anyOf/allOf) definitions.
-const composed: { name: string; slug: string }[] = composition
-    ? (raw[composition] as unknown[])
-        .map((entry) =>
-            refName((entry as Record<string, unknown>)?.$ref),
-        )
-        .filter((n): n is string => n != null)
-        .map((n) => ({ name: n, slug: schemaParam(n) }))
-    : [];
-
-const kindLabel = composition ?? type ?? 'schema';
 const pretty = JSON.stringify(schema.schema, null, 2);
 ---
 
 <Default title={`${schema.name} — Schema`}>
     <div>
-        <p class="text-3xl sm:text-4xl mb-2 font-mono">{schema.name}</p>
-        <p class="mb-3 text-2xl text-neutral-500">{kindLabel}</p>
+        <p class="text-3xl sm:text-4xl mb-4 font-mono">{schema.name}</p>
         <div class="w-full border-t border-hairline mb-10"></div>
     </div>
 
     {description && (
-        <div class="prose dark:prose-invert mb-8">
-            <p>{description}</p>
-        </div>
-    )}
-
-    {properties.length > 0 && (
-        <section class="mb-10">
-            <h2 class="text-xl mb-3">Properties</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                    <tr class="border-b border-hairline text-sm text-neutral-500">
-                        <th class="py-2 pr-4 font-medium">Name</th>
-                        <th class="py-2 pr-4 font-medium">Type</th>
-                        <th class="py-2 pr-4 font-medium">Required</th>
-                        <th class="py-2 font-medium">Description</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {properties.map((p) => (
-                        <tr class="border-b border-hairline align-top">
-                            <td class="py-2 pr-4 font-mono">{p.name}</td>
-                            <td class="py-2 pr-4 font-mono text-sm">
-                                {p.refSlug ? (
-                                    <a
-                                        href={`/schema/${p.refSlug}`}
-                                        class="underline"
-                                    >
-                                        {p.typeLabel}
-                                    </a>
-                                ) : (
-                                    p.typeLabel
-                                )}
-                            </td>
-                            <td class="py-2 pr-4 text-sm">
-                                {p.required ? 'yes' : 'no'}
-                            </td>
-                            <td class="py-2 text-sm">
-                                {p.description ?? ''}
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
+        <section class="mb-6">
+            <div class="prose dark:prose-invert">
+                <p>{description}</p>
             </div>
         </section>
     )}
 
-    {composed.length > 0 && (
-        <section class="mb-10">
-            <h2 class="text-xl mb-3">{composition} of</h2>
-            <ul class="list-disc pl-6">
-                {composed.map((c) => (
-                    <li>
-                        <a href={`/schema/${c.slug}`} class="underline font-mono">
-                            {c.name}
-                        </a>
-                    </li>
-                ))}
-            </ul>
-        </section>
-    )}
+    <section class="mb-10">
+        <SchemaPropertyList schema={schema.schema} />
+    </section>
 
     <section>
-        <h2 class="text-xl mb-3">Raw schema</h2>
-        <pre
-            class="overflow-x-auto rounded-lg border border-hairline p-4 text-sm"><code>{pretty}</code></pre>
+        <h2 class="api-block-title mb-3">Raw schema</h2>
+        <div class="prose dark:prose-invert">
+            <Code code={pretty} lang="json" frame="none" />
+        </div>
     </section>
 </Default>
 

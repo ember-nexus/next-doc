@@ -1,9 +1,8 @@
 ---
-import { marked } from 'marked';
 import { Icon } from 'astro-icon/components';
 import type { ResponseHeader } from "../type";
-import Link from "./Link.astro";
 import CardTitle from "./CardTitle.astro";
+import HeaderRow from "./HeaderRow.astro";
 
 interface Props {
     headers: ResponseHeader[];
@@ -20,21 +19,15 @@ const others = headers.filter(h => !h.important);
             {important.length} relevant · {others.length} others
         </span>
     </CardTitle>
-    <div class="bg-white dark:bg-black border border-hairline rounded-xl shadow-xs">
+    <div class="api-card">
         <div class="divide-y divide-hairline">
             {important.map((header) => (
-                <div class="flex flex-col gap-2 px-4 py-3">
-                    <div class="flex items-center justify-between mb-1">
-                        <p class="font-mono text-sm font-medium">{header.header}</p>
-                        <p class="text-xs font-semibold tracking-wider uppercase text-gray-400">
-                            {header.presence}
-                        </p>
-                    </div>
-                    <div class="text-sm text-gray-600 dark:text-gray-400" set:html={marked.parse(header.description)}></div>
-                    <div class="flex gap-4">
-                        {header.links.map((link) => <Link link={link} />)}
-                    </div>
-                </div>
+                <HeaderRow
+                    name={header.header}
+                    presence={header.presence}
+                    description={header.description}
+                    links={header.links}
+                />
             ))}
         </div>
         {others.length > 0 && (
@@ -52,18 +45,12 @@ const others = headers.filter(h => !h.important);
                 </div>
                 <div x-show="open" class="divide-y divide-hairline">
                     {others.map((header) => (
-                        <div class="flex flex-col gap-2 px-4 py-3">
-                            <div class="flex items-center justify-between mb-1">
-                                <p class="font-mono text-sm font-medium">{header.header}</p>
-                                <p class="text-xs font-semibold tracking-wider uppercase text-gray-400">
-                                    {header.presence}
-                                </p>
-                            </div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400" set:html={marked.parse(header.description)}></div>
-                            <div class="flex gap-4">
-                                {header.links.map((link) => <Link link={link} />)}
-                            </div>
-                        </div>
+                        <HeaderRow
+                            name={header.header}
+                            presence={header.presence}
+                            description={header.description}
+                            links={header.links}
+                        />
                     ))}
                 </div>
             </div>

@@ -1,8 +1,7 @@
 ---
-import { marked } from 'marked';
 import type { RequestHeader } from "../type";
-import Link from "./Link.astro";
 import CardTitle from "./CardTitle.astro";
+import HeaderRow from "./HeaderRow.astro";
 
 interface Props {
     headers: RequestHeader[];
@@ -12,22 +11,15 @@ const { headers } = Astro.props;
 ---
 <div class="request-header-card">
     <CardTitle title="Request Header"></CardTitle>
-    <div class="bg-white dark:bg-black border border-hairline rounded-xl shadow-xs divide-y divide-hairline">
+    <div class="api-card divide-y divide-hairline">
         {headers.map((header) => (
-            <div class="flex flex-col gap-2 px-4 py-3">
-                <div class="flex items-center justify-between mb-1">
-                    <p class="font-mono text-sm font-medium">{header.header}</p>
-                    <p class={`text-xs font-semibold tracking-wider uppercase ${header.presence === 'required' ? 'text-red-500' : 'text-gray-400'}`}>
-                        {header.presence}
-                    </p>
-                </div>
-                <div class="text-sm text-gray-600 dark:text-gray-400" set:html={marked.parse(header.description)}></div>
-                <div class="flex gap-4">
-                    {header.links.map((link) => (
-                        <Link link={link} />
-                    ))}
-                </div>
-            </div>
+            <HeaderRow
+                name={header.header}
+                presence={header.presence}
+                description={header.description}
+                links={header.links}
+                highlightRequired
+            />
         ))}
     </div>
 </div>
