@@ -15,7 +15,7 @@ import {
     httpMethodAugmentation,
     linkAugmentation,
     inlineCodeAttrs,
-} from "../rehype"; // adjust path to match your layout
+} from "../plugins/rehype";
 
 type Renderer = Awaited<ReturnType<ReturnType<typeof unified>["createRenderer"]>>;
 

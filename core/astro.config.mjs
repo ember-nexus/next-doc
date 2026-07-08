@@ -11,7 +11,7 @@ import alpinejs from '@astrojs/alpinejs';
 import expressiveCode from 'astro-expressive-code';
 
 import icon from 'astro-icon';
-import {httpMethodAugmentation, inlineCodeAttrs, linkAugmentation} from "./src/rehype";
+import {httpMethodAugmentation, inlineCodeAttrs, linkAugmentation} from "./src/plugins/rehype";
 import pagefind from "astro-pagefind";
 
 export default defineConfig({
