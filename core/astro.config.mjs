@@ -15,6 +15,7 @@ import {httpMethodAugmentation, inlineCodeAttrs, linkAugmentation} from "./src/r
 import { unified } from "@astrojs/markdown-remark";
 import pagefind from "astro-pagefind";
 
+const customRehypePlugins = [httpMethodAugmentation, linkAugmentation, inlineCodeAttrs];
 
 export default defineConfig({
   vite: {
@@ -27,7 +28,9 @@ export default defineConfig({
   site: 'https://api.ember-nexus.dev',
   integrations: [
     expressiveCode(),
-    mdx(),
+    mdx({
+      rehypePlugins: customRehypePlugins,
+    }),
     sitemap(),
     alpinejs(),
     icon(),
@@ -43,7 +46,7 @@ export default defineConfig({
       ]
     },
     processor: unified({
-      rehypePlugins: [httpMethodAugmentation, linkAugmentation, inlineCodeAttrs],
+      rehypePlugins: customRehypePlugins,
     }),
   }
 });
