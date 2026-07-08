@@ -1,7 +1,7 @@
 import { h } from "hastscript";
 import { visit } from "unist-util-visit";
 
-const LOCAL_PREFIX = "https://ember-nexus.github.io";
+const LOCAL_PREFIX = "https://api.ember-nexus.dev";
 
 const ICON_PATHS: Record<string, string> = {
   "arrow-right": "M5 12h14M12 5l7 7-7 7",

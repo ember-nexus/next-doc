@@ -9,11 +9,19 @@ import type {
 import { LitElement, type PropertyValues, css, html } from "lit";
 
 import {
+  type EdgeDatum,
   type ElementsPayload,
+  type HlStyle,
+  type LayoutKind,
+  type NodeDatum,
+  type Scheme,
+  type StyleMode,
+  type Theme,
   elementsToGraphData,
   typeStyle,
 } from "./graphTypes.ts";
 import { iconNodeGeometry } from "./IconNode.ts";
+import { escapeHtml } from "../../../util/htmlUtil.ts";
 
 const PAD = 48; // padding around content, both sides
 const ZOOM_RANGE: [number, number] = [0.05, 2.0]; // shared by zoomRange + manual pinch clamp
@@ -23,17 +31,6 @@ const ZOOM_RANGE: [number, number] = [0.05, 2.0]; // shared by zoomRange + manua
  *  Only the properties that should differ between light / dark live
  *  here. Add more keys as needed and reference them via `this._theme`.
  * ------------------------------------------------------------------ */
-type Scheme = "light" | "dark";
-
-interface Theme {
-  nodeLabelFill: string;
-  edgeStroke: string;
-  edgeLabelFill: string;
-  edgeLabelBg: string;
-  tooltipBg: string;
-  tooltipFill: string;
-}
-
 const THEMES: Record<Scheme, Theme> = {
   light: {
     nodeLabelFill: "#ffffff",
@@ -69,11 +66,6 @@ const THEMES: Record<Scheme, Theme> = {
  *  `hl` is a simple int|string key (e.g. 1, "1", 2, "m"). Unknown or
  *  absent keys fall back to muted.
  * ------------------------------------------------------------------ */
-interface HlStyle {
-  light: string;
-  dark: string;
-}
-
 const HL_MUTED = "m";
 
 const HIGHLIGHTS: Record<string, HlStyle> = {
@@ -107,29 +99,6 @@ function luminance(hex: string): number {
  */
 function readableOn(bg: string): string {
   return luminance(bg) > 0.34 ? "#18181b" : "#ffffff"; // zinc-900 vs white
-}
-
-/** Supported layout variants, selected via the `layout` attribute. */
-type LayoutKind = "antv-dagre-LR" | "antv-dagre-TB" | "grid" | "force";
-
-/** Highlight mode, selected via the `mode` attribute. */
-type StyleMode = "auto" | "manual";
-
-/** Business data we attach under each element's `data` field. */
-interface NodeDatum {
-  type?: string;
-  name?: string;
-  label?: string;
-  highlight?: boolean;
-  tooltip?: string;
-  hl?: number | string;
-}
-
-interface EdgeDatum {
-  name?: string;
-  type?: string;
-  tooltip?: string;
-  hl?: number | string;
 }
 
 const nodeDatum = (d: NodeData): NodeDatum => (d.data ?? {}) as NodeDatum;
@@ -440,7 +409,7 @@ export class G6Graph extends LitElement {
               `font:12px/1.4 'Fira Code',monospace;color:${t.tooltipFill};` +
               `background:${t.tooltipBg};box-shadow:0 1px 6px rgba(0,0,0,.35);` +
               `max-width:240px;white-space:normal;">` +
-              this._esc(tip) +
+              escapeHtml(tip) +
               `</div>`
             );
           },
@@ -674,20 +643,6 @@ export class G6Graph extends LitElement {
 
   private _eid(e: any, items?: any[]): string | undefined {
     return items?.[0]?.id ?? e?.target?.id;
-  }
-
-  private _esc(s: string): string {
-    return String(s).replace(
-      /[&<>"']/g,
-      (c) =>
-        ({
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#39;",
-        })[c] as string,
-    );
   }
 
   _readData(): ElementsPayload | null {

@@ -33,7 +33,7 @@ const queryCount = parameters.filter((p) => p.location === "query").length;
                 {pathCount} path · {queryCount} query
             </span>
     </CardTitle>
-    <div class="bg-white dark:bg-black border border-hairline rounded-xl shadow-xs divide-y divide-hairline">
+    <div class="api-card divide-y divide-hairline">
         {sorted.map((param) => (
             <div class="flex flex-col gap-2 px-4 py-3">
                 <div class="flex items-center justify-between mb-1">

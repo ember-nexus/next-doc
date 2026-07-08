@@ -23,7 +23,7 @@ const multiple = body.contents.length > 1;
 
     <div
         x-data="{ componentId: 'example' }"
-        class="bg-white dark:bg-black block border border-hairline rounded-xl shadow-xs flex flex-col divide-y divide-gray-200 dark:divide-gray-800"
+        class="api-card block flex flex-col divide-y divide-gray-200 dark:divide-gray-800"
     >
         {body.description && (
             <div class="text-sm p-4 text-gray-600 dark:text-gray-400" set:html={marked.parse(body.description)} />

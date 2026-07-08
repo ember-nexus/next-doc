@@ -3,6 +3,7 @@ import "@vaadin/grid";
 import "@vaadin/grid/vaadin-grid-column.js";
 import { gridRowDetailsRenderer } from "@vaadin/grid/lit.js";
 import type { GridActiveItemChangedEvent } from "@vaadin/grid";
+import { escapeHtml } from "../../util/htmlUtil.ts";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -339,13 +340,13 @@ export class JsonTable extends LitElement {
 
           if (isType) {
             // Full value, never clipped, with slack for the rounded badge.
-            root.innerHTML = `<span class="type-cell"><span class="type-badge">${this._esc(full)}</span></span>`;
+            root.innerHTML = `<span class="type-cell"><span class="type-badge">${escapeHtml(full)}</span></span>`;
           } else if (isUuid) {
             // Only the first 8 chars of the uuid; full value in the tooltip.
             const short = full.slice(0, UUID_PREFIX_LENGTH);
-            root.innerHTML = `<span class="mono-fixed" title="${this._esc(full)}">${this._esc(short)}</span>`;
+            root.innerHTML = `<span class="mono-fixed" title="${escapeHtml(full)}">${escapeHtml(short)}</span>`;
           } else {
-            root.innerHTML = `<span class="cell" title="${this._esc(full)}">${this._esc(clip(full))}</span>`;
+            root.innerHTML = `<span class="cell" title="${escapeHtml(full)}">${escapeHtml(clip(full))}</span>`;
           }
         }}"
       ></vaadin-grid-column>
@@ -382,14 +383,14 @@ ${this._highlightJson(JSON.stringify(rec, null, 2))}</pre>
 
     while ((m = tokenRe.exec(json)) !== null) {
       // Structural characters / whitespace between tokens — escape verbatim.
-      out += this._esc(json.slice(lastIndex, m.index));
+      out += escapeHtml(json.slice(lastIndex, m.index));
       lastIndex = tokenRe.lastIndex;
 
       if (m[1] !== undefined) {
         // string token (optionally a key if followed by a colon)
-        const str = this._esc(m[1]);
+        const str = escapeHtml(m[1]);
         if (m[2] !== undefined) {
-          out += `<span class="json-key">${str}</span>${this._esc(m[2])}`;
+          out += `<span class="json-key">${str}</span>${escapeHtml(m[2])}`;
         } else {
           out += `<span class="json-str">${str}</span>`;
         }
@@ -401,7 +402,7 @@ ${this._highlightJson(JSON.stringify(rec, null, 2))}</pre>
         out += `<span class="json-null">${m[5]}</span>`;
       }
     }
-    out += this._esc(json.slice(lastIndex));
+    out += escapeHtml(json.slice(lastIndex));
 
     // Build real nodes from the (safely escaped) highlighted markup.
     const tpl = document.createElement("template");
@@ -415,19 +416,6 @@ ${this._highlightJson(JSON.stringify(rec, null, 2))}</pre>
     this.requestUpdate();
   }
 
-  private _esc(s: string): string {
-    return String(s).replace(
-      /[&<>"']/g,
-      (c) =>
-        ({
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#39;",
-        })[c] as string,
-    );
-  }
 }
 
 customElements.define("json-table", JsonTable);

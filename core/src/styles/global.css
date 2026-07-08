@@ -36,33 +36,44 @@ body {
     display: none;
 }
 
-.response-card, .request-card, .request-body-card {
+.response-card,
+.request-card,
+.request-body-card,
+.search-response-card {
     --ec-frm-frameBoxShdCssVal: '';
 }
 
+/* Tabs sit flush above the code block — strip the top radii */
 .response-card .expressive-code pre,
-.request-body-card .expressive-code pre {
+.request-body-card .expressive-code pre,
+.search-response-card .expressive-code pre {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     border-bottom-left-radius: calc(var(--radius-xl) - 1px);
     border-bottom-right-radius: calc(var(--radius-xl) - 1px);
 }
 
+/* request-card has no tab strip — full rounded corners */
 .request-card .expressive-code pre {
     border-radius: calc(var(--radius-xl) - 1px);
 }
 
-.response-card .expressive-code pre {
+/* Constrain height for response/search code blocks */
+.response-card .expressive-code pre,
+.search-response-card .expressive-code pre {
     min-height: 250px;
     max-height: 400px;
 }
 
-.response-card .expressive-code pre code .ec-line:last-child {
-    padding-bottom: var(--ec-codePadBlk) !important;
+/* Fix last-line padding inside constrained code blocks */
+.response-card .expressive-code pre code,
+.search-response-card .expressive-code pre code {
+    padding-bottom: 0 !important;
 }
 
-.response-card .expressive-code pre code {
-    padding-bottom: 0 !important;
+.response-card .expressive-code pre code .ec-line:last-child,
+.search-response-card .expressive-code pre code .ec-line:last-child {
+    padding-bottom: var(--ec-codePadBlk) !important;
 }
 
 .prose {
@@ -166,6 +177,21 @@ body {
     }
 }
 
+/* Shared card shell: white/black surface with hairline border and subtle shadow.
+   Combine with Tailwind utilities for layout specifics (divide-y, overflow-hidden, etc.) */
+.api-card {
+    background-color: white;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xs);
+}
+
+@media (prefers-color-scheme: dark) {
+    .api-card {
+        background-color: black;
+    }
+}
+
 .api-block-title,
 .sidebar-group-title {
     font-family: "Qanelas Soft Custom";
@@ -254,26 +280,11 @@ body {
     box-sizing: border-box;
 }
 
-.search-response-card {
-    --ec-frm-frameBoxShdCssVal: '';
-}
 .search-response-card-body {
     overflow: hidden;
 }
-.search-response-card .expressive-code pre {
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    border-bottom-left-radius: calc(var(--radius-xl) - 1px);
-    border-bottom-right-radius: calc(var(--radius-xl) - 1px);
-    min-height: 250px;
-    max-height: 400px;
-}
-.search-response-card .expressive-code pre code .ec-line:last-child {
-    padding-bottom: var(--ec-codePadBlk) !important;
-}
-.search-response-card .expressive-code pre code {
-    padding-bottom: 0 !important;
-}
+
+/* Bold-width placeholder trick: prevents layout shift when tab label goes bold on active */
 .search-response-card button::before {
     content: attr(data-label);
     display: block;
@@ -282,6 +293,7 @@ body {
     font-weight: 600;
     overflow: hidden;
 }
+
 .search-response-card .search-response-card-body g6-graph {
     display: block;
     padding: 0;

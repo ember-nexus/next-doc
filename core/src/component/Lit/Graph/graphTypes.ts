@@ -2,6 +2,52 @@
 // elements → {nodes, edges} transform. Keeping it out of Graph.ts means the
 // component file only deals with rendering concerns.
 
+// ── Color scheme ─────────────────────────────────────────────────────────────
+
+export type Scheme = "light" | "dark";
+
+export interface Theme {
+  nodeLabelFill: string;
+  edgeStroke: string;
+  edgeLabelFill: string;
+  edgeLabelBg: string;
+  tooltipBg: string;
+  tooltipFill: string;
+}
+
+// ── Highlight mode ────────────────────────────────────────────────────────────
+
+export interface HlStyle {
+  light: string;
+  dark: string;
+}
+
+// ── Layout and style mode ─────────────────────────────────────────────────────
+
+/** Supported layout variants, selected via the `layout` attribute. */
+export type LayoutKind = "antv-dagre-LR" | "antv-dagre-TB" | "grid" | "force";
+
+/** Highlight mode, selected via the `mode` attribute. */
+export type StyleMode = "auto" | "manual";
+
+// ── Per-element data fields carried under g6's `data` property ───────────────
+
+export interface NodeDatum {
+  type?: string;
+  name?: string;
+  label?: string;
+  highlight?: boolean;
+  tooltip?: string;
+  hl?: number | string;
+}
+
+export interface EdgeDatum {
+  name?: string;
+  type?: string;
+  tooltip?: string;
+  hl?: number | string;
+}
+
 export interface GraphElement {
   id: string;
   /** semantic type, e.g. "user" / "data" — drives color + icon (NOT the g6 shape type) */

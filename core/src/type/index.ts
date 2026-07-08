@@ -7,5 +7,6 @@ export * from "./RequestHeader.ts";
 export * from "./RequestParameter.ts";
 export * from "./ResponseExample.ts";
 export * from "./ResponseHeader.ts";
+export * from "./Sidebar.ts";
 export * from "./Version.ts";
 export * from "./Schema.ts";
