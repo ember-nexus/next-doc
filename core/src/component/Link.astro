@@ -8,7 +8,6 @@ interface Props {
 
 const { link } = Astro.props;
 
-// Treat links to the same origin as internal (arrow-right) vs external (arrow-up-right).
 const siteOrigin = import.meta.env.SITE ?? "";
 const isLocal = siteOrigin !== "" && link.url.startsWith(siteOrigin);
 const icon = isLocal ? "arrow-right" : "arrow-up-right";

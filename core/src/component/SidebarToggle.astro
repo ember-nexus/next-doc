@@ -7,12 +7,6 @@ interface Props {
 
 const { icon = 'panel-left' } = Astro.props;
 ---
-
-<!--
-  Toggles sidebarOpen. When still null (untouched), resolve against the
-  breakpoint so the first click does the intuitive thing: close on desktop
-  (where it's open by default), open on mobile (where it's hidden).
--->
 <button
     type="button"
     @click="sidebarOpen = !(sidebarOpen ?? window.matchMedia('(min-width: 640px)').matches)"

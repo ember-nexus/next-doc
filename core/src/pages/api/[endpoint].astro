@@ -52,7 +52,7 @@ const responseExamples = extractResponseExamples(spec, path, method2);
 <Default title={`${endpoint} — ${name}`}>
     <div style={`--c: var(--method-${method.toLowerCase()}, var(--method-put))`}>
         <p class="text-3xl sm:text-4xl mb-2 font-mono">
-            <span class="uppercase text-[var(--c)]">{method}</span> {endpointUrl}
+            <span class="uppercase text-(--c)">{method}</span> {endpointUrl}
         </p>
         <p class="mb-3 text-2xl">{name}</p>
         <div class="w-full border-t border-hairline mb-10"></div>

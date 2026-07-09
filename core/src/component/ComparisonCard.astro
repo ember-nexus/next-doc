@@ -1,8 +1,5 @@
 ---
-import { Code } from 'astro-expressive-code/components';
 import { Icon } from 'astro-icon/components';
-import { type HarRequest, HTTPSnippet, type TargetId, targets } from "httpsnippet";
-import CardTitle from "./CardTitle.astro";
 
 interface Props {
     variant: "good" | "bad";
@@ -11,13 +8,11 @@ interface Props {
 
 const { variant, title } = Astro.props;
 
-// icon per variant — swap names to whatever icon set you have registered
 const icons: Record<Props["variant"], string> = {
     good: "check",
     bad: "x",
 };
 
-// color tokens per variant (border / header background / header text)
 const styles: Record<Props["variant"], { border: string; bg: string; text: string }> = {
     good: {
         border: "border-green-500 dark:border-green-700",

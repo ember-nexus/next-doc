@@ -8,20 +8,14 @@ interface Props {
     presence: string;
     description: string;
     links: Link[];
-    /** When true, "required" presence is highlighted in red. Default: false. */
-    highlightRequired?: boolean;
 }
 
-const { name, presence, description, links, highlightRequired = false } = Astro.props;
-
-const presenceClass = highlightRequired && presence === 'required'
-    ? 'text-red-500'
-    : 'text-gray-400';
+const { name, presence, description, links } = Astro.props;
 ---
 <div class="flex flex-col gap-2 px-4 py-3">
     <div class="flex items-center justify-between mb-1">
         <p class="font-mono text-sm font-medium">{name}</p>
-        <p class={`text-xs font-semibold tracking-wider uppercase ${presenceClass}`}>
+        <p class={`text-xs font-semibold tracking-wider uppercase text-gray-400`}>
             {presence}
         </p>
     </div>

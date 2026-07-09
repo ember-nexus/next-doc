@@ -1,9 +1,4 @@
 ---
-// SchemaPropertyRow.astro
-// Renders one property entry in the human-friendly schema view.
-// Recurses into nested object properties and oneOf/anyOf/allOf variants
-// using Astro.self — same pattern as SidebarNode.astro.
-
 import { Code } from 'astro-expressive-code/components';
 import { schemaParam } from '../util';
 
@@ -11,7 +6,6 @@ interface Props {
     name: string;
     node: unknown;
     required: boolean;
-    /** Nesting depth — used to lighten the background of nested cards. */
     depth?: number;
 }
 
@@ -19,29 +13,17 @@ const { name, node, required, depth = 0 } = Astro.props;
 
 const n = (node != null && typeof node === 'object' ? node : {}) as Record<string, unknown>;
 
-// --- type display --------------------------------------------------------
-
-/** Pull schema name from a $ref string like `#/components/schemas/Element`. */
 function refName(ref: unknown): string | null {
     if (typeof ref !== 'string') return null;
     const m = /#\/components\/schemas\/(.+)$/.exec(ref);
     return m ? m[1] : null;
 }
 
-/**
- * The type is rendered as up to three parts so each piece can be styled
- * independently (and refs can become links):
- *   prefix  — e.g. nothing, or the array-item ref name
- *   suffix  — e.g. "[]" for arrays, or nothing
- *   plain   — a non-ref label (used when there is no ref)
- *   refSlug — slug for the ref link, or null
- *   format  — optional format chip after "·"
- */
 interface TypeDisplay {
-    refSlug: string | null;   // slug for the link target (null = no link)
-    refLabel: string | null;  // text inside the link
-    suffix: string;           // appended after the link/plain, e.g. "[]"
-    plain: string | null;     // used when refSlug is null (mutually exclusive)
+    refSlug: string | null;
+    refLabel: string | null;
+    suffix: string;
+    plain: string | null;
     format: string | null;
 }
 
@@ -50,15 +32,11 @@ function describeType(raw: unknown): TypeDisplay {
     if (raw == null || typeof raw !== 'object') return empty;
     const r = raw as Record<string, unknown>;
 
-    // Direct $ref
     const direct = refName(r.$ref);
     if (direct) return { refSlug: schemaParam(direct), refLabel: direct, suffix: '', plain: null, format: null };
 
-    // Array — preserve ref linkability for the item type.
-    // Note: some swagger files store the ref in items.$ref, others in items.type.
     if (r.type === 'array' && r.items) {
         const items = r.items as Record<string, unknown>;
-        // Normalise: if items.type looks like a $ref, treat it as one.
         if (typeof items.type === 'string' && items.type.startsWith('#/')) {
             items.$ref = items.type;
             delete items.type;
@@ -73,14 +51,11 @@ function describeType(raw: unknown): TypeDisplay {
         };
     }
 
-    // enum
     if (Array.isArray(r.enum)) return { ...empty, plain: 'enum', refSlug: null };
 
-    // compositional (oneOf/anyOf/allOf on the property node itself)
     const comp = (['oneOf', 'anyOf', 'allOf'] as const).find(k => Array.isArray(r[k]));
     if (comp) return { ...empty, plain: `one of ${(r[comp] as unknown[]).length}` };
 
-    // Scalar type
     if (typeof r.type === 'string') {
         return {
             refSlug: null,
@@ -91,20 +66,12 @@ function describeType(raw: unknown): TypeDisplay {
         };
     }
 
-    // Fallback object
     if (r.properties || r.additionalProperties) return { ...empty, plain: 'object' };
 
     return empty;
 }
 
 const typeDisplay = describeType(node);
-
-// For arrays: the suffix always ends with "[]". The link label is just the
-// item ref name; the "[]" is rendered as plain text after the link.
-// For non-arrays: refLabel and suffix together equal the full label, or
-// plain is used when there is no ref.
-
-// --- nested children: object properties ----------------------------------
 
 const childRequired = new Set<string>(
     Array.isArray(n.required) ? (n.required as string[]) : [],
@@ -114,8 +81,6 @@ const childProperties: [string, unknown][] =
     n.type === 'object' && n.properties && typeof n.properties === 'object'
         ? Object.entries(n.properties as Record<string, unknown>)
         : [];
-
-// --- oneOf / anyOf / allOf variants on this property node ----------------
 
 const composition = (['oneOf', 'anyOf', 'allOf'] as const).find(k => Array.isArray(n[k]));
 
@@ -149,12 +114,8 @@ if (composition) {
     }
 }
 
-// --- example value -------------------------------------------------------
-
 const exampleRaw = n.example;
 
-// Scalar: string, number, boolean, null — render inline as code.
-// Complex: object or array — render via expressive-code block.
 type ExampleKind = 'none' | 'scalar' | 'complex';
 
 let exampleKind: ExampleKind = 'none';
@@ -173,10 +134,8 @@ if (exampleRaw !== undefined) {
 
 const description = typeof n.description === 'string' ? n.description : null;
 
-// Slightly lighter nested bg at depth > 0
 const nestedBgClass = depth === 0 ? 'bg-white dark:bg-black' : 'bg-gray-50 dark:bg-gray-950';
 
-// Discriminator property name for the variants header line.
 const discriminatorProp: string | null =
     n.discriminator &&
     typeof n.discriminator === 'object' &&
@@ -187,13 +146,11 @@ const discriminatorProp: string | null =
 ---
 
 <div class={`schema-property-row flex flex-col gap-1.5 px-4 py-3 ${nestedBgClass}`}>
-    {/* --- top row: name : type · format / REQUIRED badge --- */}
     <div class="flex items-center justify-between gap-2">
         <div class="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 min-w-0">
             <span class="font-mono font-semibold text-sm text-gray-900 dark:text-gray-100">{name}</span>
             <span class="text-gray-400 text-sm">:</span>
 
-            {/* ref link (possibly with [] suffix after) */}
             {typeDisplay.refSlug && (
                 <>
                     <a
@@ -208,7 +165,6 @@ const discriminatorProp: string | null =
                 </>
             )}
 
-            {/* plain (non-ref) label */}
             {!typeDisplay.refSlug && (
                 <span class="font-mono text-sm text-blue-600 dark:text-blue-400">
                     {(typeDisplay.plain ?? '') + typeDisplay.suffix}
@@ -227,12 +183,10 @@ const discriminatorProp: string | null =
         </span>
     </div>
 
-    {/* --- description --- */}
     {description && (
         <p class="text-sm text-gray-600 dark:text-gray-400">{description}</p>
     )}
 
-    {/* --- example: scalar inline --- */}
     {exampleKind === 'scalar' && (
         <p class="text-xs text-gray-400 dark:text-gray-500">
             example{' '}
@@ -240,7 +194,6 @@ const discriminatorProp: string | null =
         </p>
     )}
 
-    {/* --- example: complex — expressive-code block --- */}
     {exampleKind === 'complex' && (
         <div class="schema-example-block mt-0.5">
             <p class="text-xs text-gray-400 dark:text-gray-500 mb-1">example</p>
@@ -248,7 +201,6 @@ const discriminatorProp: string | null =
         </div>
     )}
 
-    {/* --- nested object properties --- */}
     {childProperties.length > 0 && (
         <div class="mt-1 border border-hairline rounded-lg overflow-hidden divide-y divide-hairline">
             {childProperties.map(([childName, childNode]) => (
@@ -262,7 +214,6 @@ const discriminatorProp: string | null =
         </div>
     )}
 
-    {/* --- oneOf / anyOf / allOf variants --- */}
     {variants.length > 0 && (
         <div class="mt-1 border border-hairline rounded-lg overflow-hidden">
             <p class="px-4 py-2 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-950 border-b border-hairline">
