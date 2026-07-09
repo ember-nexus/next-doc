@@ -1,6 +1,7 @@
 ---
 import SwaggerParser from '@apidevtools/swagger-parser';
 import type { OpenAPIObject } from 'openapi3-ts/oas31';
+
 import { extractSchemas } from '../util';
 import LinkCard from './LinkCard.astro';
 const spec = (await SwaggerParser.parse('./src/data/swagger.json')) as OpenAPIObject;

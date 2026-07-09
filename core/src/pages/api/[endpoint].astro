@@ -2,24 +2,25 @@
 // Moved from [group]/[endpoint].astro to api/[endpoint].astro.
 // Endpoint ids are unique, so `group` no longer needs to be in the URL — it is
 // used only to group items in the sidebar.
-import { getCollection, render } from 'astro:content';
 import SwaggerParser from '@apidevtools/swagger-parser';
-import Default from '../../layouts/Default.astro';
-import ResponseCard from '../../component/ResponseCard.astro';
-import RequestCard from '../../component/RequestCard.astro';
-import RequestParameterCard from '../../component/RequestParameterCard.astro';
-import RequestHeaderCard from '../../component/RequestHeaderCard.astro';
+import { getCollection, render } from 'astro:content';
+
 import RequestBodyCard from "../../component/RequestBodyCard.astro";
+import RequestCard from '../../component/RequestCard.astro';
+import RequestHeaderCard from '../../component/RequestHeaderCard.astro';
+import RequestParameterCard from '../../component/RequestParameterCard.astro';
+import ResponseCard from '../../component/ResponseCard.astro';
 import ResponseHeaderCard from '../../component/ResponseHeaderCard.astro';
+import Default from '../../layouts/Default.astro';
+import { endpointParam } from '../../lib';
 import {
     extractHarExample,
+    extractRequestBody,
     extractRequestHeaders,
     extractRequestParameters,
-    extractRequestBody,
     extractResponseExamples,
     extractResponseHeaders,
 } from '../../util';
-import { endpointParam } from '../../lib';
 
 export async function getStaticPaths() {
     const entries = await getCollection('endpoints');

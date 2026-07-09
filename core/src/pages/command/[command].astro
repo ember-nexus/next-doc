@@ -1,8 +1,9 @@
 ---
+import { Code } from 'astro-expressive-code/components';
 import { getCollection, render } from 'astro:content';
+
 import Default from '../../layouts/Default.astro';
 import { commandParam } from '../../lib';
-import { Code } from 'astro-expressive-code/components';
 
 export async function getStaticPaths() {
     const entries = await getCollection('commands');

@@ -1,9 +1,10 @@
 ---
 import { Code } from 'astro-expressive-code/components';
+
+import { type ResponseExample, getHttpStatusCodeLabel } from "../type";
 import { renderMarkdown } from '../util';
-import { getHttpStatusCodeLabel, type ResponseExample } from "../type";
-import Link from "./Link.astro";
 import CardTitle from "./CardTitle.astro";
+import Link from "./Link.astro";
 
 interface Props {
     examples: ResponseExample[];
