@@ -9,4 +9,3 @@ export * from "./ResponseExample.ts";
 export * from "./ResponseHeader.ts";
 export * from "./Schema.ts";
 export * from "./Sidebar.ts";
-export * from "./Version.ts";
