@@ -1,5 +1,3 @@
-export * from "./Change.ts";
-export * from "./Endpoint.ts";
 export * from "./HttpStatusCode.ts";
 export * from "./Link.ts";
 export * from "./RequestBody.ts";
