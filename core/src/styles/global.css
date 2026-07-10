@@ -82,6 +82,10 @@ body {
     padding-bottom: var(--ec-codePadBlk) !important;
 }
 
+.font-qanelas-soft-custom {
+    font-family: "Qanelas Soft Custom";
+}
+
 .prose {
     --prose-gap: 1rem;
     gap: var(--prose-gap);

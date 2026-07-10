@@ -11,6 +11,8 @@ services:
     tty: true
     volumes:
       - ../core:/core
+    environment:
+      VERSION: '0.1.31'
     working_dir: /core
     ports:
       - 4321:4321
