@@ -1,8 +1,8 @@
 ---
 import '../styles/global.css'
+
 import Sidebar from '../component/Sidebar.astro'
-import SidebarToggle from '../component/SidebarToggle.astro'
-import Search from "astro-pagefind/components/Search.astro";
+import Header from "../component/Header.astro";
 
 interface Props {
     title: string
@@ -41,10 +41,7 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
     class="flex min-h-screen flex-col transition-[padding] duration-200 ease-in-out max-sm:pl-0 sm:pl-64"
     :class="{ 'sm:pl-64': sidebarOpen !== false, 'sm:!pl-0': sidebarOpen === false }"
 >
-    <header class="flex items-center gap-2 px-5 py-4">
-        <SidebarToggle icon="panel-left" />
-        <Search instance="search" className="pagefind-ui" searchboxOptions={{ placeholder: "search" }} />
-    </header>
+    <Header></Header>
 
     <main class="content-grid" data-pagefind-body>
         {headings.length > 0 && (

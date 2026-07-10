@@ -1,9 +1,10 @@
 ---
 import { Code } from 'astro-expressive-code/components';
+
+import { type ResponseExample, getHttpStatusCodeLabel } from "../type";
 import { renderMarkdown } from '../util';
-import { getHttpStatusCodeLabel, type ResponseExample } from "../type";
-import Link from "./Link.astro";
 import CardTitle from "./CardTitle.astro";
+import Link from "./Link.astro";
 
 interface Props {
     examples: ResponseExample[];
@@ -35,7 +36,7 @@ const firstId = exampleId(examples[0]);
 
     <div
         x-data={`{ exampleId: '${firstId}', componentId: 'body' }`}
-        class="api-card block flex flex-col divide-y divide-gray-200 dark:divide-gray-800"
+        class="api-card flex flex-col divide-y divide-gray-200 dark:divide-gray-800"
     >
         <div class="flex flex-wrap gap-2 p-4">
             {examples.map((e) => (

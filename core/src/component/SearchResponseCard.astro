@@ -1,7 +1,6 @@
 ---
 import {Code} from 'astro-expressive-code/components';
 import {Icon} from 'astro-icon/components';
-import CardTitle from "./CardTitle.astro";
 
 interface Props {
     responseBody: object;
@@ -70,7 +69,7 @@ const tabEntries = tabs.map(t => ({key: t, label: tabLabels[t] ?? t}));
     </div>
 
     <div
-        class="search-response-card-body api-card block flex flex-col divide-y divide-gray-200 dark:divide-gray-800">
+        class="search-response-card-body api-card flex flex-col divide-y divide-gray-200 dark:divide-gray-800">
         <!-- Tab bar: desktop only -->
         <div class="hidden sm:flex border-b border-gray-200 dark:border-gray-800 px-4">
             {tabEntries.map(({key, label}) => (

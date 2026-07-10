@@ -232,3 +232,13 @@ The following optional properties can be set on `HAS_X_ACCESS`:
 - `onLabel`: Limits access to a specific type of nodes.
 - `onParentLabel`: Limits access to children of a specific type of nodes.
 - `onCreatedByUser`: Requires that the element was created by the current user, i.e. the relation `CREATED` exists between the user and the element.
+
+### Metadata and timing attacks
+
+Note that even with all security measures in place, some data can still be accessed by other users:
+
+- General graph structure, e.g. the types of nodes and relations present in the global graph, through the [`GET /graph-structure`](/api/get-graph-structure)
+  endpoint.
+- Timing data. Databases can and will act differently for elements which exist but need to be filtered out, as well as
+  elements which are truly missing from the database. While these small differences are usually not enough to leak
+  useful data, a persistent actor might be able to learn general patterns.

@@ -7,5 +7,8 @@ endpointUrl: /<uuid>
 swaggerUrl: /{uuid}
 ---
 
-Documentation of the current version.
+Updates properties of the referenced element.
 
+Properties with the value `null` will be deleted.
+
+Already existing properties whose keys are not mentioned in the `PATCH`-request are kept as they are.

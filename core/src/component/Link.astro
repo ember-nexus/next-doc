@@ -1,5 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
+
 import type { Link } from "../type";
 
 interface Props {
@@ -8,12 +9,16 @@ interface Props {
 
 const { link } = Astro.props;
 
-// Treat links to the same origin as internal (arrow-right) vs external (arrow-up-right).
 const siteOrigin = import.meta.env.SITE ?? "";
 const isLocal = siteOrigin !== "" && link.url.startsWith(siteOrigin);
 const icon = isLocal ? "arrow-right" : "arrow-up-right";
 ---
-<a href={link.url} class="text-sm text-blue-700 hover:underline inline-flex items-center gap-0.5">
+<a
+    href={link.url}
+    class="text-sm text-blue-700 hover:underline inline-flex items-center gap-0.5"
+    target={isLocal ? undefined : "_blank"}
+    rel={isLocal ? undefined : "noopener noreferrer"}
+>
     {link.name}
     <Icon name={icon} class="size-4" />
 </a>

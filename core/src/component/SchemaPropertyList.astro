@@ -1,26 +1,14 @@
 ---
-// SchemaPropertyList.astro
-// Entry-point for the human-friendly schema property view.
-// Handles top-level object schemas (renders each property via SchemaPropertyRow)
-// and top-level oneOf/anyOf/allOf schemas.
-//
-// For allOf, we merge inline object blocks (show their properties) and collect
-// $ref entries as "extends" links — matching how OpenAPI allOf typically works.
-// For oneOf/anyOf, we show a list of variant links.
-
 import SchemaPropertyRow from './SchemaPropertyRow.astro';
 import { schemaParam } from '../util';
 
 interface Props {
-    /** The raw schema object (untyped, as stored in Schema.schema). */
     schema: unknown;
 }
 
 const { schema } = Astro.props;
 
 const raw = (schema != null && typeof schema === 'object' ? schema : {}) as Record<string, unknown>;
-
-// --- object properties (direct) ---
 
 const requiredNames = new Set<string>(
     Array.isArray(raw.required) ? (raw.required as string[]) : [],
@@ -30,8 +18,6 @@ const properties: [string, unknown][] =
     raw.type === 'object' && raw.properties && typeof raw.properties === 'object'
         ? Object.entries(raw.properties as Record<string, unknown>)
         : [];
-
-// --- compositional keyword ---
 
 const composition = (['oneOf', 'anyOf', 'allOf'] as const).find(k => Array.isArray(raw[k]));
 
@@ -43,10 +29,8 @@ function parseRef(ref: unknown): string | null {
 
 interface Variant { name: string; slug: string }
 
-// For oneOf / anyOf: collect all $ref entries as variant links.
 const variants: Variant[] = [];
 
-// For allOf: collect $ref entries as "extends" links, merge inline object props.
 const extendsRefs: Variant[] = [];
 const allOfProperties: [string, unknown][] = [];
 const allOfRequired = new Set<string>();
@@ -63,7 +47,6 @@ if (composition === 'oneOf' || composition === 'anyOf') {
         if (refName) {
             extendsRefs.push({ name: refName, slug: schemaParam(refName) });
         } else if (e.type === 'object' || e.properties) {
-            // Inline object: absorb its properties.
             if (Array.isArray(e.required)) {
                 for (const r of e.required as string[]) allOfRequired.add(r);
             }
@@ -76,7 +59,6 @@ if (composition === 'oneOf' || composition === 'anyOf') {
     }
 }
 
-// Merge top-level properties with allOf inline properties.
 const mergedProperties = [...properties, ...allOfProperties];
 const mergedRequired = new Set([...requiredNames, ...allOfRequired]);
 
@@ -113,7 +95,6 @@ const hasContent =
             />
         ))}
 
-        {/* oneOf / anyOf variant links */}
         {variants.length > 0 && (
             <div class="px-4 py-3 flex flex-col gap-2">
                 <p class="text-sm text-gray-500 dark:text-gray-400">

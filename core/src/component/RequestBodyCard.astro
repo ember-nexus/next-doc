@@ -1,6 +1,7 @@
 ---
 import { Code } from 'astro-expressive-code/components';
 import { marked } from 'marked';
+
 import type { RequestBody } from "../type";
 import CardTitle from "./CardTitle.astro";
 
@@ -10,7 +11,6 @@ interface Props {
 
 const { body } = Astro.props;
 
-// Only label content types when there's more than one to disambiguate.
 const multiple = body.contents.length > 1;
 ---
 {body.contents.length > 0 && (
@@ -23,7 +23,7 @@ const multiple = body.contents.length > 1;
 
     <div
         x-data="{ componentId: 'example' }"
-        class="api-card block flex flex-col divide-y divide-gray-200 dark:divide-gray-800"
+        class="api-card flex flex-col divide-y divide-gray-200 dark:divide-gray-800"
     >
         {body.description && (
             <div class="text-sm p-4 text-gray-600 dark:text-gray-400" set:html={marked.parse(body.description)} />

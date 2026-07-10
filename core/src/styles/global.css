@@ -82,8 +82,13 @@ body {
     padding-bottom: var(--ec-codePadBlk) !important;
 }
 
+.font-qanelas-soft-custom {
+    font-family: "Qanelas Soft Custom";
+}
+
 .prose {
-    gap: 1rem;
+    --prose-gap: 1rem;
+    gap: var(--prose-gap);
     display: flex;
     flex-direction: column;
     
@@ -102,6 +107,7 @@ body {
     }
 
     .expressive-code + .expressive-code {
+        margin-block-start: calc(-1 * var(--prose-gap, 1rem)) !important;
         figure {
             border-top: 1px solid #e5e7eb;
             border-top-left-radius: 0 !important;

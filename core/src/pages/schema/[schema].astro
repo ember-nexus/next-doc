@@ -6,12 +6,13 @@
 // we want the `$ref`s left intact so we can render them as cross-links, and so
 // self-referential schemas (e.g. Element → Element) don't expand forever.
 import SwaggerParser from '@apidevtools/swagger-parser';
-import type { OpenAPIObject } from 'openapi3-ts/oas31';
 import { Code } from 'astro-expressive-code/components';
-import Default from '../../layouts/Default.astro';
+import type { OpenAPIObject } from 'openapi3-ts/oas31';
+
 import SchemaPropertyList from '../../component/SchemaPropertyList.astro';
-import { extractSchemas } from '../../util';
+import Default from '../../layouts/Default.astro';
 import type { Schema } from '../../type';
+import { extractSchemas } from '../../util';
 
 export async function getStaticPaths() {
     const spec = (await SwaggerParser.parse(

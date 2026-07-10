@@ -1,11 +1,5 @@
 ---
-// Recursive renderer for one sidebar node. Replaces SidebarLinkItem.astro,
-// SidebarEndpointItem.astro and SidebarGroupItem.astro plus the manual
-// `if (type === …) <X as Dto>` dispatch in Sidebar.astro.
-//
-// Because SidebarItem is a discriminated union, `item.type` narrows the type in
-// each branch — no casts needed. Groups recurse via <Astro.self />.
-import type { SidebarItem } from '../type/Sidebar';
+import type { SidebarItem } from '../type';
 
 interface Props {
     item: SidebarItem;
