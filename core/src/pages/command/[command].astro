@@ -4,6 +4,7 @@ import { getCollection, render } from 'astro:content';
 
 import Default from '../../layouts/Default.astro';
 import { commandParam } from '../../lib';
+import TerminalExample from 'src/component/TerminalExample.astro';
 
 export async function getStaticPaths() {
     const entries = await getCollection('commands');
@@ -25,11 +26,15 @@ const { command, helpCommand, helpOutput, exampleCommand, exampleOutput } = entr
     <div class="prose dark:prose-invert">
         <Content />
 
-        <Code class="col-breakout" code={helpCommand} lang="bash" />
-        <iframe class="col-breakout mb-4" src={`/command-embeds/${helpOutput}`} width="100%" height="500"></iframe>
+        <TerminalExample
+            file={`src/data/command-output/${helpOutput}`}
+            command={helpCommand}
+        />
 
-        <Code class="col-breakout" code={exampleCommand} lang="bash" />
-        <iframe class="col-breakout" src={`/command-embeds/${exampleOutput}`} width="100%" height="500"></iframe>
+        <TerminalExample
+            file={`src/data/command-output/${exampleOutput}`}
+            command={exampleCommand}
+        />
     </div>
 </Default>
 

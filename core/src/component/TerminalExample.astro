@@ -1,0 +1,29 @@
+---
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
+import { parse } from 'node-html-parser';
+import { Code } from 'astro-expressive-code/components';
+
+interface Props {
+    /** Path to the HTML file to embed. Absolute, or relative to the project root. */
+    file: string;
+    /** The CLI command shown above the output. */
+    command: string;
+}
+
+const { file, command } = Astro.props;
+
+// Runs at build time: read the file, keep only the <body> contents.
+const raw = await readFile(path.resolve(process.cwd(), file), 'utf-8');
+const bodyHtml = parse(raw).querySelector('body')?.innerHTML ?? raw;
+---
+{/*
+    Structure only — all visual styling lives in the global `terminal-example.css`.
+    The two children stack with NO gap; the wrapper draws the shell (background,
+    border, rounded outer corners) and `overflow: hidden` clips the inner corners
+    flat automatically, so the command block + output read as one terminal.
+*/}
+<div class="terminal-example not-prose">
+    <Code code={command} lang="bash" />
+    <div class="terminal-output" set:html={bodyHtml}></div>
+</div>

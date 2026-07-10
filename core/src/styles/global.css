@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "grid.css";
 @import "highlight.css";
+@import "terminal-example.css";
 
 @plugin "@tailwindcss/typography";
 
