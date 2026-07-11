@@ -10,19 +10,42 @@ const { item, currentPath } = Astro.props;
 
 const isActive = (url: string): boolean =>
     currentPath === url || currentPath === `${url}/`;
+
+// Check if any child of a link-group is active (for potential future use)
+const hasActiveChild = (items: SidebarItem[]): boolean =>
+    items.some((child) =>
+        (child.type === 'link' && isActive(child.url)) ||
+        (child.type === 'endpoint' && isActive(child.url)) ||
+        (child.type === 'link-group' && (isActive(child.url) || hasActiveChild(child.items))) ||
+        (child.type === 'group' && hasActiveChild(child.items))
+    );
 ---
 
-{item.type === 'group' && (
+{/* ── Top-level section heading (bold title, no click) ──────────────────────── */}
+{item.type === 'group' && item.variant === 'section' && (
 <li>
-    <p class="sidebar-group-title mt-3 px-3">{item.name}</p>
+    <p class="sidebar-group-title mt-4 px-3">{item.name}</p>
     <ul>
         {item.items.map((child) => (
             <Astro.self item={child} currentPath={currentPath} />
         ))}
     </ul>
 </li>
-    )}
+)}
 
+{/* ── Nested group heading (smaller, with left-border indented children) ─────── */}
+{item.type === 'group' && item.variant === 'nested' && (
+<li>
+    <p class="sidebar-nested-group-title mt-2 px-3">{item.name}</p>
+    <ul class="border-l border-zinc-200 dark:border-zinc-700 ml-3 pl-2">
+        {item.items.map((child) => (
+            <Astro.self item={child} currentPath={currentPath} />
+        ))}
+    </ul>
+</li>
+)}
+
+{/* ── Plain link ─────────────────────────────────────────────────────────────── */}
 {item.type === 'link' && (
 <li>
     <a
@@ -33,8 +56,27 @@ const isActive = (url: string): boolean =>
         {item.name}
     </a>
 </li>
-    )}
+)}
 
+{/* ── Link with nested children (left-border indented sub-list) ──────────────── */}
+{item.type === 'link-group' && (
+<li>
+    <a
+        href={item.url}
+        aria-current={isActive(item.url) ? 'page' : undefined}
+        class="block rounded-md px-3 py-1.5 text-[0.8125rem] no-underline text-zinc-900 dark:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/[0.06] aria-[current]:bg-black/[0.06] dark:aria-[current]:bg-white/[0.09]"
+    >
+        {item.name}
+    </a>
+    <ul class="border-l border-zinc-200 dark:border-zinc-700 ml-3 pl-2">
+        {item.items.map((child) => (
+            <Astro.self item={child} currentPath={currentPath} />
+        ))}
+    </ul>
+</li>
+)}
+
+{/* ── API endpoint link (method badge + endpoint URL + name) ─────────────────── */}
 {item.type === 'endpoint' && (
 <li>
     <a
@@ -50,4 +92,4 @@ const isActive = (url: string): boolean =>
         <p class="mb-0 font-mono text-zinc-900 dark:text-zinc-100">{item.name}</p>
     </a>
 </li>
-    )}
+)}

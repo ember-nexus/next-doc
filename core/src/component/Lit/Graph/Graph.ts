@@ -650,8 +650,16 @@ export class G6Graph extends LitElement {
     let raw = (script ? script.textContent : this.textContent) || "";
     raw = raw.trim();
     raw = raw.replace(/^\{`/, "").replace(/`\}$/, "").trim();
-    const parsed = JSON.parse(raw);
-    return parsed;
+    if (!raw) {
+      console.warn("[g6-graph] No JSON data found in element.");
+      return null;
+    }
+    try {
+      return JSON.parse(raw) as ElementsPayload;
+    } catch (err) {
+      console.error("[g6-graph] Failed to parse graph JSON data:", err);
+      return null;
+    }
   }
 
   disconnectedCallback() {

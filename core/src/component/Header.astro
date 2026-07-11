@@ -13,7 +13,7 @@ const iconBtn =
 ---
 
 <header
-    class="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-gray-200 bg-white px-3 sm:h-16 sm:px-4 dark:border-gray-800 dark:bg-gray-900"
+    class="fixed inset-x-0 top-0 z-50 flex h-14 items-center gap-2 border-b border-gray-200 bg-white px-3 sm:h-16 sm:px-4 dark:border-gray-800 dark:bg-gray-900"
 >
     <SidebarToggle icon="panel-left" />
 
@@ -39,10 +39,6 @@ const iconBtn =
             <Search instance="search" className="pagefind-ui" searchboxOptions={{ placeholder: "search" }} />
         </div>
 
-        <a href="#" aria-label="Download this page as Markdown" class={iconBtn}>
-            <Icon name="file-down" class="size-5" />
-        </a>
-
         <a href="https://github.com/ember-nexus/api" target="_blank" rel="noreferrer" aria-label="GitHub" class:list={["hidden sm:inline-flex", iconBtn]}>
             <Icon name="github" class="size-5" />
         </a>
@@ -50,9 +46,9 @@ const iconBtn =
             <Icon name="docker" class="size-5" />
         </a>
 
-        <div class="mx-1 h-6 w-px bg-gray-200 dark:bg-gray-800"></div>
+        <div class="mx-1 h-6 w-px bg-gray-200 dark:bg-gray-800 sm:hidden"></div>
 
-        <button type="button" aria-label="Toggle table of contents" class={iconBtn}>
+        <button type="button" aria-label="Toggle table of contents" class:list={["sm:hidden", iconBtn]} @click="tocOpen = !tocOpen; if (tocOpen) sidebarOpen = null" :aria-expanded="tocOpen">
             <Icon name="menu" class="size-5" />
         </button>
     </div>

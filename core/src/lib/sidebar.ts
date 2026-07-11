@@ -7,6 +7,7 @@ import type {
   SidebarGroup,
   SidebarItem,
   SidebarLink,
+  SidebarLinkGroup,
 } from "../type/Sidebar";
 
 // Lexical order by collection id (the file path without extension) is THE
@@ -15,70 +16,185 @@ import type {
 const byId = (a: { id: string }, b: { id: string }) => a.id.localeCompare(b.id);
 
 /**
- * Build a nested tree from entry ids of the form "a/b/c".
- * Every segment except the last becomes a folder GROUP; the last segment is a
- * leaf produced by `toLeaf`. Groups are created on first encounter, so (because
- * entries are pre-sorted by id) they come out in lexical filename order.
+ * Internal entry type that carries both the original (full) id for URL
+ * building and a shortened id (with the top-level section folder stripped)
+ * for tree construction.
  */
-function buildTree<E extends { id: string }>(
-  entries: E[],
-  toLeaf: (entry: E) => SidebarItem,
-): SidebarItem[] {
-  const root: SidebarItem[] = [];
-  const folders = new Map<string, SidebarItem[]>([["", root]]);
+interface InternalEntry {
+  shortId: string; // path relative to the section folder, e.g. "01-installation.mdx"
+  name: string;    // display label
+  url: string;     // already-computed absolute href
+}
 
-  const ensureFolder = (segments: string[]): SidebarItem[] => {
-    let path = "";
-    let parent = root;
-    for (const seg of segments) {
-      path = path ? `${path}/${seg}` : seg;
-      let items = folders.get(path);
-      if (!items) {
-        items = [];
-        const group: SidebarGroup = {
-          type: "group",
-          name: humanize(seg),
-          items,
-        };
-        parent.push(group);
-        folders.set(path, items);
-      }
-      parent = items;
+/**
+ * Build a nested tree from entries with ids of the form "a/b/c".
+ *
+ * Every path segment except the last may become either:
+ *   - A SidebarGroup (variant "nested") if no page exists at that exact path, or
+ *   - A SidebarLinkGroup if a page exists at the same path as a folder
+ *     (e.g. "02-search" alongside "02-search/..." entries).
+ *
+ * Leaf nodes that are the "parent" of a link-group are absorbed into the
+ * link-group node and not emitted separately.
+ */
+function buildTree(entries: InternalEntry[]): SidebarItem[] {
+  const root: SidebarItem[] = [];
+
+  // folder key -> items array for that folder
+  const folderItems = new Map<string, SidebarItem[]>([["", root]]);
+
+  // folder key -> the group/link-group node
+  const folderNodes = new Map<string, SidebarGroup | SidebarLinkGroup>();
+
+  // stem -> entry (for page+folder collision detection)
+  const byStem = new Map<string, InternalEntry>();
+  for (const entry of entries) {
+    byStem.set(entry.shortId, entry);
+  }
+
+  // Pre-compute which stems are "folder parents" — i.e. entries whose shortId
+  // is a prefix of another entry's path. We need this upfront so that when we
+  // encounter a page like "02-search" we already know it has children and will
+  // be rendered as a SidebarLinkGroup rather than a plain leaf.
+  const isFolderParent = new Set<string>();
+  for (const entry of entries) {
+    const parts = entry.shortId.split("/");
+    // Every ancestor segment is a folder parent.
+    for (let i = 1; i < parts.length; i++) {
+      isFolderParent.add(parts.slice(0, i).join("/"));
     }
-    return parent;
+  }
+
+  const ensureFolder = (
+    segments: string[],
+    parentItems: SidebarItem[],
+    parentKey: string,
+  ): SidebarItem[] => {
+    if (segments.length === 0) return parentItems;
+
+    const [head, ...rest] = segments;
+    const key = parentKey ? `${parentKey}/${head}` : head;
+
+    if (!folderItems.has(key)) {
+      const children: SidebarItem[] = [];
+
+      // If there's a page whose shortId matches this folder key, it becomes a
+      // SidebarLinkGroup (clickable heading + nested children).
+      const matchingEntry = byStem.get(key);
+      if (matchingEntry) {
+        const node: SidebarLinkGroup = {
+          type: "link-group",
+          name: matchingEntry.name,
+          url: matchingEntry.url,
+          items: children,
+        };
+        folderNodes.set(key, node);
+        parentItems.push(node);
+      } else {
+        const node: SidebarGroup = {
+          type: "group",
+          name: humanize(head),
+          variant: "nested",
+          items: children,
+        };
+        folderNodes.set(key, node);
+        parentItems.push(node);
+      }
+
+      folderItems.set(key, children);
+    }
+
+    return ensureFolder(rest, folderItems.get(key)!, key);
   };
 
   for (const entry of entries) {
-    const segments = entry.id.split("/");
-    segments.pop(); // drop the filename; only folders form groups
-    ensureFolder(segments).push(toLeaf(entry));
+    const segments = entry.shortId.split("/");
+    segments.pop(); // drop filename; only folder segments become groups
+
+    // Skip entries that serve as the "parent page" of a link-group — they are
+    // already represented by the link-group node produced by ensureFolder.
+    // We use isFolderParent (pre-computed) so this check is order-independent.
+    if (isFolderParent.has(entry.shortId)) continue;
+
+    const parentItems = ensureFolder(segments, root, "");
+    parentItems.push({ type: "link", name: entry.name, url: entry.url });
   }
+
   return root;
 }
 
-/** Regular content pages — arbitrary folder nesting -> nested groups. */
+/**
+ * Build the pages section as two explicit top-level SidebarGroup sections:
+ * "Getting started" and "Reference".
+ *
+ * Files under 01-getting-started/ -> "Getting started" section (variant "section")
+ * Files under 02-reference/       -> "Reference" section (variant "section")
+ *
+ * Within each section, buildTree() handles nested folders and link-groups.
+ */
 async function pagesSection(): Promise<SidebarItem[]> {
-  const entries = (await getCollection("pages")).sort(byId);
-  return buildTree(entries, (e): SidebarLink => ({
-    type: "link",
-    name: e.data.name ?? e.data.title,
-    url: pagePath(e.id),
-  }));
+  const allEntries = (await getCollection("pages")).sort(byId);
+
+  const sectionDefs: Array<{ key: string; label: string }> = [
+    { key: "01-getting-started", label: "Getting started" },
+    { key: "02-reference", label: "Reference" },
+  ];
+
+  const result: SidebarItem[] = [];
+
+  for (const { key, label } of sectionDefs) {
+    const sectionEntries: InternalEntry[] = allEntries
+      .filter((e) => e.id.startsWith(`${key}/`))
+      .map((e) => ({
+        shortId: e.id.slice(key.length + 1), // strip leading "01-getting-started/"
+        name: e.data.name ?? e.data.title,
+        url: pagePath(e.id),
+      }));
+
+    if (sectionEntries.length === 0) continue;
+
+    result.push({
+      type: "group",
+      name: label,
+      variant: "section",
+      items: buildTree(sectionEntries),
+    });
+  }
+
+  return result;
 }
 
-/** CLI commands — grouped by folder, wrapped under one "Commands" heading. */
+/** CLI commands — grouped by folder under a "Commands" section heading. */
 async function commandsSection(): Promise<SidebarItem[]> {
   const entries = (await getCollection("commands")).sort(byId);
-  const items = buildTree(entries, (e): SidebarLink => ({
-    type: "link",
-    name: e.data.command, // the command string is the natural label
+  if (entries.length === 0) return [];
+
+  const internalEntries: InternalEntry[] = entries.map((e) => ({
+    shortId: e.id,
+    name: e.data.command,
     url: commandPath(e.data.command),
   }));
-  if (items.length === 0) return [];
-  return [{ type: "group", name: "Commands", items }];
+
+  const items = buildTree(internalEntries);
+
+  // Ensure all top-level group items use variant "nested"
+  // (buildTree already sets variant "nested" for sub-folders, but top-level
+  // folder groups inside Commands also need to be nested).
+  const nestedItems = items.map((item): SidebarItem =>
+    item.type === "group" ? { ...item, variant: "nested" } : item,
+  );
+
+  return [
+    {
+      type: "group",
+      name: "Commands",
+      variant: "section",
+      items: nestedItems,
+    },
+  ];
 }
 
-/** API endpoints — grouped by the `group` frontmatter field (not by folder). */
+/** API endpoints — grouped by `group` frontmatter under an "Endpoints" section heading. */
 async function apiSection(): Promise<SidebarItem[]> {
   const entries = (await getCollection("endpoints")).sort(byId);
 
@@ -97,11 +213,23 @@ async function apiSection(): Promise<SidebarItem[]> {
     groups.get(e.data.group)!.push(item);
   }
 
-  return [...groups].map(([group, items]): SidebarGroup => ({
+  const nestedGroups: SidebarGroup[] = [...groups].map(([group, items]): SidebarGroup => ({
     type: "group",
     name: humanize(group),
+    variant: "nested",
     items,
   }));
+
+  if (nestedGroups.length === 0) return [];
+
+  return [
+    {
+      type: "group",
+      name: "Endpoints",
+      variant: "section",
+      items: nestedGroups,
+    },
+  ];
 }
 
 /**

@@ -39,7 +39,11 @@
     grid-row: 1 / -1;
     align-self: start;
     position: sticky;
-    top: 1rem;
+    /* clear the fixed header (sm: h-16 = 4rem) plus a small breathing gap */
+    top: calc(4rem + 1rem);
+    max-height: calc(100dvh - 4rem - 1rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .toc-nav ul {
@@ -55,12 +59,17 @@
     text-decoration: none;
     opacity: 0.6;
     display: block;
-    padding-block: 0.1rem;
+    padding-block: 0.35rem;
     transition: opacity 0.15s ease;
 }
 
 .toc-nav a:hover {
     opacity: 1;
+}
+
+.toc-nav a.toc-link--active {
+    opacity: 1;
+    font-weight: 500;
 }
 
 .content-grid .prose {
@@ -97,7 +106,17 @@
             [full-end];
     }
 
+    /* Desktop inline TOC hidden on mobile — the fixed overlay panel takes over */
     .toc-sidebar {
         display: none;
+    }
+
+    /* Larger tap targets inside the mobile overlay */
+    #toc-panel .toc-nav ul {
+        font-size: 0.9rem;
+    }
+
+    #toc-panel .toc-nav a {
+        padding-block: 0.6rem;
     }
 }

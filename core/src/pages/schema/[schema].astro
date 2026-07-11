@@ -36,12 +36,29 @@ const raw = (schema.schema ?? {}) as Record<string, unknown>;
 const description = typeof raw.description === 'string' ? raw.description : null;
 
 const pretty = JSON.stringify(schema.schema, null, 2);
+
+// Mirror the hasContent check from SchemaPropertyList to conditionally include
+// the Properties entry in the TOC.
+const hasProperties = (() => {
+    const properties =
+        raw.type === 'object' && raw.properties && typeof raw.properties === 'object'
+            ? Object.keys(raw.properties as Record<string, unknown>).length > 0
+            : false;
+    const composition = (['oneOf', 'anyOf', 'allOf'] as const).find(k => Array.isArray(raw[k]));
+    const hasVariantsOrRefs = composition != null && (raw[composition] as unknown[]).length > 0;
+    return properties || hasVariantsOrRefs;
+})();
+
+const schemaHeadings: { depth: number; slug: string; text: string }[] = [
+    ...(hasProperties ? [{ depth: 2, slug: 'properties', text: 'Properties' }] : []),
+    { depth: 2, slug: 'raw-schema', text: 'Raw Schema' },
+];
 ---
 
-<Default title={`${schema.name} — Schema`}>
+<Default title={`${schema.name} schema`} headings={schemaHeadings}>
     <div>
         <p class="text-3xl sm:text-4xl mb-4 font-mono">{schema.name}</p>
-        <div class="w-full border-t border-hairline mb-10"></div>
+        <div class="w-full border-t border-hairline"></div>
     </div>
 
     {description && (
@@ -52,12 +69,13 @@ const pretty = JSON.stringify(schema.schema, null, 2);
         </section>
     )}
 
-    <section class="mb-10">
+    <section>
+        {hasProperties && <h2 class="api-block-title mb-3" id="properties">Properties</h2>}
         <SchemaPropertyList schema={schema.schema} />
     </section>
 
     <section>
-        <h2 class="api-block-title mb-3">Raw schema</h2>
+        <h2 class="api-block-title mb-3" id="raw-schema">Raw Schema</h2>
         <div class="prose dark:prose-invert">
             <Code code={pretty} lang="json" frame="none" />
         </div>
@@ -69,12 +87,5 @@ const pretty = JSON.stringify(schema.schema, null, 2);
         max-width: 58rem;
         width: 100%;
         margin-inline: auto;
-        padding-inline: 1rem;
-    }
-
-    @media (max-width: 50rem) {
-        section {
-            padding-inline: 0.75rem;
-        }
     }
 </style>

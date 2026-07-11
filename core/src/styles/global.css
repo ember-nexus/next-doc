@@ -1,8 +1,10 @@
 @import "tailwindcss";
 @import "grid.css";
 @import "highlight.css";
+@import "terminal-example.css";
 
 @plugin "@tailwindcss/typography";
+
 
 @theme {
     --color-hairline: #e3e3e0;
@@ -220,6 +222,24 @@ body {
     line-height: 1.5;
     padding-top: 0.25em;
     padding-bottom: 0.25em;
+}
+
+.sidebar-group-title {
+    margin-top: 1.5rem;
+}
+
+    /* Smaller heading for nested sub-groups (commands sub-categories, API endpoint groups) */
+.sidebar-nested-group-title {
+    font-family: "Qanelas Soft Custom";
+    color: inherit;
+    font-weight: normal;
+    line-height: 1.5;
+    padding-top: 0.125em;
+    padding-bottom: 0.125em;
+}
+
+#primary-sidebar nav > ul:first-of-type > li:first-of-type > p {
+    margin-top: 0;
 }
 
 @media (prefers-color-scheme: dark) {

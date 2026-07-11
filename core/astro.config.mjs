@@ -30,7 +30,9 @@ export default defineConfig({
     alpinejs(),
     icon(),
     pagefind(),
-    (await import("@playform/compress")).default()
+    (await import("@playform/compress")).default({
+      CSS: false, // csso + lightningcss break Tailwind's responsive utilities (sm: prefixes)
+    })
   ],
   markdown: {
     shikiConfig: {

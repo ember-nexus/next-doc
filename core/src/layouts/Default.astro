@@ -3,6 +3,8 @@ import '../styles/global.css'
 
 import Sidebar from '../component/Sidebar.astro'
 import Header from "../component/Header.astro";
+import TocNav from '../component/TocNav.astro';
+import { Icon } from 'astro-icon/components';
 
 interface Props {
     title: string
@@ -15,7 +17,7 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
 ---
 
 <!doctype html>
-<html lang="de" dir="ltr">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -32,32 +34,43 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
 </head>
 
 <body
-    x-data="{ sidebarOpen: null }"
+    x-data="{ sidebarOpen: null, tocOpen: null }"
     class="min-h-screen bg-white text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100"
 >
+<Header />
 <Sidebar version={version} />
 
+{headings.length > 0 && (
+    /* Mobile-only overlay panel — hidden on desktop via sm:hidden */
+    <aside
+        id="toc-panel"
+        class="fixed bottom-0 right-0 top-14 z-40 flex h-[calc(100dvh-3.5rem)] w-full flex-col bg-white transition-transform duration-200 ease-in-out translate-x-full dark:bg-gray-950 sm:hidden print:hidden"
+        :class="{ '!translate-x-0': tocOpen === true, '!translate-x-full': tocOpen === false }"
+        aria-label="Table of contents"
+    >
+        <button
+            type="button"
+            @click="tocOpen = false"
+            aria-label="Close table of contents"
+            class="absolute right-4 top-4 z-50 inline-flex items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 dark:text-gray-200 dark:hover:bg-gray-800"
+        >
+            <Icon name="x" class="size-4" />
+        </button>
+        <div class="flex-1 overflow-y-auto overscroll-contain p-4">
+            <TocNav headings={headings} />
+        </div>
+    </aside>
+)}
+
 <div
-    class="flex min-h-screen flex-col transition-[padding] duration-200 ease-in-out max-sm:pl-0 sm:pl-64"
+    class="flex min-h-screen flex-col pt-14 transition-[padding] duration-200 ease-in-out max-sm:pl-0 sm:pl-64 sm:pt-16"
     :class="{ 'sm:pl-64': sidebarOpen !== false, 'sm:!pl-0': sidebarOpen === false }"
 >
-    <Header></Header>
-
     <main class="content-grid" data-pagefind-body>
         {headings.length > 0 && (
+            /* Desktop inline sticky TOC — hidden on mobile, the fixed panel takes over there */
             <aside class="toc-sidebar" aria-label="Table of contents">
-                <nav class="toc-nav">
-                    <ul>
-                        {headings
-                            .filter(h => h.depth <= 3)
-                            .map(h => (
-                                <li style={`margin-left: ${(h.depth - 1) * 0.75}rem`}>
-                                    <a href={`#${h.slug}`}>{h.text}</a>
-                                </li>
-                            ))
-                        }
-                    </ul>
-                </nav>
+                <TocNav headings={headings} />
             </aside>
         )}
 
@@ -67,6 +80,56 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
 
 <script>
     import '../component/Lit/index.ts';
+</script>
+
+<script>
+    // TOC links: header-aware smooth scroll on all viewports.
+    // On mobile, also close the overlay first.
+    // Active-section highlighting is handled inside TocNav.astro.
+    function initTocClicks() {
+        const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
+        if (!tocLinks.length) return;
+
+        const getHeaderHeight = (): number => {
+            const header = document.querySelector('header');
+            return header ? header.getBoundingClientRect().height : 56;
+        };
+
+        tocLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                const isMobile = window.matchMedia('(max-width: 768px)').matches;
+                if (isMobile) {
+                    const alpine = (window as any).Alpine;
+                    if (alpine) {
+                        const data = alpine.$data(document.body);
+                        if (data) data.tocOpen = false;
+                    }
+                }
+
+                const href = link.getAttribute('href');
+                if (!href) return;
+                const target = document.getElementById(href.slice(1));
+                if (!target) return;
+
+                // Update the URL hash without triggering a jump (replaceState keeps history clean).
+                history.pushState(null, '', href);
+
+                requestAnimationFrame(() => {
+                    const top = target.getBoundingClientRect().top + window.scrollY - getHeaderHeight() - 16;
+                    window.scrollTo({ top, behavior: 'smooth' });
+                });
+            });
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTocClicks);
+    } else {
+        initTocClicks();
+    }
+    document.addEventListener('astro:page-load', initTocClicks);
 </script>
 </body>
 </html>

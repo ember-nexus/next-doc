@@ -1,7 +1,4 @@
 ---
-// Moved from [group]/[endpoint].astro to api/[endpoint].astro.
-// Endpoint ids are unique, so `group` no longer needs to be in the URL — it is
-// used only to group items in the sidebar.
 import SwaggerParser from '@apidevtools/swagger-parser';
 import { getCollection, render } from 'astro:content';
 
@@ -25,18 +22,15 @@ import {
 export async function getStaticPaths() {
     const entries = await getCollection('endpoints');
     return entries.map((entry) => ({
-        // Same helper the sidebar uses for hrefs.
         params: { endpoint: endpointParam(entry.data.endpoint) },
         props: { entry },
     }));
 }
 
 const { entry } = Astro.props;
-const { Content } = await render(entry);
-const { endpoint, method, endpointUrl, swaggerUrl, name } = entry.data;
+const { Content, headings: contentHeadings } = await render(entry);
+const { method, endpointUrl, swaggerUrl, name } = entry.data;
 
-// NOTE: '/{uuid}' / 'get' are placeholders carried over from the original file.
-// Swap these for values derived from `entry.data` once your swagger paths line up.
 const spec = await SwaggerParser.dereference('./src/data/swagger.json');
 
 const path = swaggerUrl ?? '/';
@@ -48,15 +42,25 @@ const requestHeaders = extractRequestHeaders(spec, path, method2);
 const requestBody = extractRequestBody(spec, path, method2);
 const responseHeaders = extractResponseHeaders(spec, path, method2);
 const responseExamples = extractResponseExamples(spec, path, method2);
+
+const cardHeadings: { depth: number; slug: string; text: string }[] = [
+    ...contentHeadings,
+    { depth: 2, slug: 'request',            text: 'Request' },
+    { depth: 2, slug: 'response',           text: 'Response' },
+    { depth: 2, slug: 'request-parameters', text: 'Request Parameters' },
+    { depth: 2, slug: 'request-header',     text: 'Request Header' },
+    ...(requestBody ? [{ depth: 2, slug: 'request-body', text: 'Request Body' }] : []),
+    { depth: 2, slug: 'response-header',    text: 'Response Header' },
+];
 ---
 
-<Default title={`${endpoint} — ${name}`}>
+<Default title={`${name} endpoint`} headings={cardHeadings}>
     <div style={`--c: var(--method-${method.toLowerCase()}, var(--method-put))`}>
         <p class="text-3xl sm:text-4xl mb-2 font-mono">
             <span class="uppercase text-(--c)">{method}</span> {endpointUrl}
         </p>
         <p class="mb-3 text-2xl">{name}</p>
-        <div class="w-full border-t border-hairline mb-10"></div>
+        <div class="w-full border-t border-hairline"></div>
 
     </div>
     
@@ -64,12 +68,12 @@ const responseExamples = extractResponseExamples(spec, path, method2);
         <Content />
     </div>
 
-    <RequestCard request={request} />
-    <ResponseCard examples={responseExamples} />
-    <RequestParameterCard parameters={requestParameters} />
-    <RequestHeaderCard headers={requestHeaders} />
-    {requestBody && <RequestBodyCard body={requestBody} />}
-    <ResponseHeaderCard headers={responseHeaders} />
+    <RequestCard request={request} id="request" />
+    <ResponseCard examples={responseExamples} id="response" />
+    <RequestParameterCard parameters={requestParameters} id="request-parameters" />
+    <RequestHeaderCard headers={requestHeaders} id="request-header" />
+    {requestBody && <RequestBodyCard body={requestBody} id="request-body" />}
+    <ResponseHeaderCard headers={responseHeaders} id="response-header" />
 </Default>
 
 <style>
@@ -81,13 +85,5 @@ const responseExamples = extractResponseExamples(spec, path, method2);
         display: flex;
         flex-direction: column;
         gap: 1rem;
-        padding-inline: 1rem;
-    }
-
-    @media (max-width: 50rem) {
-        .prose,
-        .api-doc {
-            padding-inline: 0.75rem;
-        }
     }
 </style>

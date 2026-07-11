@@ -7,15 +7,16 @@ import HeaderRow from "./HeaderRow.astro";
 
 interface Props {
     headers: ResponseHeader[];
+    id?: string;
 }
 
-const { headers } = Astro.props;
+const { headers, id } = Astro.props;
 
 const important = headers.filter(h => h.important);
 const others = headers.filter(h => !h.important);
 ---
 <div class="response-header-card">
-    <CardTitle title="Response Header">
+    <CardTitle title="Response Header" id={id}>
         <span slot="meta" class="text-sm text-gray-400">
             {important.length} relevant · {others.length} others
         </span>

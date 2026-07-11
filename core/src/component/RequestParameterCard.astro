@@ -7,9 +7,10 @@ import Link from "./Link.astro";
 
 interface Props {
     parameters: RequestParameter[];
+    id?: string;
 }
 
-const { parameters } = Astro.props;
+const { parameters, id } = Astro.props;
 
 // Sort by location ("type"), then name.
 const LOCATION_ORDER: Record<RequestParameter["location"], number> = {
@@ -29,7 +30,7 @@ const queryCount = parameters.filter((p) => p.location === "query").length;
 ---
 {parameters.length > 0 && (
 <div class="request-parameter-card">
-    <CardTitle title="Request Parameters">
+    <CardTitle title="Request Parameters" id={id}>
             <span slot="meta" class="text-sm text-gray-400">
                 {pathCount} path · {queryCount} query
             </span>

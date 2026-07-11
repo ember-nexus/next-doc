@@ -2,7 +2,7 @@
 type: tutorial
 title: Search
 ---
-import SearchResponseCard from '../../component/SearchResponseCard.astro';
+import SearchResponseCard from '../../../component/SearchResponseCard.astro';
 
 
 # Search
@@ -36,8 +36,8 @@ This step is mostly used to convert results of other search steps to collection 
 
 ### Simple full text search
 
-import simpleFullTextSearch from './assets/simple-full-text-search.json';
-import simpleFullTextSearchHeader from './assets/simple-full-text-search.txt?raw';
+import simpleFullTextSearch from '../assets/simple-full-text-search.json';
+import simpleFullTextSearchHeader from '../assets/simple-full-text-search.txt?raw';
 
 In this example, only Elasticsearch is queried for all elements, whose `description`-property contains the word
 `lily`.  
@@ -81,8 +81,8 @@ In this example, only Neo4j is queried for all paths, which satisfy `(:Plant)-[:
 all plants, which are tagged `blue`.  
 The `element-hydration`-step only makes sure, that the results from Neo4j are correctly hydrated and returned.
 
-import simplePathSearch from './assets/simple-path-search.json';
-import simplePathSearchHeader from './assets/simple-path-search.txt?raw';
+import simplePathSearch from '../assets/simple-path-search.json';
+import simplePathSearchHeader from '../assets/simple-path-search.txt?raw';
 
 ```json
 {
@@ -115,8 +115,8 @@ parameters to Neo4j, which then expands the results to the path `(:Plant)-[:IS_M
 Note that because we map Elasticsearch's results to only `:Plant`-nodes, we filter out other results from Elasticsearch,
 e.g. Taxons which also contain the word `lily`.
 
-import combinedFullTextAndPathSearch from './assets/combined-full-text-and-path-search.json';
-import combinedFullTextAndPathSearchHeader from './assets/combined-full-text-and-path-search.txt?raw';
+import combinedFullTextAndPathSearch from '../assets/combined-full-text-and-path-search.json';
+import combinedFullTextAndPathSearchHeader from '../assets/combined-full-text-and-path-search.txt?raw';
 
 ```json
 {

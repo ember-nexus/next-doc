@@ -1,5 +1,3 @@
-export * from "./Change.ts";
-export * from "./Endpoint.ts";
 export * from "./HttpStatusCode.ts";
 export * from "./Link.ts";
 export * from "./RequestBody.ts";
@@ -9,4 +7,3 @@ export * from "./ResponseExample.ts";
 export * from "./ResponseHeader.ts";
 export * from "./Schema.ts";
 export * from "./Sidebar.ts";
-export * from "./Version.ts";
