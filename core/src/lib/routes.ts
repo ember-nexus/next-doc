@@ -51,3 +51,8 @@ export const endpointParam = (endpoint: string): string =>
 /** "users/{uuid}" -> "/api/users_{uuid}" */
 export const endpointPath = (endpoint: string): string =>
   "/api/" + endpointParam(endpoint);
+
+// --- schemas: routed by schema/[schema] ---------------------------------------
+
+/** "ElementId" -> "element-id" (the id produced by extractSchemas / schemaParam) */
+export const schemaPath = (id: string): string => "/schema/" + id;

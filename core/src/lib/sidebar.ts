@@ -1,6 +1,9 @@
+import SwaggerParser from "@apidevtools/swagger-parser";
 import { getCollection } from "astro:content";
+import type { OpenAPIObject } from "openapi3-ts/oas31";
 
-import { commandPath, endpointPath, humanize, pagePath } from "./routes";
+import { commandPath, endpointPath, humanize, pagePath, schemaPath } from "./routes";
+import { extractSchemas } from "../util";
 import type {
   HttpMethod,
   SidebarEndpoint,
@@ -232,15 +235,39 @@ async function apiSection(): Promise<SidebarItem[]> {
   ];
 }
 
+/** OpenAPI schemas — flat alphabetical list under a "Schemas" section heading. */
+async function schemaSection(): Promise<SidebarItem[]> {
+  const spec = (await SwaggerParser.parse("./src/data/swagger.json")) as OpenAPIObject;
+  const schemas = extractSchemas(spec).sort((a, b) => a.name.localeCompare(b.name));
+
+  if (schemas.length === 0) return [];
+
+  const items: SidebarLink[] = schemas.map((s) => ({
+    type: "link",
+    name: s.name,
+    url: schemaPath(s.id),
+  }));
+
+  return [
+    {
+      type: "group",
+      name: "Schemas",
+      variant: "section",
+      items,
+    },
+  ];
+}
+
 /**
  * The whole sidebar, top to bottom: content pages, then commands, then API.
  * Reorder the spread to taste.
  */
 export async function buildSidebar(): Promise<SidebarItem[]> {
-  const [pages, commands, api] = await Promise.all([
+  const [pages, commands, api, schemas] = await Promise.all([
     pagesSection(),
     apiSection(),
     commandsSection(),
+    schemaSection(),
   ]);
-  return [...pages, ...commands, ...api];
+  return [...pages, ...commands, ...api, ...schemas];
 }
