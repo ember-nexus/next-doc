@@ -1,5 +1,4 @@
 ---
-import { Code } from 'astro-expressive-code/components';
 import { getCollection, render } from 'astro:content';
 
 import Default from '../../layouts/Default.astro';
@@ -16,11 +15,17 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { Content } = await render(entry);
+const { Content, headings: contentHeadings } = await render(entry);
 const { command, helpCommand, helpOutput, exampleCommand, exampleOutput } = entry.data;
+
+const terminalHeadings = [
+    ...contentHeadings,
+    { depth: 2, slug: 'help',    text: 'Help' },
+    { depth: 2, slug: 'example', text: 'Example' },
+];
 ---
 
-<Default title={`${command} command`}>
+<Default title={`${command} command`} headings={terminalHeadings}>
     <h1 class="font-mono font-medium">{command}</h1>
 
     <div class="prose dark:prose-invert">
@@ -29,11 +34,15 @@ const { command, helpCommand, helpOutput, exampleCommand, exampleOutput } = entr
         <TerminalExample
             file={`src/data/command-output/${helpOutput}`}
             command={helpCommand}
+            label="Help"
+            id="help"
         />
 
         <TerminalExample
             file={`src/data/command-output/${exampleOutput}`}
             command={exampleCommand}
+            label="Example"
+            id="example"
         />
     </div>
 </Default>

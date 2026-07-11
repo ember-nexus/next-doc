@@ -5,12 +5,13 @@ import HeaderRow from "./HeaderRow.astro";
 
 interface Props {
     headers: RequestHeader[];
+    id?: string;
 }
 
-const { headers } = Astro.props;
+const { headers, id } = Astro.props;
 ---
 <div class="request-header-card">
-    <CardTitle title="Request Header"></CardTitle>
+    <CardTitle title="Request Header" id={id}></CardTitle>
     <div class="api-card divide-y divide-hairline">
         {headers.map((header) => (
             <HeaderRow

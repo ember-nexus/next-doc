@@ -8,9 +8,10 @@ import Link from "./Link.astro";
 
 interface Props {
     examples: ResponseExample[];
+    id?: string;
 }
 
-const { examples } = Astro.props;
+const { examples, id } = Astro.props;
 
 function statusClass(code: number): string {
     if (code >= 200 && code < 300) return "http-status-2xx";
@@ -32,7 +33,7 @@ const renderedDescriptions = await Promise.all(
 const firstId = exampleId(examples[0]);
 ---
 <div class="response-card">
-    <CardTitle title="Response"></CardTitle>
+    <CardTitle title="Response" id={id}></CardTitle>
 
     <div
         x-data={`{ exampleId: '${firstId}', componentId: 'body' }`}

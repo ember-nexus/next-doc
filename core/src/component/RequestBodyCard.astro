@@ -7,15 +7,16 @@ import CardTitle from "./CardTitle.astro";
 
 interface Props {
     body: RequestBody;
+    id?: string;
 }
 
-const { body } = Astro.props;
+const { body, id } = Astro.props;
 
 const multiple = body.contents.length > 1;
 ---
 {body.contents.length > 0 && (
 <div class="request-body-card">
-    <CardTitle title="Request Body">
+    <CardTitle title="Request Body" id={id}>
         <span slot="meta" class={`text-xs font-semibold tracking-wider uppercase ${body.required ? 'text-red-500' : 'text-gray-400'}`}>
             {body.required ? 'required' : 'optional'}
         </span>

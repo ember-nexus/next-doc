@@ -9,9 +9,13 @@ interface Props {
     file: string;
     /** The CLI command shown above the output. */
     command: string;
+    /** Optional heading label rendered above the terminal block and used as a TOC anchor. */
+    label?: string;
+    /** Optional id for the section heading (used by TocNav). */
+    id?: string;
 }
 
-const { file, command } = Astro.props;
+const { file, command, label, id } = Astro.props;
 
 // Runs at build time: read the file, keep only the <body> contents.
 const raw = await readFile(path.resolve(process.cwd(), file), 'utf-8');
@@ -23,6 +27,7 @@ const bodyHtml = parse(raw).querySelector('body')?.innerHTML ?? raw;
     border, rounded outer corners) and `overflow: hidden` clips the inner corners
     flat automatically, so the command block + output read as one terminal.
 */}
+{label && <h3 id={id} class="api-block-title">{label}</h3>}
 <div class="terminal-example not-prose">
     <Code code={command} lang="bash" />
     <div class="terminal-output" set:html={bodyHtml}></div>

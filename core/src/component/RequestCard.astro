@@ -7,9 +7,10 @@ import CardTitle from "./CardTitle.astro";
 
 interface Props {
     request: Partial<HarRequest>;
+    id?: string;
 }
 
-const { request } = Astro.props;
+const { request, id } = Astro.props;
 
 const snippet = new HTTPSnippet(request);
 const opts = { indent: '\t' };
@@ -32,7 +33,7 @@ const examples = [
 		return ${JSON.stringify(examples)}.find(e => e.library === this.tab)
 	}
 }`}>
-    <CardTitle title="Request">
+    <CardTitle title="Request" id={id}>
         <div class="relative w-full sm:w-auto">
             <button
                 @click="open = !open"
