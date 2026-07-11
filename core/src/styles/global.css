@@ -224,6 +224,18 @@ body {
     padding-bottom: 0.25em;
 }
 
+/* Smaller heading for nested sub-groups (commands sub-categories, API endpoint groups) */
+.sidebar-nested-group-title {
+    font-family: "Qanelas Soft Custom";
+    font-size: 0.875rem;
+    color: inherit;
+    font-weight: normal;
+    line-height: 1.5;
+    padding-top: 0.125em;
+    padding-bottom: 0.125em;
+    opacity: 0.75;
+}
+
 @media (prefers-color-scheme: dark) {
     .api-block-title {
         color: #9ca3af;
