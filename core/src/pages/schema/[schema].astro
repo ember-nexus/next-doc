@@ -58,7 +58,7 @@ const schemaHeadings: { depth: number; slug: string; text: string }[] = [
 <Default title={`${schema.name} schema`} headings={schemaHeadings}>
     <div>
         <p class="text-3xl sm:text-4xl mb-4 font-mono">{schema.name}</p>
-        <div class="w-full border-t border-hairline mb-10"></div>
+        <div class="w-full border-t border-hairline"></div>
     </div>
 
     {description && (
@@ -69,7 +69,7 @@ const schemaHeadings: { depth: number; slug: string; text: string }[] = [
         </section>
     )}
 
-    <section class="mb-10">
+    <section>
         {hasProperties && <h2 class="api-block-title mb-3" id="properties">Properties</h2>}
         <SchemaPropertyList schema={schema.schema} />
     </section>
@@ -87,12 +87,5 @@ const schemaHeadings: { depth: number; slug: string; text: string }[] = [
         max-width: 58rem;
         width: 100%;
         margin-inline: auto;
-        padding-inline: 1rem;
-    }
-
-    @media (max-width: 50rem) {
-        section {
-            padding-inline: 0.75rem;
-        }
     }
 </style>

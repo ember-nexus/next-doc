@@ -24,7 +24,7 @@ const hasActiveChild = (items: SidebarItem[]): boolean =>
 {/* ── Top-level section heading (bold title, no click) ──────────────────────── */}
 {item.type === 'group' && item.variant === 'section' && (
 <li>
-    <p class="sidebar-group-title mt-4 px-3 first:mt-0">{item.name}</p>
+    <p class="sidebar-group-title mt-4 px-3">{item.name}</p>
     <ul>
         {item.items.map((child) => (
             <Astro.self item={child} currentPath={currentPath} />

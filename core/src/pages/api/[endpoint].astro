@@ -60,7 +60,7 @@ const cardHeadings: { depth: number; slug: string; text: string }[] = [
             <span class="uppercase text-(--c)">{method}</span> {endpointUrl}
         </p>
         <p class="mb-3 text-2xl">{name}</p>
-        <div class="w-full border-t border-hairline mb-10"></div>
+        <div class="w-full border-t border-hairline"></div>
 
     </div>
     
@@ -85,13 +85,5 @@ const cardHeadings: { depth: number; slug: string; text: string }[] = [
         display: flex;
         flex-direction: column;
         gap: 1rem;
-        padding-inline: 1rem;
-    }
-
-    @media (max-width: 50rem) {
-        .prose,
-        .api-doc {
-            padding-inline: 0.75rem;
-        }
     }
 </style>
