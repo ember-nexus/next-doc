@@ -239,8 +239,8 @@ async function apiSection(): Promise<SidebarItem[]> {
 export async function buildSidebar(): Promise<SidebarItem[]> {
   const [pages, commands, api] = await Promise.all([
     pagesSection(),
-    commandsSection(),
     apiSection(),
+    commandsSection(),
   ]);
   return [...pages, ...commands, ...api];
 }
