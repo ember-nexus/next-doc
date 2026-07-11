@@ -9,7 +9,7 @@ const { icon = 'panel-left' } = Astro.props;
 ---
 <button
     type="button"
-    @click="sidebarOpen = !(sidebarOpen ?? window.matchMedia('(min-width: 640px)').matches)"
+    @click="sidebarOpen = !(sidebarOpen ?? window.matchMedia('(min-width: 640px)').matches); if (sidebarOpen) tocOpen = null"
     aria-label="Toggle sidebar"
     aria-controls="primary-sidebar"
     class="inline-flex items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 dark:text-gray-200 dark:hover:bg-gray-800"

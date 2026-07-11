@@ -46,9 +46,9 @@ const iconBtn =
             <Icon name="docker" class="size-5" />
         </a>
 
-        <div class="mx-1 h-6 w-px bg-gray-200 dark:bg-gray-800"></div>
+        <div class="mx-1 h-6 w-px bg-gray-200 dark:bg-gray-800 sm:hidden"></div>
 
-        <button type="button" aria-label="Toggle table of contents" class={iconBtn}>
+        <button type="button" aria-label="Toggle table of contents" class:list={["sm:hidden", iconBtn]} @click="tocOpen = !tocOpen; if (tocOpen) sidebarOpen = null" :aria-expanded="tocOpen">
             <Icon name="menu" class="size-5" />
         </button>
     </div>

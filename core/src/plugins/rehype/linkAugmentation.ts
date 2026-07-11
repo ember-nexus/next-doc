@@ -79,6 +79,7 @@ export function linkAugmentation() {
       ];
       if (isExternal) {
         node.properties.target = "_blank";
+        node.properties.rel = "noopener noreferrer";
       }
     });
   };

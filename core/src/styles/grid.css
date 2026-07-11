@@ -37,9 +37,9 @@
 .toc-sidebar {
     grid-column: toc-start / toc-end;
     grid-row: 1 / -1;
-    align-self: start;
-    position: sticky;
-    top: 1rem;
+    /* desktop: occupies the named grid column; the fixed panel is the actual visible element */
+    pointer-events: none;
+    visibility: hidden;
 }
 
 .toc-nav ul {
@@ -55,7 +55,7 @@
     text-decoration: none;
     opacity: 0.6;
     display: block;
-    padding-block: 0.1rem;
+    padding-block: 0.35rem;
     transition: opacity 0.15s ease;
 }
 
@@ -97,7 +97,19 @@
             [full-end];
     }
 
+    /* placeholder column hidden on mobile — the fixed panel handles display */
     .toc-sidebar {
         display: none;
+    }
+}
+
+/* Mobile TOC panel: larger tap targets */
+@media (max-width: 768px) {
+    #toc-panel .toc-nav ul {
+        font-size: 0.9rem;
+    }
+
+    #toc-panel .toc-nav a {
+        padding-block: 0.6rem;
     }
 }
