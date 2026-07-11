@@ -40,9 +40,10 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
 <Sidebar version={version} />
 
 {headings.length > 0 && (
+    /* Mobile-only overlay panel — hidden on desktop via sm:hidden */
     <aside
         id="toc-panel"
-        class="fixed bottom-0 right-0 top-14 z-40 flex h-[calc(100dvh-3.5rem)] w-full flex-col border-l border-gray-200 bg-white transition-transform duration-200 ease-in-out max-sm:translate-x-full dark:border-gray-800 dark:bg-gray-950 sm:top-16 sm:h-[calc(100dvh-4rem)] sm:w-72 print:hidden"
+        class="fixed bottom-0 right-0 top-14 z-40 flex h-[calc(100dvh-3.5rem)] w-full flex-col bg-white transition-transform duration-200 ease-in-out translate-x-full dark:bg-gray-950 sm:hidden print:hidden"
         :class="{ '!translate-x-0': tocOpen === true, '!translate-x-full': tocOpen === false }"
         aria-label="Table of contents"
     >
@@ -50,7 +51,7 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
             type="button"
             @click="tocOpen = false"
             aria-label="Close table of contents"
-            class="absolute right-4 top-4 z-50 inline-flex items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 dark:text-gray-200 dark:hover:bg-gray-800 sm:hidden"
+            class="absolute right-4 top-4 z-50 inline-flex items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 dark:text-gray-200 dark:hover:bg-gray-800"
         >
             <Icon name="x" class="size-4" />
         </button>
@@ -75,8 +76,20 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
 >
     <main class="content-grid" data-pagefind-body>
         {headings.length > 0 && (
-            <aside class="toc-sidebar" aria-hidden="true">
-                {/* Desktop sticky placeholder — keeps the grid column reserved */}
+            /* Desktop inline sticky TOC — hidden on mobile, the fixed panel takes over there */
+            <aside class="toc-sidebar" aria-label="Table of contents">
+                <nav class="toc-nav">
+                    <ul>
+                        {headings
+                            .filter(h => h.depth <= 3)
+                            .map(h => (
+                                <li style={`margin-left: ${(h.depth - 1) * 0.75}rem`}>
+                                    <a href={`#${h.slug}`} class="toc-link">{h.text}</a>
+                                </li>
+                            ))
+                        }
+                    </ul>
+                </nav>
             </aside>
         )}
 
