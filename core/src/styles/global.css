@@ -5,6 +5,7 @@
 
 @plugin "@tailwindcss/typography";
 
+
 @theme {
     --color-hairline: #e3e3e0;
 }

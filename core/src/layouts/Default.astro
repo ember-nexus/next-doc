@@ -35,14 +35,13 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
     x-data="{ sidebarOpen: null }"
     class="min-h-screen bg-white text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100"
 >
+<Header />
 <Sidebar version={version} />
 
 <div
-    class="flex min-h-screen flex-col transition-[padding] duration-200 ease-in-out max-sm:pl-0 sm:pl-64"
+    class="flex min-h-screen flex-col pt-14 transition-[padding] duration-200 ease-in-out max-sm:pl-0 sm:pl-64 sm:pt-16"
     :class="{ 'sm:pl-64': sidebarOpen !== false, 'sm:!pl-0': sidebarOpen === false }"
 >
-    <Header></Header>
-
     <main class="content-grid" data-pagefind-body>
         {headings.length > 0 && (
             <aside class="toc-sidebar" aria-label="Table of contents">
