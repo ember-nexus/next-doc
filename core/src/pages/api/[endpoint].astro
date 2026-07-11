@@ -1,7 +1,4 @@
 ---
-// Moved from [group]/[endpoint].astro to api/[endpoint].astro.
-// Endpoint ids are unique, so `group` no longer needs to be in the URL — it is
-// used only to group items in the sidebar.
 import SwaggerParser from '@apidevtools/swagger-parser';
 import { getCollection, render } from 'astro:content';
 
@@ -25,7 +22,6 @@ import {
 export async function getStaticPaths() {
     const entries = await getCollection('endpoints');
     return entries.map((entry) => ({
-        // Same helper the sidebar uses for hrefs.
         params: { endpoint: endpointParam(entry.data.endpoint) },
         props: { entry },
     }));
@@ -35,8 +31,6 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 const { endpoint, method, endpointUrl, swaggerUrl, name } = entry.data;
 
-// NOTE: '/{uuid}' / 'get' are placeholders carried over from the original file.
-// Swap these for values derived from `entry.data` once your swagger paths line up.
 const spec = await SwaggerParser.dereference('./src/data/swagger.json');
 
 const path = swaggerUrl ?? '/';
@@ -50,7 +44,7 @@ const responseHeaders = extractResponseHeaders(spec, path, method2);
 const responseExamples = extractResponseExamples(spec, path, method2);
 ---
 
-<Default title={`${endpoint} — ${name}`}>
+<Default title={`${name} endpoint`}>
     <div style={`--c: var(--method-${method.toLowerCase()}, var(--method-put))`}>
         <p class="text-3xl sm:text-4xl mb-2 font-mono">
             <span class="uppercase text-(--c)">{method}</span> {endpointUrl}

@@ -20,7 +20,7 @@ const { Content } = await render(entry);
 const { command, helpCommand, helpOutput, exampleCommand, exampleOutput } = entry.data;
 ---
 
-<Default title={command}>
+<Default title={`${command} command`}>
     <h1 class="font-mono font-medium">{command}</h1>
 
     <div class="prose dark:prose-invert">
