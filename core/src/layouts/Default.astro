@@ -3,6 +3,7 @@ import '../styles/global.css'
 
 import Sidebar from '../component/Sidebar.astro'
 import Header from "../component/Header.astro";
+import TocNav from '../component/TocNav.astro';
 import { Icon } from 'astro-icon/components';
 
 interface Props {
@@ -55,18 +56,9 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
         >
             <Icon name="x" class="size-4" />
         </button>
-        <nav class="toc-nav flex-1 overflow-y-auto overscroll-contain p-4">
-            <ul>
-                {headings
-                    .filter(h => h.depth <= 3)
-                    .map(h => (
-                        <li style={`margin-left: ${(h.depth - 1) * 0.75}rem`}>
-                            <a href={`#${h.slug}`} class="toc-link">{h.text}</a>
-                        </li>
-                    ))
-                }
-            </ul>
-        </nav>
+        <div class="flex-1 overflow-y-auto overscroll-contain p-4">
+            <TocNav headings={headings} />
+        </div>
     </aside>
 )}
 
@@ -78,18 +70,7 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
         {headings.length > 0 && (
             /* Desktop inline sticky TOC — hidden on mobile, the fixed panel takes over there */
             <aside class="toc-sidebar" aria-label="Table of contents">
-                <nav class="toc-nav">
-                    <ul>
-                        {headings
-                            .filter(h => h.depth <= 3)
-                            .map(h => (
-                                <li style={`margin-left: ${(h.depth - 1) * 0.75}rem`}>
-                                    <a href={`#${h.slug}`} class="toc-link">{h.text}</a>
-                                </li>
-                            ))
-                        }
-                    </ul>
-                </nav>
+                <TocNav headings={headings} />
             </aside>
         )}
 
@@ -104,7 +85,8 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
 <script>
     // TOC links: header-aware smooth scroll on all viewports.
     // On mobile, also close the overlay first.
-    document.addEventListener('DOMContentLoaded', () => {
+    // Active-section highlighting is handled inside TocNav.astro.
+    function initTocClicks() {
         const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
         if (!tocLinks.length) return;
 
@@ -118,9 +100,7 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
                 e.preventDefault();
 
                 const isMobile = window.matchMedia('(max-width: 768px)').matches;
-
                 if (isMobile) {
-                    // Close TOC overlay via Alpine v3
                     const alpine = (window as any).Alpine;
                     if (alpine) {
                         const data = alpine.$data(document.body);
@@ -133,14 +113,23 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
                 const target = document.getElementById(href.slice(1));
                 if (!target) return;
 
-                // One rAF so the overlay starts collapsing before we measure.
+                // Update the URL hash without triggering a jump (replaceState keeps history clean).
+                history.pushState(null, '', href);
+
                 requestAnimationFrame(() => {
                     const top = target.getBoundingClientRect().top + window.scrollY - getHeaderHeight() - 16;
                     window.scrollTo({ top, behavior: 'smooth' });
                 });
             });
         });
-    });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTocClicks);
+    } else {
+        initTocClicks();
+    }
+    document.addEventListener('astro:page-load', initTocClicks);
 </script>
 </body>
 </html>

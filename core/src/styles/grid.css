@@ -67,6 +67,11 @@
     opacity: 1;
 }
 
+.toc-nav a.toc-link--active {
+    opacity: 1;
+    font-weight: 500;
+}
+
 .content-grid .prose {
     max-width: unset;
     width: 100%;
