@@ -10,10 +10,12 @@ FROM core AS dev
 RUN apk add bash
 
 FROM core AS prod-build
+ARG VERSION=dev
 WORKDIR /core
 RUN cd /core
 COPY core .
 ENV CI=true
+ENV VERSION=${VERSION}
 RUN pnpm install && pnpm run build
 
 FROM caddy:2.11.4-alpine AS prod
