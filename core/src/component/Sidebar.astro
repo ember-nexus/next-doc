@@ -13,7 +13,7 @@ const currentPath = Astro.url.pathname;
     label="Sidebar"
     desktopClass="sm:!translate-x-0 sm:top-16 sm:h-[calc(100dvh-4rem)] sm:w-64 sm:border-r sm:border-gray-200 sm:dark:border-gray-800"
 >
-    <nav class="flex-1 overflow-y-auto overscroll-contain p-4">
+    <nav>
         <ul class="flex flex-col gap-0.5">
             {items.map((item) => <SidebarNode item={item} currentPath={currentPath} />)}
         </ul>

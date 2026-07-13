@@ -148,7 +148,7 @@ Which will return a response like this:
 
 For updating an element, you will usually chose the `PATCH` operation - all provided properties are replaced, properties not mentioned in the request body are kept as they are. For replacing all properties of an element, use the `PUT` operation.
 
-**Important**: As only the data-attribute of an element can be modified after creation, the update-requests skip the element-data-wrapper. The full upload payload will be used as the new data object.
+**Important**: As only the data-attribute of an element can be modified after creation, the update-requests skip the element-data-wrapper. The full request payload will be used as the new data object.
 
 ```bash
 curl \
