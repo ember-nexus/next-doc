@@ -1,6 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
-import Search from "astro-pagefind/components/Search.astro";
+import DesktopSearch from "./DesktopSearch.astro";
 import SidebarToggle from "./SidebarToggle.astro";
 
 let version = import.meta.env.VERSION;
@@ -35,8 +35,8 @@ const iconBtn =
     )}
 
     <div class="ml-auto flex items-center gap-1">
-        <div class="hidden sm:block w-60">
-            <Search instance="search" className="pagefind-ui" searchboxOptions={{ placeholder: "search" }} />
+        <div class="hidden sm:block">
+            <DesktopSearch />
         </div>
 
         <a href="https://github.com/ember-nexus/api" target="_blank" rel="noreferrer" aria-label="GitHub" class:list={["hidden sm:inline-flex", iconBtn]}>

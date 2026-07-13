@@ -1,0 +1,66 @@
+---
+import PagefindConfig from 'astro-pagefind/components/PagefindConfig.astro';
+---
+
+<div class="pagefind-desktop-wrap" id="desktop-search-wrap">
+    <PagefindConfig instance="search" />
+    <pagefind-input
+        instance="search"
+        placeholder="Search…"
+        class="pagefind-desktop-input"
+    ></pagefind-input>
+    <div class="pagefind-desktop-dropdown" id="desktop-search-dropdown" hidden>
+        <pagefind-results
+            instance="search"
+            class="pagefind-desktop-results"
+            max-results="8"
+            hide-sub-results
+        ></pagefind-results>
+    </div>
+</div>
+
+<script>
+    function initDesktopSearch() {
+        const wrap     = document.getElementById('desktop-search-wrap');
+        const dropdown = document.getElementById('desktop-search-dropdown');
+        if (!wrap || !dropdown) return;
+
+        const input = wrap.querySelector<HTMLElement>('pagefind-input[instance="search"]');
+
+        // Show dropdown whenever the pagefind instance fires results (any search state change).
+        // pagefind-results updates itself; we just need to show/hide the container.
+        const resultsEl = wrap.querySelector('pagefind-results');
+
+        function showDropdown() { dropdown.hidden = false; }
+        function hideDropdown() { dropdown.hidden = true; }
+
+        // Show on input focus if there's already a query.
+        input?.addEventListener('focus', showDropdown);
+
+        // Watch for mutations on pagefind-results — when it gets children, show; when empty, hide.
+        const observer = new MutationObserver(() => {
+            const hasResults = resultsEl && resultsEl.childElementCount > 0;
+            if (hasResults) showDropdown(); else hideDropdown();
+        });
+        if (resultsEl) {
+            observer.observe(resultsEl, { childList: true, subtree: true });
+        }
+
+        // Close on outside click.
+        document.addEventListener('click', (e) => {
+            if (!wrap.contains(e.target as Node)) hideDropdown();
+        });
+
+        // Close when a result link is followed.
+        dropdown.addEventListener('click', (e) => {
+            if ((e.target as HTMLElement).closest('a')) hideDropdown();
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initDesktopSearch);
+    } else {
+        initDesktopSearch();
+    }
+    document.addEventListener('astro:page-load', initDesktopSearch);
+</script>

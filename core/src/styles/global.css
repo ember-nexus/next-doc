@@ -652,10 +652,44 @@ code span[data-method="HEAD"] {
     }
 }
 
-/* ─── Pagefind UI — desktop header search ──────────────────────────────────── */
-/* Scale corrected for 18px root (pagefind assumes 16px: 16/18 ≈ 0.889)        */
-.pagefind-ui {
-    --pagefind-ui-scale: 0.889;
+/* ─── Pagefind — desktop header search ─────────────────────────────────────── */
+
+/* Wrapper: relative so the dropdown anchors to it */
+.pagefind-desktop-wrap {
+    position: relative;
+    width: 260px;
+}
+
+/* Input: slightly smaller than mobile */
+.pagefind-desktop-input {
+    --pf-input-height: 36px;
+    --pf-input-font-size: 15px;
+    width: 100%;
+    display: block;
+}
+
+/* Dropdown: absolutely positioned below the input */
+.pagefind-desktop-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 500px;
+    max-height: 500px;
+    overflow-y: auto;
+    background: var(--pf-background, #fff);
+    border: 1px solid var(--pf-border, #e0e0e0);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    z-index: 9999;
+    padding: 6px;
+}
+
+/* Results inside the dropdown: same component + vars as mobile */
+.pagefind-desktop-results {
+    width: 100%;
+    display: block;
+    --pf-result-title-font-size: 14px;
+    --pf-result-excerpt-font-size: 13px;
 }
 
 /* ─── Pagefind — mobile search panel (split input + results) ───────────────── */
@@ -677,23 +711,23 @@ code span[data-method="HEAD"] {
 /* Dark mode overrides for mobile panel */
 @media (prefers-color-scheme: dark) {
     .pagefind-mobile-input,
-    .pagefind-mobile-results {
+    .pagefind-mobile-results,
+    .pagefind-desktop-input,
+    .pagefind-desktop-results {
         --pf-text: #e5e7eb;
-        --pf-background: #030712;
+        --pf-background: #111827;
         --pf-border: #1f2937;
         --pf-border-focus: #374151;
-        --pf-hover: #111827;
+        --pf-hover: #1f2937;
         --pf-skeleton: #1f2937;
         --pf-skeleton-shine: #374151;
         --pf-text-secondary: #9ca3af;
         --pf-text-muted: #6b7280;
     }
-    .pagefind-ui {
-        --pagefind-ui-text: #e5e7eb;
-        --pagefind-ui-background: #ffffff00;
-        --pagefind-ui-border: #1f2937;
-        --pagefind-ui-primary: #93c5fd;
-        --pagefind-ui-tag: #1f2937;
+    .pagefind-desktop-dropdown {
+        background: #111827;
+        border-color: #1f2937;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
     }
 }
 
