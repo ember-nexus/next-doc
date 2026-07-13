@@ -652,44 +652,184 @@ code span[data-method="HEAD"] {
     }
 }
 
-/* ─── Pagefind — desktop header search ─────────────────────────────────────── */
+/* ─── Desktop search modal ──────────────────────────────────────────────────── */
 
-/* Wrapper: relative so the dropdown anchors to it */
-.pagefind-desktop-wrap {
-    position: relative;
-    width: 260px;
-}
-
-/* Input: slightly smaller than mobile */
-.pagefind-desktop-input {
-    --pf-input-height: 36px;
-    --pf-input-font-size: 15px;
-    width: 100%;
-    display: block;
-}
-
-/* Dropdown: absolutely positioned below the input */
-.pagefind-desktop-dropdown {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    width: 500px;
-    max-height: 500px;
-    overflow-y: auto;
-    background: var(--pf-background, #fff);
-    border: 1px solid var(--pf-border, #e0e0e0);
-    border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+/* Full-screen overlay */
+.ds-modal {
+    position: fixed;
+    inset: 0;
     z-index: 9999;
-    padding: 6px;
 }
 
-/* Results inside the dropdown: same component + vars as mobile */
-.pagefind-desktop-results {
-    width: 100%;
+/* Semi-transparent backdrop */
+.ds-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+/* Floating panel: top-center, grows downward — no overflow so outlines are never clipped */
+.ds-panel {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(600px, calc(100vw - 2rem));
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    /* Padding lets the 4px outlines on bar islands paint without clipping */
+    padding: 6px;
+    max-height: calc(100dvh - 100px);
+}
+
+/* Results scroll wrapper — isolated overflow so only this scrolls.
+   padding + negative margin trick: outlines paint into the padding area,
+   which is inside the scroll container so it's never clipped. */
+.ds-results-scroll {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    flex: 1;
+    min-height: 0;
+    padding: 6px;
+    margin: -6px;
+}
+
+/* Search bar row: input island + X island */
+.ds-bar {
+    --ds-input-height: 56px;
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* pagefind-input IS the island — white pill, input fills it edge-to-edge */
+.ds-input {
+    --pf-input-height: var(--ds-input-height); /* island height — input fills it fully */
+    --pf-input-font-size: 16px;
+    --pf-border: transparent;     /* no inner border — island is the frame */
+    --pf-background: transparent; /* island bg shows through */
+    --pf-border-radius: 10px;     /* input corners match island */
+    --pf-outline-focus: #f59e0b;  /* amber focus ring */
+    contain: style;               /* drop layout containment so outlines escape */
+    flex: 1;
+    min-width: 0;
     display: block;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Clear button: desktop layout — fill height, flush to inline-end */
+:is(*, #\#):is(*, #\#):is(*, #\#) .ds-input .pf-input-clear {
+    height: 100%;
+    inset-inline-end: 0px;
+    border-radius: 10px; /* matches island / input field */
+}
+
+/* Clear button focus ring — needs :focus-visible to beat the library's own
+   :is(*, #\#):is(*, #\#):is(*, #\#) .pf-input-clear:focus-visible rule (same
+   boost count, but that rule has the pseudo-class so it wins without this). */
+:is(*, #\#):is(*, #\#):is(*, #\#) .ds-input .pf-input-clear:focus-visible {
+    outline-offset: 3px; /* matches .ds-input .pf-input:focus-visible */
+}
+
+/* Clear button: always visible in layout, greyed + inert when empty */
+:is(*, #\#):is(*, #\#):is(*, #\#) .ds-input .pf-input-clear[data-pf-suppressed] {
+    display: block;
+    opacity: 0.3;
+    pointer-events: none;
+    visibility: hidden; /* removes from tab order and AT while keeping layout space */
+}
+
+/* Suppress library's box-shadow focus ring on the inner input (island IS the frame) */
+:is(*, #\#):is(*, #\#):is(*, #\#) .ds-input .pf-input:focus-visible {
+    box-shadow: none;
+    border-color: transparent;
+    outline: 2px solid #f59e0b;
+    outline-offset: 3px;
+}
+
+/* X button island — square, matches input island height via stretch */
+.ds-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    align-self: stretch;
+    width: var(--ds-input-height, 56px);
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: none;
+    cursor: pointer;
+    color: #374151;
+    transition: background 0.15s;
+}
+.ds-close:hover {
+    background: #f3f4f6;
+}
+.ds-close:focus-visible {
+    outline: 2px solid #f59e0b;
+    outline-offset: 3px;
+}
+
+/* Results: each card is its own island — no wrapper background */
+.ds-results {
+    display: block;
+    width: 100%;
+    contain: style;               /* drop layout containment so card outlines escape */
     --pf-result-title-font-size: 14px;
     --pf-result-excerpt-font-size: 13px;
+    --pf-background: white;
+    --pf-border: transparent;
+}
+
+/* Give each result card island styling */
+:is(*, #\#):is(*, #\#):is(*, #\#) .ds-results .pf-result-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    border: none;
+}
+
+/* Amber focus outline floating clear of the card */
+:is(*, #\#):is(*, #\#):is(*, #\#) .ds-results .pf-result-card:has(.pf-result-link:focus-visible) {
+    outline: 2px solid #f59e0b;
+    outline-offset: 3px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+@media (prefers-color-scheme: dark) {
+    .ds-input {
+        background: #111827;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        --pf-text: #e5e7eb;
+        --pf-text-muted: #6b7280;
+    }
+    .ds-close {
+        background: #111827;
+        color: #e5e7eb;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    }
+    .ds-close:hover {
+        background: #1f2937;
+    }
+    .ds-results {
+        --pf-text: #e5e7eb;
+        --pf-background: #111827;
+        --pf-border: transparent;
+        --pf-border-focus: #374151;
+        --pf-hover: #1f2937;
+        --pf-skeleton: #1f2937;
+        --pf-skeleton-shine: #374151;
+        --pf-text-secondary: #9ca3af;
+        --pf-text-muted: #6b7280;
+    }
+    :is(*, #\#):is(*, #\#):is(*, #\#) .ds-results .pf-result-card {
+        background: #111827;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    }
 }
 
 /* ─── Pagefind — mobile search panel (split input + results) ───────────────── */
@@ -711,9 +851,7 @@ code span[data-method="HEAD"] {
 /* Dark mode overrides for mobile panel */
 @media (prefers-color-scheme: dark) {
     .pagefind-mobile-input,
-    .pagefind-mobile-results,
-    .pagefind-desktop-input,
-    .pagefind-desktop-results {
+    .pagefind-mobile-results {
         --pf-text: #e5e7eb;
         --pf-background: #111827;
         --pf-border: #1f2937;
@@ -723,11 +861,6 @@ code span[data-method="HEAD"] {
         --pf-skeleton-shine: #374151;
         --pf-text-secondary: #9ca3af;
         --pf-text-muted: #6b7280;
-    }
-    .pagefind-desktop-dropdown {
-        background: #111827;
-        border-color: #1f2937;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
     }
 }
 
