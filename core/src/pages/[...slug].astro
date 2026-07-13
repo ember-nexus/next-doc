@@ -8,7 +8,8 @@ export async function getStaticPaths() {
     const pages = await getCollection('pages');
     return pages.map((entry) => ({
         // Same helper the sidebar uses for hrefs -> routes & links can't drift.
-        params: { slug: pageSlug(entry.id) },
+        // "index" entry maps to undefined so [...slug] claims the root "/" route.
+        params: { slug: entry.id === 'index' ? undefined : pageSlug(entry.id) },
         props: { entry },
     }));
 }
