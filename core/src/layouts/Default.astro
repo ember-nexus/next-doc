@@ -4,7 +4,7 @@ import '../styles/global.css'
 import Sidebar from '../component/Sidebar.astro'
 import Header from "../component/Header.astro";
 import TocNav from '../component/TocNav.astro';
-import Search from 'astro-pagefind/components/Search.astro';
+import PagefindConfig from 'astro-pagefind/components/PagefindConfig.astro';
 import OverlayPanel from '../component/OverlayPanel.astro';
 
 interface Props {
@@ -45,7 +45,11 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
 )}
 
 <OverlayPanel id="search-panel" side="right" label="Search">
-    <Search slot="title" instance="search-mobile" className="pagefind-ui-mobile" searchboxOptions={{ placeholder: "search" }} />
+    <Fragment slot="title">
+        <PagefindConfig instance="search-mobile" />
+        <pagefind-input instance="search-mobile" placeholder="Search…" class="pagefind-mobile-input"></pagefind-input>
+    </Fragment>
+    <pagefind-results instance="search-mobile" class="pagefind-mobile-results"></pagefind-results>
 </OverlayPanel>
 
 <div

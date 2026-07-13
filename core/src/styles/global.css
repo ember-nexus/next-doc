@@ -652,6 +652,51 @@ code span[data-method="HEAD"] {
     }
 }
 
+/* ─── Pagefind UI — desktop header search ──────────────────────────────────── */
+/* Scale corrected for 18px root (pagefind assumes 16px: 16/18 ≈ 0.889)        */
+.pagefind-ui {
+    --pagefind-ui-scale: 0.889;
+}
+
+/* ─── Pagefind — mobile search panel (split input + results) ───────────────── */
+
+/* Bigger input in the title bar */
+.pagefind-mobile-input {
+    --pf-input-height: 44px;
+    --pf-input-font-size: 18px;
+    width: 100%;
+    display: block;
+}
+
+/* Full-width results in the panel body */
+.pagefind-mobile-results {
+    width: 100%;
+    display: block;
+}
+
+/* Dark mode overrides for mobile panel */
+@media (prefers-color-scheme: dark) {
+    .pagefind-mobile-input,
+    .pagefind-mobile-results {
+        --pf-text: #e5e7eb;
+        --pf-background: #030712;
+        --pf-border: #1f2937;
+        --pf-border-focus: #374151;
+        --pf-hover: #111827;
+        --pf-skeleton: #1f2937;
+        --pf-skeleton-shine: #374151;
+        --pf-text-secondary: #9ca3af;
+        --pf-text-muted: #6b7280;
+    }
+    .pagefind-ui {
+        --pagefind-ui-text: #e5e7eb;
+        --pagefind-ui-background: #ffffff00;
+        --pagefind-ui-border: #1f2937;
+        --pagefind-ui-primary: #93c5fd;
+        --pagefind-ui-tag: #1f2937;
+    }
+}
+
 
 
 
