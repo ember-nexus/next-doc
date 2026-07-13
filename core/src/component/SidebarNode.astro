@@ -25,7 +25,7 @@ const hasActiveChild = (items: SidebarItem[]): boolean =>
 {item.type === 'group' && item.variant === 'section' && (
 <li>
     <p class="sidebar-group-title mt-4 px-3">{item.name}</p>
-    <ul>
+    <ul class="flex flex-col gap-0.5">
         {item.items.map((child) => (
             <Astro.self item={child} currentPath={currentPath} />
         ))}
@@ -37,7 +37,7 @@ const hasActiveChild = (items: SidebarItem[]): boolean =>
 {item.type === 'group' && item.variant === 'nested' && (
 <li>
     <p class="sidebar-nested-group-title mt-2 px-3">{item.name}</p>
-    <ul class="border-l border-zinc-200 dark:border-zinc-700 ml-3 pl-2">
+    <ul class="flex flex-col gap-0.5 border-l border-zinc-200 dark:border-zinc-700 ml-3 pl-2">
         {item.items.map((child) => (
             <Astro.self item={child} currentPath={currentPath} />
         ))}
@@ -68,7 +68,7 @@ const hasActiveChild = (items: SidebarItem[]): boolean =>
     >
         {item.name}
     </a>
-    <ul class="border-l border-zinc-200 dark:border-zinc-700 ml-3 pl-2">
+    <ul class="flex flex-col gap-0.5 border-l border-zinc-200 dark:border-zinc-700 mt-0.5 ml-3 pl-2">
         {item.items.map((child) => (
             <Astro.self item={child} currentPath={currentPath} />
         ))}
