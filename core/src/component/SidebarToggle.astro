@@ -9,10 +9,31 @@ const { icon = 'panel-left' } = Astro.props;
 ---
 <button
     type="button"
-    @click="sidebarOpen = !(sidebarOpen ?? window.matchMedia('(min-width: 640px)').matches); if (sidebarOpen) tocOpen = null"
+    data-overlay-toggle="sidebar"
     aria-label="Toggle sidebar"
     aria-controls="sidebar"
     class="inline-flex cursor-pointer items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 dark:text-gray-200 dark:hover:bg-gray-800"
 >
     <Icon name={icon} class="size-5" />
 </button>
+
+<script>
+    function init() {
+        document.querySelectorAll<HTMLElement>('[data-overlay-toggle]').forEach(btn => {
+            // Avoid attaching duplicate listeners on re-init
+            if (btn.dataset.overlayToggleInit) return;
+            btn.dataset.overlayToggleInit = '1';
+            btn.addEventListener('click', () => {
+                const id = btn.dataset.overlayToggle!;
+                window.dispatchEvent(new CustomEvent('overlay-toggle', { detail: { id } }));
+            });
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+    document.addEventListener('astro:page-load', init);
+</script>

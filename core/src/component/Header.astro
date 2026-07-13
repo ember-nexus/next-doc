@@ -35,7 +35,7 @@ const iconBtn =
     )}
 
     <div class="ml-auto flex items-center gap-1">
-        <div class="w-40 sm:w-60">
+        <div class="hidden sm:block w-60">
             <Search instance="search" className="pagefind-ui" searchboxOptions={{ placeholder: "search" }} />
         </div>
 
@@ -48,7 +48,23 @@ const iconBtn =
 
         <div class="mx-1 h-6 w-px bg-gray-200 dark:bg-gray-800 sm:hidden"></div>
 
-        <button type="button" aria-label="Toggle table of contents" class:list={["sm:hidden", iconBtn]} @click="tocOpen = !tocOpen; if (tocOpen) sidebarOpen = null" :aria-expanded="tocOpen">
+        <button
+            type="button"
+            aria-label="Toggle search"
+            aria-controls="search-panel"
+            data-overlay-toggle="search-panel"
+            class:list={["sm:hidden", iconBtn]}
+        >
+            <Icon name="search" class="size-5" />
+        </button>
+
+        <button
+            type="button"
+            aria-label="Toggle table of contents"
+            aria-controls="toc-panel"
+            data-overlay-toggle="toc-panel"
+            class:list={["sm:hidden", iconBtn]}
+        >
             <Icon name="menu" class="size-5" />
         </button>
     </div>
