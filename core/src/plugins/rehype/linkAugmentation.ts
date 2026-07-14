@@ -1,8 +1,6 @@
 import { h } from "hastscript";
 import { visit } from "unist-util-visit";
 
-const LOCAL_PREFIX = "https://api.ember-nexus.dev";
-
 const ICON_PATHS: Record<string, string> = {
   "arrow-right": "M5 12h14M12 5l7 7-7 7",
   "arrow-up-right": "M7 17L17 7M7 7h10v10",
@@ -30,20 +28,14 @@ function isBrokenHref(href: string): boolean {
   return normalized === "" || normalized.includes("todo");
 }
 
-function isExternalHref(href: string): boolean {
+export function isExternalHref(href: string): boolean {
   const trimmed = href.trim();
 
   // Protocol-relative URLs → external
   if (trimmed.startsWith("//")) return true;
 
-  // No explicit scheme → relative or path-absolute → internal
-  if (!/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(trimmed)) return false;
-
-  // Has scheme, matches own domain → internal
-  if (trimmed.startsWith(LOCAL_PREFIX)) return false;
-
-  // Has scheme, foreign domain → external
-  return true;
+  // Has an explicit scheme (e.g. https://) → external; otherwise relative → internal
+  return /^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(trimmed);
 }
 
 export function linkAugmentation() {
