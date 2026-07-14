@@ -43,7 +43,10 @@ const requestBody = extractRequestBody(spec, path, method2);
 const responseHeaders = extractResponseHeaders(spec, path, method2);
 const responseExamples = extractResponseExamples(spec, path, method2);
 
+const titleSlug = name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+
 const cardHeadings: { depth: number; slug: string; text: string }[] = [
+    { depth: 1, slug: titleSlug, text: name },
     ...contentHeadings,
     { depth: 2, slug: 'request',            text: 'Request' },
     { depth: 2, slug: 'response',           text: 'Response' },
@@ -55,7 +58,7 @@ const cardHeadings: { depth: number; slug: string; text: string }[] = [
 ---
 
 <Default title={`${name} endpoint`} headings={cardHeadings}>
-    <div class="page-title-block" style={`--c: var(--method-${method.toLowerCase()}, var(--method-put))`}>
+    <div id={titleSlug} class="page-title-block" style={`--c: var(--method-${method.toLowerCase()}, var(--method-put))`}>
         <p class="page-title-text is-code">
             <span class="uppercase text-(--c)">{method}</span> {endpointUrl}
         </p>
