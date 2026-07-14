@@ -15,10 +15,9 @@ const icon = isLocal ? "arrow-right" : "arrow-up-right";
 ---
 <a
     href={link.url}
-    class="text-sm text-blue-700 hover:underline inline-flex items-center gap-0.5"
+    class="text-sm text-blue-700 hover:underline"
     target={isLocal ? undefined : "_blank"}
     rel={isLocal ? undefined : "noopener noreferrer"}
 >
-    {link.name}
-    <Icon name={icon} class="size-4" />
+    {link.name}&hairsp;<Icon name={icon} class="size-4 inline-block" style="vertical-align: calc(50% - 14px)" />
 </a>
