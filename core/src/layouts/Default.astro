@@ -68,35 +68,88 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
 </script>
 
 <script>
-    // Set --toc-top on <html> so the fixed TOC starts below the title block.
-    // Measured at top-of-page (scrollY=0) so the value is stable — the TOC
-    // position is fixed relative to the viewport, not the scroll position.
-    function updateTocTop() {
+    // TOC scroll-aware positioning:
+    // - At scrollY=0 the TOC starts below the title block (visually grouped with content).
+    // - As the page scrolls, the TOC moves up with the content until it hits the
+    //   header bottom, then stays stuck there (classic "sticky after threshold").
+    //
+    // Strategy: position:fixed, update `top` on every scroll frame.
+    //   top = clamp(headerH, initialTop - scrollY, initialTop)
+    //   where initialTop = document-bottom of title block + row-gap.
+
+    let tocInitialTop = 0; // document-absolute px of the element top — recomputed on load/resize
+    let headerH = 64;      // px — recomputed on load/resize
+
+    // Gap between header bottom and first TOC link when the TOC is fully stuck.
+    // Must match the padding-top on .toc-sidebar in grid.css.
+    const TOC_PADDING_TOP = 16;
+
+    function measureToc() {
         const header = document.querySelector('header');
         const titleBlock = document.querySelector('.page-title-block');
-        const headerH = header ? header.getBoundingClientRect().height : 64;
+        headerH = header ? header.getBoundingClientRect().height : 64;
 
+        const rowGap = 24; // 1.5rem — matches content-grid row-gap
         if (titleBlock instanceof HTMLElement) {
-            // getBoundingClientRect().bottom is viewport-relative.
-            // Adding scrollY converts it to document-absolute, which equals the
-            // viewport-Y of the element bottom when the page is at scroll=0.
-            // Since position:fixed top is always viewport-relative, this value
-            // is the correct constant — it doesn't change as the user scrolls.
-            const rowGap = 24; // 1.5rem — matches content-grid row-gap
-            const docBottom = titleBlock.getBoundingClientRect().bottom + window.scrollY;
-            document.documentElement.style.setProperty('--toc-top', `${docBottom + rowGap}px`);
+            // document-absolute bottom of title block + row-gap = where the first link should start.
+            // Subtract padding-top so the element top is that far above the first link.
+            const firstLinkDocY = titleBlock.getBoundingClientRect().bottom + window.scrollY + rowGap;
+            tocInitialTop = firstLinkDocY - TOC_PADDING_TOP;
         } else {
-            document.documentElement.style.setProperty('--toc-top', `${headerH + 24}px`);
+            tocInitialTop = headerH + rowGap - TOC_PADDING_TOP;
+        }
+
+        applyTocTop();
+    }
+
+    function applyTocTop() {
+        // When sticky: element top = headerH, first link lands at headerH + TOC_PADDING_TOP.
+        const top = Math.max(headerH, tocInitialTop - window.scrollY);
+        const maxH = window.innerHeight - top;
+        const toc = document.querySelector<HTMLElement>('.toc-sidebar');
+        if (toc) {
+            toc.style.top = `${top}px`;
+            toc.style.maxHeight = `${maxH}px`;
         }
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', updateTocTop);
-    } else {
-        updateTocTop();
+    function initTocPosition() {
+        measureToc();
+        window.addEventListener('scroll', applyTocTop, { passive: true });
+        window.addEventListener('resize', measureToc, { passive: true });
     }
-    document.addEventListener('astro:page-load', updateTocTop);
-    window.addEventListener('resize', updateTocTop, { passive: true });
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTocPosition);
+    } else {
+        initTocPosition();
+    }
+    document.addEventListener('astro:page-load', initTocPosition);
+</script>
+
+<script is:inline>
+    // Apply the correct TOC top position synchronously before first paint to prevent
+    // layout shift. Mirrors the measureToc() / applyTocTop() logic above, but runs
+    // inline so the browser can apply it before rendering the sidebar.
+    (function () {
+        var TOC_PADDING_TOP = 16;
+        var toc = document.querySelector('.toc-sidebar');
+        if (!toc) return;
+        var header = document.querySelector('header');
+        var titleBlock = document.querySelector('.page-title-block');
+        var headerH = header ? header.getBoundingClientRect().height : 64;
+        var rowGap = 24;
+        var tocInitialTop;
+        if (titleBlock) {
+            var firstLinkDocY = titleBlock.getBoundingClientRect().bottom + window.scrollY + rowGap;
+            tocInitialTop = firstLinkDocY - TOC_PADDING_TOP;
+        } else {
+            tocInitialTop = headerH + rowGap - TOC_PADDING_TOP;
+        }
+        var top = Math.max(headerH, tocInitialTop - window.scrollY);
+        toc.style.top = top + 'px';
+        toc.style.maxHeight = (window.innerHeight - top) + 'px';
+    })();
 </script>
 
 <script>

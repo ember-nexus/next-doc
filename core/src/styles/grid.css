@@ -37,20 +37,17 @@
 .toc-sidebar {
     /* Fixed outside the grid — position:sticky inside a grid with auto row heights
        is unreliable. Fixed lets us precisely control where the TOC starts.
-       JS measures the title block and writes --toc-top to <html>. */
+       JS sets top/max-height on scroll; right/width are layout constants. */
     display: none; /* hidden on mobile — shown only on desktop below */
     position: fixed;
-    /* --toc-top is set by JS to: title block document-bottom + row-gap.
-       Fallback covers pages with no title block (header + grid padding only). */
-    top: var(--toc-top, calc(4rem + 1.5rem));
     /* Mirror the grid's right gutter: sidebar is 16rem, grid columns use ch units
        at root font size. right = (viewport - sidebar - 2×breakout - main - toc-gap - toc) / 2 */
     right: max(0px, calc((100vw - 16rem - 16ch - 65ch - 1.5rem - 20ch) / 2));
     width: 20ch;
-    max-height: calc(100dvh - var(--toc-top, calc(4rem + 1.5rem)));
     overflow-y: auto;
     overscroll-behavior: contain;
     padding: 4px;
+    padding-top: 16px; /* breathing room between header and first TOC link when sticky */
     margin-inline: -4px;
 }
 
