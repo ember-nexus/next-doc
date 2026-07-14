@@ -3,16 +3,16 @@ type: tutorial
 title: First steps for using Ember Nexus
 ---
 
-### Prerequisites
+## Prerequisites
 
 The following CLI tools should be available: `curl`, `jq`.
 You should have access to an Ember Nexus API instance. If not, you can read the [tutorial about creating a new instance](./todo-link).
 
-### Preparation: Auth
+## Preparation: Auth
 
 Ember Nexus can be used without a user account, but in most cases, you would want to store your own data in a private and secure manner. In this case, you will need to create a user account first.
 
-#### Creating a new user account
+### Creating a new user account
 
 Execute the following curl command - just with the URL of your own Ember Nexus API instance and your email and password.
 
@@ -32,7 +32,7 @@ curl \
 
 The request should not return anything, unless an error happened.
 
-#### Creating a new token
+### Creating a new token
 
 Then create a new API token, which is later included in all following requests:
 
@@ -61,7 +61,7 @@ The value of `$.token`, i.e. `secret-token:4pKMAMcI0LlGBuqZDKQEUP`, is your new 
 
 Note: The token has a limited lifetime, i.e. has to be recreated every so often. The number of active tokens per user is unlimited.
 
-### CRUD & element properties
+## CRUD & element properties
 
 CRUD, standing for **c**reate, **r**ead, **u**pdate and **d**elete, is used to present the minimal steps required to interact with the API in a productive manner.
 
@@ -81,7 +81,7 @@ CRUD is always being used in the context of some data - which in Ember Nexus' ca
 
 ## Node examples
 
-### Creating an element
+## Creating an element
 
 In Ember Nexus you have two options for creating a new element:
 
@@ -120,7 +120,7 @@ Which will return a response like this:
 
 Note that the response headers include a `location`-header: This absolute path includes the id of the newly created element.
 
-### Retrieving an element
+## Retrieving an element
 
 The just created element can be retrieved in a single API call using `GET`:
 
@@ -144,7 +144,7 @@ Which will return a response like this:
 }
 ```
 
-### Updating an element's data
+## Updating an element's data
 
 For updating an element, you will usually chose the `PATCH` operation - all provided properties are replaced, properties not mentioned in the request body are kept as they are. For replacing all properties of an element, use the `PUT` operation.
 
@@ -181,7 +181,7 @@ Which will show, that the `hello`-property no longer shows `"world :D"`, but ins
 }
 ```
 
-### Replacing an element's data
+## Replacing an element's data
 
 For replacing an element's data, use the `PUT` operation instead of `PATCH`:
 
@@ -218,7 +218,7 @@ The response will now not include `hello`, but instead the new `hi`-property:
 
 **Note**: Some properties like `created` can not be replaced or be set back.
 
-### Deleting an element
+## Deleting an element
 
 Once you no longer need an element, you can delete it using the `DELETE` method:
 
