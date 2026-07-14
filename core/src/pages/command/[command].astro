@@ -26,7 +26,10 @@ const terminalHeadings = [
 ---
 
 <Default title={`${command} command`} headings={terminalHeadings}>
-    <h1 class="font-mono font-medium">{command}</h1>
+    <div class="page-title-block">
+        <h1 class="page-title-text is-code">{command}</h1>
+        <div class="page-title-divider"></div>
+    </div>
 
     <div class="prose dark:prose-invert">
         <Content />

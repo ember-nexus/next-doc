@@ -32,8 +32,12 @@ const allHeadings = [
 ---
 
 <Default title={entry.data.title} headings={allHeadings}>
+    <div class="page-title-block">
+        <h1 id={titleSlug} class="page-title-text">{entry.data.title}</h1>
+        <div class="page-title-divider"></div>
+    </div>
+
     <div class="prose dark:prose-invert">
-        <h1 id={titleSlug}>{entry.data.title}</h1>
         <Content />
     </div>
 </Default>

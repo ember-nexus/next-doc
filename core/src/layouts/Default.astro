@@ -46,24 +46,57 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
 )}
 
 
+{headings.length > 0 && (
+    /* Desktop fixed TOC — pulled out of the grid so position:fixed works correctly.
+       Hidden on mobile; the overlay panel takes over there. */
+    <aside class="toc-sidebar" aria-label="Table of contents">
+        <TocNav headings={headings} />
+    </aside>
+)}
+
 <div
     id="main-content"
     class="flex min-h-screen flex-col pt-14 transition-[padding] duration-200 ease-in-out pl-0 sm:pt-16"
 >
     <main class="content-grid" data-pagefind-body>
-        {headings.length > 0 && (
-            /* Desktop inline sticky TOC — hidden on mobile, the fixed panel takes over there */
-            <aside class="toc-sidebar" aria-label="Table of contents">
-                <TocNav headings={headings} />
-            </aside>
-        )}
-
         <slot />
     </main>
 </div>
 
 <script>
     import '../component/Lit/index.ts';
+</script>
+
+<script>
+    // Set --toc-top on <html> so the fixed TOC starts below the title block.
+    // Measured at top-of-page (scrollY=0) so the value is stable — the TOC
+    // position is fixed relative to the viewport, not the scroll position.
+    function updateTocTop() {
+        const header = document.querySelector('header');
+        const titleBlock = document.querySelector('.page-title-block');
+        const headerH = header ? header.getBoundingClientRect().height : 64;
+
+        if (titleBlock instanceof HTMLElement) {
+            // getBoundingClientRect().bottom is viewport-relative.
+            // Adding scrollY converts it to document-absolute, which equals the
+            // viewport-Y of the element bottom when the page is at scroll=0.
+            // Since position:fixed top is always viewport-relative, this value
+            // is the correct constant — it doesn't change as the user scrolls.
+            const rowGap = 24; // 1.5rem — matches content-grid row-gap
+            const docBottom = titleBlock.getBoundingClientRect().bottom + window.scrollY;
+            document.documentElement.style.setProperty('--toc-top', `${docBottom + rowGap}px`);
+        } else {
+            document.documentElement.style.setProperty('--toc-top', `${headerH + 24}px`);
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', updateTocTop);
+    } else {
+        updateTocTop();
+    }
+    document.addEventListener('astro:page-load', updateTocTop);
+    window.addEventListener('resize', updateTocTop, { passive: true });
 </script>
 
 <script>

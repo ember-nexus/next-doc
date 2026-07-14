@@ -55,13 +55,12 @@ const cardHeadings: { depth: number; slug: string; text: string }[] = [
 ---
 
 <Default title={`${name} endpoint`} headings={cardHeadings}>
-    <div style={`--c: var(--method-${method.toLowerCase()}, var(--method-put))`}>
-        <p class="text-3xl sm:text-4xl mb-2 font-mono">
+    <div class="page-title-block" style={`--c: var(--method-${method.toLowerCase()}, var(--method-put))`}>
+        <p class="page-title-text is-code">
             <span class="uppercase text-(--c)">{method}</span> {endpointUrl}
         </p>
-        <p class="mb-3 text-2xl">{name}</p>
-        <div class="w-full border-t border-hairline"></div>
-
+        <p class="page-title-subtitle">{name}</p>
+        <div class="page-title-divider"></div>
     </div>
     
     <div class="prose dark:prose-invert">
