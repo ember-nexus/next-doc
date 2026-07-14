@@ -46,21 +46,21 @@ const queryCount = parameters.filter((p) => p.location === "query").length;
                 </div>
 
                 <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-                        <span class="font-mono rounded-md bg-gray-100 dark:bg-gray-900 px-1.5 py-0.5 text-gray-500 dark:text-gray-400">
+                        <span class="font-mono rounded-md bg-gray-100 dark:bg-zinc-800 px-1.5 py-0.5 text-gray-500 dark:text-zinc-400">
                             {param.location}
                         </span>
                     {param.type && (
-                        <span class="font-mono rounded-md bg-gray-100 dark:bg-gray-900 px-1.5 py-0.5 text-gray-500 dark:text-gray-400">
+                        <span class="font-mono rounded-md bg-gray-100 dark:bg-zinc-800 px-1.5 py-0.5 text-gray-500 dark:text-zinc-400">
                                 {param.type}
                             </span>
                     )}
                     {param.format && (
-                        <span class="font-mono rounded-md bg-gray-100 dark:bg-gray-900 px-1.5 py-0.5 text-gray-500 dark:text-gray-400">
+                        <span class="font-mono rounded-md bg-gray-100 dark:bg-zinc-800 px-1.5 py-0.5 text-gray-500 dark:text-zinc-400">
                                 {param.format}
                             </span>
                     )}
                     {param.constraints.map((chip) => (
-                        <span class="font-mono rounded-md bg-gray-100 dark:bg-gray-900 px-1.5 py-0.5 text-gray-500 dark:text-gray-400">
+                        <span class="font-mono rounded-md bg-gray-100 dark:bg-zinc-800 px-1.5 py-0.5 text-gray-500 dark:text-zinc-400">
                                 {chip}
                             </span>
                     ))}

@@ -59,7 +59,7 @@ const tabEntries = tabs.map(t => ({key: t, label: tabLabels[t] ?? t}));
             {tabEntries.map(({key, label}) => (
                 <button
                     @click={`tab = '${key}'; open = false`}
-                    :class={`tab === '${key}' ? 'bg-gray-100 dark:bg-gray-900' : 'hover:bg-gray-50 dark:hover:bg-gray-950'`}
+                    :class={`tab === '${key}' ? 'bg-gray-100 dark:bg-zinc-900' : 'hover:bg-gray-50 dark:hover:bg-zinc-950'`}
                     class="w-full flex items-center px-3 py-2 text-sm cursor-pointer transition-colors"
                 >
                     <span class="font-medium">{label}</span>
@@ -69,9 +69,9 @@ const tabEntries = tabs.map(t => ({key: t, label: tabLabels[t] ?? t}));
     </div>
 
     <div
-        class="search-response-card-body api-card flex flex-col divide-y divide-gray-200 dark:divide-gray-800">
+        class="search-response-card-body api-card flex flex-col divide-y divide-gray-200 dark:divide-zinc-800">
         <!-- Tab bar: desktop only -->
-        <div class="hidden sm:flex border-b border-gray-200 dark:border-gray-800 px-4">
+        <div class="hidden sm:flex border-b border-gray-200 dark:border-zinc-800 px-4">
             {tabEntries.map(({key, label}) => (
                 <button
                     @click={`tab = '${key}'`}

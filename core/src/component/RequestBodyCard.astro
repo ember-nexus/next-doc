@@ -24,20 +24,20 @@ const multiple = body.contents.length > 1;
 
     <div
         x-data="{ componentId: 'example' }"
-        class="api-card flex flex-col divide-y divide-gray-200 dark:divide-gray-800"
+        class="api-card flex flex-col divide-y divide-gray-200 dark:divide-zinc-800"
     >
         {body.description && (
             <div class="text-sm p-4 text-gray-600 dark:text-gray-400" set:html={marked.parse(body.description)} />
         )}
 
-        <div class="flex border-b border-gray-200 dark:border-gray-800 px-4">
+        <div class="flex border-b border-gray-200 dark:border-zinc-800 px-4">
             <button @click="componentId = 'example'" :class="componentId === 'example' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer before:block before:h-0 before:invisible before:font-semibold before:content-['Example']">Example</button>
             <button @click="componentId = 'schema'" :class="componentId === 'schema' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer before:block before:h-0 before:invisible before:font-semibold before:content-['Schema']">Schema</button>
         </div>
 
         <div>
             <!-- Example tab: every content type stacked -->
-            <div x-show="componentId === 'example'" class="text-gray-800 font-mono divide-y divide-hairline">
+            <div x-show="componentId === 'example'" class="text-gray-800 dark:text-zinc-300 font-mono divide-y divide-hairline">
                 {body.contents.map((c) => (
                     <div>
                         {multiple && (
@@ -55,7 +55,7 @@ const multiple = body.contents.length > 1;
             </div>
 
             <!-- Schema tab: every content type stacked -->
-            <div x-show="componentId === 'schema'" x-cloak class="text-gray-800 font-mono divide-y divide-hairline">
+            <div x-show="componentId === 'schema'" x-cloak class="text-gray-800 dark:text-zinc-300 font-mono divide-y divide-hairline">
                 {body.contents.map((c) => (
                     <div>
                         {multiple && (

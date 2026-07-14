@@ -8,8 +8,8 @@
 
 @theme {
     --color-hairline: #e3e3e0;
-    /* Single source of truth for keyboard-focus ring color (amber-500). */
-    --color-focus: #f59e0b;
+    /* Single source of truth for keyboard-focus ring color (orange-500). */
+    --color-focus: #f97316;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -472,21 +472,21 @@ body {
     }
 
     .http-status-other {
-        --status-color: #d1d5db;
-        --status-bg: #1f2937;
-        --status-border: #374151;
-        --status-active-bg: #4b5563;
+        --status-color: #d4d4d8;
+        --status-bg: #27272a;
+        --status-border: #3f3f46;
+        --status-active-bg: #52525b;
         --status-active-color: #ffffff;
-        --status-active-border: #6b7280;
+        --status-active-border: #71717a;
     }
 
     .request-lang-shell {
-        --lang-color: #d1d5db;
-        --lang-bg: #1f2937;
-        --lang-border: #374151;
-        --lang-active-bg: #4b5563;
+        --lang-color: #d4d4d8;
+        --lang-bg: #27272a;
+        --lang-border: #3f3f46;
+        --lang-active-bg: #52525b;
         --lang-active-color: #ffffff;
-        --lang-active-border: #6b7280;
+        --lang-active-border: #71717a;
     }
 
     .request-lang-python {
@@ -620,37 +620,37 @@ code span[data-method="HEAD"] {
     code[data-method="GET"],
     code span[data-method="GET"] {
         color: var(--method-get);
-        background-color: color-mix(in srgb, var(--method-get) 10%, #111827);
+        background-color: color-mix(in srgb, var(--method-get) 10%, #18181b);
     }
 
     code[data-method="POST"],
     code span[data-method="POST"] {
         color: var(--method-post);
-        background-color: color-mix(in srgb, var(--method-post) 10%, #111827);
+        background-color: color-mix(in srgb, var(--method-post) 10%, #18181b);
     }
 
     code[data-method="PUT"],
     code span[data-method="PUT"] {
         color: var(--method-put);
-        background-color: color-mix(in srgb, var(--method-put) 10%, #111827);
+        background-color: color-mix(in srgb, var(--method-put) 10%, #18181b);
     }
 
     code[data-method="PATCH"],
     code span[data-method="PATCH"] {
         color: var(--method-patch);
-        background-color: color-mix(in srgb, var(--method-patch) 10%, #111827);
+        background-color: color-mix(in srgb, var(--method-patch) 10%, #18181b);
     }
 
     code[data-method="DELETE"],
     code span[data-method="DELETE"] {
         color: var(--method-delete);
-        background-color: color-mix(in srgb, var(--method-delete) 10%, #111827);
+        background-color: color-mix(in srgb, var(--method-delete) 10%, #18181b);
     }
 
     code[data-method="HEAD"],
     code span[data-method="HEAD"] {
         color: var(--method-head);
-        background-color: color-mix(in srgb, var(--method-head) 10%, #111827);
+        background-color: color-mix(in srgb, var(--method-head) 10%, #18181b);
     }
 }
 
@@ -804,32 +804,32 @@ code span[data-method="HEAD"] {
 
 @media (prefers-color-scheme: dark) {
     .ds-input {
-        background: #111827;
+        background: #18181b;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-        --pf-text: #e5e7eb;
-        --pf-text-muted: #6b7280;
+        --pf-text: #e4e4e7;
+        --pf-text-muted: #71717a;
     }
     .ds-close {
-        background: #111827;
-        color: #e5e7eb;
+        background: #18181b;
+        color: #e4e4e7;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
     }
     .ds-close:hover {
-        background: #1f2937;
+        background: #27272a;
     }
     .ds-results {
-        --pf-text: #e5e7eb;
-        --pf-background: #111827;
+        --pf-text: #e4e4e7;
+        --pf-background: #18181b;
         --pf-border: transparent;
-        --pf-border-focus: #374151;
-        --pf-hover: #1f2937;
-        --pf-skeleton: #1f2937;
-        --pf-skeleton-shine: #374151;
-        --pf-text-secondary: #9ca3af;
-        --pf-text-muted: #6b7280;
+        --pf-border-focus: #3f3f46;
+        --pf-hover: #27272a;
+        --pf-skeleton: #27272a;
+        --pf-skeleton-shine: #3f3f46;
+        --pf-text-secondary: #a1a1aa;
+        --pf-text-muted: #71717a;
     }
     :is(*, #\#):is(*, #\#):is(*, #\#) .ds-results .pf-result-card {
-        background: #111827;
+        background: #18181b;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
     }
 }

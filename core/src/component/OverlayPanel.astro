@@ -35,7 +35,7 @@ const hasTitle = Astro.slots.has('title');
 const startPos = side === 'right' ? 'translate-x-full'  : '-translate-x-full';
 const anchorX  = side === 'right' ? 'right-0'           : 'left-0';
 
-const closeBtn = "shrink-0 inline-flex cursor-pointer items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] dark:text-gray-200 dark:hover:bg-gray-800";
+const closeBtn = "shrink-0 inline-flex cursor-pointer items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] dark:text-zinc-200 dark:hover:bg-zinc-800";
 ---
 
 <aside
@@ -45,7 +45,7 @@ const closeBtn = "shrink-0 inline-flex cursor-pointer items-center justify-cente
     class:list={[
         "fixed bottom-0 top-14 z-40 flex h-[calc(100dvh-3.5rem)] w-full flex-col bg-white",
         "transition-transform duration-200 ease-in-out",
-        "dark:bg-gray-950 print:hidden",
+        "dark:bg-zinc-950 print:hidden",
         anchorX,
         startPos,
         desktopClass,
@@ -55,7 +55,7 @@ const closeBtn = "shrink-0 inline-flex cursor-pointer items-center justify-cente
     {hasTitle ? (
         /* ── Title slot: header row with title content + X button, body below ── */
         <>
-            <div class="flex shrink-0 items-center gap-2 border-b border-gray-200 px-3 py-2 dark:border-gray-800">
+            <div class="flex shrink-0 items-center gap-2 border-b border-gray-200 px-3 py-2 dark:border-zinc-800">
                 <div class="min-w-0 flex-1">
                     <slot name="title" />
                 </div>
