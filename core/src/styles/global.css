@@ -8,6 +8,8 @@
 
 @theme {
     --color-hairline: #e3e3e0;
+    /* Single source of truth for keyboard-focus ring color (amber-500). */
+    --color-focus: #f59e0b;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -149,7 +151,7 @@ body {
         text-decoration-color: var(--color-violet-600);
     }
     a:focus-visible {
-        outline: 2px solid var(--color-amber-500);
+        outline: 2px solid var(--color-focus);
         outline-offset: 2px;
     }
 
@@ -711,7 +713,7 @@ code span[data-method="HEAD"] {
     --pf-border: transparent;     /* no inner border — island is the frame */
     --pf-background: transparent; /* island bg shows through */
     --pf-border-radius: 10px;     /* input corners match island */
-    --pf-outline-focus: #f59e0b;  /* amber focus ring */
+    --pf-outline-focus: var(--color-focus);
     contain: style;               /* drop layout containment so outlines escape */
     flex: 1;
     min-width: 0;
@@ -747,7 +749,7 @@ code span[data-method="HEAD"] {
 :is(*, #\#):is(*, #\#):is(*, #\#) .ds-input .pf-input:focus-visible {
     box-shadow: none;
     border-color: transparent;
-    outline: 2px solid #f59e0b;
+    outline: 2px solid var(--color-focus);
     outline-offset: 3px;
 }
 
@@ -771,7 +773,7 @@ code span[data-method="HEAD"] {
     background: #f3f4f6;
 }
 .ds-close:focus-visible {
-    outline: 2px solid #f59e0b;
+    outline: 2px solid var(--color-focus);
     outline-offset: 3px;
 }
 
@@ -795,7 +797,7 @@ code span[data-method="HEAD"] {
 
 /* Amber focus outline floating clear of the card */
 :is(*, #\#):is(*, #\#):is(*, #\#) .ds-results .pf-result-card:has(.pf-result-link:focus-visible) {
-    outline: 2px solid #f59e0b;
+    outline: 2px solid var(--color-focus);
     outline-offset: 3px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
 }
@@ -831,39 +833,6 @@ code span[data-method="HEAD"] {
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
     }
 }
-
-/* ─── Pagefind — mobile search panel (split input + results) ───────────────── */
-
-/* Bigger input in the title bar */
-.pagefind-mobile-input {
-    --pf-input-height: 44px;
-    --pf-input-font-size: 18px;
-    width: 100%;
-    display: block;
-}
-
-/* Full-width results in the panel body */
-.pagefind-mobile-results {
-    width: 100%;
-    display: block;
-}
-
-/* Dark mode overrides for mobile panel */
-@media (prefers-color-scheme: dark) {
-    .pagefind-mobile-input,
-    .pagefind-mobile-results {
-        --pf-text: #e5e7eb;
-        --pf-background: #111827;
-        --pf-border: #1f2937;
-        --pf-border-focus: #374151;
-        --pf-hover: #1f2937;
-        --pf-skeleton: #1f2937;
-        --pf-skeleton-shine: #374151;
-        --pf-text-secondary: #9ca3af;
-        --pf-text-muted: #6b7280;
-    }
-}
-
 
 
 

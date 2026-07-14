@@ -4,7 +4,6 @@ import '../styles/global.css'
 import Sidebar from '../component/Sidebar.astro'
 import Header from "../component/Header.astro";
 import TocNav from '../component/TocNav.astro';
-import PagefindConfig from 'astro-pagefind/components/PagefindConfig.astro';
 import OverlayPanel from '../component/OverlayPanel.astro';
 
 interface Props {
@@ -44,13 +43,6 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
     </OverlayPanel>
 )}
 
-<OverlayPanel id="search-panel" side="right" label="Search">
-    <Fragment slot="title">
-        <PagefindConfig instance="search-mobile" />
-        <pagefind-input instance="search-mobile" placeholder="Search…" class="pagefind-mobile-input"></pagefind-input>
-    </Fragment>
-    <pagefind-results instance="search-mobile" class="pagefind-mobile-results" max-results="8" hide-sub-results></pagefind-results>
-</OverlayPanel>
 
 <div
     id="main-content"
@@ -117,15 +109,6 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
     document.addEventListener('astro:page-load', initTocClicks);
 </script>
 
-<script>
-    // Focus the search input when the search panel opens.
-    window.addEventListener('overlay-open', (e: Event) => {
-        const { id } = (e as CustomEvent<{ id: string }>).detail;
-        if (id !== 'search-panel') return;
-        const input = document.querySelector<HTMLElement & { focus(): void }>('pagefind-input[instance="search-mobile"]');
-        // Small delay to let the panel's CSS transition start so the element is visible/focusable.
-        setTimeout(() => input?.focus(), 50);
-    });
-</script>
+
 </body>
 </html>

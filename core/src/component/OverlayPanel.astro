@@ -14,6 +14,11 @@ interface Props {
      * into a panel that is also an overlay on mobile.
      */
     desktopClass?: string;
+    /**
+     * Hide the close (X) button on sm: and above.
+     * Use for panels that are permanently visible on desktop (e.g. the sidebar).
+     */
+    hideCloseOnDesktop?: boolean;
 }
 
 const {
@@ -21,6 +26,7 @@ const {
     side = 'right',
     label,
     desktopClass = '',
+    hideCloseOnDesktop = false,
 } = Astro.props;
 
 const hasTitle = Astro.slots.has('title');
@@ -29,7 +35,7 @@ const hasTitle = Astro.slots.has('title');
 const startPos = side === 'right' ? 'translate-x-full'  : '-translate-x-full';
 const anchorX  = side === 'right' ? 'right-0'           : 'left-0';
 
-const closeBtn = "shrink-0 inline-flex cursor-pointer items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 dark:text-gray-200 dark:hover:bg-gray-800";
+const closeBtn = "shrink-0 inline-flex cursor-pointer items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] dark:text-gray-200 dark:hover:bg-gray-800";
 ---
 
 <aside
@@ -57,7 +63,7 @@ const closeBtn = "shrink-0 inline-flex cursor-pointer items-center justify-cente
                     type="button"
                     data-overlay-close={id}
                     aria-label="Close"
-                    class={closeBtn}
+                    class:list={[closeBtn, hideCloseOnDesktop && 'sm:hidden']}
                 >
                     <Icon name="x" class="size-4" />
                 </button>
@@ -67,23 +73,23 @@ const closeBtn = "shrink-0 inline-flex cursor-pointer items-center justify-cente
             </div>
         </>
     ) : (
-        /* ── Default: X button floats absolute, content fills ── */
+        /* ── Default: scrollable content fills, X button floats on top ── */
         <>
+            <div class="flex-1 overflow-y-auto overscroll-contain p-4">
+                <slot />
+            </div>
             <button
                 type="button"
                 data-overlay-close={id}
                 aria-label="Close"
                 class:list={[
-                    "absolute top-4 z-50",
+                    "absolute top-4 right-4 z-50",
                     closeBtn,
-                    'right-4',
+                    hideCloseOnDesktop && 'sm:hidden',
                 ]}
             >
                 <Icon name="x" class="size-4" />
             </button>
-            <div class="flex-1 overflow-y-auto overscroll-contain p-4">
-                <slot />
-            </div>
         </>
     )}
 </aside>
@@ -92,6 +98,8 @@ const closeBtn = "shrink-0 inline-flex cursor-pointer items-center justify-cente
     // Track which panel ids have already had their window listeners registered,
     // so re-initialisation on astro:page-load doesn't pile up duplicate listeners.
     const _registeredPanels = new Set<string>();
+    // Dedup close-button click listeners (new DOM nodes after navigation are not in this set).
+    const _registeredCloseBtns = new WeakSet<HTMLElement>();
 
     function initOverlayPanel(panel: HTMLElement) {
         const panelId    = panel.dataset.overlayPanel!;
@@ -99,9 +107,10 @@ const closeBtn = "shrink-0 inline-flex cursor-pointer items-center justify-cente
         const openClass  = '!translate-x-0';
         const closeClass = side === 'right' ? '!translate-x-full' : '!-translate-x-full';
 
-        // Close buttons live inside the panel DOM — re-attach on every init
-        // (safe: new DOM nodes after page-load navigation).
+        // Close buttons live inside the panel DOM — attach once per element instance.
         panel.querySelectorAll<HTMLElement>(`[data-overlay-close="${panelId}"]`).forEach(btn => {
+            if (_registeredCloseBtns.has(btn)) return;
+            _registeredCloseBtns.add(btn);
             btn.addEventListener('click', () => {
                 window.dispatchEvent(new CustomEvent('overlay-close', { detail: { id: panelId } }));
             });
@@ -147,8 +156,22 @@ const closeBtn = "shrink-0 inline-flex cursor-pointer items-center justify-cente
         });
     }
 
+    // Wire every [data-overlay-toggle] button to the event bus.
+    // Re-runs on page-load; dedup guard lives on the DOM element.
+    const _registeredToggles = new WeakSet<HTMLElement>();
+    function initToggles() {
+        document.querySelectorAll<HTMLElement>('[data-overlay-toggle]').forEach(btn => {
+            if (_registeredToggles.has(btn)) return;
+            _registeredToggles.add(btn);
+            btn.addEventListener('click', () => {
+                window.dispatchEvent(new CustomEvent('overlay-toggle', { detail: { id: btn.dataset.overlayToggle! } }));
+            });
+        });
+    }
+
     function init() {
         document.querySelectorAll<HTMLElement>('[data-overlay-panel]').forEach(initOverlayPanel);
+        initToggles();
     }
 
     if (document.readyState === 'loading') {

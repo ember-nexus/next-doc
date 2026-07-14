@@ -9,7 +9,7 @@ if (!version || version === '') {
 }
 
 const iconBtn =
-    "inline-flex cursor-pointer items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 dark:text-gray-200 dark:hover:bg-gray-800";
+    "inline-flex cursor-pointer items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] dark:text-gray-200 dark:hover:bg-gray-800";
 ---
 
 <header
@@ -20,7 +20,7 @@ const iconBtn =
     <a
         href="/"
         aria-label="Ember Nexus API — home"
-        class="flex items-center gap-2 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400"
+        class="flex items-center gap-2 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]"
     >
         <img src="/logo.svg" alt="" class="size-6 sm:size-7" />
         <span class="hidden text-2xl font-qanelas-soft-custom tracking-tight text-gray-900 sm:inline dark:text-gray-100">
@@ -43,18 +43,6 @@ const iconBtn =
         <a href="https://hub.docker.com/r/embernexus/api" target="_blank" rel="noreferrer" aria-label="Docker Hub" class:list={["hidden sm:inline-flex", iconBtn]}>
             <Icon name="docker" class="size-5" />
         </a>
-
-        <div class="mx-1 h-6 w-px bg-gray-200 dark:bg-gray-800 sm:hidden"></div>
-
-        <button
-            type="button"
-            aria-label="Toggle search"
-            aria-controls="search-panel"
-            data-overlay-toggle="search-panel"
-            class:list={["sm:hidden", iconBtn]}
-        >
-            <Icon name="search" class="size-5" />
-        </button>
 
         <button
             type="button"
