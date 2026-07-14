@@ -31,8 +31,8 @@ const multiple = body.contents.length > 1;
         )}
 
         <div class="flex border-b border-gray-200 dark:border-zinc-800 px-3">
-            <button @click="componentId = 'example'" :class="componentId === 'example' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer rounded-sm focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)] before:block before:h-0 before:invisible before:font-semibold before:content-['Example']">Example</button>
-            <button @click="componentId = 'schema'" :class="componentId === 'schema' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer rounded-sm focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)] before:block before:h-0 before:invisible before:font-semibold before:content-['Schema']">Schema</button>
+            <button @click="componentId = 'example'" :class="componentId === 'example' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)] before:block before:h-0 before:invisible before:font-semibold before:content-['Example']">Example</button>
+            <button @click="componentId = 'schema'" :class="componentId === 'schema' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)] before:block before:h-0 before:invisible before:font-semibold before:content-['Schema']">Schema</button>
         </div>
 
         <div>
