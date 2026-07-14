@@ -28,6 +28,23 @@ html {
     font-size: var(--base-font-size);
 }
 
+/* Suppress all transitions while the page is initialising so panels snap
+   into their correct positions without a visible slide-in animation. */
+html.no-transitions * {
+    transition: none !important;
+}
+
+/* Open the sidebar and offset main content on desktop via pure CSS so the
+   correct layout is visible from first paint, before any JS runs. */
+@media (min-width: 640px) {
+    #sidebar {
+        transform: translateX(0);
+    }
+    #main-content {
+        padding-left: 16rem; /* 256 px = w-64 */
+    }
+}
+
 body {
     -webkit-font-smoothing: antialiased;
 }

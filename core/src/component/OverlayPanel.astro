@@ -127,6 +127,9 @@ const closeBtn = "shrink-0 inline-flex cursor-pointer items-center justify-cente
             if (id === panelId) {
                 el.classList.remove(closeClass);
                 el.classList.add(openClass);
+                if (panelId === 'sidebar') {
+                    document.getElementById('main-content')?.classList.add('sm:pl-64');
+                }
             } else {
                 el.classList.remove(openClass);
                 el.classList.add(closeClass);
@@ -140,6 +143,9 @@ const closeBtn = "shrink-0 inline-flex cursor-pointer items-center justify-cente
             if (id === panelId) {
                 el.classList.remove(openClass);
                 el.classList.add(closeClass);
+                if (panelId === 'sidebar') {
+                    document.getElementById('main-content')?.classList.remove('sm:pl-64');
+                }
             }
         });
 
@@ -169,9 +175,41 @@ const closeBtn = "shrink-0 inline-flex cursor-pointer items-center justify-cente
         });
     }
 
+    function syncPanelStateFromCSS() {
+        // The sidebar is opened on desktop via a CSS @media query (no JS involved).
+        // Sync the JS open/close classes to match what CSS has already rendered,
+        // so the event system is in sync before transitions are re-enabled.
+        //
+        // Only the sidebar gets special treatment — all other panels start closed.
+        const isDesktop = window.matchMedia('(min-width: 640px)').matches;
+
+        document.querySelectorAll<HTMLElement>('[data-overlay-panel]').forEach(panel => {
+            const panelId    = panel.dataset.overlayPanel!;
+            const side       = (panel.dataset.overlaySide ?? 'right') as 'left' | 'right';
+            const openClass  = '!translate-x-0';
+            const closeClass = side === 'right' ? '!translate-x-full' : '!-translate-x-full';
+
+            const shouldBeOpen = panelId === 'sidebar' && isDesktop;
+
+            if (shouldBeOpen) {
+                panel.classList.add(openClass);
+                panel.classList.remove(closeClass);
+                document.getElementById('main-content')?.classList.add('sm:pl-64');
+            } else {
+                panel.classList.remove(openClass);
+                panel.classList.add(closeClass);
+            }
+        });
+    }
+
     function init() {
         document.querySelectorAll<HTMLElement>('[data-overlay-panel]').forEach(initOverlayPanel);
         initToggles();
+        syncPanelStateFromCSS();
+        // Re-enable transitions now that JS state matches what's on screen.
+        requestAnimationFrame(() => {
+            document.documentElement.classList.remove('no-transitions');
+        });
     }
 
     if (document.readyState === 'loading') {

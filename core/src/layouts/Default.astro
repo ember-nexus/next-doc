@@ -30,6 +30,8 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
     <meta name="apple-mobile-web-app-title" content="Ember Nexus API" />
     <link rel="manifest" href="/site.webmanifest" />
     <title>{title}</title>
+    <!-- Suppress transitions immediately so panels don't animate into position on first paint. -->
+    <script is:inline>document.documentElement.classList.add('no-transitions');</script>
     <script defer src="https://analytics.webserver.ember-nexus.dev/script.js" data-website-id="dcc00c41-5a1a-48db-8e4f-59ce8a7fada7"></script>
 </head>
 
@@ -46,7 +48,7 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
 
 <div
     id="main-content"
-    class="flex min-h-screen flex-col pt-14 transition-[padding] duration-200 ease-in-out max-sm:pl-0 sm:pl-64 sm:pt-16"
+    class="flex min-h-screen flex-col pt-14 transition-[padding] duration-200 ease-in-out pl-0 sm:pt-16"
 >
     <main class="content-grid" data-pagefind-body>
         {headings.length > 0 && (
