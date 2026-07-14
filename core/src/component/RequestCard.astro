@@ -58,7 +58,7 @@ const examples = [
                 {examples.map(e => (
                     <button
                         @click={`tab = '${e.library}'; open = false`}
-                        :class={`tab === '${e.library}' ? 'bg-gray-100 dark:bg-gray-900' : 'hover:bg-gray-50 dark:hover:bg-gray-950'`}
+                        :class={`tab === '${e.library}' ? 'bg-gray-100 dark:bg-zinc-900' : 'hover:bg-gray-50 dark:hover:bg-zinc-950'`}
                         class="w-full flex justify-between items-center px-3 py-2 text-sm cursor-pointer transition-colors"
                     >
                         <span class="text-gray-500 dark:text-gray-400">{e.label}</span>

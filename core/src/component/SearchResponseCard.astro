@@ -43,7 +43,7 @@ const tabEntries = tabs.map(t => ({key: t, label: tabLabels[t] ?? t}));
         <button
             @click="open = !open"
             @keydown.escape="open = false"
-            class="flex w-full items-center justify-between gap-2 px-3 py-1.5 rounded-xl border border-hairline text-sm font-medium cursor-pointer transition-colors"
+            class="flex w-full items-center justify-between gap-2 px-3 py-1.5 rounded-xl border border-hairline text-sm font-medium cursor-pointer transition-colors focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
         >
             <span x-text="currentLabel" class="text-gray-800 dark:text-gray-200 text-left flex-1"></span>
             <Icon name="chevron-down" class="size-4 text-gray-400 transition-transform duration-200 shrink-0"
@@ -59,8 +59,8 @@ const tabEntries = tabs.map(t => ({key: t, label: tabLabels[t] ?? t}));
             {tabEntries.map(({key, label}) => (
                 <button
                     @click={`tab = '${key}'; open = false`}
-                    :class={`tab === '${key}' ? 'bg-gray-100 dark:bg-gray-900' : 'hover:bg-gray-50 dark:hover:bg-gray-950'`}
-                    class="w-full flex items-center px-3 py-2 text-sm cursor-pointer transition-colors"
+                    :class={`tab === '${key}' ? 'bg-gray-100 dark:bg-zinc-900' : 'hover:bg-gray-50 dark:hover:bg-zinc-950'`}
+                    class="w-full flex items-center px-3 py-2 text-sm cursor-pointer transition-colors focus:outline-none focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
                 >
                     <span class="font-medium">{label}</span>
                 </button>
@@ -69,14 +69,14 @@ const tabEntries = tabs.map(t => ({key: t, label: tabLabels[t] ?? t}));
     </div>
 
     <div
-        class="search-response-card-body api-card flex flex-col divide-y divide-gray-200 dark:divide-gray-800">
+        class="search-response-card-body api-card flex flex-col divide-y divide-gray-200 dark:divide-zinc-800">
         <!-- Tab bar: desktop only -->
-        <div class="hidden sm:flex border-b border-gray-200 dark:border-gray-800 px-4">
+        <div class="hidden sm:flex border-b border-gray-200 dark:border-zinc-800 px-3 overflow-visible">
             {tabEntries.map(({key, label}) => (
                 <button
                     @click={`tab = '${key}'`}
                     :class={`tab === '${key}' ? 'font-semibold border-b-2 border-current' : ''`}
-                    class="px-3 py-2 text-sm cursor-pointer"
+                    class="px-3 py-2 text-sm cursor-pointer focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
                     data-label={label}
                 >
                     {label}
@@ -85,7 +85,7 @@ const tabEntries = tabs.map(t => ({key: t, label: tabLabels[t] ?? t}));
         </div>
 
         <!-- Tab panels -->
-        <div class="relative">
+        <div class="relative overflow-hidden rounded-b-xl">
             {hasGraph && (
                 <div
                     :class={`tab === 'graph' ? '' : 'invisible absolute inset-0 pointer-events-none overflow-hidden'`}

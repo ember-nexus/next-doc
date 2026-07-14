@@ -8,16 +8,35 @@ export async function getStaticPaths() {
     const pages = await getCollection('pages');
     return pages.map((entry) => ({
         // Same helper the sidebar uses for hrefs -> routes & links can't drift.
-        params: { slug: pageSlug(entry.id) },
+        // "index" entry maps to undefined so [...slug] claims the root "/" route.
+        params: { slug: entry.id === 'index' ? undefined : pageSlug(entry.id) },
         props: { entry },
     }));
 }
 
 const { entry } = Astro.props;
 const { Content, headings } = await render(entry);
+
+// Generate a slug for the page title h1 the same way Astro slugifies markdown
+// headings: lowercase, collapse whitespace to hyphens, strip non-word chars.
+const titleSlug = entry.data.title
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]/g, '');
+
+const allHeadings = [
+    { depth: 1, slug: titleSlug, text: entry.data.title },
+    ...headings,
+];
 ---
 
-<Default title={entry.data.title} headings={headings}>
+<Default title={entry.data.title} headings={allHeadings}>
+    <div class="page-title-block">
+        <h1 id={titleSlug} class="page-title-text">{entry.data.title}</h1>
+        <div class="page-title-divider"></div>
+    </div>
+
     <div class="prose dark:prose-invert">
         <Content />
     </div>

@@ -37,7 +37,7 @@ const firstId = exampleId(examples[0]);
 
     <div
         x-data={`{ exampleId: '${firstId}', componentId: 'body' }`}
-        class="api-card flex flex-col divide-y divide-gray-200 dark:divide-gray-800"
+        class="api-card flex flex-col divide-y divide-gray-200 dark:divide-zinc-800"
     >
         <div class="flex flex-wrap gap-2 p-4">
             {examples.map((e) => (
@@ -59,7 +59,7 @@ const firstId = exampleId(examples[0]);
                     class="text-sm p-4 flex flex-col gap-2"
                 >
                     <p class="font-bold">{e.httpStatusCode} · {e.name ?? getHttpStatusCodeLabel(e.httpStatusCode)}</p>
-                    <div class="prose prose-sm max-w-none" set:html={renderedDescriptions[i]} />
+                    <div class="prose prose-sm max-w-none dark:prose-invert" set:html={renderedDescriptions[i]} />
                     {
                         e.links.length > 1 ? (
                             <div class="flex gap-4">
@@ -73,10 +73,10 @@ const firstId = exampleId(examples[0]);
             ))}
         </div>
 
-        <div class="flex border-b border-gray-200 dark:border-gray-800 px-4">
-            <button @click="componentId = 'body'" :class="componentId === 'body' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer before:block before:h-0 before:invisible before:font-semibold before:content-['Body']">Body</button>
-            <button @click="componentId = 'headers'" :class="componentId === 'headers' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer before:block before:h-0 before:invisible before:font-semibold before:content-['Headers']">Headers</button>
-            <button @click="componentId = 'schema'" :class="componentId === 'schema' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer before:block before:h-0 before:invisible before:font-semibold before:content-['Schema']">Schema</button>
+        <div class="flex border-b border-gray-200 dark:border-zinc-800 px-3">
+            <button @click="componentId = 'body'" :class="componentId === 'body' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)] before:block before:h-0 before:invisible before:font-semibold before:content-['Body']">Body</button>
+            <button @click="componentId = 'headers'" :class="componentId === 'headers' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)] before:block before:h-0 before:invisible before:font-semibold before:content-['Headers']">Headers</button>
+            <button @click="componentId = 'schema'" :class="componentId === 'schema' ? 'font-semibold border-b-2 border-current' : ''" class="px-3 py-2 text-sm cursor-pointer focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)] before:block before:h-0 before:invisible before:font-semibold before:content-['Schema']">Schema</button>
         </div>
 
         <div>
@@ -85,7 +85,7 @@ const firstId = exampleId(examples[0]);
                     <div
                         x-show={`exampleId === '${exampleId(e)}' && componentId === 'body'`}
                         x-cloak={i !== 0 || undefined}
-                        class="text-gray-800 font-mono"
+                        class="text-gray-800 dark:text-zinc-300 font-mono"
                     >
                         {e.body?.type === "binary" && (
                             <div class="p-4 min-h-[250px]">
@@ -105,7 +105,7 @@ const firstId = exampleId(examples[0]);
                     <div
                         x-show={`exampleId === '${exampleId(e)}' && componentId === 'headers'`}
                         x-cloak={i !== 0 || undefined}
-                        class="text-gray-800 font-mono"
+                        class="text-gray-800 dark:text-zinc-300 font-mono"
                     >
                         {e.headers && (
                             <Code code={e.headers} lang="http" class="not-prose rounded-b-xl text-[0.875rem]" />
@@ -120,7 +120,7 @@ const firstId = exampleId(examples[0]);
                     <div
                         x-show={`exampleId === '${exampleId(e)}' && componentId === 'schema'`}
                         x-cloak={i !== 0 || undefined}
-                        class="text-gray-800 font-mono"
+                        class="text-gray-800 dark:text-zinc-300 font-mono"
                     >
                         {e.schema === null && (
                             <div class="p-4 min-h-[250px]">

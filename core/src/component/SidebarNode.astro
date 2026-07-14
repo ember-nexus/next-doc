@@ -25,7 +25,7 @@ const hasActiveChild = (items: SidebarItem[]): boolean =>
 {item.type === 'group' && item.variant === 'section' && (
 <li>
     <p class="sidebar-group-title mt-4 px-3">{item.name}</p>
-    <ul>
+    <ul class="flex flex-col gap-0.5">
         {item.items.map((child) => (
             <Astro.self item={child} currentPath={currentPath} />
         ))}
@@ -37,7 +37,7 @@ const hasActiveChild = (items: SidebarItem[]): boolean =>
 {item.type === 'group' && item.variant === 'nested' && (
 <li>
     <p class="sidebar-nested-group-title mt-2 px-3">{item.name}</p>
-    <ul class="border-l border-zinc-200 dark:border-zinc-700 ml-3 pl-2">
+    <ul class="flex flex-col gap-0.5 border-l border-zinc-200 dark:border-zinc-700 ml-3 pl-2">
         {item.items.map((child) => (
             <Astro.self item={child} currentPath={currentPath} />
         ))}
@@ -51,7 +51,7 @@ const hasActiveChild = (items: SidebarItem[]): boolean =>
     <a
         href={item.url}
         aria-current={isActive(item.url) ? 'page' : undefined}
-        class="block rounded-md px-3 py-1.5 text-[0.8125rem] no-underline text-zinc-900 dark:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/[0.06] aria-[current]:bg-black/[0.06] dark:aria-[current]:bg-white/[0.09]"
+        class="block rounded-md px-3 py-1.5 text-[0.8125rem] no-underline text-zinc-900 dark:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/[0.06] aria-[current]:bg-black/[0.06] dark:aria-[current]:bg-white/[0.09] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]"
     >
         {item.name}
     </a>
@@ -64,11 +64,11 @@ const hasActiveChild = (items: SidebarItem[]): boolean =>
     <a
         href={item.url}
         aria-current={isActive(item.url) ? 'page' : undefined}
-        class="block rounded-md px-3 py-1.5 text-[0.8125rem] no-underline text-zinc-900 dark:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/[0.06] aria-[current]:bg-black/[0.06] dark:aria-[current]:bg-white/[0.09]"
+        class="block rounded-md px-3 py-1.5 text-[0.8125rem] no-underline text-zinc-900 dark:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/[0.06] aria-[current]:bg-black/[0.06] dark:aria-[current]:bg-white/[0.09] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]"
     >
         {item.name}
     </a>
-    <ul class="border-l border-zinc-200 dark:border-zinc-700 ml-3 pl-2">
+    <ul class="flex flex-col gap-0.5 border-l border-zinc-200 dark:border-zinc-700 mt-0.5 ml-3 pl-2">
         {item.items.map((child) => (
             <Astro.self item={child} currentPath={currentPath} />
         ))}
@@ -83,7 +83,7 @@ const hasActiveChild = (items: SidebarItem[]): boolean =>
         href={item.url}
         aria-current={isActive(item.url) ? 'page' : undefined}
         style={`--c: var(--method-${item.method}, var(--method-put))`}
-        class="block rounded-md px-3 py-1.5 text-[0.8125rem] no-underline text-zinc-900 dark:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/[0.06] aria-[current]:bg-black/[0.06] dark:aria-[current]:bg-white/[0.09]"
+        class="block rounded-md px-3 py-1.5 text-[0.8125rem] no-underline text-zinc-900 dark:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/[0.06] aria-[current]:bg-black/[0.06] dark:aria-[current]:bg-white/[0.09] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]"
     >
         <p class="m-0 font-mono truncate" title={item.endpointUrl}>
             <b class="font-semibold text-[var(--c)] uppercase">{item.method}</b>

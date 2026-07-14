@@ -1,38 +1,45 @@
 ---
-import { Icon } from 'astro-icon/components';
-
+import OverlayPanel from './OverlayPanel.astro';
 import { buildSidebar } from '../lib';
 import SidebarNode from './SidebarNode.astro';
 
 const items = await buildSidebar();
 const currentPath = Astro.url.pathname;
 ---
-<aside
-    id="primary-sidebar"
-    class="fixed bottom-0 left-0 top-14 z-40 flex h-[calc(100dvh-3.5rem)] w-full flex-col bg-white transition-transform duration-200 ease-in-out max-sm:-translate-x-full dark:bg-gray-950 sm:top-16 sm:h-[calc(100dvh-4rem)] sm:w-64 sm:border-r sm:border-gray-200 sm:dark:border-gray-800 print:hidden"
-    :class="{ '!translate-x-0': sidebarOpen === true, '!-translate-x-full': sidebarOpen === false }"
-    x-init="
-    $nextTick(() => requestAnimationFrame(() => {
-      $el.querySelector('[aria-current=page]')?.scrollIntoView({ block: 'center', behavior: 'instant' })
-    }))
-  "
-    x-effect="
-    if (sidebarOpen) $nextTick(() => requestAnimationFrame(() => {
-      $el.querySelector('[aria-current=page]')?.scrollIntoView({ block: 'center', behavior: 'instant' })
-    }))
-  "
+
+<OverlayPanel
+    id="sidebar"
+    side="left"
+    label="Sidebar"
+    desktopClass="sm:top-16 sm:h-[calc(100dvh-4rem)] sm:w-64 sm:border-r sm:border-gray-200 sm:dark:border-zinc-800"
 >
-    <button
-        type="button"
-        @click="sidebarOpen = false"
-        aria-label="Close sidebar"
-        class="absolute right-4 top-4 z-50 inline-flex items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 dark:text-gray-200 dark:hover:bg-gray-800 sm:hidden"
-    >
-        <Icon name="x" class="size-4" />
-    </button>
-    <nav class="flex-1 overflow-y-auto overscroll-contain p-4">
-        <ul>
+    <nav>
+        <ul class="flex flex-col gap-0.5">
             {items.map((item) => <SidebarNode item={item} currentPath={currentPath} />)}
         </ul>
     </nav>
-</aside>
+</OverlayPanel>
+
+<script>
+    // Scroll active sidebar link into view on open and on initial load.
+    function scrollActiveLink() {
+        const sidebar = document.getElementById('sidebar');
+        if (!sidebar) return;
+        sidebar.querySelector('[aria-current=page]')?.scrollIntoView({ block: 'center', behavior: 'instant' });
+    }
+
+    window.addEventListener('overlay-open', (e: Event) => {
+        const { id } = (e as CustomEvent<{ id: string }>).detail;
+        if (id === 'sidebar') {
+            requestAnimationFrame(scrollActiveLink);
+        }
+    });
+
+    // Also scroll on initial page load (desktop sidebar is always visible).
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => requestAnimationFrame(scrollActiveLink));
+    } else {
+        requestAnimationFrame(scrollActiveLink);
+    }
+    document.addEventListener('astro:page-load', () => requestAnimationFrame(scrollActiveLink));
+</script>

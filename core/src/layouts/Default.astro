@@ -4,7 +4,7 @@ import '../styles/global.css'
 import Sidebar from '../component/Sidebar.astro'
 import Header from "../component/Header.astro";
 import TocNav from '../component/TocNav.astro';
-import { Icon } from 'astro-icon/components';
+import OverlayPanel from '../component/OverlayPanel.astro';
 
 interface Props {
     title: string
@@ -27,53 +27,38 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <meta name="apple-mobile-web-app-title" content="MyWebSite" />
+    <meta name="apple-mobile-web-app-title" content="Ember Nexus API" />
     <link rel="manifest" href="/site.webmanifest" />
     <title>{title}</title>
+    <!-- Suppress transitions immediately so panels don't animate into position on first paint. -->
+    <script is:inline>document.documentElement.classList.add('no-transitions');</script>
     <script defer src="https://analytics.webserver.ember-nexus.dev/script.js" data-website-id="dcc00c41-5a1a-48db-8e4f-59ce8a7fada7"></script>
 </head>
 
-<body
-    x-data="{ sidebarOpen: null, tocOpen: null }"
-    class="min-h-screen bg-white text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100"
->
+<body class="min-h-screen bg-white text-gray-900 antialiased dark:bg-zinc-950 dark:text-zinc-100">
 <Header />
-<Sidebar version={version} />
+<Sidebar />
 
 {headings.length > 0 && (
-    /* Mobile-only overlay panel — hidden on desktop via sm:hidden */
-    <aside
-        id="toc-panel"
-        class="fixed bottom-0 right-0 top-14 z-40 flex h-[calc(100dvh-3.5rem)] w-full flex-col bg-white transition-transform duration-200 ease-in-out translate-x-full dark:bg-gray-950 sm:hidden print:hidden"
-        :class="{ '!translate-x-0': tocOpen === true, '!translate-x-full': tocOpen === false }"
-        aria-label="Table of contents"
-    >
-        <button
-            type="button"
-            @click="tocOpen = false"
-            aria-label="Close table of contents"
-            class="absolute right-4 top-4 z-50 inline-flex items-center justify-center rounded-md p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 dark:text-gray-200 dark:hover:bg-gray-800"
-        >
-            <Icon name="x" class="size-4" />
-        </button>
-        <div class="flex-1 overflow-y-auto overscroll-contain p-4">
-            <TocNav headings={headings} />
-        </div>
+    <OverlayPanel id="toc-panel" side="right" label="Table of contents">
+        <TocNav headings={headings} />
+    </OverlayPanel>
+)}
+
+
+{headings.length > 0 && (
+    /* Desktop fixed TOC — pulled out of the grid so position:fixed works correctly.
+       Hidden on mobile; the overlay panel takes over there. */
+    <aside class="toc-sidebar" aria-label="Table of contents">
+        <TocNav headings={headings} />
     </aside>
 )}
 
 <div
-    class="flex min-h-screen flex-col pt-14 transition-[padding] duration-200 ease-in-out max-sm:pl-0 sm:pl-64 sm:pt-16"
-    :class="{ 'sm:pl-64': sidebarOpen !== false, 'sm:!pl-0': sidebarOpen === false }"
+    id="main-content"
+    class="flex min-h-screen flex-col pt-14 transition-[padding] duration-200 ease-in-out pl-0 sm:pt-16"
 >
     <main class="content-grid" data-pagefind-body>
-        {headings.length > 0 && (
-            /* Desktop inline sticky TOC — hidden on mobile, the fixed panel takes over there */
-            <aside class="toc-sidebar" aria-label="Table of contents">
-                <TocNav headings={headings} />
-            </aside>
-        )}
-
         <slot />
     </main>
 </div>
@@ -83,8 +68,93 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
 </script>
 
 <script>
+    // TOC scroll-aware positioning:
+    // - At scrollY=0 the TOC starts below the title block (visually grouped with content).
+    // - As the page scrolls, the TOC moves up with the content until it hits the
+    //   header bottom, then stays stuck there (classic "sticky after threshold").
+    //
+    // Strategy: position:fixed, update `top` on every scroll frame.
+    //   top = clamp(headerH, initialTop - scrollY, initialTop)
+    //   where initialTop = document-bottom of title block + row-gap.
+
+    let tocInitialTop = 0; // document-absolute px of the element top — recomputed on load/resize
+    let headerH = 64;      // px — recomputed on load/resize
+
+    // Gap between header bottom and first TOC link when the TOC is fully stuck.
+    // Must match the padding-top on .toc-sidebar in grid.css.
+    const TOC_PADDING_TOP = 16;
+
+    function measureToc() {
+        const header = document.querySelector('header');
+        const titleBlock = document.querySelector('.page-title-block');
+        headerH = header ? header.getBoundingClientRect().height : 64;
+
+        const rowGap = 24; // 1.5rem — matches content-grid row-gap
+        if (titleBlock instanceof HTMLElement) {
+            // document-absolute bottom of title block + row-gap = where the first link should start.
+            // Subtract padding-top so the element top is that far above the first link.
+            const firstLinkDocY = titleBlock.getBoundingClientRect().bottom + window.scrollY + rowGap;
+            tocInitialTop = firstLinkDocY - TOC_PADDING_TOP;
+        } else {
+            tocInitialTop = headerH + rowGap - TOC_PADDING_TOP;
+        }
+
+        applyTocTop();
+    }
+
+    function applyTocTop() {
+        // When sticky: element top = headerH, first link lands at headerH + TOC_PADDING_TOP.
+        const top = Math.max(headerH, tocInitialTop - window.scrollY);
+        const maxH = window.innerHeight - top;
+        const toc = document.querySelector<HTMLElement>('.toc-sidebar');
+        if (toc) {
+            toc.style.top = `${top}px`;
+            toc.style.maxHeight = `${maxH}px`;
+        }
+    }
+
+    function initTocPosition() {
+        measureToc();
+        window.addEventListener('scroll', applyTocTop, { passive: true });
+        window.addEventListener('resize', measureToc, { passive: true });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTocPosition);
+    } else {
+        initTocPosition();
+    }
+    document.addEventListener('astro:page-load', initTocPosition);
+</script>
+
+<script is:inline>
+    // Apply the correct TOC top position synchronously before first paint to prevent
+    // layout shift. Mirrors the measureToc() / applyTocTop() logic above, but runs
+    // inline so the browser can apply it before rendering the sidebar.
+    (function () {
+        var TOC_PADDING_TOP = 16;
+        var toc = document.querySelector('.toc-sidebar');
+        if (!toc) return;
+        var header = document.querySelector('header');
+        var titleBlock = document.querySelector('.page-title-block');
+        var headerH = header ? header.getBoundingClientRect().height : 64;
+        var rowGap = 24;
+        var tocInitialTop;
+        if (titleBlock) {
+            var firstLinkDocY = titleBlock.getBoundingClientRect().bottom + window.scrollY + rowGap;
+            tocInitialTop = firstLinkDocY - TOC_PADDING_TOP;
+        } else {
+            tocInitialTop = headerH + rowGap - TOC_PADDING_TOP;
+        }
+        var top = Math.max(headerH, tocInitialTop - window.scrollY);
+        toc.style.top = top + 'px';
+        toc.style.maxHeight = (window.innerHeight - top) + 'px';
+    })();
+</script>
+
+<script>
     // TOC links: header-aware smooth scroll on all viewports.
-    // On mobile, also close the overlay first.
+    // On mobile, also close the TOC overlay first via the event system.
     // Active-section highlighting is handled inside TocNav.astro.
     function initTocClicks() {
         const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
@@ -101,11 +171,7 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
 
                 const isMobile = window.matchMedia('(max-width: 768px)').matches;
                 if (isMobile) {
-                    const alpine = (window as any).Alpine;
-                    if (alpine) {
-                        const data = alpine.$data(document.body);
-                        if (data) data.tocOpen = false;
-                    }
+                    window.dispatchEvent(new CustomEvent('overlay-close', { detail: { id: 'toc-panel' } }));
                 }
 
                 const href = link.getAttribute('href');
@@ -113,7 +179,6 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
                 const target = document.getElementById(href.slice(1));
                 if (!target) return;
 
-                // Update the URL hash without triggering a jump (replaceState keeps history clean).
                 history.pushState(null, '', href);
 
                 requestAnimationFrame(() => {
@@ -131,5 +196,7 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
     }
     document.addEventListener('astro:page-load', initTocClicks);
 </script>
+
+
 </body>
 </html>

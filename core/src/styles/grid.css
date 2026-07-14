@@ -35,15 +35,20 @@
 .col-full     { grid-column: full; }
 
 .toc-sidebar {
-    grid-column: toc-start / toc-end;
-    grid-row: 1 / -1;
-    align-self: start;
-    position: sticky;
-    /* clear the fixed header (sm: h-16 = 4rem) plus a small breathing gap */
-    top: calc(4rem + 1rem);
-    max-height: calc(100dvh - 4rem - 1rem);
+    /* Fixed outside the grid — position:sticky inside a grid with auto row heights
+       is unreliable. Fixed lets us precisely control where the TOC starts.
+       JS sets top/max-height on scroll; right/width are layout constants. */
+    display: none; /* hidden on mobile — shown only on desktop below */
+    position: fixed;
+    /* Mirror the grid's right gutter: sidebar is 16rem, grid columns use ch units
+       at root font size. right = (viewport - sidebar - 2×breakout - main - toc-gap - toc) / 2 */
+    right: max(0px, calc((100vw - 16rem - 16ch - 65ch - 1.5rem - 20ch) / 2));
+    width: 20ch;
     overflow-y: auto;
     overscroll-behavior: contain;
+    padding: 4px;
+    padding-top: 16px; /* breathing room between header and first TOC link when sticky */
+    margin-inline: -4px;
 }
 
 .toc-nav ul {
@@ -55,21 +60,43 @@
 }
 
 .toc-nav a {
-    color: inherit;
+    color: #71717a; /* zinc-500 */
     text-decoration: none;
-    opacity: 0.6;
     display: block;
     padding-block: 0.35rem;
-    transition: opacity 0.15s ease;
+    padding-inline: 0.35rem;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease;
 }
 
 .toc-nav a:hover {
-    opacity: 1;
+    color: #3f3f46; /* zinc-700 */
 }
 
 .toc-nav a.toc-link--active {
-    opacity: 1;
+    color: #18181b; /* zinc-900 */
     font-weight: 500;
+}
+
+.toc-nav a:focus {
+    outline: none;
+}
+
+.toc-nav a:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .toc-nav a {
+        color: #71717a; /* zinc-500 */
+    }
+    .toc-nav a:hover {
+        color: #a1a1aa; /* zinc-400 */
+    }
+    .toc-nav a.toc-link--active {
+        color: #e4e4e7; /* zinc-200 */
+    }
 }
 
 .content-grid .prose {
@@ -90,6 +117,12 @@
     width: calc(100% + 2 * var(--breakout-pad));
 }
 
+@media (min-width: 769px) {
+    .toc-sidebar {
+        display: block;
+    }
+}
+
 @media (max-width: 768px) {
     .content-grid {
         --breakout-pad: 0ch;
@@ -104,11 +137,6 @@
             [main-end toc-start toc-end breakout-end]
             1.5rem
             [full-end];
-    }
-
-    /* Desktop inline TOC hidden on mobile — the fixed overlay panel takes over */
-    .toc-sidebar {
-        display: none;
     }
 
     /* Larger tap targets inside the mobile overlay */

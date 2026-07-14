@@ -8,6 +8,8 @@
 
 @theme {
     --color-hairline: #e3e3e0;
+    /* Single source of truth for keyboard-focus ring color (orange-500). */
+    --color-focus: #f97316;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -24,6 +26,23 @@
 
 html {
     font-size: var(--base-font-size);
+}
+
+/* Suppress all transitions while the page is initialising so panels snap
+   into their correct positions without a visible slide-in animation. */
+html.no-transitions * {
+    transition: none !important;
+}
+
+/* Open the sidebar and offset main content on desktop via pure CSS so the
+   correct layout is visible from first paint, before any JS runs. */
+@media (min-width: 640px) {
+    #sidebar {
+        transform: translateX(0);
+    }
+    #main-content {
+        padding-left: 16rem; /* 256 px = w-64 */
+    }
 }
 
 body {
@@ -149,7 +168,7 @@ body {
         text-decoration-color: var(--color-violet-600);
     }
     a:focus-visible {
-        outline: 2px solid var(--color-amber-500);
+        outline: 2px solid var(--color-focus);
         outline-offset: 2px;
     }
 
@@ -213,8 +232,7 @@ body {
     }
 }
 
-.api-block-title,
-.sidebar-group-title {
+.api-block-title {
     font-family: "Qanelas Soft Custom";
     font-size: 1.2rem;
     color: inherit;
@@ -224,7 +242,58 @@ body {
     padding-bottom: 0.25em;
 }
 
+/* Shared page title block — used by all page types (slug, command, api, schema).
+   Provides consistent sizing, font choices, and the hairline divider. */
+.page-title-block {
+    max-width: 58rem;
+    width: 100%;
+    margin-inline: auto;
+}
+
+.page-title-block .page-title-text {
+    font-family: "Qanelas Soft Custom";
+    font-size: 1.875rem; /* text-3xl */
+    line-height: 1.2;
+    font-weight: normal;
+    margin-bottom: 0.75rem;
+}
+
+@media (min-width: 640px) {
+    .page-title-block .page-title-text {
+        font-size: 2.25rem; /* sm:text-4xl */
+    }
+}
+
+/* When the title contains a code portion (command/schema names), keep Fira Code
+   for the code part and Qanelas Soft for any surrounding label text. */
+.page-title-block .page-title-text.is-code {
+    font-family: "Fira Code", monospace;
+    font-weight: 500;
+}
+
+.page-title-block .page-title-subtitle {
+    font-family: "Qanelas Soft Custom";
+    font-size: 1.25rem;
+    font-weight: normal;
+    line-height: 1.4;
+    margin-top: 0.25rem;
+    margin-bottom: 0.75rem;
+    color: inherit;
+}
+
+.page-title-block .page-title-divider {
+    width: 100%;
+    border-top: 1px solid var(--color-hairline);
+}
+
 .sidebar-group-title {
+    font-family: "Qanelas Soft Custom";
+    font-size: 1.25rem;
+    color: inherit;
+    font-weight: normal;
+    line-height: 1.5;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
     margin-top: 1.5rem;
 }
 
@@ -238,7 +307,7 @@ body {
     padding-bottom: 0.125em;
 }
 
-#primary-sidebar nav > ul:first-of-type > li:first-of-type > p {
+#sidebar nav > ul:first-of-type > li:first-of-type > p {
     margin-top: 0;
 }
 
@@ -320,7 +389,7 @@ body {
 }
 
 .search-response-card-body {
-    overflow: hidden;
+    /* overflow-hidden lives on the panels wrapper, not here, so tab-bar focus rings are never clipped */
 }
 
 /* Bold-width placeholder trick: prevents layout shift when tab label goes bold on active */
@@ -464,21 +533,21 @@ body {
     }
 
     .http-status-other {
-        --status-color: #d1d5db;
-        --status-bg: #1f2937;
-        --status-border: #374151;
-        --status-active-bg: #4b5563;
+        --status-color: #d4d4d8;
+        --status-bg: #27272a;
+        --status-border: #3f3f46;
+        --status-active-bg: #52525b;
         --status-active-color: #ffffff;
-        --status-active-border: #6b7280;
+        --status-active-border: #71717a;
     }
 
     .request-lang-shell {
-        --lang-color: #d1d5db;
-        --lang-bg: #1f2937;
-        --lang-border: #374151;
-        --lang-active-bg: #4b5563;
+        --lang-color: #d4d4d8;
+        --lang-bg: #27272a;
+        --lang-border: #3f3f46;
+        --lang-active-bg: #52525b;
         --lang-active-color: #ffffff;
-        --lang-active-border: #6b7280;
+        --lang-active-border: #71717a;
     }
 
     .request-lang-python {
@@ -521,6 +590,13 @@ body {
     background-color: var(--status-active-bg);
     border-color: var(--status-active-border);
 }
+
+.http-status-btn:focus { outline: none; }
+.http-status-btn:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+}
+
 .request-lang-btn {
     color: var(--lang-color);
     background-color: var(--lang-bg);
@@ -531,6 +607,12 @@ body {
     color: var(--lang-active-color);
     background-color: var(--lang-active-bg);
     border-color: var(--lang-active-border);
+}
+
+.request-lang-btn:focus { outline: none; }
+.request-lang-btn:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
 }
 
 :root {
@@ -612,40 +694,219 @@ code span[data-method="HEAD"] {
     code[data-method="GET"],
     code span[data-method="GET"] {
         color: var(--method-get);
-        background-color: color-mix(in srgb, var(--method-get) 10%, #111827);
+        background-color: color-mix(in srgb, var(--method-get) 10%, #18181b);
     }
 
     code[data-method="POST"],
     code span[data-method="POST"] {
         color: var(--method-post);
-        background-color: color-mix(in srgb, var(--method-post) 10%, #111827);
+        background-color: color-mix(in srgb, var(--method-post) 10%, #18181b);
     }
 
     code[data-method="PUT"],
     code span[data-method="PUT"] {
         color: var(--method-put);
-        background-color: color-mix(in srgb, var(--method-put) 10%, #111827);
+        background-color: color-mix(in srgb, var(--method-put) 10%, #18181b);
     }
 
     code[data-method="PATCH"],
     code span[data-method="PATCH"] {
         color: var(--method-patch);
-        background-color: color-mix(in srgb, var(--method-patch) 10%, #111827);
+        background-color: color-mix(in srgb, var(--method-patch) 10%, #18181b);
     }
 
     code[data-method="DELETE"],
     code span[data-method="DELETE"] {
         color: var(--method-delete);
-        background-color: color-mix(in srgb, var(--method-delete) 10%, #111827);
+        background-color: color-mix(in srgb, var(--method-delete) 10%, #18181b);
     }
 
     code[data-method="HEAD"],
     code span[data-method="HEAD"] {
         color: var(--method-head);
-        background-color: color-mix(in srgb, var(--method-head) 10%, #111827);
+        background-color: color-mix(in srgb, var(--method-head) 10%, #18181b);
     }
 }
 
+/* ─── Desktop search modal ──────────────────────────────────────────────────── */
+
+/* Full-screen overlay */
+.ds-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+}
+
+/* Semi-transparent backdrop */
+.ds-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+/* Floating panel: top-center, grows downward — no overflow so outlines are never clipped */
+.ds-panel {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(600px, calc(100vw - 2rem));
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    /* Padding lets the 4px outlines on bar islands paint without clipping */
+    padding: 6px;
+    max-height: calc(var(--vvh, 100dvh) - 100px);
+}
+
+/* Results scroll wrapper — isolated overflow so only this scrolls.
+   padding + negative margin trick: outlines paint into the padding area,
+   which is inside the scroll container so it's never clipped. */
+.ds-results-scroll {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    flex: 1;
+    min-height: 0;
+    padding: 6px;
+    margin: -6px;
+}
+
+/* Search bar row: input island + X island */
+.ds-bar {
+    --ds-input-height: 56px;
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* pagefind-input IS the island — white pill, input fills it edge-to-edge */
+.ds-input {
+    --pf-input-height: var(--ds-input-height); /* island height — input fills it fully */
+    --pf-input-font-size: 16px;
+    --pf-border: transparent;     /* no inner border — island is the frame */
+    --pf-background: transparent; /* island bg shows through */
+    --pf-border-radius: 10px;     /* input corners match island */
+    --pf-outline-focus: var(--color-focus);
+    contain: style;               /* drop layout containment so outlines escape */
+    flex: 1;
+    min-width: 0;
+    display: block;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Clear button: desktop layout — fill height, flush to inline-end */
+:is(*, #\#):is(*, #\#):is(*, #\#) .ds-input .pf-input-clear {
+    height: 100%;
+    inset-inline-end: 0px;
+    border-radius: 10px; /* matches island / input field */
+}
+
+/* Clear button focus ring — needs :focus-visible to beat the library's own
+   :is(*, #\#):is(*, #\#):is(*, #\#) .pf-input-clear:focus-visible rule (same
+   boost count, but that rule has the pseudo-class so it wins without this). */
+:is(*, #\#):is(*, #\#):is(*, #\#) .ds-input .pf-input-clear:focus-visible {
+    outline-offset: 3px; /* matches .ds-input .pf-input:focus-visible */
+}
+
+/* Clear button: always visible in layout, greyed + inert when empty */
+:is(*, #\#):is(*, #\#):is(*, #\#) .ds-input .pf-input-clear[data-pf-suppressed] {
+    display: block;
+    opacity: 0.3;
+    pointer-events: none;
+    visibility: hidden; /* removes from tab order and AT while keeping layout space */
+}
+
+/* Suppress library's box-shadow focus ring on the inner input (island IS the frame) */
+:is(*, #\#):is(*, #\#):is(*, #\#) .ds-input .pf-input:focus-visible {
+    box-shadow: none;
+    border-color: transparent;
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+}
+
+/* X button island — square, matches input island height via stretch */
+.ds-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    align-self: stretch;
+    width: var(--ds-input-height, 56px);
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: none;
+    cursor: pointer;
+    color: #374151;
+    transition: background 0.15s;
+}
+.ds-close:hover {
+    background: #f3f4f6;
+}
+.ds-close:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+}
+
+/* Results: each card is its own island — no wrapper background */
+.ds-results {
+    display: block;
+    width: 100%;
+    contain: style;               /* drop layout containment so card outlines escape */
+    --pf-result-title-font-size: 14px;
+    --pf-result-excerpt-font-size: 13px;
+    --pf-background: white;
+    --pf-border: transparent;
+}
+
+/* Give each result card island styling */
+:is(*, #\#):is(*, #\#):is(*, #\#) .ds-results .pf-result-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    border: none;
+}
+
+/* Amber focus outline floating clear of the card */
+:is(*, #\#):is(*, #\#):is(*, #\#) .ds-results .pf-result-card:has(.pf-result-link:focus-visible) {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+@media (prefers-color-scheme: dark) {
+    .ds-input {
+        background: #18181b;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        --pf-text: #e4e4e7;
+        --pf-text-muted: #71717a;
+    }
+    .ds-close {
+        background: #18181b;
+        color: #e4e4e7;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    }
+    .ds-close:hover {
+        background: #27272a;
+    }
+    .ds-results {
+        --pf-text: #e4e4e7;
+        --pf-background: #18181b;
+        --pf-border: transparent;
+        --pf-border-focus: #3f3f46;
+        --pf-hover: #27272a;
+        --pf-skeleton: #27272a;
+        --pf-skeleton-shine: #3f3f46;
+        --pf-text-secondary: #a1a1aa;
+        --pf-text-muted: #71717a;
+    }
+    :is(*, #\#):is(*, #\#):is(*, #\#) .ds-results .pf-result-card {
+        background: #18181b;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    }
+}
 
 
 
