@@ -712,7 +712,7 @@ code span[data-method="HEAD"] {
     gap: 8px;
     /* Padding lets the 4px outlines on bar islands paint without clipping */
     padding: 6px;
-    max-height: calc(100dvh - 100px);
+    max-height: calc(var(--vvh, 100dvh) - 100px);
 }
 
 /* Results scroll wrapper — isolated overflow so only this scrolls.

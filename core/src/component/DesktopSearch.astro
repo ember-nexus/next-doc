@@ -79,6 +79,15 @@ const iconBtn =
             }
         }
 
+            // Track visual viewport height (accounts for on-screen keyboard on mobile)
+        function updateVvh() {
+            const h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+            document.documentElement.style.setProperty('--vvh', `${h}px`);
+        }
+        updateVvh();
+        window.visualViewport?.addEventListener('resize', updateVvh);
+        window.addEventListener('resize', updateVvh);
+
         function open() {
             modal.hidden = false;
             document.body.style.overflow = 'hidden';
