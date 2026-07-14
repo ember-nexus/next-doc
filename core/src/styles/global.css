@@ -328,7 +328,7 @@ body {
 }
 
 .search-response-card-body {
-    overflow: hidden;
+    /* overflow-hidden lives on the panels wrapper, not here, so tab-bar focus rings are never clipped */
 }
 
 /* Bold-width placeholder trick: prevents layout shift when tab label goes bold on active */
@@ -529,6 +529,13 @@ body {
     background-color: var(--status-active-bg);
     border-color: var(--status-active-border);
 }
+
+.http-status-btn:focus { outline: none; }
+.http-status-btn:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+}
+
 .request-lang-btn {
     color: var(--lang-color);
     background-color: var(--lang-bg);
@@ -539,6 +546,12 @@ body {
     color: var(--lang-active-color);
     background-color: var(--lang-active-bg);
     border-color: var(--lang-active-border);
+}
+
+.request-lang-btn:focus { outline: none; }
+.request-lang-btn:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
 }
 
 :root {

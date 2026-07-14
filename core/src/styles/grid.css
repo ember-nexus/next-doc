@@ -44,6 +44,10 @@
     max-height: calc(100dvh - 4rem - 1rem);
     overflow-y: auto;
     overscroll-behavior: contain;
+    /* padding + negative margin: outlines paint inside padding without clipping */
+    padding: 4px;
+    margin-inline: -4px;
+    margin-block: -4px;
 }
 
 .toc-nav ul {
@@ -55,21 +59,43 @@
 }
 
 .toc-nav a {
-    color: inherit;
+    color: #71717a; /* zinc-500 */
     text-decoration: none;
-    opacity: 0.6;
     display: block;
     padding-block: 0.35rem;
-    transition: opacity 0.15s ease;
+    padding-inline: 0.35rem;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease;
 }
 
 .toc-nav a:hover {
-    opacity: 1;
+    color: #3f3f46; /* zinc-700 */
 }
 
 .toc-nav a.toc-link--active {
-    opacity: 1;
+    color: #18181b; /* zinc-900 */
     font-weight: 500;
+}
+
+.toc-nav a:focus {
+    outline: none;
+}
+
+.toc-nav a:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .toc-nav a {
+        color: #71717a; /* zinc-500 */
+    }
+    .toc-nav a:hover {
+        color: #a1a1aa; /* zinc-400 */
+    }
+    .toc-nav a.toc-link--active {
+        color: #e4e4e7; /* zinc-200 */
+    }
 }
 
 .content-grid .prose {
