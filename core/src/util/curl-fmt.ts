@@ -137,6 +137,9 @@ const FLAG_ALIASES: Record<string, string> = {
   "--form": "-F",
 };
 
+// Flags that supply the URL as their value (e.g. httpsnippet uses --url)
+const URL_FLAGS = new Set(["--url"]);
+
 // Method implied by boolean shorthand flags
 const METHOD_SHORTHANDS: Record<string, string> = {
   "-G": "GET",
@@ -185,6 +188,9 @@ export function parse(raw: string): ParsedCurl {
           result.errors.push(`Malformed header: ${hval}`);
         }
       }
+    } else if (URL_FLAGS.has(rawTok)) {
+      idx++;
+      if (idx < tokens.length) result.url = tokens[idx];
     } else if (DATA_FLAGS.has(tok)) {
       idx++;
       if (idx < tokens.length) result.data = { flag: "-d", value: tokens[idx] };
