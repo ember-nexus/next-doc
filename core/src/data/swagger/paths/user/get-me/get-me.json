@@ -24,7 +24,7 @@
         ],
         "x-ember-nexus-har-example": {
           "method": "GET",
-          "url": "https://api.localhost/me",
+          "url": "https://api.example.com/me",
           "httpVersion": "HTTP/1.1",
           "cookies": [],
           "headers": [

@@ -7,6 +7,5 @@ endpointUrl: /<uuid>
 swaggerUrl: /{uuid}
 ---
 
-Deletes the referenced element.
-
-When deleting nodes, all relations connected to the node are automatically deleted as well.
+Deletes the referenced element, as well as its file (if it has one) and relations directly attached to the element (if
+it is a node).

@@ -47,6 +47,12 @@ html.no-transitions * {
 
 body {
     -webkit-font-smoothing: antialiased;
+    user-select: none;
+}
+
+/* Allow Ctrl+A text selection only inside the main content area */
+main.content-grid {
+    user-select: text;
 }
 
 [x-cloak] {
@@ -63,6 +69,16 @@ body {
 .search-response-card,
 .schema-example-block {
     --ec-frm-frameBoxShdCssVal: '';
+}
+
+/* Expressive Code collapsible section toggle: override browser-default blue with site orange.
+   outline-offset is negative so the ring stays inside the <pre overflow-x:auto> and is never clipped. */
+.expressive-code .ec-section summary:focus {
+    outline: none;
+}
+.expressive-code .ec-section summary:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: -2px;
 }
 
 .schema-example-block .expressive-code pre {
@@ -388,6 +404,173 @@ body {
     box-sizing: border-box;
 }
 
+/* ─── Print styles ──────────────────────────────────────────────────────────── */
+
+@media print {
+    /* 1. Base font size: 16px for print (18px for screen) */
+    html {
+        font-size: 16px;
+    }
+
+    /* 2. Hide navigation chrome */
+    header,
+    #sidebar,
+    #toc-panel,
+    .ds-modal {
+        display: none !important;
+    }
+
+    /* 3. Remove screen-layout offsets from the main content wrapper */
+    #main-content {
+        padding-left: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* 4. Collapse the multi-column content grid to a single full-width column */
+    .content-grid {
+        display: block;
+        padding-block: 0;
+    }
+
+    /* 5. TOC: flows between the title block and the main content.
+          .toc-sidebar lives inside #main-content (before .content-grid) in the DOM,
+          so with position:static it naturally lands after the title block (which is
+          the first child of .content-grid) and before the rest of the prose.
+          Three-column layout makes good use of the full print width. */
+    .toc-sidebar {
+        display: block !important;
+        position: static !important;
+        float: none;
+        right: auto;
+        width: 100%;
+        max-height: none !important;
+        overflow: visible;
+        margin: 0;
+        padding: 0.5rem 0 0.75rem 0;
+        border-left: none;
+        font-size: 0.8rem;
+        color: #52525b; /* zinc-600 */
+    }
+
+    /* "Contents" heading injected via pseudo-element — no HTML change needed */
+    .toc-sidebar::before {
+        content: "Content";
+        display: block;
+        font-family: "Qanelas Soft Custom", sans-serif;
+        font-size: 0.7rem;
+        font-weight: normal;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #a1a1aa; /* zinc-400 */
+        margin-bottom: 0.4rem;
+    }
+
+    /* Three-column multi-column layout for the link list */
+    .toc-sidebar .toc-nav ul {
+        columns: 3;
+        column-gap: 2rem;
+        font-size: inherit;
+        line-height: 1.5;
+    }
+
+    /* Prevent a single link from being split across columns */
+    .toc-sidebar .toc-nav li {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        /* Suppress screen indentation — depth is shown via prefix dots instead */
+        margin-left: 0 !important;
+    }
+
+    .toc-sidebar .toc-nav a {
+        padding-block: 0.1rem;
+        padding-inline: 0;
+        color: inherit;
+        text-decoration: none;
+        display: block;
+    }
+
+    /* Depth prefix: depth 1 = no prefix, depth 2 = ". ", depth 3 = ". . ".
+       Full stops sit on the baseline by design. Each level adds one ". " unit. */
+    .toc-sidebar .toc-nav li[data-depth="2"] > a::before { content: ". "; }
+    .toc-sidebar .toc-nav li[data-depth="3"] > a::before { content: ". . "; }
+    .toc-sidebar .toc-nav a::before {
+        display: inline;
+        color: #a1a1aa; /* zinc-400 — muted, secondary */
+    }
+
+    /* Thin rule separating the TOC from the content below */
+    .toc-sidebar .toc-nav {
+        border-bottom: 1px solid #e4e4e7; /* zinc-200 */
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.25rem;
+    }
+
+    /* 6. Prevent page breaks inside card components */
+    .request-card,
+    .request-body-card,
+    .request-header-card,
+    .request-parameter-card,
+    .response-card,
+    .response-header-card,
+    .search-response-card,
+    .terminal-example,
+    .api-card,
+    g6-graph {
+        break-inside: avoid;
+        page-break-inside: avoid; /* legacy fallback */
+    }
+
+    /* 7. Cards: let the browser break naturally between cards, but never
+          split a card across a page boundary (break-inside:avoid above).
+          break-before:avoid keeps heading + card together as a unit. */
+    .request-card,
+    .request-body-card,
+    .request-header-card,
+    .request-parameter-card,
+    .response-card,
+    .response-header-card,
+    .search-response-card,
+    .terminal-example,
+    .api-card {
+        break-before: avoid;
+        page-break-before: avoid; /* legacy fallback */
+    }
+
+    /* 8. Headings: avoid orphaning a heading at the bottom of a page.
+          break-after:avoid keeps the heading glued to the content that follows it.
+          Omit break-before:page — forcing a new page per heading was the main
+          cause of 60-80% blank-page gaps. */
+    .content-grid h2,
+    .content-grid h3,
+    .content-grid h4,
+    .content-grid h5,
+    .content-grid h6,
+    .prose h2,
+    .prose h3,
+    .prose h4,
+    .prose h5,
+    .prose h6 {
+        break-after: avoid;
+        page-break-after: avoid; /* legacy fallback */
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    /* 9. Left accent border on all code blocks.
+          Matches the hairline divider color used between stacked prose code blocks
+          (#e5e7eb). Strip all other borders and border-radius so the block sits
+          flush, edge-to-edge, with only the left accent visible. */
+    .expressive-code figure,
+    .expressive-code pre {
+        border-radius: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    .expressive-code figure {
+        border-left: 2px solid #e5e7eb !important;
+    }
+}
+
 .search-response-card-body {
     /* overflow-hidden lives on the panels wrapper, not here, so tab-bar focus rings are never clipped */
 }
@@ -583,6 +766,7 @@ body {
     color: var(--status-color);
     background-color: var(--status-bg);
     border-color: var(--status-border);
+    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .http-status-btn.active {
@@ -613,6 +797,56 @@ body {
 .request-lang-btn:focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: 2px;
+}
+
+/* Card tab bar row — elevate above the code block so focus outlines are never clipped */
+.card-tab-bar {
+    position: relative;
+    z-index: 1;
+    overflow: visible;
+}
+
+/* Card tab buttons (ResponseCard, RequestBodyCard, SearchResponseCard) */
+.card-tab {
+    position: relative;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.15s ease;
+    /* suppress default browser focus ring */
+    outline: none;
+}
+
+/* bottom border on hover and focus */
+.card-tab:hover,
+.card-tab:focus {
+    border-bottom-color: #d1d5db; /* gray-300 light */
+}
+
+@media (prefers-color-scheme: dark) {
+    .card-tab:hover,
+    .card-tab:focus {
+        border-bottom-color: #52525b; /* zinc-600 dark */
+    }
+}
+
+/* active tab: bold border using current text color */
+.card-tab.active {
+    font-weight: 600;
+    border-bottom-color: currentColor;
+}
+
+.card-tab.active:hover,
+.card-tab.active:focus {
+    border-bottom-color: currentColor;
+}
+
+/* keyboard focus ring */
+.card-tab:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: 0.15em;
 }
 
 :root {

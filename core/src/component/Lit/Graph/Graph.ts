@@ -562,7 +562,16 @@ export class G6Graph extends LitElement {
     this._idealH = localIdeal;
 
     if (!this._isSideBySide()) {
-      await this._applyHeight(localIdeal);
+      // On mobile the cards stack vertically, each filling its own height.
+      // Apply this instance's ideal height, then nudge every sibling in the
+      // group to (re-)apply its own ideal height so stale desktop-synced
+      // heights don't leave a graph smaller than its card.
+      const members = this._groupMembers();
+      await Promise.all(
+        members.map((m) =>
+          m._idealH > 0 ? m._applyHeight(m._idealH) : Promise.resolve(),
+        ),
+      );
       return;
     }
 

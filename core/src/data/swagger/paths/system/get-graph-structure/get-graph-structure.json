@@ -17,7 +17,7 @@
         "parameters": [],
         "x-ember-nexus-har-example": {
           "method": "GET",
-          "url": "https://api.localhost/graph-structure",
+          "url": "https://api.example.com/graph-structure",
           "httpVersion": "HTTP/1.1",
           "cookies": [],
           "headers": [

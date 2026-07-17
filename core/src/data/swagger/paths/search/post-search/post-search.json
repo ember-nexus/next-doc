@@ -52,7 +52,7 @@
         },
         "x-ember-nexus-har-example": {
           "method": "POST",
-          "url": "https://api.localhost/search",
+          "url": "https://api.example.com/search",
           "httpVersion": "HTTP/1.1",
           "cookies": [],
           "headers": [

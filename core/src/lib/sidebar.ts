@@ -138,12 +138,24 @@ function buildTree(entries: InternalEntry[]): SidebarItem[] {
 async function pagesSection(): Promise<SidebarItem[]> {
   const allEntries = (await getCollection("pages")).sort(byId);
 
+  const result: SidebarItem[] = [];
+
+  // The "index" entry maps to the root "/" path and is handled specially by
+  // the catch-all route (slug === undefined -> "/"). Prepend it as a standalone
+  // link at the very top of the sidebar so it appears before any section groups.
+  const indexEntry = allEntries.find((e) => e.id === "index");
+  if (indexEntry) {
+    result.push({
+      type: "link",
+      name: indexEntry.data.name ?? indexEntry.data.title,
+      url: "/",
+    });
+  }
+
   const sectionDefs: Array<{ key: string; label: string }> = [
     { key: "01-getting-started", label: "Getting started" },
     { key: "02-reference", label: "Reference" },
   ];
-
-  const result: SidebarItem[] = [];
 
   for (const { key, label } of sectionDefs) {
     const sectionEntries: InternalEntry[] = allEntries

@@ -16,7 +16,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content, headings: contentHeadings } = await render(entry);
-const { command, helpCommand, helpOutput, exampleCommand, exampleOutput } = entry.data;
+const { command, name, description, helpCommand, helpOutput, exampleCommand, exampleOutput } = entry.data;
 
 const titleSlug = command.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
 
@@ -28,7 +28,7 @@ const terminalHeadings = [
 ];
 ---
 
-<Default title={`${command} command`} headings={terminalHeadings}>
+<Default title={`${name ?? command} command`} description={description} ogType="article" headings={terminalHeadings}>
     <div class="page-title-block">
         <h1 id={titleSlug} class="page-title-text is-code">{command}</h1>
         <div class="page-title-divider"></div>

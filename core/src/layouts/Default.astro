@@ -9,11 +9,24 @@ import OverlayPanel from '../component/OverlayPanel.astro';
 interface Props {
     title: string
     description?: string
+    ogType?: 'website' | 'article'
     version?: string
     headings?: { depth: number; slug: string; text: string }[]
 }
 
-const { title, description = 'Ember Nexus API', version = 'latest', headings = [] } = Astro.props
+const { title, description, ogType = 'website', version = 'latest', headings = [] } = Astro.props
+
+// Derive the OG image URL from the current page path.
+// Convention: /open-graph/<slug>.png mirrors the public URL.
+const getOgImagePath = (pathname: string): string => {
+    let slug = pathname.replace(/^\//, '').replace(/\/$/, '');
+    if (slug === '') slug = 'index';
+    return `/open-graph/${slug}.png`;
+};
+
+const ogImagePath = getOgImagePath(Astro.url.pathname);
+const ogImageUrl = new URL(ogImagePath, Astro.url.origin).href;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.url.origin).href;
 ---
 
 <!doctype html>
@@ -21,7 +34,7 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
+    {description && <meta name="description" content={description} />}
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -30,6 +43,14 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
     <meta name="apple-mobile-web-app-title" content="Ember Nexus API" />
     <link rel="manifest" href="/site.webmanifest" />
     <title>{title}</title>
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <!-- Suppress transitions immediately so panels don't animate into position on first paint. -->
     <script is:inline>document.documentElement.classList.add('no-transitions');</script>
     <script defer src="https://analytics.webserver.ember-nexus.dev/script.js" data-website-id="dcc00c41-5a1a-48db-8e4f-59ce8a7fada7"></script>
@@ -46,18 +67,18 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
 )}
 
 
-{headings.length > 0 && (
-    /* Desktop fixed TOC — pulled out of the grid so position:fixed works correctly.
-       Hidden on mobile; the overlay panel takes over there. */
-    <aside class="toc-sidebar" aria-label="Table of contents">
-        <TocNav headings={headings} />
-    </aside>
-)}
-
 <div
     id="main-content"
     class="flex min-h-screen flex-col pt-14 transition-[padding] duration-200 ease-in-out pl-0 sm:pt-16"
 >
+    {headings.length > 0 && (
+        /* Desktop fixed TOC — position:fixed takes it out of normal flow on screen,
+           so placing it inside #main-content has zero layout impact there.
+           On print (position:static) it flows naturally after the title block. */
+        <aside class="toc-sidebar" aria-label="Table of contents">
+            <TocNav headings={headings} />
+        </aside>
+    )}
     <main class="content-grid" data-pagefind-body>
         <slot />
     </main>
@@ -195,6 +216,56 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
         initTocClicks();
     }
     document.addEventListener('astro:page-load', initTocClicks);
+</script>
+
+<script>
+    // Print: relocate .toc-sidebar so it renders between the page title block
+    // and the main prose content.  On screen the aside is position:fixed (out of
+    // flow), so its DOM position is irrelevant.  For print (position:static) we
+    // move it programmatically just before the browser lays out the print page,
+    // then restore it afterwards so the live page is unaffected.
+
+    let tocOriginalParent: Element | null = null;
+    let tocOriginalNextSibling: Element | null = null;
+
+    function relocateTocForPrint() {
+        const toc = document.querySelector<HTMLElement>('.toc-sidebar');
+        const titleBlock = document.querySelector<HTMLElement>('.page-title-block');
+        if (!toc || !titleBlock) return;
+
+        // Record original position so we can restore after printing.
+        tocOriginalParent = toc.parentElement;
+        tocOriginalNextSibling = toc.nextElementSibling;
+
+        // Insert immediately after the title block.
+        titleBlock.after(toc);
+    }
+
+    function restoreTocAfterPrint() {
+        const toc = document.querySelector<HTMLElement>('.toc-sidebar');
+        if (!toc || !tocOriginalParent) return;
+
+        if (tocOriginalNextSibling) {
+            tocOriginalParent.insertBefore(toc, tocOriginalNextSibling);
+        } else {
+            tocOriginalParent.appendChild(toc);
+        }
+
+        tocOriginalParent = null;
+        tocOriginalNextSibling = null;
+    }
+
+    function initPrintToc() {
+        window.addEventListener('beforeprint', relocateTocForPrint);
+        window.addEventListener('afterprint',  restoreTocAfterPrint);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPrintToc);
+    } else {
+        initPrintToc();
+    }
+    document.addEventListener('astro:page-load', initPrintToc);
 </script>
 
 

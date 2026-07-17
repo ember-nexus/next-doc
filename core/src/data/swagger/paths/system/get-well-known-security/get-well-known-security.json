@@ -17,7 +17,7 @@
         "parameters": [],
         "x-ember-nexus-har-example": {
           "method": "GET",
-          "url": "https://api.localhost/.well-known/security.txt",
+          "url": "https://api.example.com/.well-known/security.txt",
           "httpVersion": "HTTP/1.1",
           "cookies": [],
           "headers": [

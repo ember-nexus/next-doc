@@ -29,7 +29,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content, headings: contentHeadings } = await render(entry);
-const { method, endpointUrl, swaggerUrl, name } = entry.data;
+const { method, endpointUrl, swaggerUrl, name, description } = entry.data;
 
 const spec = await SwaggerParser.dereference('./src/data/swagger.json');
 
@@ -57,7 +57,7 @@ const cardHeadings: { depth: number; slug: string; text: string }[] = [
 ];
 ---
 
-<Default title={`${name} endpoint`} headings={cardHeadings}>
+<Default title={`${name} endpoint`} description={description} ogType="article" headings={cardHeadings}>
     <div id={titleSlug} class="page-title-block" style={`--c: var(--method-${method.toLowerCase()}, var(--method-put))`}>
         <p class="page-title-text is-code">
             <span class="uppercase text-(--c)">{method}</span> {endpointUrl}

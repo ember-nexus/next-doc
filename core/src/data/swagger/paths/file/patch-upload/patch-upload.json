@@ -43,7 +43,7 @@
         },
         "x-ember-nexus-har-example": {
           "method": "PATCH",
-          "url": "https://api.localhost/upload/7b80b203-2b82-40f5-accd-c7089fe6114e",
+          "url": "https://api.example.com/upload/7b80b203-2b82-40f5-accd-c7089fe6114e",
           "httpVersion": "HTTP/1.1",
           "cookies": [],
           "headers": [

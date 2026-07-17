@@ -10,7 +10,7 @@ const filtered = headings.filter(h => h.depth <= 3)
 <nav class="toc-nav">
     <ul>
         {filtered.map(h => (
-            <li style={`margin-left: ${(h.depth - 1) * 0.75}rem`}>
+            <li style={`margin-left: ${(h.depth - 1) * 0.75}rem`} data-depth={h.depth}>
                 <a href={`#${h.slug}`} class="toc-link" data-toc-slug={h.slug}>{h.text}</a>
             </li>
         ))}

@@ -18,6 +18,9 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()]
   },
+  build: {
+    inlineStylesheets: 'never',
+  },
   server: {
     host: true,
     allowedHosts: ['localhost', 'astro', 'ember-nexus-org-astro']

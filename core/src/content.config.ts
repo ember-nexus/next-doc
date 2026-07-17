@@ -7,6 +7,7 @@ const pages = defineCollection({
     type: z.string(),
     title: z.string(),
     name: z.string().optional(),
+    description: z.string().optional(),
   }),
 });
 
@@ -19,6 +20,7 @@ const endpoints = defineCollection({
     endpointUrl: z.string(),
     swaggerUrl: z.string().optional(),
     name: z.string(),
+    description: z.string().optional(),
   }),
 });
 
@@ -26,6 +28,8 @@ const commands = defineCollection({
   loader: glob({ base: "./src/data/commands", pattern: "**/*.{md,mdx}" }),
   schema: z.object({
     command: z.string(),
+    name: z.string().optional(),
+    description: z.string().optional(),
     helpCommand: z.string(),
     helpOutput: z.string(),
     exampleCommand: z.string(),

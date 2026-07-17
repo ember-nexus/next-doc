@@ -1,100 +1,117 @@
 ---
 type: page
-title: Ember Nexus: Knowledge Graph API
+title: "Ember Nexus: Knowledge Graph API"
 ---
 
-Ember Nexus is a **graph-native data platform** with a REST API. Store nodes and relations, attach arbitrary properties
-and files, query with full-text or graph traversal, and share data across multiple users — all on infrastructure you
-control.
+Ember Nexus is a self-hosted backend for connected data. You store **elements** - nodes and the
+relations between them - and get a complete REST API with user accounts, permissions, file storage
+and powerful search already built in.
 
-It is [source first](https://sourcefirst.com/) and ships as a Docker image for AMD and ARM architectures.
+No schema to design up front. No permission system to write. No search integration to maintain.
+One API, running on your own infrastructure, with your data staying yours.
 
-## Graph-native data model
+Ember Nexus is [source first](https://sourcefirst.com/) and ships as a single
+[Docker image](https://hub.docker.com/r/embernexus/api) for AMD and ARM.
 
-Every piece of data in Ember Nexus is either a **node** or a **relation**. Relations connect two nodes and can carry
-their own properties — no junction tables, no foreign keys, just a graph.
+## What people build with it
 
-- Every element gets a globally unique **UUID** at creation time. You can also supply your own UUIDs if needed.
-- Properties are schema-free: strings, numbers, booleans, lists and objects are all valid. No migrations required when
-  your data evolves.
-- Relations are first-class citizens: they can be created, read, updated and deleted independently, and they can hold
-  arbitrary data just like nodes.
-- File attachments can be stored directly on any node, backed by an S3-compatible object store.
+- **Knowledge bases and note apps**: Notes, tags, backlinks and attachments are a graph. Store them as one instead of
+  fighting a relational schema.
+- **Content platforms and CMS**: Pages, authors, categories and media, with per-user and per-group publishing rights.
+- **Private clouds and archives**: Files and metadata side by side, shared deliberately, searchable instantly.
+- **Anything multi-user**: Every element is private to its owner until access is explicitly granted. Collaboration is
+  built into the data model, not bolted on.
 
-Ember Nexus uses [Neo4j](https://neo4j.com/) as its graph database, giving you the full power of recursive traversal and
-path queries on your data.
+## How it feels
 
-## Secure multi-user platform
+Create a node — any type, any properties, no migration:
 
-Access control in Ember Nexus is **part of the graph itself**, not an afterthought bolted on top. Ownership and
-permissions are modeled as relations (`OWNS`, `HAS_READ_ACCESS`, `HAS_CREATE_ACCESS`, ...) between users, groups and
-data elements.
+```bash
+curl -X POST \
+  -H 'Authorization: Bearer $TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "type": "Note",
+        "data": {
+          "title": "Graph databases",
+          "tags": [
+            "db",
+            "graph"
+          ]
+        }
+      }' \
+  https://api.example.com/
+```
 
-Key properties of the access model:
+Connect it to another element — relations are data too:
 
-- **Recursive by default**: owning a node means owning its entire subtree.
-- **Explicit sharing**: data is private to its owner until access is deliberately granted.
-- **Group-based delegation**: assign access to a group once; all group members inherit it, including nested groups.
-- **Conditional access**: restrict permissions to specific element types, parent types, or elements created by the
-  requesting user.
-- **Granular operations**: read, create, update, delete and search can be granted independently.
+```bash
+curl -X POST \
+  -H 'Authorization: Bearer $TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "type": "LINKS_TO",
+        "start": "<note-uuid>",
+        "end": "<other-uuid>"
+      }' \
+  https://api.example.com/
+```
 
-Because access paths live in the same graph as your data, they can be queried, audited and reasoned about like any
-other relation. See the [access model reference](/reference/access-model) for the full picture.
+Search it — full-text and graph traversal in a single request:
 
-## Polyglot search
+```bash
+curl -X POST \
+  -H 'Authorization: Bearer $TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "steps": [
+          {
+            "type": "elasticsearchQueryDslMixin",
+            "query": {
+              "match": {
+                "title": "graph"
+              }
+            }
+          },
+          {
+            "type": "elementHydration"
+          }
+        ]
+      }' \
+  https://api.example.com/search
+```
 
-Search in Ember Nexus is expressed as a **pipeline of search steps**, each targeting one specific database or
-technology. The output of one step feeds directly into the next, enabling cross-database search logic in a single
-request.
+Results only ever contain elements the requesting user is allowed to see — even though the query
+itself is freely written by the user.
 
-Available search steps:
+## Three ideas that make it different
 
-- **Elasticsearch Query DSL Mixin**: executes any Elasticsearch query against the full-text index. Supports the
-  complete Elasticsearch Query DSL — fuzzy matching, ranges, aggregations and more.
-- **Cypher Path**: executes a Cypher query against Neo4j. Ideal for structural queries like "all comments on post X"
-  or recursive membership lookups.
-- **Element Hydration**: converts a list of element ids into a full collection response with all properties attached.
+**Everything is a graph — including permissions.** Ownership and access rights are relations in
+the same graph as your data. Owning a node means owning its subtree; sharing with a group shares
+with all its members, nested groups included. Access can be queried and audited like any other
+data. See the [access model](/reference/access-model).
 
-Every search step runs inside the access model: users can only see results they have `HAS_SEARCH_ACCESS` to, even when
-writing their own Elasticsearch or Cypher queries. User-supplied queries are scoped automatically — no additional
-filtering code required on your end.
+**Users can write real queries, safely.** Clients may send full Elasticsearch Query DSL and graph
+path queries directly to the API. A restricted query grammar and an enforced access filter make
+this safe even for untrusted users — power that normally requires custom backend code, available
+out of the box. See [search](/reference/search).
 
-See the [search reference](/reference/search) for examples including combined full-text and path queries.
+**Search is a pipeline.** Chain search steps across databases: find candidates via full-text,
+expand them along graph relations, hydrate the results — one request, permissions enforced at
+every step.
 
-## Built for real workloads
+## What you need
 
-Ember Nexus is designed to run in production:
-
-- **Horizontal scaling**: add more API containers with the same configuration — no coordination required, no sticky
-  sessions, no shared state beyond the databases.
-- **Async permission caching**: permission lists are calculated and cached in the background, keeping read paths fast
-  even on large graphs.
-- **Tested thoroughly**: the codebase is covered by unit tests, feature tests, memory leak tests and mutation tests.
-  Most documentation examples are automatically verified against the live API.
-- **Standard tooling**: backed by Neo4j, MongoDB, Elasticsearch, Redis, RabbitMQ and S3 — each independently
-  scalable and replaceable with community or enterprise editions.
-
-## When to use Ember Nexus
-
-Ember Nexus is a good fit when:
-
-- **Your data has relationships**: social graphs, taxonomies, content hierarchies, dependency trees — the graph model
-  handles them naturally without denormalization.
-- **You need multi-user data isolation**: each user's data is private by default; sharing is opt-in and auditable.
-- **Search has to be powerful and safe**: polyglot queries combining full-text and graph traversal, executed within the
-  access model, without exposing raw database access to clients.
-- **You want to self-host**: run it on your own hardware, your own cloud account, with your own data staying yours.
-
-Concrete use cases include private clouds, CMS and blog platforms, data management systems and archives, data lakes,
-and integration hubs between multiple backend systems.
+Ember Nexus runs on your hardware via Docker and uses proven databases under the hood: Neo4j,
+Elasticsearch, MongoDB, Redis, RabbitMQ and S3-compatible storage. Plan for at least 8 GB of RAM —
+Neo4j and Elasticsearch are memory-hungry. A complete Docker Compose setup is part of the
+[installation guide](/getting-started/installation).
 
 ## Get started
 
-- [Installation](/getting-started/installation) — Docker Compose setup, hardware requirements, reverse proxy
-- [First steps](/getting-started/first-steps) — create a user, obtain a token, run your first CRUD requests
+- [Installation](/getting-started/installation) — running in minutes with Docker Compose
+- [First steps](/getting-started/first-steps) — create a user, get a token, store your first data
 - [Search](/getting-started/search) — write your first search pipeline
-- [Access model](/reference/access-model) — understand how permissions work
-- [Demo API](https://reference-dataset.ember-nexus.dev/) — a live instance with example data
-- [Docker Hub](https://hub.docker.com/r/embernexus/api) — pull the latest image
+- [Live demo](https://reference-dataset.ember-nexus.dev/) — explore a running instance with
+example data
 - [Discord](https://discord.gg/qbQFBrJrRC) — ask questions, share what you build

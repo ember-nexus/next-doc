@@ -58,7 +58,7 @@ const schemaHeadings: { depth: number; slug: string; text: string }[] = [
 ];
 ---
 
-<Default title={`${schema.name} schema`} headings={schemaHeadings}>
+<Default title={`${schema.name} schema`} description={description ?? undefined} ogType="article" headings={schemaHeadings}>
     <div class="page-title-block">
         <h1 id={titleSlug} class="page-title-text is-code">{schema.name}</h1>
         <div class="page-title-divider"></div>
