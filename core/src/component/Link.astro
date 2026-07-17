@@ -15,9 +15,24 @@ const icon = isExternal ? "arrow-up-right" : "arrow-right";
 ---
 <a
     href={link.url}
-    class="text-sm text-blue-700 hover:underline"
+    class="link-component text-sm hover:underline"
     target={isExternal ? "_blank" : undefined}
     rel={isExternal ? "noopener noreferrer" : undefined}
 >
     {link.name}&hairsp;<Icon name={icon} class="size-4 inline-block" style="vertical-align: calc(50% - 14px)" />
 </a>
+
+<style>
+    .link-component {
+        color: var(--color-blue-700);
+        border-radius: 0.15em;
+    }
+    .link-component:focus {
+        outline: none;
+    }
+    .link-component:focus-visible {
+        outline: 2px solid var(--color-focus);
+        outline-offset: 2px;
+        border-radius: 0.15em;
+    }
+</style>

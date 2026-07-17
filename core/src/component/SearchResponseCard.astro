@@ -71,12 +71,12 @@ const tabEntries = tabs.map(t => ({key: t, label: tabLabels[t] ?? t}));
     <div
         class="search-response-card-body api-card flex flex-col divide-y divide-gray-200 dark:divide-zinc-800">
         <!-- Tab bar: desktop only -->
-        <div class="hidden sm:flex border-b border-gray-200 dark:border-zinc-800 px-3 overflow-visible">
+        <div class="card-tab-bar hidden sm:flex border-b border-gray-200 dark:border-zinc-800 px-3">
             {tabEntries.map(({key, label}) => (
                 <button
                     @click={`tab = '${key}'`}
-                    :class={`tab === '${key}' ? 'font-semibold border-b-2 border-current' : ''`}
-                    class="px-3 py-2 text-sm cursor-pointer focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
+                    :class={`tab === '${key}' ? 'active' : ''`}
+                    class="card-tab"
                     data-label={label}
                 >
                     {label}

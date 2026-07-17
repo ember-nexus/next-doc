@@ -65,6 +65,16 @@ body {
     --ec-frm-frameBoxShdCssVal: '';
 }
 
+/* Expressive Code collapsible section toggle: override browser-default blue with site orange.
+   outline-offset is negative so the ring stays inside the <pre overflow-x:auto> and is never clipped. */
+.expressive-code .ec-section summary:focus {
+    outline: none;
+}
+.expressive-code .ec-section summary:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: -2px;
+}
+
 .schema-example-block .expressive-code pre {
     border-radius: calc(var(--radius-lg) - 1px);
     margin: 0;
@@ -583,6 +593,7 @@ body {
     color: var(--status-color);
     background-color: var(--status-bg);
     border-color: var(--status-border);
+    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .http-status-btn.active {
@@ -613,6 +624,56 @@ body {
 .request-lang-btn:focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: 2px;
+}
+
+/* Card tab bar row — elevate above the code block so focus outlines are never clipped */
+.card-tab-bar {
+    position: relative;
+    z-index: 1;
+    overflow: visible;
+}
+
+/* Card tab buttons (ResponseCard, RequestBodyCard, SearchResponseCard) */
+.card-tab {
+    position: relative;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.15s ease;
+    /* suppress default browser focus ring */
+    outline: none;
+}
+
+/* bottom border on hover and focus */
+.card-tab:hover,
+.card-tab:focus {
+    border-bottom-color: #d1d5db; /* gray-300 light */
+}
+
+@media (prefers-color-scheme: dark) {
+    .card-tab:hover,
+    .card-tab:focus {
+        border-bottom-color: #52525b; /* zinc-600 dark */
+    }
+}
+
+/* active tab: bold border using current text color */
+.card-tab.active {
+    font-weight: 600;
+    border-bottom-color: currentColor;
+}
+
+.card-tab.active:hover,
+.card-tab.active:focus {
+    border-bottom-color: currentColor;
+}
+
+/* keyboard focus ring */
+.card-tab:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: 0.15em;
 }
 
 :root {
