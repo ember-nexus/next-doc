@@ -47,6 +47,12 @@ html.no-transitions * {
 
 body {
     -webkit-font-smoothing: antialiased;
+    user-select: none;
+}
+
+/* Allow Ctrl+A text selection only inside the main content area */
+main.content-grid {
+    user-select: text;
 }
 
 [x-cloak] {
