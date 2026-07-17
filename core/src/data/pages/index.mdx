@@ -27,29 +27,57 @@ Ember Nexus is [source first](https://sourcefirst.com/) and ships as a single
 Create a node — any type, any properties, no migration:
 
 ```bash
-curl -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
-  -d '{"type": "Note", "data": {"title": "Graph databases", "tags": ["db", "graph"]}}' \
+curl -X POST \
+  -H 'Authorization: Bearer $TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+         "type": "Note",
+         "data": {
+           "title": "Graph databases",
+           "tags": [
+             "db",
+             "graph"
+           ]
+         }
+       }' \
   https://api.example.com/
 ```
 
 Connect it to another element — relations are data too:
 
 ```bash
-curl -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
-  -d '{"type": "LINKS_TO", "start": "<note-uuid>", "end": "<other-uuid>"}' \
+curl -X POST \
+  -H 'Authorization: Bearer $TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+         "type": "LINKS_TO",
+         "start": "<note-uuid>",
+         "end": "<other-uuid>"
+       }' \
   https://api.example.com/
 ```
 
 Search it — full-text and graph traversal in a single request:
 
 ```bash
-curl -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+curl -X POST \
+  -H 'Authorization: Bearer $TOKEN' \
+  -H 'Content-Type: application/json' \
   -d '{
-    "steps": [
-      {"type": "elasticsearchQueryDslMixin", "query": {"match": {"title": "graph"}}},
-      {"type": "elementHydration"}
-    ]
-  }' \
+         "steps": [
+           {
+             "type": "elasticsearchQueryDslMixin",
+             "query": {
+               "match": {
+                 "title": "graph"
+               }
+             }
+           },
+           {
+             "type": "elementHydration"
+           }
+         ]
+       }' \
   https://api.example.com/search
 ```
 

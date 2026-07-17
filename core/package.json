@@ -8,7 +8,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "test:playwright": "PW_TEST_CONNECT_WS_ENDPOINT=ws://playwright-browser:3000/ yarn playwright test",
-    "test": "vitest run swagger",
+    "test": "vitest run swagger curl",
     "cs": "eslint ./src",
     "cs:fix": "eslint ./src --fix"
   },

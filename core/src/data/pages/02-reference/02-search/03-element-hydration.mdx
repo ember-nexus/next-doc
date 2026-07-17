@@ -51,10 +51,9 @@ List of hydrated elements.
 ```
 
 ```bash
-curl \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc" \
+curl -X POST \
+  -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' \
+  -H 'Content-Type: application/json' \
   -d @payload.json \
   https://api.localhost/search
 ```

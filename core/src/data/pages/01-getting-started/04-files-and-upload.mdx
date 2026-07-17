@@ -20,12 +20,11 @@ file.
 ## Uploading a file directly
 
 ```bash
-curl \
+curl -X POST \
+  -H 'Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ' \
+  -H 'Content-Disposition: inline; filename=image.jpg' \
   -v \
-  -X POST \
-  -H "Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ" \
-  -H "Content-Disposition: inline; filename=image.jpg" \
-  --data-binary "@./image.jpg" \
+  --data-binary @./image.jpg \
   http://localhost/7ac83b11-3c48-4ecd-930c-97e9dbf47ef3/file
 ```
 
@@ -42,32 +41,30 @@ Similar to the previous `POST` operation, the `PUT` upload endpoint can be used 
 endpoint does not care whether the element already has an associated file - it either writes it, or replaces it.
 
 ```bash
-curl \
+curl -X PUT \
+  -H 'Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ' \
+  -H 'Content-Disposition: inline; filename=image.jpg' \
   -v \
-  -X PUT \
-  -H "Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ" \
-  -H "Content-Disposition: inline; filename=image.jpg" \
-  --data-binary "@./image.jpg" \
+  --data-binary @./image.jpg \
   http://localhost/7ac83b11-3c48-4ecd-930c-97e9dbf47ef3/file
 ```
 
 ## Downloading a file
 
 ```bash
-curl \
+curl -X GET \
+  -H 'Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ' \
   -v \
-  -H "Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ" \
-  http://localhost/7ac83b11-3c48-4ecd-930c-97e9dbf47ef3/file \
-  -o download.jpg
+  -o download.jpg \
+  http://localhost/7ac83b11-3c48-4ecd-930c-97e9dbf47ef3/file
 ```
 
 ## Deleting a file
 
 ```bash
-curl \
+curl -X DELETE \
+  -H 'Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ' \
   -v \
-  -X DELETE \
-  -H "Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ" \
   http://localhost/7ac83b11-3c48-4ecd-930c-97e9dbf47ef3/file
 ```
 
@@ -122,14 +119,13 @@ The important detail for resumable upload creation is, that the header `Upload-C
 incomplete, thereby creating a resumable upload.
 
 ```bash
-curl \
+curl -X PUT \
+  -H 'Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ' \
+  -H 'Content-Disposition: inline; filename=image.jpg' \
+  -H 'Content-Type: image/png' \
+  -H 'Upload-Complete: ?0' \
   -v \
-  -X PUT \
-  -H "Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ" \
-  -H "Content-Disposition: inline; filename=image.jpg" \
-  -H "Content-Type: image/png" \
-  -H "Upload-Complete: ?0" \
-  --data-binary "@./image.jpg.01.part" \
+  --data-binary @./image.jpg.01.part \
   http://localhost/7ac83b11-3c48-4ecd-930c-97e9dbf47ef3/file
 ```
 
@@ -140,14 +136,13 @@ The response then contains the `location` header, which is the location of the n
 Using the location of the resumable upload object, new chunks can be uploaded using the `PATCH` operation:
 
 ```bash
-curl \
+curl -X PATCH \
+  -H 'Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ' \
+  -H 'Content-Type: application/partial-upload' \
+  -H 'Upload-Complete: ?0' \
+  -H 'Upload-Offset: 10485760' \
   -v \
-  -X PATCH \
-  -H "Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ" \
-  -H "Content-Type: application/partial-upload" \
-  -H "Upload-Offset: 10485760" \
-  -H "Upload-Complete: ?0" \
-  --data-binary "@./image.jpg.02.part" \
+  --data-binary @./image.jpg.02.part \
   http://localhost/upload/98e795bc-cbe8-49d2-a5ce-e6977b877139
 ```
 
@@ -156,10 +151,9 @@ curl \
 `HEAD` returns the current upload offset, as well as additional metadata, if available:
 
 ```bash
-curl \
+curl -X HEAD \
+  -H 'Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ' \
   -v \
-  -X HEAD \
-  -H "Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ" \
   http://localhost/upload/ec19e774-b54d-43d7-b167-e3c35441b6fa
 ```
 
@@ -170,24 +164,22 @@ To complete the resumable upload, you have to send the HTTP header `Upload-Compl
 If you 
 
 ```bash
-curl \
+curl -X PATCH \
+  -H 'Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ' \
+  -H 'Content-Type: application/partial-upload' \
+  -H 'Upload-Complete: ?1' \
+  -H 'Upload-Offset: 20971520' \
   -v \
-  -X PATCH \
-  -H "Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ" \
-  -H "Content-Type: application/partial-upload" \
-  -H "Upload-Offset: 20971520" \
-  -H "Upload-Complete: ?1" \
-  --data-binary "@./image.jpg.03.part" \
+  --data-binary @./image.jpg.03.part \
   http://localhost/upload/93c842b6-60a7-419e-aa39-17b31d504b90
 ```
 
 ### Canceling a resumable upload
 
 ```bash
-curl \
+curl -X DELETE \
+  -H 'Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ' \
   -v \
-  -X DELETE \
-  -H "Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ" \
   http://localhost/upload/93c842b6-60a7-419e-aa39-17b31d504b90
 ```
 
