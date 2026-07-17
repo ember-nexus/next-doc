@@ -16,7 +16,28 @@ import pagefind from "astro-pagefind";
 
 export default defineConfig({
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    build: {
+      rollupOptions: {
+        output: {
+          // Split the heavy Lit/G6/Vaadin dependency tree into a dedicated
+          // vendor chunk.  This chunk is only fetched on pages that actually
+          // render <g6-graph> or <json-table> (via the lazy-loader in
+          // Default.astro), and is cached across navigations separately from
+          // the small per-page JS that every page needs.
+          manualChunks(id) {
+            if (
+              id.includes('/node_modules/@antv/') ||
+              id.includes('/node_modules/lit') ||
+              id.includes('/node_modules/@lit/') ||
+              id.includes('/node_modules/@vaadin/')
+            ) {
+              return 'vendor-lit-g6';
+            }
+          },
+        },
+      },
+    },
   },
   build: {
     inlineStylesheets: 'never',

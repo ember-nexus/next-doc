@@ -85,7 +85,75 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.url.origin).href;
 </div>
 
 <script>
-    import '../component/Lit/index.ts';
+    // Lazy-load the Lit/G6 bundle only on pages that actually contain
+    // <g6-graph> or <json-table> custom elements.
+    //
+    // Strategy:
+    //   1. If neither element is present in the DOM → skip entirely (most pages).
+    //   2. If elements exist but none are visible yet → load when the browser is
+    //      idle (requestIdleCallback) so the heavy bundle doesn't compete with
+    //      first-paint rendering.
+    //   3. If an element is already in the viewport → load immediately via a
+    //      dynamic import so it upgrades as fast as possible.
+    //
+    // The same logic re-runs on Astro view-transition navigations via
+    // `astro:page-load`, which fires after the new page's DOM is ready.
+
+    const LIT_SELECTORS = 'g6-graph, json-table';
+
+    function loadLitBundle() {
+        return import('../component/Lit/index.ts');
+    }
+
+    let loaded = false;
+
+    function maybeLoad() {
+        if (loaded) return;
+
+        const elements = document.querySelectorAll(LIT_SELECTORS);
+        if (elements.length === 0) return; // This page needs no Lit components.
+
+        // Check if any element is already intersecting the viewport.
+        const anyVisible = Array.from(elements).some((el) => {
+            const rect = el.getBoundingClientRect();
+            return rect.top < window.innerHeight && rect.bottom > 0;
+        });
+
+        if (anyVisible) {
+            // Load immediately — user can already see the placeholder.
+            loaded = true;
+            loadLitBundle();
+            return;
+        }
+
+        // Elements exist but are below the fold. Load during idle time so the
+        // bundle is ready before the user scrolls to them.
+        const scheduleLoad = () => {
+            loaded = true;
+            loadLitBundle();
+        };
+
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(scheduleLoad, { timeout: 2000 });
+        } else {
+            // Safari fallback: use a short timeout.
+            setTimeout(scheduleLoad, 200);
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', maybeLoad);
+    } else {
+        maybeLoad();
+    }
+    // Re-evaluate after Astro view-transition navigations.
+    document.addEventListener('astro:page-load', () => {
+        // Reset so a new page that contains components can trigger a load.
+        // If the bundle is already downloaded it will be served from the
+        // module cache instantly — no extra network round trip.
+        loaded = false;
+        maybeLoad();
+    });
 </script>
 
 <script>
