@@ -2,35 +2,26 @@
  * Terminal example — a single card that fuses an Expressive Code command block
  * with its rendered CLI output so they look like one terminal.
  *
- * Theme handling mirrors your EC config (`themes: ['min-dark', 'min-light']`,
- * `useDarkModeMediaQuery: true`), so it switches on `prefers-color-scheme`:
- *   - light mode -> min-light  (bg #ffffff, fg #212121) + min-light's terminal ANSI colors
- *   - dark  mode -> min-dark   (bg #1f1f1f)             + the classic bright console palette
- *
- * If your site toggles dark mode via a `.dark` class *independently* of the OS
- * setting, tell me and I'll swap the media query for that selector so this stays
- * locked to the rest of the page.
+ * Theme handling mirrors the EC config (`themes: ['min-dark', 'min-light']`,
+ * `useDarkModeMediaQuery: true`), so it switches on `prefers-color-scheme`.
+ * All color values come from --c-term-* and --c-ansi-* vars defined in colors.css.
  */
 
 .terminal-example {
-    /* ---- shared shell: light mode / default = min-light ---- */
-    --term-bg:   #ffffff;   /* min-light editor.background */
-    --term-fg:   #212121;   /* min-light editor.foreground */
-    --term-line: #e5e7eb;   /* thin hairline (≈ Tailwind gray-200, like the response card) */
+    --term-bg:   var(--c-term-bg);
+    --term-fg:   var(--c-term-fg);
+    --term-line: var(--c-term-line);
     --term-pad:  0.7rem 1rem;
 
-    /* ANSI foreground palette, pulled from min-light's terminal.* colors
-       (a couple nudged to the "bright" variant for legibility on white) */
-    /* grayscale ramp, dark -> light, all readable & mutually distinct on white:
-       default text (#212121)  <  dim (#6b7280)  <  white (#b0b0b0) */
-    --ansi-dim:    #6b7280;
-    --ansi-red:    #d32f2f;
-    --ansi-green:  #77cc00;
-    --ansi-yellow: #f29718;
-    --ansi-blue:   #6871ff;
-    --ansi-purple: #9966cc;
-    --ansi-cyan:   #4dbf99;
-    --ansi-white:  #b0b0b0; /* a light gray — the lightest step, distinct from --ansi-dim and default text */
+    /* ANSI foreground palette — theme-aware via colors.css vars */
+    --ansi-dim:    var(--c-ansi-dim);
+    --ansi-red:    var(--c-ansi-red);
+    --ansi-green:  var(--c-ansi-green);
+    --ansi-yellow: var(--c-ansi-yellow);
+    --ansi-blue:   var(--c-ansi-blue);
+    --ansi-purple: var(--c-ansi-purple);
+    --ansi-cyan:   var(--c-ansi-cyan);
+    --ansi-white:  var(--c-ansi-white);
 
     display: block;
     overflow: hidden;                 /* clips inner corners flat + outer corners to the radius */
@@ -40,27 +31,6 @@
     color: var(--term-fg);
     font-size: 14px;
     line-height: 1.4;
-}
-
-@media (prefers-color-scheme: dark) {
-    .terminal-example {
-        /* ---- shared shell: dark mode = min-dark ---- */
-        --term-bg:   #1f1f1f;   /* min-dark editor.background */
-        --term-fg:   #e6e6e6;
-        --term-line: #3a3a3a;   /* light-ish hairline so the divider stays visible on the dark surface */
-
-        /* min-dark ships almost no terminal colors, so keep the proven bright
-           console palette (designed for a dark background) */
-        /* ramp on #1f1f1f: dim (#8a8a8a) < default text (#e6e6e6) < white (#ffffff) */
-        --ansi-dim:    #8a8a8a;
-        --ansi-red:    red;
-        --ansi-green:  lime;
-        --ansi-yellow: yellow;
-        --ansi-blue:   #3333ff;
-        --ansi-purple: fuchsia;
-        --ansi-cyan:   aqua;
-        --ansi-white:  #ffffff;
-    }
 }
 
 /* ---- command block (Expressive Code) ---------------------------------- */

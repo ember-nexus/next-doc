@@ -28,25 +28,27 @@ const ZOOM_RANGE: [number, number] = [0.05, 2.0]; // shared by zoomRange + manua
 
 /* ------------------------------------------------------------------ *
  *  Color scheme tokens
- *  Only the properties that should differ between light / dark live
- *  here. Add more keys as needed and reference them via `this._theme`.
+ *  Hex values mirror --c-graph-* vars in colors.css. If you change a
+ *  color here, update colors.css too (and vice-versa). The G6 API
+ *  requires resolved hex/rgba strings, so CSS vars cannot be used here
+ *  directly — the CSS file is the single source of truth for the values.
  * ------------------------------------------------------------------ */
 const THEMES: Record<Scheme, Theme> = {
   light: {
     nodeLabelFill: "#ffffff",
-    edgeStroke: "#8b949e",
-    edgeLabelFill: "#3f3f46",
-    edgeLabelBg: "rgba(255, 255, 255, 0.9)",
-    tooltipBg: "#1f2430",
-    tooltipFill: "#ffffff",
+    edgeStroke:    "#8b949e", // --c-graph-edge (light)
+    edgeLabelFill: "#3f3f46", // --c-graph-edge-label (light)       zinc-700
+    edgeLabelBg:   "rgba(255, 255, 255, 0.9)", // --c-graph-edge-label-bg (light)
+    tooltipBg:     "#1f2430", // --c-graph-tooltip-bg (light)
+    tooltipFill:   "#ffffff", // --c-graph-tooltip-fg (light)
   },
   dark: {
     nodeLabelFill: "#ffffff",
-    edgeStroke: "#6e7681",
-    edgeLabelFill: "#e6edf3",
-    edgeLabelBg: "rgba(22, 27, 34, 0.92)",
-    tooltipBg: "#0d1117",
-    tooltipFill: "#e6edf3",
+    edgeStroke:    "#6e7681", // --c-graph-edge (dark)
+    edgeLabelFill: "#e6edf3", // --c-graph-edge-label (dark)
+    edgeLabelBg:   "rgba(22, 27, 34, 0.92)", // --c-graph-edge-label-bg (dark)
+    tooltipBg:     "#0d1117", // --c-graph-tooltip-bg (dark)
+    tooltipFill:   "#e6edf3", // --c-graph-tooltip-fg (dark)
   },
 };
 
@@ -55,13 +57,13 @@ const THEMES: Record<Scheme, Theme> = {
  *
  *  In `mode="manual"` every element is muted by default, and an element
  *  with `data.hl` set adopts the matching color below. Keep these hex
- *  values in sync with the prose CSS classes (.hl-1 / .hl-2 / .hl-m) so
- *  a node and its inline reference read as "the same thing".
+ *  values in sync with:
+ *    - highlight.css  (.hl-1 / .hl-2 / .hl-m)
+ *    - colors.css     (--c-hl-graph-*-light / --c-hl-graph-*-dark)
  *
- *  Mirrors the Tailwind tokens you author with:
- *    hl-1 -> blue-600   (light)  / blue-500   (dark)
- *    hl-2 -> orange-600 (light)  / orange-500 (dark)
- *    hl-m -> zinc-700   (light)  / zinc-400   (dark)   <- muted fallback
+ *  hl-1 -> blue-600   (light)  / blue-500   (dark)   --c-hl-graph-1-*
+ *  hl-2 -> orange-600 (light)  / orange-500 (dark)   --c-hl-graph-2-*
+ *  hl-m -> zinc-700   (light)  / zinc-400   (dark)   --c-hl-graph-m-*  (muted fallback)
  *
  *  `hl` is a simple int|string key (e.g. 1, "1", 2, "m"). Unknown or
  *  absent keys fall back to muted.
@@ -69,9 +71,9 @@ const THEMES: Record<Scheme, Theme> = {
 const HL_MUTED = "m";
 
 const HIGHLIGHTS: Record<string, HlStyle> = {
-  m: { light: "#3f3f46", dark: "#a1a1aa" }, // zinc-700  / zinc-400  (muted)
-  1: { light: "#2563eb", dark: "#3b82f6" }, // blue-600  / blue-500  (hl-1)
-  2: { light: "#ea580c", dark: "#f97316" }, // orange-600 / orange-500 (hl-2)
+  m: { light: "#3f3f46", dark: "#a1a1aa" }, // --c-hl-graph-m-*  zinc-700  / zinc-400
+  1: { light: "#2563eb", dark: "#3b82f6" }, // --c-hl-graph-1-*  blue-600  / blue-500
+  2: { light: "#ea580c", dark: "#f97316" }, // --c-hl-graph-2-*  orange-600 / orange-500
 };
 
 /** Resolve an `hl` key to a fill color for the active scheme. */
@@ -96,6 +98,8 @@ function luminance(hex: string): number {
  * saturated/dark fills, near-black only on genuinely light fills (i.e.
  * the muted gray in dark mode). Threshold sits between orange-500 and
  * zinc-400 so only the light gray flips to dark text.
+ *
+ * Return values mirror --c-node-label-dark / --c-node-label-light in colors.css.
  */
 function readableOn(bg: string): string {
   return luminance(bg) > 0.34 ? "#18181b" : "#ffffff"; // zinc-900 vs white

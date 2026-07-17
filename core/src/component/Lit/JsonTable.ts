@@ -157,7 +157,7 @@ export class JsonTable extends LitElement {
            don't reveal white pixels of the cell behind them. */
     vaadin-grid::part(details-cell) {
       padding: 0;
-      background: var(--json-bg, #1e293b);
+      background: var(--json-bg, var(--c-json-bg, #1e293b));
     }
 
     .cell {
@@ -185,8 +185,8 @@ export class JsonTable extends LitElement {
       border-radius: 9999px;
       font-size: 0.72rem;
       font-weight: 600;
-      background: var(--type-badge-bg, #334155);
-      color: var(--type-badge-fg, #e2e8f0);
+      background: var(--type-badge-bg, var(--c-json-type-badge-bg, #334155));
+      color: var(--type-badge-fg, var(--c-json-type-badge-fg, #e2e8f0));
       letter-spacing: 0.03em;
       white-space: nowrap;
     }
@@ -196,7 +196,7 @@ export class JsonTable extends LitElement {
     .mono-fixed {
       font-family: "Fira Code", monospace;
       font-size: 0.72rem;
-      color: var(--id-color, #94a3b8);
+      color: var(--id-color, var(--c-json-id, #94a3b8));
       white-space: nowrap;
     }
 
@@ -207,8 +207,8 @@ export class JsonTable extends LitElement {
       width: 100%;
       box-sizing: border-box;
       border-radius: 0.5rem; /* enforced radius — tweak later if needed */
-      background: var(--json-bg, #1e293b);
-      color: var(--json-fg, #e2e8f0);
+      background: var(--json-bg, var(--c-json-bg, #1e293b));
+      color: var(--json-fg, var(--c-json-fg, #e2e8f0));
       font-size: 0.8rem;
       line-height: 1.55;
       overflow-x: auto;
@@ -216,22 +216,12 @@ export class JsonTable extends LitElement {
       tab-size: 2;
     }
 
-    /* syntax highlight tokens */
-    .json-key {
-      color: #7dd3fc;
-    }
-    .json-str {
-      color: #86efac;
-    }
-    .json-num {
-      color: #fbbf24;
-    }
-    .json-bool {
-      color: #f472b6;
-    }
-    .json-null {
-      color: #94a3b8;
-    }
+    /* syntax highlight tokens — values mirror --c-json-* in colors.css */
+    .json-key  { color: var(--c-json-key,  #7dd3fc); }  /* sky-300   */
+    .json-str  { color: var(--c-json-str,  #86efac); }  /* green-300 */
+    .json-num  { color: var(--c-json-num,  #fbbf24); }  /* amber-400 */
+    .json-bool { color: var(--c-json-bool, #f472b6); }  /* pink-400  */
+    .json-null { color: var(--c-json-null, #94a3b8); }  /* slate-400 */
   `;
 
   static properties = {
@@ -296,7 +286,7 @@ export class JsonTable extends LitElement {
 
   render() {
     if (!this._records.length) {
-      return html`<p style="color:#94a3b8;font-size:0.85rem;">No data.</p>`;
+      return html`<p style="color:var(--c-json-null,#94a3b8);font-size:0.85rem;">No data.</p>`;
     }
 
     return html`
