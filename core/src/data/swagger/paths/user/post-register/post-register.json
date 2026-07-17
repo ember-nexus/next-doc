@@ -64,7 +64,7 @@
         },
         "x-ember-nexus-har-example": {
           "method": "POST",
-          "url": "https://api.localhost/register",
+          "url": "https://api.example.com/register",
           "httpVersion": "HTTP/1.1",
           "cookies": [],
           "headers": [

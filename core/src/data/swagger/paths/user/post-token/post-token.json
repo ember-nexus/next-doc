@@ -64,7 +64,7 @@
         },
         "x-ember-nexus-har-example": {
           "method": "POST",
-          "url": "https://api.localhost/token",
+          "url": "https://api.example.com/token",
           "httpVersion": "HTTP/1.1",
           "cookies": [],
           "headers": [
