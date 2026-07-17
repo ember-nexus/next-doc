@@ -46,18 +46,18 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
 )}
 
 
-{headings.length > 0 && (
-    /* Desktop fixed TOC — pulled out of the grid so position:fixed works correctly.
-       Hidden on mobile; the overlay panel takes over there. */
-    <aside class="toc-sidebar" aria-label="Table of contents">
-        <TocNav headings={headings} />
-    </aside>
-)}
-
 <div
     id="main-content"
     class="flex min-h-screen flex-col pt-14 transition-[padding] duration-200 ease-in-out pl-0 sm:pt-16"
 >
+    {headings.length > 0 && (
+        /* Desktop fixed TOC — position:fixed takes it out of normal flow on screen,
+           so placing it inside #main-content has zero layout impact there.
+           On print (position:static) it flows naturally after the title block. */
+        <aside class="toc-sidebar" aria-label="Table of contents">
+            <TocNav headings={headings} />
+        </aside>
+    )}
     <main class="content-grid" data-pagefind-body>
         <slot />
     </main>
@@ -195,6 +195,56 @@ const { title, description = 'Ember Nexus API', version = 'latest', headings = [
         initTocClicks();
     }
     document.addEventListener('astro:page-load', initTocClicks);
+</script>
+
+<script>
+    // Print: relocate .toc-sidebar so it renders between the page title block
+    // and the main prose content.  On screen the aside is position:fixed (out of
+    // flow), so its DOM position is irrelevant.  For print (position:static) we
+    // move it programmatically just before the browser lays out the print page,
+    // then restore it afterwards so the live page is unaffected.
+
+    let tocOriginalParent: Element | null = null;
+    let tocOriginalNextSibling: Element | null = null;
+
+    function relocateTocForPrint() {
+        const toc = document.querySelector<HTMLElement>('.toc-sidebar');
+        const titleBlock = document.querySelector<HTMLElement>('.page-title-block');
+        if (!toc || !titleBlock) return;
+
+        // Record original position so we can restore after printing.
+        tocOriginalParent = toc.parentElement;
+        tocOriginalNextSibling = toc.nextElementSibling;
+
+        // Insert immediately after the title block.
+        titleBlock.after(toc);
+    }
+
+    function restoreTocAfterPrint() {
+        const toc = document.querySelector<HTMLElement>('.toc-sidebar');
+        if (!toc || !tocOriginalParent) return;
+
+        if (tocOriginalNextSibling) {
+            tocOriginalParent.insertBefore(toc, tocOriginalNextSibling);
+        } else {
+            tocOriginalParent.appendChild(toc);
+        }
+
+        tocOriginalParent = null;
+        tocOriginalNextSibling = null;
+    }
+
+    function initPrintToc() {
+        window.addEventListener('beforeprint', relocateTocForPrint);
+        window.addEventListener('afterprint',  restoreTocAfterPrint);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPrintToc);
+    } else {
+        initPrintToc();
+    }
+    document.addEventListener('astro:page-load', initPrintToc);
 </script>
 
 
