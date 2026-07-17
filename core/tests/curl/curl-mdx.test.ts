@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readdirSync, readFileSync } from "fs";
 import { join } from "path";
-import { curlfmt } from "./curl-fmt";
+import { curlfmt } from "../../src/util/curl-fmt";
 
 // ── MDX discovery ──
 

@@ -4,6 +4,7 @@ import { Icon } from 'astro-icon/components';
 import { HTTPSnippet, type HarRequest, type TargetId } from "httpsnippet";
 
 import CardTitle from "./CardTitle.astro";
+import { curlfmt } from "../util/curl-fmt";
 
 interface Props {
     request: Partial<HarRequest>;
@@ -20,10 +21,13 @@ const examples = [
     { lang: 'python', library: 'requests', astroLang: 'python', label: 'python', sublabel: 'requests' },
     { lang: 'javascript', library: 'fetch', astroLang: 'js', label: 'js', sublabel: 'fetch' },
     { lang: 'php', library: 'guzzle', astroLang: 'php', label: 'php', sublabel: 'guzzle' },
-].map(e => ({
-    ...e,
-    example: snippet.convert(e.lang as unknown as TargetId, e.library, opts) as string
-}));
+].map(e => {
+    const raw = snippet.convert(e.lang as unknown as TargetId, e.library, opts) as string;
+    const example = e.library === 'curl'
+        ? curlfmt(raw, { headerPriority: ['Authorization', 'Content-Type', 'Accept'] })
+        : raw;
+    return { ...e, example };
+});
 ---
 
 <div x-data={`{

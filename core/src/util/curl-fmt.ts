@@ -104,10 +104,46 @@ const BOOL_FLAGS = new Set([
   "-v", "--verbose", "-s", "--silent", "-S", "--show-error",
   "-k", "--insecure", "-L", "--location", "-I", "--head",
   "-f", "--fail", "--fail-with-body", "--compressed",
-  "-G", "--get", "-#", "--progress-bar", "--http1.1", "--http2",
+  "-#", "--progress-bar", "--http1.1", "--http2",
   "--http3", "-N", "--no-buffer", "--raw", "--tr-encoding",
   "--tcp-fastopen", "--tcp-nodelay",
 ]);
+
+// Canonical short-form aliases: long flag → short flag
+const FLAG_ALIASES: Record<string, string> = {
+  "--header": "-H",
+  "--data": "-d",
+  "--data-raw": "-d",
+  "--data-binary": "-d",
+  "--data-ascii": "-d",
+  "--data-urlencode": "-d",
+  "--json": "-d",
+  "--request": "-X",
+  "--verbose": "-v",
+  "--silent": "-s",
+  "--show-error": "-S",
+  "--insecure": "-k",
+  "--location": "-L",
+  "--head": "-I",
+  "--fail": "-f",
+  "--output": "-o",
+  "--user": "-u",
+  "--user-agent": "-A",
+  "--referer": "-e",
+  "--cookie": "-b",
+  "--cookie-jar": "-c",
+  "--max-time": "-m",
+  "--upload-file": "-T",
+  "--form": "-F",
+};
+
+// Method implied by boolean shorthand flags
+const METHOD_SHORTHANDS: Record<string, string> = {
+  "-G": "GET",
+  "--get": "GET",
+  "-I": "HEAD",
+  "--head": "HEAD",
+};
 
 export function parse(raw: string): ParsedCurl {
   const { curl, pipe } = splitPipe(raw);
@@ -131,7 +167,9 @@ export function parse(raw: string): ParsedCurl {
   };
 
   while (idx < tokens.length) {
-    const tok = tokens[idx];
+    const rawTok = tokens[idx];
+    // Normalize long-form aliases to their canonical short form
+    const tok = FLAG_ALIASES[rawTok] ?? rawTok;
 
     if (HEADER_FLAGS.has(tok)) {
       idx++;
@@ -149,10 +187,13 @@ export function parse(raw: string): ParsedCurl {
       }
     } else if (DATA_FLAGS.has(tok)) {
       idx++;
-      if (idx < tokens.length) result.data = { flag: tok, value: tokens[idx] };
+      if (idx < tokens.length) result.data = { flag: "-d", value: tokens[idx] };
     } else if (METHOD_FLAGS.has(tok)) {
       idx++;
       if (idx < tokens.length) result.method = tokens[idx].toUpperCase();
+    } else if (tok in METHOD_SHORTHANDS) {
+      // e.g. -G / --get sets method but is not emitted as a flag
+      result.method = METHOD_SHORTHANDS[tok];
     } else if (BOOL_FLAGS.has(tok)) {
       result.flags.push({ flag: tok });
     } else if (VALUED_FLAGS.has(tok)) {

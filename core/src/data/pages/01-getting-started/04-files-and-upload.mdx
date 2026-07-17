@@ -23,7 +23,7 @@ file.
 curl -X POST -v \
   -H 'Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ' \
   -H 'Content-Disposition: inline; filename=image.jpg' \
-  --data-binary @./image.jpg \
+  -d @./image.jpg \
   https://api.example.com/7ac83b11-3c48-4ecd-930c-97e9dbf47ef3/file
 ```
 
@@ -43,7 +43,7 @@ endpoint does not care whether the element already has an associated file - it e
 curl -X PUT -v \
   -H 'Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ' \
   -H 'Content-Disposition: inline; filename=image.jpg' \
-  --data-binary @./image.jpg \
+  -d @./image.jpg \
   https://api.example.com/7ac83b11-3c48-4ecd-930c-97e9dbf47ef3/file
 ```
 
@@ -120,7 +120,7 @@ curl -X PUT -v \
   -H 'Content-Disposition: inline; filename=image.jpg' \
   -H 'Content-Type: image/png' \
   -H 'Upload-Complete: ?0' \
-  --data-binary @./image.jpg.01.part \
+  -d @./image.jpg.01.part \
   https://api.example.com/7ac83b11-3c48-4ecd-930c-97e9dbf47ef3/file
 ```
 
@@ -136,7 +136,7 @@ curl -X PATCH -v \
   -H 'Content-Type: application/partial-upload' \
   -H 'Upload-Complete: ?0' \
   -H 'Upload-Offset: 10485760' \
-  --data-binary @./image.jpg.02.part \
+  -d @./image.jpg.02.part \
   https://api.example.com/upload/98e795bc-cbe8-49d2-a5ce-e6977b877139
 ```
 
@@ -162,7 +162,7 @@ curl -X PATCH -v \
   -H 'Content-Type: application/partial-upload' \
   -H 'Upload-Complete: ?1' \
   -H 'Upload-Offset: 20971520' \
-  --data-binary @./image.jpg.03.part \
+  -d @./image.jpg.03.part \
   https://api.example.com/upload/93c842b6-60a7-419e-aa39-17b31d504b90
 ```
 
