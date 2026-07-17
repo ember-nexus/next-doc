@@ -31,15 +31,15 @@ curl -X POST \
   -H 'Authorization: Bearer $TOKEN' \
   -H 'Content-Type: application/json' \
   -d '{
-         "type": "Note",
-         "data": {
-           "title": "Graph databases",
-           "tags": [
-             "db",
-             "graph"
-           ]
-         }
-       }' \
+        "type": "Note",
+        "data": {
+          "title": "Graph databases",
+          "tags": [
+            "db",
+            "graph"
+          ]
+        }
+      }' \
   https://api.example.com/
 ```
 
@@ -50,10 +50,10 @@ curl -X POST \
   -H 'Authorization: Bearer $TOKEN' \
   -H 'Content-Type: application/json' \
   -d '{
-         "type": "LINKS_TO",
-         "start": "<note-uuid>",
-         "end": "<other-uuid>"
-       }' \
+        "type": "LINKS_TO",
+        "start": "<note-uuid>",
+        "end": "<other-uuid>"
+      }' \
   https://api.example.com/
 ```
 
@@ -64,20 +64,20 @@ curl -X POST \
   -H 'Authorization: Bearer $TOKEN' \
   -H 'Content-Type: application/json' \
   -d '{
-         "steps": [
-           {
-             "type": "elasticsearchQueryDslMixin",
-             "query": {
-               "match": {
-                 "title": "graph"
-               }
-             }
-           },
-           {
-             "type": "elementHydration"
-           }
-         ]
-       }' \
+        "steps": [
+          {
+            "type": "elasticsearchQueryDslMixin",
+            "query": {
+              "match": {
+                "title": "graph"
+              }
+            }
+          },
+          {
+            "type": "elementHydration"
+          }
+        ]
+      }' \
   https://api.example.com/search
 ```
 

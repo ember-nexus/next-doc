@@ -93,7 +93,7 @@ describe("curl code blocks in MDX files — formatting", () => {
     it("is correctly formatted", () => {
       let formatted: string;
       try {
-        formatted = curlfmt(curlSource);
+        formatted = curlfmt(curlSource, { domainWhitelist: ["api.example.com"] });
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : String(err);
         throw new Error(

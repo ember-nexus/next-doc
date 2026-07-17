@@ -158,6 +158,19 @@ describe("format", () => {
     expect(lines[lines.length - 1].trim()).toBe("https://x.com");
   });
 
+  it("attaches -v to the first line after the method", () => {
+    const p = parse("curl -X GET -v https://x.com");
+    const out = format(p);
+    expect(out.split("\n")[0]).toMatch(/^curl -X GET -v/);
+    expect(out).not.toMatch(/^\s+-v\s*(\\)?$/m);
+  });
+
+  it("attaches -v to first line even without explicit method flag", () => {
+    const p = parse("curl -v https://x.com");
+    const out = format(p);
+    expect(out.split("\n")[0]).toMatch(/^curl -X GET -v/);
+  });
+
   it("sorts headers by priority", () => {
     const p = parse("curl -H 'X-Custom: 1' -H 'Authorization: Bearer x' https://x.com");
     const out = format(p, { headerPriority: ["Authorization", "X-Custom"] });
@@ -173,11 +186,11 @@ describe("format", () => {
     expect(out).toContain('"b": 2');
   });
 
-  it("uses 7-space indent for JSON body", () => {
+  it("uses 6-space indent for JSON body", () => {
     const p = parse(`curl -d '{"key":"val"}' https://x.com`);
     const out = format(p, { prettyJson: true });
     const jsonLine = out.split("\n").find((l) => l.includes('"key"'));
-    expect(jsonLine).toMatch(/^ {7,}/); // at least 7 leading spaces
+    expect(jsonLine).toMatch(/^ {6}/); // exactly 6 leading spaces
   });
 
   it("keeps JSON body as-is when prettyJson is false", () => {

@@ -22,11 +22,11 @@ You must choose the password - this will be your account's password going forwar
 curl -X POST \
   -H 'Content-Type: application/json' \
   -d '{
-         "type": "User",
-         "password": "superSecurePassword",
-         "uniqueUserIdentifier": "your-email-address@example.com"
-       }' \
-  https://api.localhost/register
+        "type": "User",
+        "password": "superSecurePassword",
+        "uniqueUserIdentifier": "your-email-address@example.com"
+      }' \
+  https://api.example.com/register
 ```
 
 The request should not return anything, unless an error happened.
@@ -39,11 +39,11 @@ Then create a new API token, which is later included in all following requests:
 curl -X POST \
   -H 'Content-Type: application/json' \
   -d '{
-         "type": "Token",
-         "uniqueUserIdentifier": "your-email-address@example.com",
-         "password": "superSecurePassword"
-       }' \
-  https://api.localhost/token
+        "type": "Token",
+        "uniqueUserIdentifier": "your-email-address@example.com",
+        "password": "superSecurePassword"
+      }' \
+  https://api.example.com/token
   | jq
 ```
 
@@ -90,17 +90,16 @@ In Ember Nexus you have two options for creating a new element:
 As we do not yet have a top level element, we create one first:
 
 ```bash
-curl -X POST \
+curl -X POST -v \
   -H 'Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP' \
   -H 'Content-Type: application/json' \
-  -v \
   -d '{
-         "type": "Data",
-         "data": {
-           "hello": "world :D"
-         }
-       }' \
-  https://api.localhost/
+        "type": "Data",
+        "data": {
+          "hello": "world :D"
+        }
+      }' \
+  https://api.example.com/
 ```
 
 Which will return a response like this:
@@ -130,7 +129,7 @@ The just created element can be retrieved in a single API call using `GET`:
 ```bash
 curl -X GET \
   -H 'Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP' \
-  https://api.localhost/4030e226-086d-41c8-95dd-b4080af9d883
+  https://api.example.com/4030e226-086d-41c8-95dd-b4080af9d883
   | jq
 ```
 
@@ -159,9 +158,9 @@ curl -X PATCH \
   -H 'Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP' \
   -H 'Content-Type: application/json' \
   -d '{
-         "hello": "sea :]"
-       }' \
-  https://api.localhost/4030e226-086d-41c8-95dd-b4080af9d883
+        "hello": "sea :]"
+      }' \
+  https://api.example.com/4030e226-086d-41c8-95dd-b4080af9d883
 ```
 
 After execution, you can read the new data object back:
@@ -169,7 +168,7 @@ After execution, you can read the new data object back:
 ```bash
 curl -X GET \
   -H 'Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP' \
-  https://api.localhost/4030e226-086d-41c8-95dd-b4080af9d883
+  https://api.example.com/4030e226-086d-41c8-95dd-b4080af9d883
   | jq
 ```
 
@@ -196,9 +195,9 @@ curl -X PUT \
   -H 'Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP' \
   -H 'Content-Type: application/json' \
   -d '{
-         "hi": "world :D"
-       }' \
-  https://api.localhost/4030e226-086d-41c8-95dd-b4080af9d883
+        "hi": "world :D"
+      }' \
+  https://api.example.com/4030e226-086d-41c8-95dd-b4080af9d883
 ```
 
 After executing, you can then again query the current representation of the element:
@@ -206,7 +205,7 @@ After executing, you can then again query the current representation of the elem
 ```bash
 curl -X GET \
   -H 'Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP' \
-  https://api.localhost/4030e226-086d-41c8-95dd-b4080af9d883
+  https://api.example.com/4030e226-086d-41c8-95dd-b4080af9d883
   | jq
 ```
 
@@ -233,7 +232,7 @@ Once you no longer need an element, you can delete it using the `DELETE` method:
 ```bash
 curl -X DELETE \
   -H 'Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP' \
-  https://api.localhost/4030e226-086d-41c8-95dd-b4080af9d883
+  https://api.example.com/4030e226-086d-41c8-95dd-b4080af9d883
 ```
 
 When you now query the API for the deleted element, you will receive an 404 element not found problem response:
@@ -241,7 +240,7 @@ When you now query the API for the deleted element, you will receive an 404 elem
 ```bash
 curl -X GET \
   -H 'Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP' \
-  https://api.localhost/4030e226-086d-41c8-95dd-b4080af9d883
+  https://api.example.com/4030e226-086d-41c8-95dd-b4080af9d883
   | jq
 ```
 
@@ -263,17 +262,16 @@ In general the interactions with relations is the same as with nodes - you only 
 Before we can create such a relation, we need to create two nodes first:
 
 ```bash
-curl -X POST \
+curl -X POST -v \
   -H 'Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP' \
   -H 'Content-Type: application/json' \
-  -v \
   -d '{
-         "type": "Data",
-         "data": {
-           "name": "start node"
-         }
-       }' \
-  https://api.localhost/
+        "type": "Data",
+        "data": {
+          "name": "start node"
+        }
+      }' \
+  https://api.example.com/
 ```
 
 ```txt
@@ -283,17 +281,16 @@ curl -X POST \
 And the second node:
 
 ```bash
-curl -X POST \
+curl -X POST -v \
   -H 'Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP' \
   -H 'Content-Type: application/json' \
-  -v \
   -d '{
-         "type": "Data",
-         "data": {
-           "name": "end node"
-         }
-       }' \
-  https://api.localhost/
+        "type": "Data",
+        "data": {
+          "name": "end node"
+        }
+      }' \
+  https://api.example.com/
 ```
 
 ```txt
@@ -303,19 +300,18 @@ curl -X POST \
 Then you can create the relation:
 
 ```bash
-curl -X POST \
+curl -X POST -v \
   -H 'Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP' \
   -H 'Content-Type: application/json' \
-  -v \
   -d '{
-         "type": "RELATION",
-         "start": "baa03f88-6e1c-4185-9520-c020a61b4214",
-         "end": "354f204b-bdba-473a-a55b-ae7df36f3b9a",
-         "data": {
-           "name": "relation"
-         }
-       }' \
-  https://api.localhost/
+        "type": "RELATION",
+        "start": "baa03f88-6e1c-4185-9520-c020a61b4214",
+        "end": "354f204b-bdba-473a-a55b-ae7df36f3b9a",
+        "data": {
+          "name": "relation"
+        }
+      }' \
+  https://api.example.com/
 ```
 
 ```txt
@@ -327,7 +323,7 @@ Finally, you can retrieve the relation's representation using the already explai
 ```bash
 curl -X GET \
   -H 'Authorization: Bearer secret-token:4pKMAMcI0LlGBuqZDKQEUP' \
-  https://api.localhost/74c7f6a9-1439-4252-8ca0-4ec4e5f36029
+  https://api.example.com/74c7f6a9-1439-4252-8ca0-4ec4e5f36029
   | jq
 ```
 

@@ -228,8 +228,16 @@ function tryPrettyJson(str: string): { text: string; isJson: boolean } {
 export function format(parsed: ParsedCurl, opts: FormatOptions = {}): string {
   const { headerPriority = [], prettyJson = true } = opts;
 
-  const lines: string[] = [];
-  lines.push(`curl -X ${parsed.method}`);
+  // Check if -v / --verbose is present as a flag
+  const verboseFlags = new Set(["-v", "--verbose"]);
+  const hasVerbose = parsed.flags.some((f) => verboseFlags.has(f.flag));
+  const nonVerboseFlags = parsed.flags.filter((f) => !verboseFlags.has(f.flag));
+
+  // First line: curl -X METHOD, with -v appended if present
+  const firstLine = hasVerbose
+    ? `curl -X ${parsed.method} -v`
+    : `curl -X ${parsed.method}`;
+  const lines: string[] = [firstLine];
 
   // sort headers
   const prioMap: Record<string, number> = {};
@@ -246,7 +254,7 @@ export function format(parsed: ParsedCurl, opts: FormatOptions = {}): string {
     lines.push(`  -H ${shellQuote(`${h.name}: ${h.value}`)}`);
   }
 
-  for (const f of parsed.flags) {
+  for (const f of nonVerboseFlags) {
     lines.push(f.value !== undefined ? `  ${f.flag} ${shellQuote(f.value)}` : `  ${f.flag}`);
   }
 
@@ -259,7 +267,7 @@ export function format(parsed: ParsedCurl, opts: FormatOptions = {}): string {
     if (isJson && text.includes("\n")) {
       const jsonLines = text.split("\n");
       const inner = jsonLines.slice(1, -1);
-      const indent = "       "; // 7 spaces
+      const indent = "      "; // 6 spaces (2 indent + len("-d '{")==4... = 2+4=6)
       const block =
         `  ${flag} '{` +
         "\n" +
