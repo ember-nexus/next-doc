@@ -2,8 +2,23 @@
   "openapi": "3.1.1",
   "info": {
     "title": "Ember Nexus API",
-    "version": "0.1.31"
+    "description": "Knowledge graph API with advanced search capabilities.",
+    "version": "0.1.31",
+    "license": {
+      "name": "Source First License 1.1",
+      "url": "https://github.com/ember-nexus/api/blob/main/LICENSE"
+    },
+    "contact": {
+      "name": "GitHub issues",
+      "url": "https://github.com/ember-nexus/api/issues"
+    }
   },
+  "servers": [
+    {
+      "url": "https://reference-dataset.ember-nexus.dev/",
+      "description": "Demo API instance running the reference dataset backup."
+    }
+  ],
   "components": {
     "securitySchemes": {
       "BearerAuth": {

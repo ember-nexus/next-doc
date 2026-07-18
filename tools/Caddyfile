@@ -1,7 +1,33 @@
 :80 {
-    root * /srv
-    encode zstd gzip
-    file_server
-    try_files {path} {path}/index.html /404.html
-    header /_astro/* Cache-Control "public, max-age=31536000, immutable"
+	root * /srv
+	file_server
+	try_files {path} {path}/index.html
+
+	encode {
+		zstd better
+		gzip 6
+		minimum_length 256
+	}
+
+	header /_astro/* Cache-Control "public, max-age=31536000, immutable"
+	header /fonts/* Cache-Control "public, max-age=31536000, immutable"
+	header /pagefind/pagefind-*.* Cache-Control "public, max-age=31536000, immutable"
+	header /pagefind/* ?Cache-Control "public, max-age=3600"
+	header /open-graph/* ?Cache-Control "public, max-age=604800"
+	header /*.ico ?Cache-Control "public, max-age=604800"
+	header /*.png ?Cache-Control "public, max-age=604800"
+	header /*.svg ?Cache-Control "public, max-age=604800"
+	header /*.webmanifest ?Cache-Control "public, max-age=604800"
+
+	header {
+		?Cache-Control "public, max-age=0, must-revalidate"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	handle_errors 404 {
+		rewrite * /404.html
+		file_server
+	}
 }

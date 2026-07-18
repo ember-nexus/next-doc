@@ -28,4 +28,4 @@ tasks:
 
   swagger:generate:
     cmds:
-      - find ./core/src/data/swagger -name '*.json' -print0 | xargs -0 jq -s 'reduce .[1:][] as $x (.[0]; . * $x)' > ./core/src/data/swagger.json
+      - find ./core/src/data/swagger -name '*.json' -print0 | sort -z | xargs -0 jq -s 'reduce .[1:][] as $x (.[0]; . * $x)' > ./core/src/data/swagger.json

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "colors.css";
 @import "grid.css";
 @import "highlight.css";
 @import "terminal-example.css";
@@ -7,15 +8,9 @@
 
 
 @theme {
-    --color-hairline: #e3e3e0;
-    /* Single source of truth for keyboard-focus ring color (orange-500). */
-    --color-focus: #f97316;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --color-hairline: #2a2a2a;
-    }
+    /* Bridge color tokens into Tailwind's --color-* namespace. */
+    --color-hairline: var(--c-hairline, #e3e3e0);
+    --color-focus:    var(--c-focus, #f97316);
 }
 
 :root {
@@ -139,14 +134,14 @@ main.content-grid {
     .expressive-code figure {
         box-shadow: none !important;
         pre {
-            background: #fafafa;
+            background: var(--c-code-block-bg);
         }
     }
 
     .expressive-code + .expressive-code {
         margin-block-start: calc(-1 * var(--prose-gap, 1rem)) !important;
         figure {
-            border-top: 1px solid #e5e7eb;
+            border-top: 1px solid var(--c-code-stack-border);
             border-top-left-radius: 0 !important;
             border-top-right-radius: 0 !important;
             pre {
@@ -168,7 +163,7 @@ main.content-grid {
     }
 
     a {
-        color: var(--color-blue-700);
+        color: var(--c-link);
         display: inline;
         text-decoration: underline;
         text-underline-offset: 0.2em;
@@ -180,8 +175,8 @@ main.content-grid {
         -moz-osx-font-smoothing: grayscale;
     }
     a:hover {
-        color: var(--color-violet-600);
-        text-decoration-color: var(--color-violet-600);
+        color: var(--c-link-hover);
+        text-decoration-color: var(--c-link-hover);
     }
     a:focus-visible {
         outline: 2px solid var(--color-focus);
@@ -217,35 +212,15 @@ main.content-grid {
 }
 
 
-@media (prefers-color-scheme: dark) {
-    .prose {
-        .expressive-code figure {
-            pre {
-                background: #18181b;
-            }
-        }
-
-        .expressive-code + .expressive-code {
-            figure {
-                border-top: 1px solid #27272a;
-            }
-        }
-    }
-}
+/* Dark-mode prose code colors are handled via --c-* vars set in colors.css */
 
 /* Shared card shell: white/black surface with hairline border and subtle shadow.
    Combine with Tailwind utilities for layout specifics (divide-y, overflow-hidden, etc.) */
 .api-card {
-    background-color: white;
+    background-color: var(--c-surface);
     border: 1px solid var(--color-hairline);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-xs);
-}
-
-@media (prefers-color-scheme: dark) {
-    .api-card {
-        background-color: black;
-    }
 }
 
 .api-block-title {
@@ -329,7 +304,7 @@ main.content-grid {
 
 @media (prefers-color-scheme: dark) {
     .api-block-title {
-        color: #9ca3af;
+        color: var(--c-text-muted);
     }
 }
 
@@ -449,7 +424,7 @@ main.content-grid {
         padding: 0.5rem 0 0.75rem 0;
         border-left: none;
         font-size: 0.8rem;
-        color: #52525b; /* zinc-600 */
+        color: var(--c-print-toc-text);
     }
 
     /* "Contents" heading injected via pseudo-element — no HTML change needed */
@@ -461,7 +436,7 @@ main.content-grid {
         font-weight: normal;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: #a1a1aa; /* zinc-400 */
+        color: var(--c-print-toc-label);
         margin-bottom: 0.4rem;
     }
 
@@ -495,12 +470,12 @@ main.content-grid {
     .toc-sidebar .toc-nav li[data-depth="3"] > a::before { content: ". . "; }
     .toc-sidebar .toc-nav a::before {
         display: inline;
-        color: #a1a1aa; /* zinc-400 — muted, secondary */
+        color: var(--c-print-toc-label);
     }
 
     /* Thin rule separating the TOC from the content below */
     .toc-sidebar .toc-nav {
-        border-bottom: 1px solid #e4e4e7; /* zinc-200 */
+        border-bottom: 1px solid var(--c-print-toc-rule);
         padding-bottom: 0.5rem;
         margin-bottom: 0.25rem;
     }
@@ -567,7 +542,7 @@ main.content-grid {
         box-shadow: none !important;
     }
     .expressive-code figure {
-        border-left: 2px solid #e5e7eb !important;
+        border-left: 2px solid var(--c-print-code-accent) !important;
     }
 }
 
@@ -596,169 +571,90 @@ main.content-grid {
 }
 
 
-/* Base vars per status class */
+/* ── Status family: bridge component-scoped vars to the global palette ── */
+/* All color values live in colors.css; these classes just plumb them in.  */
+
 .http-status-2xx {
-    --status-color: #166534;
-    --status-bg: #dcfce7;
-    --status-border: #86efac;
-    --status-active-bg: #16a34a;
-    --status-active-color: #ffffff;
-    --status-active-border: #15803d;
+    --status-color:         var(--c-status-2xx-fg);
+    --status-bg:            var(--c-status-2xx-bg);
+    --status-border:        var(--c-status-2xx-border);
+    --status-active-bg:     var(--c-status-2xx-active);
+    --status-active-color:  #ffffff;
+    --status-active-border: var(--c-status-2xx-active-border);
 }
 
 .http-status-3xx {
-    --status-color: #1e40af;
-    --status-bg: #dbeafe;
-    --status-border: #93c5fd;
-    --status-active-bg: #2563eb;
-    --status-active-color: #ffffff;
-    --status-active-border: #1d4ed8;
+    --status-color:         var(--c-status-3xx-fg);
+    --status-bg:            var(--c-status-3xx-bg);
+    --status-border:        var(--c-status-3xx-border);
+    --status-active-bg:     var(--c-status-3xx-active);
+    --status-active-color:  #ffffff;
+    --status-active-border: var(--c-status-3xx-active-border);
 }
 
 .http-status-4xx {
-    --status-color: #9a3412;
-    --status-bg: #fee2e2;
-    --status-border: #fca5a5;
-    --status-active-bg: #dc2626;
-    --status-active-color: #ffffff;
-    --status-active-border: #b91c1c;
+    --status-color:         var(--c-status-4xx-fg);
+    --status-bg:            var(--c-status-4xx-bg);
+    --status-border:        var(--c-status-4xx-border);
+    --status-active-bg:     var(--c-status-4xx-active);
+    --status-active-color:  #ffffff;
+    --status-active-border: var(--c-status-4xx-active-border);
 }
 
 .http-status-5xx {
-    --status-color: #6b21a8;
-    --status-bg: #f3e8ff;
-    --status-border: #d8b4fe;
-    --status-active-bg: #9333ea;
-    --status-active-color: #ffffff;
-    --status-active-border: #7e22ce;
+    --status-color:         var(--c-status-5xx-fg);
+    --status-bg:            var(--c-status-5xx-bg);
+    --status-border:        var(--c-status-5xx-border);
+    --status-active-bg:     var(--c-status-5xx-active);
+    --status-active-color:  #ffffff;
+    --status-active-border: var(--c-status-5xx-active-border);
 }
 
 .http-status-other {
-    --status-color: #374151;
-    --status-bg: #f3f4f6;
-    --status-border: #d1d5db;
-    --status-active-bg: #4b5563;
-    --status-active-color: #ffffff;
-    --status-active-border: #374151;
+    --status-color:         var(--c-status-other-fg);
+    --status-bg:            var(--c-status-other-bg);
+    --status-border:        var(--c-status-other-border);
+    --status-active-bg:     var(--c-status-other-active);
+    --status-active-color:  #ffffff;
+    --status-active-border: var(--c-status-other-active-border);
 }
 
+/* ── Request language tabs: bridge to palette ─────────────────────────── */
+
 .request-lang-shell {
-    --lang-color: #374151;
-    --lang-bg: #f3f4f6;
-    --lang-border: #d1d5db;
-    --lang-active-bg: #4b5563;
-    --lang-active-color: #ffffff;
-    --lang-active-border: #374151;
+    --lang-color:           var(--c-lang-shell-fg);
+    --lang-bg:              var(--c-lang-shell-bg);
+    --lang-border:          var(--c-lang-shell-border);
+    --lang-active-bg:       var(--c-lang-shell-active);
+    --lang-active-color:    #ffffff;
+    --lang-active-border:   var(--c-lang-shell-active-border);
 }
 
 .request-lang-python {
-    --lang-color: #1e40af;
-    --lang-bg: #dbeafe;
-    --lang-border: #93c5fd;
-    --lang-active-bg: #2563eb;
-    --lang-active-color: #ffffff;
-    --lang-active-border: #1d4ed8;
+    --lang-color:           var(--c-lang-python-fg);
+    --lang-bg:              var(--c-lang-python-bg);
+    --lang-border:          var(--c-lang-python-border);
+    --lang-active-bg:       var(--c-lang-python-active);
+    --lang-active-color:    #ffffff;
+    --lang-active-border:   var(--c-lang-python-active-border);
 }
 
 .request-lang-js {
-    --lang-color: #854d0e;
-    --lang-bg: #fef9c3;
-    --lang-border: #fde047;
-    --lang-active-bg: #ca8a04;
-    --lang-active-color: #ffffff;
-    --lang-active-border: #a16207;
+    --lang-color:           var(--c-lang-js-fg);
+    --lang-bg:              var(--c-lang-js-bg);
+    --lang-border:          var(--c-lang-js-border);
+    --lang-active-bg:       var(--c-lang-js-active);
+    --lang-active-color:    #ffffff;
+    --lang-active-border:   var(--c-lang-js-active-border);
 }
 
 .request-lang-php {
-    --lang-color: #6b21a8;
-    --lang-bg: #f3e8ff;
-    --lang-border: #d8b4fe;
-    --lang-active-bg: #9333ea;
-    --lang-active-color: #ffffff;
-    --lang-active-border: #7e22ce;
-}
-
-@media (prefers-color-scheme: dark) {
-    .http-status-2xx {
-        --status-color: #86efac;
-        --status-bg: #052e16;
-        --status-border: #166534;
-        --status-active-bg: #16a34a;
-        --status-active-color: #ffffff;
-        --status-active-border: #15803d;
-    }
-
-    .http-status-3xx {
-        --status-color: #93c5fd;
-        --status-bg: #0f1e3d;
-        --status-border: #1e40af;
-        --status-active-bg: #2563eb;
-        --status-active-color: #ffffff;
-        --status-active-border: #1d4ed8;
-    }
-
-    .http-status-4xx {
-        --status-color: #fca5a5;
-        --status-bg: #2d0a0a;
-        --status-border: #9a3412;
-        --status-active-bg: #dc2626;
-        --status-active-color: #ffffff;
-        --status-active-border: #b91c1c;
-    }
-
-    .http-status-5xx {
-        --status-color: #d8b4fe;
-        --status-bg: #1e0a2e;
-        --status-border: #6b21a8;
-        --status-active-bg: #9333ea;
-        --status-active-color: #ffffff;
-        --status-active-border: #7e22ce;
-    }
-
-    .http-status-other {
-        --status-color: #d4d4d8;
-        --status-bg: #27272a;
-        --status-border: #3f3f46;
-        --status-active-bg: #52525b;
-        --status-active-color: #ffffff;
-        --status-active-border: #71717a;
-    }
-
-    .request-lang-shell {
-        --lang-color: #d4d4d8;
-        --lang-bg: #27272a;
-        --lang-border: #3f3f46;
-        --lang-active-bg: #52525b;
-        --lang-active-color: #ffffff;
-        --lang-active-border: #71717a;
-    }
-
-    .request-lang-python {
-        --lang-color: #93c5fd;
-        --lang-bg: #0f1e3d;
-        --lang-border: #1e40af;
-        --lang-active-bg: #2563eb;
-        --lang-active-color: #ffffff;
-        --lang-active-border: #1d4ed8;
-    }
-
-    .request-lang-js {
-        --lang-color: #fde047;
-        --lang-bg: #1a1500;
-        --lang-border: #854d0e;
-        --lang-active-bg: #ca8a04;
-        --lang-active-color: #ffffff;
-        --lang-active-border: #a16207;
-    }
-
-    .request-lang-php {
-        --lang-color: #d8b4fe;
-        --lang-bg: #1e0a2e;
-        --lang-border: #6b21a8;
-        --lang-active-bg: #9333ea;
-        --lang-active-color: #ffffff;
-        --lang-active-border: #7e22ce;
-    }
+    --lang-color:           var(--c-lang-php-fg);
+    --lang-bg:              var(--c-lang-php-bg);
+    --lang-border:          var(--c-lang-php-border);
+    --lang-active-bg:       var(--c-lang-php-active);
+    --lang-active-color:    #ffffff;
+    --lang-active-border:   var(--c-lang-php-active-border);
 }
 
 /* Apply vars to the button */
@@ -821,14 +717,7 @@ main.content-grid {
 /* bottom border on hover and focus */
 .card-tab:hover,
 .card-tab:focus {
-    border-bottom-color: #d1d5db; /* gray-300 light */
-}
-
-@media (prefers-color-scheme: dark) {
-    .card-tab:hover,
-    .card-tab:focus {
-        border-bottom-color: #52525b; /* zinc-600 dark */
-    }
+    border-bottom-color: var(--c-tab-hover-border);
 }
 
 /* active tab: bold border using current text color */
@@ -849,28 +738,12 @@ main.content-grid {
     border-radius: 0.15em;
 }
 
-:root {
-    --method-get:    #0074E4;
-    --method-post:   #4CAF50;
-    --method-put:    #FFA726;
-    --method-patch:  #FFA726;
-    --method-delete: #E9685F;
-    --method-head:   #7E57C2;
-}
-
-:root[data-theme="light"] {
-    --method-get:    #0074E4;
-    --method-post:   #379C3D;
-    --method-put:    #C07900;
-    --method-patch:  #C07900;
-    --method-delete: #DE5E56;
-    --method-head:   #7E57C2;
-}
+/* --method-* aliases are defined in colors.css via --c-method-* */
 
 code:not(pre > code) {
     padding: 0.25em;
     border-radius: 0.5em;
-    background-color: #f4f4f5;
+    background-color: var(--c-code-bg);
 }
 
 code span[data-method] {
@@ -881,85 +754,27 @@ code span[data-method] {
     margin-right: -0.25em;
 }
 
-@media (prefers-color-scheme: dark) {
-    code:not(pre > code) {
-        background-color: #27272a;
-    }
-}
+/* Dark-mode inline code bg is handled via --c-code-bg set in colors.css */
 
-code[data-method="GET"],
-code span[data-method="GET"] {
-    color: var(--method-get);
-    background-color: color-mix(in srgb, var(--method-get) 10%, white);
-}
+/* Method badge colors — use color-mix() so a single base color works for both modes.
+   The surface variable (--c-surface) is white in light, black in dark, giving a
+   subtle tinted background while the text color stays the full method hue.
+   Dark mode uses 20% to compensate for the near-black surface. */
 
-code[data-method="POST"],
-code span[data-method="POST"] {
-    color: var(--method-post);
-    background-color: color-mix(in srgb, var(--method-post) 10%, white);
-}
-
-code[data-method="PUT"],
-code span[data-method="PUT"] {
-    color: var(--method-put);
-    background-color: color-mix(in srgb, var(--method-put) 10%, white);
-}
-
-code[data-method="PATCH"],
-code span[data-method="PATCH"] {
-    color: var(--method-patch);
-    background-color: color-mix(in srgb, var(--method-patch) 10%, white);
-}
-
-code[data-method="DELETE"],
-code span[data-method="DELETE"] {
-    color: var(--method-delete);
-    background-color: color-mix(in srgb, var(--method-delete) 10%, white);
-}
-
-code[data-method="HEAD"],
-code span[data-method="HEAD"] {
-    color: var(--method-head);
-    background-color: color-mix(in srgb, var(--method-head) 10%, white);
-}
+code[data-method="GET"],    code span[data-method="GET"]    { color: var(--c-method-get);    background-color: color-mix(in srgb, var(--c-method-get)    10%, var(--c-surface)); }
+code[data-method="POST"],   code span[data-method="POST"]   { color: var(--c-method-post);   background-color: color-mix(in srgb, var(--c-method-post)   10%, var(--c-surface)); }
+code[data-method="PUT"],    code span[data-method="PUT"]    { color: var(--c-method-put);    background-color: color-mix(in srgb, var(--c-method-put)    10%, var(--c-surface)); }
+code[data-method="PATCH"],  code span[data-method="PATCH"]  { color: var(--c-method-patch);  background-color: color-mix(in srgb, var(--c-method-patch)  10%, var(--c-surface)); }
+code[data-method="DELETE"], code span[data-method="DELETE"] { color: var(--c-method-delete); background-color: color-mix(in srgb, var(--c-method-delete) 10%, var(--c-surface)); }
+code[data-method="HEAD"],   code span[data-method="HEAD"]   { color: var(--c-method-head);   background-color: color-mix(in srgb, var(--c-method-head)   10%, var(--c-surface)); }
 
 @media (prefers-color-scheme: dark) {
-
-    code[data-method="GET"],
-    code span[data-method="GET"] {
-        color: var(--method-get);
-        background-color: color-mix(in srgb, var(--method-get) 10%, #18181b);
-    }
-
-    code[data-method="POST"],
-    code span[data-method="POST"] {
-        color: var(--method-post);
-        background-color: color-mix(in srgb, var(--method-post) 10%, #18181b);
-    }
-
-    code[data-method="PUT"],
-    code span[data-method="PUT"] {
-        color: var(--method-put);
-        background-color: color-mix(in srgb, var(--method-put) 10%, #18181b);
-    }
-
-    code[data-method="PATCH"],
-    code span[data-method="PATCH"] {
-        color: var(--method-patch);
-        background-color: color-mix(in srgb, var(--method-patch) 10%, #18181b);
-    }
-
-    code[data-method="DELETE"],
-    code span[data-method="DELETE"] {
-        color: var(--method-delete);
-        background-color: color-mix(in srgb, var(--method-delete) 10%, #18181b);
-    }
-
-    code[data-method="HEAD"],
-    code span[data-method="HEAD"] {
-        color: var(--method-head);
-        background-color: color-mix(in srgb, var(--method-head) 10%, #18181b);
-    }
+    code[data-method="GET"],    code span[data-method="GET"]    { background-color: color-mix(in srgb, var(--c-method-get)    20%, var(--c-surface)); }
+    code[data-method="POST"],   code span[data-method="POST"]   { background-color: color-mix(in srgb, var(--c-method-post)   20%, var(--c-surface)); }
+    code[data-method="PUT"],    code span[data-method="PUT"]    { background-color: color-mix(in srgb, var(--c-method-put)    20%, var(--c-surface)); }
+    code[data-method="PATCH"],  code span[data-method="PATCH"]  { background-color: color-mix(in srgb, var(--c-method-patch)  20%, var(--c-surface)); }
+    code[data-method="DELETE"], code span[data-method="DELETE"] { background-color: color-mix(in srgb, var(--c-method-delete) 20%, var(--c-surface)); }
+    code[data-method="HEAD"],   code span[data-method="HEAD"]   { background-color: color-mix(in srgb, var(--c-method-head)   20%, var(--c-surface)); }
 }
 
 /* ─── Desktop search modal ──────────────────────────────────────────────────── */
@@ -975,7 +790,7 @@ code span[data-method="HEAD"] {
 .ds-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.55);
+    background: var(--c-search-backdrop);
 }
 
 /* Floating panel: top-center, grows downward — no overflow so outlines are never clipped */
@@ -1026,9 +841,9 @@ code span[data-method="HEAD"] {
     flex: 1;
     min-width: 0;
     display: block;
-    background: white;
+    background: var(--c-search-island);
     border-radius: 10px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 32px var(--c-search-island-shadow);
 }
 
 /* Clear button: desktop layout — fill height, flush to inline-end */
@@ -1069,16 +884,16 @@ code span[data-method="HEAD"] {
     flex-shrink: 0;
     align-self: stretch;
     width: var(--ds-input-height, 56px);
-    background: white;
+    background: var(--c-search-island);
     border-radius: 10px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 32px var(--c-search-island-shadow);
     border: none;
     cursor: pointer;
-    color: #374151;
+    color: var(--c-search-close-fg);
     transition: background 0.15s;
 }
 .ds-close:hover {
-    background: #f3f4f6;
+    background: var(--c-search-close-hover);
 }
 .ds-close:focus-visible {
     outline: 2px solid var(--color-focus);
@@ -1099,7 +914,7 @@ code span[data-method="HEAD"] {
 /* Give each result card island styling */
 :is(*, #\#):is(*, #\#):is(*, #\#) .ds-results .pf-result-card {
     border-radius: 10px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 4px 16px var(--c-search-result-shadow);
     border: none;
 }
 
@@ -1107,27 +922,19 @@ code span[data-method="HEAD"] {
 :is(*, #\#):is(*, #\#):is(*, #\#) .ds-results .pf-result-card:has(.pf-result-link:focus-visible) {
     outline: 2px solid var(--color-focus);
     outline-offset: 3px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 4px 16px var(--c-search-result-shadow);
 }
 
+/* Dark-mode search: --c-search-* vars set in colors.css handle islands/shadows.
+   Pagefind-specific vars still need explicit dark overrides here. */
 @media (prefers-color-scheme: dark) {
     .ds-input {
-        background: #18181b;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
         --pf-text: #e4e4e7;
         --pf-text-muted: #71717a;
     }
-    .ds-close {
-        background: #18181b;
-        color: #e4e4e7;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-    }
-    .ds-close:hover {
-        background: #27272a;
-    }
     .ds-results {
         --pf-text: #e4e4e7;
-        --pf-background: #18181b;
+        --pf-background: var(--c-search-island);
         --pf-border: transparent;
         --pf-border-focus: #3f3f46;
         --pf-hover: #27272a;
@@ -1137,8 +944,7 @@ code span[data-method="HEAD"] {
         --pf-text-muted: #71717a;
     }
     :is(*, #\#):is(*, #\#):is(*, #\#) .ds-results .pf-result-card {
-        background: #18181b;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+        background: var(--c-search-island);
     }
 }
 

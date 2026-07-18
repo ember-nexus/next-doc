@@ -3,7 +3,7 @@
     "/": {
       "post": {
         "responses": {
-          "204": {
+          "201": {
             "description": "Element was created successfully.",
             "headers": {
               "Access-Control-Allow-Headers": {

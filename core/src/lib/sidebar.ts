@@ -143,7 +143,7 @@ async function pagesSection(): Promise<SidebarItem[]> {
   // The "index" entry maps to the root "/" path and is handled specially by
   // the catch-all route (slug === undefined -> "/"). Prepend it as a standalone
   // link at the very top of the sidebar so it appears before any section groups.
-  const indexEntry = allEntries.find((e) => e.id === "index");
+  const indexEntry = allEntries.find((e) => e.id === "index" && !e.data.hidden);
   if (indexEntry) {
     result.push({
       type: "link",
@@ -159,7 +159,7 @@ async function pagesSection(): Promise<SidebarItem[]> {
 
   for (const { key, label } of sectionDefs) {
     const sectionEntries: InternalEntry[] = allEntries
-      .filter((e) => e.id.startsWith(`${key}/`))
+      .filter((e) => e.id.startsWith(`${key}/`) && !e.data.hidden)
       .map((e) => ({
         shortId: e.id.slice(key.length + 1), // strip leading "01-getting-started/"
         name: e.data.name ?? e.data.title,

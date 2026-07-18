@@ -43,25 +43,29 @@ The `element-hydration`-step only makes sure, that the results from Elasticsearc
 See also [Elasticsearch's documentation about the match query clause](https://www.elastic.co/docs/reference/query-languages/query-dsl/query-dsl-match-query).
 
 
-```json
-{
-  "debug": true,
-  "steps": [
-    {
-      "type": "elasticsearch-query-dsl-mixin",
-      "query": {
-        "match": {
-          "description": {
-            "query": "lily"
+```bash
+curl -X POST \
+  -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "debug": true,
+        "steps": [
+          {
+            "type": "elasticsearch-query-dsl-mixin",
+            "query": {
+              "match": {
+                "description": {
+                  "query": "lily"
+                }
+              }
+            }
+          },
+          {
+            "type": "element-hydration"
           }
-        }
-      }
-    },
-    {
-      "type": "element-hydration"
-    }
-  ]
-}
+        ]
+      }' \
+  https://api.example.com/search
 ```
 
 <SearchResponseCard
@@ -81,19 +85,23 @@ The `element-hydration`-step only makes sure, that the results from Neo4j are co
 import simplePathSearch from '../assets/simple-path-search.json';
 import simplePathSearchHeader from '../assets/simple-path-search.txt?raw';
 
-```json
-{
-  "debug": true,
-  "steps": [
-    {
-      "type": "cypher-path-subset",
-      "query": "MATCH path=((:Plant)-[:HAS_TAG]->(:Tag {name: \"blue\"})) RETURN path"
-    },
-    {
-      "type": "element-hydration"
-    }
-  ]
-}
+```bash
+curl -X POST \
+  -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "debug": true,
+        "steps": [
+          {
+            "type": "cypher-path-subset",
+            "query": "MATCH path=((:Plant)-[:HAS_TAG]->(:Tag {name: \"blue\"})) RETURN path"
+          },
+          {
+            "type": "element-hydration"
+          }
+        ]
+      }' \
+  https://api.example.com/search
 ```
 
 <SearchResponseCard
@@ -115,29 +123,33 @@ e.g. Taxons which also contain the word `lily`.
 import combinedFullTextAndPathSearch from '../assets/combined-full-text-and-path-search.json';
 import combinedFullTextAndPathSearchHeader from '../assets/combined-full-text-and-path-search.txt?raw';
 
-```json
-{
-  "debug": true,
-  "steps": [
-    {
-      "type": "elasticsearch-query-dsl-mixin",
-      "query": {
-        "match": {
-          "description": {
-            "query": "lily"
+```bash
+curl -X POST \
+  -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "debug": true,
+        "steps": [
+          {
+            "type": "elasticsearch-query-dsl-mixin",
+            "query": {
+              "match": {
+                "description": {
+                  "query": "lily"
+                }
+              }
+            }
+          },
+          {
+            "type": "cypher-path-subset",
+            "query": "UNWIND $stepResults[0].elements AS element MATCH path=((plant:Plant)-[:IS_MEMBER_OF*..]->(:Taxon)) WHERE plant.id = element.id RETURN path"
+          },
+          {
+            "type": "element-hydration"
           }
-        }
-      }
-    },
-    {
-      "type": "cypher-path-subset",
-      "query": "UNWIND $stepResults[0].elements AS element MATCH path=((plant:Plant)-[:IS_MEMBER_OF*..]->(:Taxon)) WHERE plant.id = element.id RETURN path"
-    },
-    {
-      "type": "element-hydration"
-    }
-  ]
-}
+        ]
+      }' \
+  https://api.example.com/search
 ```
 
 <SearchResponseCard

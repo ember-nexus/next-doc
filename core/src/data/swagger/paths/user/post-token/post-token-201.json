@@ -3,8 +3,8 @@
     "/token": {
       "post": {
         "responses": {
-          "204": {
-            "description": "Element was created successfully.",
+          "201": {
+            "description": "Token was created successfully.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"

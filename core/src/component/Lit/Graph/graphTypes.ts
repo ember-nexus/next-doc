@@ -3,6 +3,10 @@
 // component file only deals with rendering concerns.
 
 // ── Color scheme ─────────────────────────────────────────────────────────────
+//
+// Node type colors mirror --c-node-* vars defined in colors.css.
+// If you change a color here, update colors.css too (and vice-versa).
+// Graph chrome / highlight colors are mirrored in Graph.ts (THEMES / HIGHLIGHTS).
 
 export type Scheme = "light" | "dark";
 
@@ -92,22 +96,24 @@ export interface TypeStyle {
  * type name -> color + icon.
  * Add new categories here; unknown types fall back to DEFAULT_TYPE.
  */
+// Node type color palette — mirrors --c-node-* in colors.css.
 export const TYPE_STYLES: Record<string, TypeStyle> = {
-  User: { color: "#ef4444", icon: "user" },
-  Group: { color: "#f59e0b", icon: "group" },
-  Token: { color: "#d946ef", icon: "token" },
-
-  Search: { color: "#6366f1", icon: "search" },
-
-  Data: { color: "#2563eb", icon: "data" },
-  Collection: { color: "#16a34a", icon: "collection" },
-  File: { color: "#22d3ee", icon: "file" },
-
-  Taxon: { color: "#6b7280", icon: "tag" },
-  Plant: { color: "#16a34a", icon: "plant" },
+  // Identity
+  User:       { color: "#ef4444", icon: "user"       }, // --c-node-user        red-500
+  Group:      { color: "#f59e0b", icon: "group"      }, // --c-node-group       amber-400
+  Token:      { color: "#d946ef", icon: "token"      }, // --c-node-token       fuchsia-500
+  // Search
+  Search:     { color: "#6366f1", icon: "search"     }, // --c-node-search      indigo-500
+  // Data
+  Data:       { color: "#2563eb", icon: "data"       }, // --c-node-data        blue-600
+  Collection: { color: "#16a34a", icon: "collection" }, // --c-node-collection  green-600
+  File:       { color: "#22d3ee", icon: "file"       }, // --c-node-file        cyan-400
+  // Taxonomy
+  Taxon:      { color: "#6b7280", icon: "tag"        }, // --c-node-taxon       gray-500
+  Plant:      { color: "#16a34a", icon: "plant"      }, // --c-node-plant       green-600
 };
 
-export const DEFAULT_TYPE: TypeStyle = { color: "#6b7280", icon: "data" };
+export const DEFAULT_TYPE: TypeStyle = { color: "#6b7280", icon: "data" }; // --c-node-default  gray-500
 
 export function typeStyle(type?: string): TypeStyle {
   return (type && TYPE_STYLES[type]) || DEFAULT_TYPE;

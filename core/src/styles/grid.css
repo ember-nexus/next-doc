@@ -60,7 +60,7 @@
 }
 
 .toc-nav a {
-    color: #71717a; /* zinc-500 */
+    color: var(--c-toc);
     text-decoration: none;
     display: block;
     padding-block: 0.35rem;
@@ -70,11 +70,11 @@
 }
 
 .toc-nav a:hover {
-    color: #3f3f46; /* zinc-700 */
+    color: var(--c-toc-hover);
 }
 
 .toc-nav a.toc-link--active {
-    color: #18181b; /* zinc-900 */
+    color: var(--c-toc-active);
     font-weight: 500;
 }
 
@@ -87,17 +87,7 @@
     outline-offset: 2px;
 }
 
-@media (prefers-color-scheme: dark) {
-    .toc-nav a {
-        color: #71717a; /* zinc-500 */
-    }
-    .toc-nav a:hover {
-        color: #a1a1aa; /* zinc-400 */
-    }
-    .toc-nav a.toc-link--active {
-        color: #e4e4e7; /* zinc-200 */
-    }
-}
+/* Dark-mode TOC colors are handled via --c-toc-* vars set in colors.css */
 
 .content-grid .prose {
     max-width: unset;
