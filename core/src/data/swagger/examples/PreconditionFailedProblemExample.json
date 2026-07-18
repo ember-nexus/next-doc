@@ -4,7 +4,7 @@
       "PreconditionFailedProblemExample": {
         "summary": "Precondition failed. `If-Match` or `If-None-Match` condition not met.",
         "value": {
-          "type": "http://api/error/412/precondition-failed",
+          "type": "https://api.example.com/error/412/precondition-failed",
           "title": "Precondition Failed",
           "status": 412,
           "detail": "Precondition does not match."

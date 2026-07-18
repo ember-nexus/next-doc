@@ -3,7 +3,7 @@
     "examples": {
       "NotFoundProblemExample": {
         "value": {
-          "type": "http://api/error/404/not-found",
+          "type": "https://api.example.com/error/404/not-found",
           "title": "Not Found",
           "status": 404,
           "detail": "Requested element was not found."
