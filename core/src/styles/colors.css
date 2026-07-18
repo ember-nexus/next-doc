@@ -154,37 +154,52 @@
 /* ─── 6. HTTP method verb colors ────────────────────────────────────────── */
 /*
  *  Design rationale:
- *    GET    → cyan-600    calm, read-only, informational
- *    POST   → emerald-600 create, positive
- *    PUT    → amber-600   replace/overwrite, caution
- *    PATCH  → orange-600  partial update — deliberately distinct from PUT
- *    DELETE → rose-600    destructive, danger
- *    HEAD   → violet-600  metadata, secondary
+ *    GET    → blue-600    read-only, informational — pure, unmistakable blue
+ *    POST   → green-600   create / positive action
+ *    PUT    → orange-400  full replace — light orange, clearly "caution"
+ *    PATCH  → orange-400  partial update — same color as PUT (both modify a resource)
+ *    DELETE → red-600     destructive — unambiguous danger red
+ *    HEAD   → violet-600  metadata / secondary — solid purple
+ *    other  → violet-600  unknown verbs share HEAD's purple (secondary feel)
  *
- *  A single base color per method works for both light and dark; backgrounds
- *  are derived with color-mix() at the call site (10% base + surface color).
- *  Light mode: darken slightly for legibility on white backgrounds.
- *  Dark mode:  brighten slightly for legibility on near-black backgrounds.
+ *  Dark mode: one step brighter (−600 → −500) for legibility on near-black.
+ *  Light mode: one step darker (−600 → −700) for AA contrast on white.
+ *  Backgrounds are derived with color-mix() at the call site.
  */
 
+/* Default (dark-mode-friendly base, used when no data-theme is set) */
 :root {
-    --c-method-get:             #0891b2;  /* cyan-600 */
-    --c-method-post:            #059669;  /* emerald-600 */
-    --c-method-put:             #d97706;  /* amber-600 */
-    --c-method-patch:           #ea580c;  /* orange-600 */
-    --c-method-delete:          #e11d48;  /* rose-600 */
+    --c-method-get:             #2563eb;  /* blue-600 */
+    --c-method-post:            #16a34a;  /* green-600 */
+    --c-method-put:             #fb923c;  /* orange-400 */
+    --c-method-patch:           #fb923c;  /* orange-400 — same as PUT */
+    --c-method-delete:          #dc2626;  /* red-600 */
     --c-method-head:            #7c3aed;  /* violet-600 */
+    --c-method-other:           #7c3aed;  /* violet-600 — same as HEAD */
 }
 
-/* Light mode: keep full saturation but shift to a slightly darker value for
-   better contrast on white (4.5:1 AA at these hues). */
+/* Dark mode: shift to brighter tones for legibility on near-black */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --c-method-get:         #3b82f6;  /* blue-500 */
+        --c-method-post:        #22c55e;  /* green-500 */
+        --c-method-put:         #fdba74;  /* orange-300 */
+        --c-method-patch:       #fdba74;  /* orange-300 — same as PUT */
+        --c-method-delete:      #ef4444;  /* red-500 */
+        --c-method-head:        #8b5cf6;  /* violet-500 */
+        --c-method-other:       #8b5cf6;  /* violet-500 */
+    }
+}
+
+/* Light mode: shift to darker tones for AA contrast on white */
 :root[data-theme="light"] {
-    --c-method-get:             #0e7490;  /* cyan-700 */
-    --c-method-post:            #047857;  /* emerald-700 */
-    --c-method-put:             #b45309;  /* amber-700 */
-    --c-method-patch:           #c2410c;  /* orange-700 */
-    --c-method-delete:          #be123c;  /* rose-700 */
+    --c-method-get:             #1d4ed8;  /* blue-700 */
+    --c-method-post:            #15803d;  /* green-700 */
+    --c-method-put:             #f97316;  /* orange-500 */
+    --c-method-patch:           #f97316;  /* orange-500 — same as PUT */
+    --c-method-delete:          #b91c1c;  /* red-700 */
     --c-method-head:            #6d28d9;  /* violet-700 */
+    --c-method-other:           #6d28d9;  /* violet-700 */
 }
 
 /* Backward-compat aliases so existing code using --method-* still works */
@@ -195,6 +210,7 @@
     --method-patch:  var(--c-method-patch);
     --method-delete: var(--c-method-delete);
     --method-head:   var(--c-method-head);
+    --method-other:  var(--c-method-other);
 }
 
 
@@ -207,45 +223,45 @@
  *    --c-status-NNN-active  solid fill color for the active/selected state
  *    --c-status-NNN-active-border  border for the active state
  *
- *  Color families:
+ *  Color families (mirrors method verb palette for clear cross-context meaning):
  *    2xx  green   (success)
- *    3xx  sky     (redirect — blue feels too close to links; sky is distinct)
+ *    3xx  blue    (redirect — same blue family as GET)
  *    4xx  red     (client error)
- *    5xx  amber   (server error — reworked from purple; amber signals "degraded")
- *    other zinc   (informational / unknown)
+ *    5xx  red     (server error — same red family as 4xx; status number differentiates)
+ *    other zinc   (informational / unknown — intentionally muted/undefined)
  */
 
 /* Light mode */
 :root {
     /* 2xx — green */
-    --c-status-2xx-fg:              #166534;  /* green-800 */
+    --c-status-2xx-fg:              #14532d;  /* green-900 */
     --c-status-2xx-bg:              #dcfce7;  /* green-100 */
     --c-status-2xx-border:          #86efac;  /* green-300 */
     --c-status-2xx-active:          #16a34a;  /* green-600 */
     --c-status-2xx-active-border:   #15803d;  /* green-700 */
 
-    /* 3xx — sky (redirect) */
-    --c-status-3xx-fg:              #075985;  /* sky-800 */
-    --c-status-3xx-bg:              #e0f2fe;  /* sky-100 */
-    --c-status-3xx-border:          #7dd3fc;  /* sky-300 */
-    --c-status-3xx-active:          #0284c7;  /* sky-600 */
-    --c-status-3xx-active-border:   #0369a1;  /* sky-700 */
+    /* 3xx — blue (redirect) */
+    --c-status-3xx-fg:              #1e3a8a;  /* blue-900 */
+    --c-status-3xx-bg:              #dbeafe;  /* blue-100 */
+    --c-status-3xx-border:          #93c5fd;  /* blue-300 */
+    --c-status-3xx-active:          #2563eb;  /* blue-600 */
+    --c-status-3xx-active-border:   #1d4ed8;  /* blue-700 */
 
     /* 4xx — red (client error) */
-    --c-status-4xx-fg:              #991b1b;  /* red-800 */
+    --c-status-4xx-fg:              #7f1d1d;  /* red-900 */
     --c-status-4xx-bg:              #fee2e2;  /* red-100 */
     --c-status-4xx-border:          #fca5a5;  /* red-300 */
     --c-status-4xx-active:          #dc2626;  /* red-600 */
     --c-status-4xx-active-border:   #b91c1c;  /* red-700 */
 
-    /* 5xx — amber (server error — "degraded", distinct from 4xx red) */
-    --c-status-5xx-fg:              #92400e;  /* amber-800 */
-    --c-status-5xx-bg:              #fef3c7;  /* amber-100 */
-    --c-status-5xx-border:          #fcd34d;  /* amber-300 */
-    --c-status-5xx-active:          #d97706;  /* amber-600 */
-    --c-status-5xx-active-border:   #b45309;  /* amber-700 */
+    /* 5xx — red (server error — same family as 4xx) */
+    --c-status-5xx-fg:              #7f1d1d;  /* red-900 */
+    --c-status-5xx-bg:              #fee2e2;  /* red-100 */
+    --c-status-5xx-border:          #fca5a5;  /* red-300 */
+    --c-status-5xx-active:          #dc2626;  /* red-600 */
+    --c-status-5xx-active-border:   #b91c1c;  /* red-700 */
 
-    /* other — zinc (neutral) */
+    /* other — zinc (intentionally muted/neutral) */
     --c-status-other-fg:            #374151;  /* gray-700 */
     --c-status-other-bg:            #f3f4f6;  /* gray-100 */
     --c-status-other-border:        #d1d5db;  /* gray-300 */
@@ -262,9 +278,9 @@
         --c-status-2xx-border:          #166534;  /* green-800 */
 
         /* 3xx */
-        --c-status-3xx-fg:              #7dd3fc;  /* sky-300 */
-        --c-status-3xx-bg:              #082f49;  /* sky-950 */
-        --c-status-3xx-border:          #075985;  /* sky-800 */
+        --c-status-3xx-fg:              #93c5fd;  /* blue-300 */
+        --c-status-3xx-bg:              #1e3a5f;  /* deep blue */
+        --c-status-3xx-border:          #1e40af;  /* blue-800 */
 
         /* 4xx */
         --c-status-4xx-fg:              #fca5a5;  /* red-300 */
@@ -272,9 +288,9 @@
         --c-status-4xx-border:          #991b1b;  /* red-800 */
 
         /* 5xx */
-        --c-status-5xx-fg:              #fcd34d;  /* amber-300 */
-        --c-status-5xx-bg:              #2d1b00;  /* deep amber */
-        --c-status-5xx-border:          #92400e;  /* amber-800 */
+        --c-status-5xx-fg:              #fca5a5;  /* red-300 */
+        --c-status-5xx-bg:              #2d0a0a;  /* deep red */
+        --c-status-5xx-border:          #991b1b;  /* red-800 */
 
         /* other */
         --c-status-other-fg:            #d4d4d8;  /* zinc-300 */
