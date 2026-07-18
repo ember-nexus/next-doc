@@ -1,34 +1,33 @@
 :80 {
-    root * /srv
-    encode zstd gzip
-    file_server
-    try_files {path} {path}/index.html
+	root * /srv
+	file_server
+	try_files {path} {path}/index.html
 
-    # Hashed by Astro build — safe to cache forever
-    header /_astro/* Cache-Control "public, max-age=31536000, immutable"
+	encode {
+		zstd better
+		gzip 6
+		minimum_length 256
+	}
 
-    # Self-hosted fonts — filenames are stable and versioned manually
-    header /fonts/* Cache-Control "public, max-age=31536000, immutable"
+	header /_astro/* Cache-Control "public, max-age=31536000, immutable"
+	header /fonts/* Cache-Control "public, max-age=31536000, immutable"
+	header /pagefind/pagefind-*.* Cache-Control "public, max-age=31536000, immutable"
+	header /pagefind/* ?Cache-Control "public, max-age=3600"
+	header /open-graph/* ?Cache-Control "public, max-age=604800"
+	header /*.ico ?Cache-Control "public, max-age=604800"
+	header /*.png ?Cache-Control "public, max-age=604800"
+	header /*.svg ?Cache-Control "public, max-age=604800"
+	header /*.webmanifest ?Cache-Control "public, max-age=604800"
 
-    # Pagefind JS/WASM/data chunks use hashed filenames; the entry point files
-    # (pagefind.js, pagefind-entry.json) are not hashed so get a shorter TTL.
-    # Caddy matches most-specific prefix first, so hashed chunks win over the
-    # catch-all below.
-    header /pagefind/pagefind-*.* Cache-Control "public, max-age=31536000, immutable"
-    header /pagefind/* Cache-Control "public, max-age=3600"
+	header {
+		?Cache-Control "public, max-age=0, must-revalidate"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
 
-    # OG images are static build output; slug-named (not hash-named), so use a
-    # moderate TTL that still gives browsers a useful cache hit between deploys.
-    header /open-graph/* Cache-Control "public, max-age=604800"
-
-    # Favicons, web-app manifest, and other root-level static assets
-    header /*.ico Cache-Control "public, max-age=604800"
-    header /*.png Cache-Control "public, max-age=604800"
-    header /*.svg Cache-Control "public, max-age=604800"
-    header /*.webmanifest Cache-Control "public, max-age=604800"
-
-    handle_errors 404 {
-        rewrite * /404.html
-        file_server
-    }
+	handle_errors 404 {
+		rewrite * /404.html
+		file_server
+	}
 }
