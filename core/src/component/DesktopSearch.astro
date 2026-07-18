@@ -105,9 +105,13 @@ const iconBtn =
         closeBtn.addEventListener('click', close);
         backdrop.addEventListener('click', close);
 
-        // ESC closes
+        // ESC closes; Cmd/Ctrl+K opens
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && !modal.hidden) close();
+            if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                open();
+            }
         });
 
         // Auto-close when viewport drops to mobile width
