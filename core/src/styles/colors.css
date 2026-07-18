@@ -279,7 +279,7 @@
 
         /* 3xx */
         --c-status-3xx-fg:              #93c5fd;  /* blue-300 */
-        --c-status-3xx-bg:              #1e3a5f;  /* deep blue */
+        --c-status-3xx-bg:              #172554;  /* blue-950 */
         --c-status-3xx-border:          #1e40af;  /* blue-800 */
 
         /* 4xx */

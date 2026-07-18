@@ -758,7 +758,8 @@ code span[data-method] {
 
 /* Method badge colors — use color-mix() so a single base color works for both modes.
    The surface variable (--c-surface) is white in light, black in dark, giving a
-   subtle tinted background while the text color stays the full method hue. */
+   subtle tinted background while the text color stays the full method hue.
+   Dark mode uses 20% to compensate for the near-black surface. */
 
 code[data-method="GET"],    code span[data-method="GET"]    { color: var(--c-method-get);    background-color: color-mix(in srgb, var(--c-method-get)    10%, var(--c-surface)); }
 code[data-method="POST"],   code span[data-method="POST"]   { color: var(--c-method-post);   background-color: color-mix(in srgb, var(--c-method-post)   10%, var(--c-surface)); }
@@ -766,6 +767,15 @@ code[data-method="PUT"],    code span[data-method="PUT"]    { color: var(--c-met
 code[data-method="PATCH"],  code span[data-method="PATCH"]  { color: var(--c-method-patch);  background-color: color-mix(in srgb, var(--c-method-patch)  10%, var(--c-surface)); }
 code[data-method="DELETE"], code span[data-method="DELETE"] { color: var(--c-method-delete); background-color: color-mix(in srgb, var(--c-method-delete) 10%, var(--c-surface)); }
 code[data-method="HEAD"],   code span[data-method="HEAD"]   { color: var(--c-method-head);   background-color: color-mix(in srgb, var(--c-method-head)   10%, var(--c-surface)); }
+
+@media (prefers-color-scheme: dark) {
+    code[data-method="GET"],    code span[data-method="GET"]    { background-color: color-mix(in srgb, var(--c-method-get)    20%, var(--c-surface)); }
+    code[data-method="POST"],   code span[data-method="POST"]   { background-color: color-mix(in srgb, var(--c-method-post)   20%, var(--c-surface)); }
+    code[data-method="PUT"],    code span[data-method="PUT"]    { background-color: color-mix(in srgb, var(--c-method-put)    20%, var(--c-surface)); }
+    code[data-method="PATCH"],  code span[data-method="PATCH"]  { background-color: color-mix(in srgb, var(--c-method-patch)  20%, var(--c-surface)); }
+    code[data-method="DELETE"], code span[data-method="DELETE"] { background-color: color-mix(in srgb, var(--c-method-delete) 20%, var(--c-surface)); }
+    code[data-method="HEAD"],   code span[data-method="HEAD"]   { background-color: color-mix(in srgb, var(--c-method-head)   20%, var(--c-surface)); }
+}
 
 /* ─── Desktop search modal ──────────────────────────────────────────────────── */
 
