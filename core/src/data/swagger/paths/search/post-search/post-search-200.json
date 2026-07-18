@@ -3,7 +3,7 @@
     "/search": {
       "post": {
         "responses": {
-          "204": {
+          "200": {
             "description": "Search result was successful.",
             "headers": {
               "Access-Control-Allow-Headers": {

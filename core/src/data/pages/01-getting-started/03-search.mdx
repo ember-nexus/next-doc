@@ -43,8 +43,11 @@ The `element-hydration`-step only makes sure, that the results from Elasticsearc
 See also [Elasticsearch's documentation about the match query clause](https://www.elastic.co/docs/reference/query-languages/query-dsl/query-dsl-match-query).
 
 
-```json
-{
+```bash
+curl -X POST \
+  -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' \
+  -H 'Content-Type: application/json' \
+  -d '{
   "debug": true,
   "steps": [
     {
@@ -61,7 +64,8 @@ See also [Elasticsearch's documentation about the match query clause](https://ww
       "type": "element-hydration"
     }
   ]
-}
+}' \
+  https://api.example.com/search
 ```
 
 <SearchResponseCard
@@ -81,8 +85,11 @@ The `element-hydration`-step only makes sure, that the results from Neo4j are co
 import simplePathSearch from '../assets/simple-path-search.json';
 import simplePathSearchHeader from '../assets/simple-path-search.txt?raw';
 
-```json
-{
+```bash
+curl -X POST \
+  -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' \
+  -H 'Content-Type: application/json' \
+  -d '{
   "debug": true,
   "steps": [
     {
@@ -93,7 +100,8 @@ import simplePathSearchHeader from '../assets/simple-path-search.txt?raw';
       "type": "element-hydration"
     }
   ]
-}
+}' \
+  https://api.example.com/search
 ```
 
 <SearchResponseCard
@@ -115,8 +123,11 @@ e.g. Taxons which also contain the word `lily`.
 import combinedFullTextAndPathSearch from '../assets/combined-full-text-and-path-search.json';
 import combinedFullTextAndPathSearchHeader from '../assets/combined-full-text-and-path-search.txt?raw';
 
-```json
-{
+```bash
+curl -X POST \
+  -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' \
+  -H 'Content-Type: application/json' \
+  -d '{
   "debug": true,
   "steps": [
     {
@@ -137,7 +148,8 @@ import combinedFullTextAndPathSearchHeader from '../assets/combined-full-text-an
       "type": "element-hydration"
     }
   ]
-}
+}' \
+  https://api.example.com/search
 ```
 
 <SearchResponseCard
