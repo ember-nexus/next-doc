@@ -32,7 +32,7 @@ curl -X GET \
   https://api.example.com/<uuid of element>/parents
 ```
 
-```bash
+```bash /0c4cabca-a519-4ace-9b7b-2f4d57c31259/
 {
   "type": "_PartialCollection",
   "id": "/<uuid of element>/parents",
@@ -111,4 +111,4 @@ curl -X DELETE \
   be alternative paths to access the element:
   - Access through different groups, parallel `OWNS`-relations etc.
   - Limited access through non-ownership-permissions, e.g. `HAS_READ_ACCESS`.
-  - Limited access through `CREATED`-permissions.
+  - Limited access through `CREATED`-relations.
