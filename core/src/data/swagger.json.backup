@@ -97,7 +97,7 @@
     "examples": {
       "NotFoundProblemExample": {
         "value": {
-          "type": "http://api/error/404/not-found",
+          "type": "https://api.example.com/error/404/not-found",
           "title": "Not Found",
           "status": 404,
           "detail": "Requested element was not found."
@@ -105,7 +105,7 @@
       },
       "UnauthorizedProblemExample": {
         "value": {
-          "type": "http://api/error/401/unauthorized",
+          "type": "https://api.example.com/error/401/unauthorized",
           "title": "Unauthorized",
           "status": 401,
           "detail": "Authorization for the request failed due to possible problems with the token (incorrect or expired), password (incorrect or changed), the user's unique identifier, or the user's status (e.g., missing, blocked, or deleted)."
@@ -114,7 +114,7 @@
       "PreconditionFailedProblemExample": {
         "summary": "Precondition failed. `If-Match` or `If-None-Match` condition not met.",
         "value": {
-          "type": "http://api/error/412/precondition-failed",
+          "type": "https://api.example.com/error/412/precondition-failed",
           "title": "Precondition Failed",
           "status": 412,
           "detail": "Precondition does not match."
@@ -123,7 +123,7 @@
       "TooManyRequestsProblemExample": {
         "summary": "Too many requests. Rate limit exceeded.",
         "value": {
-          "type": "http://api/error/429/too-many-requests",
+          "type": "https://api.example.com/error/429/too-many-requests",
           "title": "Too Many Requests",
           "status": 429,
           "detail": "The client sent too many requests in a given timeframe; rate limiting is active."

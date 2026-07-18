@@ -7,7 +7,7 @@
     "build": "astro build && ./build-summary.sh",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "vitest run swagger curl",
+    "test": "vitest run swagger curl links",
     "cs": "eslint ./src",
     "cs:fix": "eslint ./src --fix"
   },
