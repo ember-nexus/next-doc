@@ -85,7 +85,7 @@ const hasActiveChild = (items: SidebarItem[]): boolean =>
         style={`--c: var(--method-${item.method}, var(--method-put))`}
         class="block rounded-md px-3 py-1.5 text-[0.8125rem] no-underline text-zinc-900 dark:text-zinc-100 hover:bg-black/5 dark:hover:bg-white/[0.06] aria-[current]:bg-black/[0.06] dark:aria-[current]:bg-white/[0.09] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]"
     >
-        <p class="m-0 font-mono truncate" title={item.endpointUrl}>
+        <p class="m-0 font-mono truncate" title={item.endpointUrl} translate="no">
             <b class="font-semibold text-[var(--c)] uppercase">{item.method}</b>
             {" "}{item.endpointUrl}
         </p>

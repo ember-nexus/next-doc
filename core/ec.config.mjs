@@ -1,6 +1,6 @@
 import { defineEcConfig } from 'astro-expressive-code'
 import { pluginCollapsibleSections } from '@expressive-code/plugin-collapsible-sections'
-import { pluginSchemaLinks } from './src/plugins/expressive-code/plugin-schema-links.js'
+import { schemaLinks, translateNo } from './src/plugins/expressiveCode/index.ts'
 
 export default defineEcConfig({
     themes: ['min-dark', 'min-light'],
@@ -9,7 +9,7 @@ export default defineEcConfig({
         frame: 'none',
         collapseStyle: 'collapsible-start',
     },
-    plugins: [pluginCollapsibleSections(), pluginSchemaLinks()],
+    plugins: [pluginCollapsibleSections(), schemaLinks(), translateNo()],
     styleOverrides: {
         collapsibleSections: {
             closedBackgroundColor: '#e4e4e7',

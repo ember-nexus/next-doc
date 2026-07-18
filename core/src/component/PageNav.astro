@@ -104,7 +104,7 @@ if (!prev && !next) {
                 <span class="pn-label">Previous</span>
                 {prev.method ? (
                     <>
-                        <p class="pn-mono pn-truncate" style={`--c: var(--method-${prev.method}, var(--method-put))`}>
+                        <p class="pn-mono pn-truncate" style={`--c: var(--method-${prev.method}, var(--method-put))`} translate="no">
                             <b class="pn-method">{prev.method}</b>
                             {" "}{prev.endpointUrl}
                         </p>
@@ -122,7 +122,7 @@ if (!prev && !next) {
                 <span class="pn-label">Next</span>
                 {next.method ? (
                     <>
-                        <p class="pn-mono pn-truncate" style={`--c: var(--method-${next.method}, var(--method-put))`}>
+                        <p class="pn-mono pn-truncate" style={`--c: var(--method-${next.method}, var(--method-put))`} translate="no">
                             <b class="pn-method">{next.method}</b>
                             {" "}{next.endpointUrl}
                         </p>
