@@ -6,18 +6,20 @@ import { isExternalHref } from "../plugins/rehype/linkAugmentation";
 
 interface Props {
     link: Link;
+    download?: boolean;
 }
 
-const { link } = Astro.props;
+const { link, download = false } = Astro.props;
 
 const isExternal = isExternalHref(link.url);
-const icon = isExternal ? "arrow-up-right" : "arrow-right";
+const icon = download ? "arrow-down" : (isExternal ? "arrow-up-right" : "arrow-right");
 ---
 <a
     href={link.url}
-    class="link-component text-sm hover:underline"
-    target={isExternal ? "_blank" : undefined}
-    rel={isExternal ? "noopener noreferrer" : undefined}
+    class="link-component hover:underline"
+    target={isExternal && !download ? "_blank" : undefined}
+    rel={isExternal && !download ? "noopener noreferrer" : undefined}
+    download={download ? "" : undefined}
 >
     {link.name}&hairsp;<Icon name={icon} class="size-4 inline-block" style="vertical-align: calc(50% - 14px)" />
 </a>
