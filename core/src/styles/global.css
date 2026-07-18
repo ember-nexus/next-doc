@@ -236,7 +236,7 @@ main.content-grid {
 /* Shared page title block — used by all page types (slug, command, api, schema).
    Provides consistent sizing, font choices, and the hairline divider. */
 .page-title-block {
-    max-width: 58rem;
+    max-width: 76rem;
     width: 100%;
     margin-inline: auto;
 }
