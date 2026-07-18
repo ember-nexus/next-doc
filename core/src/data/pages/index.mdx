@@ -28,7 +28,7 @@ Create a node — any type, any properties, no migration:
 
 ```bash
 curl -X POST \
-  -H 'Authorization: Bearer $TOKEN' \
+  -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' \
   -H 'Content-Type: application/json' \
   -d '{
         "type": "Note",
@@ -47,7 +47,7 @@ Connect it to another element — relations are data too:
 
 ```bash
 curl -X POST \
-  -H 'Authorization: Bearer $TOKEN' \
+  -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' \
   -H 'Content-Type: application/json' \
   -d '{
         "type": "LINKS_TO",
@@ -61,7 +61,7 @@ Search it — full-text and graph traversal in a single request:
 
 ```bash
 curl -X POST \
-  -H 'Authorization: Bearer $TOKEN' \
+  -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' \
   -H 'Content-Type: application/json' \
   -d '{
         "steps": [

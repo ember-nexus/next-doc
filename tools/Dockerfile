@@ -1,7 +1,6 @@
-FROM alpine:3.23 AS core
+FROM alpine:3.24 AS core
 
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
-    apk add nodejs npm pnpm git && \
+RUN apk add nodejs npm pnpm git && \
     addgroup -S astro && adduser -S astro -G astro -u 1000 && \
     mkdir /core && \
     chmod 777 /core
@@ -12,7 +11,6 @@ RUN apk add bash
 FROM core AS prod-build
 ARG VERSION=dev
 WORKDIR /core
-RUN cd /core
 COPY core .
 ENV CI=true
 ENV VERSION=${VERSION}
