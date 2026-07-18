@@ -22,7 +22,7 @@ const { name, presence, description, links } = Astro.props;
     </div>
     <div class="text-sm text-gray-600 dark:text-gray-400" set:html={marked.parse(description)}></div>
     {links.length > 0 && (
-        <div class="flex gap-4 flex-wrap">
+        <div class="flex gap-4 flex-wrap text-sm">
             {links.map((link) => <LinkComponent link={link} />)}
         </div>
     )}

@@ -77,7 +77,7 @@ const queryCount = parameters.filter((p) => p.location === "query").length;
                 )}
 
                 {param.links.length > 0 && (
-                    <div class="flex gap-4">
+                    <div class="flex gap-4 text-sm">
                         {param.links.map((link) => <Link link={link} />)}
                     </div>
                 )}
