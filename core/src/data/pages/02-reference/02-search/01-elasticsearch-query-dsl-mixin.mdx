@@ -2,6 +2,7 @@
 type: reference
 title: Elasticsearch Query DSL Mixin Search Step
 ---
+import { Code } from 'astro-expressive-code/components';
 import ComparisonCard from '../../../../component/ComparisonCard.astro';
 import TwoColumn from '../../../../component/TwoColumn.astro';
 
@@ -40,16 +41,15 @@ to experiment and test custom queries, as well as explore the data schemas of El
 Note that **Kibana's console requires a full query**, while Ember Nexus API's [`POST /search`](/api/post-search)
 endpoint only accepts the **content of the `query` property**:
 
+import emberNexusQuery from "./01-elasticsearch-query-dsl-mixin/ember-nexus-query.txt?raw"
+import kibanaConsoleQuery from "./01-elasticsearch-query-dsl-mixin/kibana-console-query.txt?raw"
+
 <TwoColumn>
     <ComparisonCard title="Ember Nexus">
-        ```bash
-        blib blub
-        ```
+        <Code code={emberNexusQuery} lang="bash" />
     </ComparisonCard>
     <ComparisonCard title="Kibana's console">
-        ```txt
-        blib blub
-        ```
+        <Code code={kibanaConsoleQuery} lang="txt" />
     </ComparisonCard>
 </TwoColumn>
 
