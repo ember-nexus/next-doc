@@ -8,7 +8,26 @@ In order to transfer ownership over a specific element and its children, two thi
 - The new owner receives ownership.
 - The old owner removes their ownership.
 
+## Initial state
+
+The current owner has ownership over the element, while the new owner has not:
+
+<g6-graph mode="manual" layout="antv-dagre-LR">
+    <script type="application/json">{`
+    {
+        "elements": [
+            { "id": "ownerOld", "type": "User", "data": { "name": "Old owner" }},
+            { "id": "ownerNew", "type": "User", "data": { "name": "New owner" }},
+            { "id": "element", "type": "Data", "data": { "name": "Element" }},
+            { "id": "ownsOld", "type": "OWNS", "start": "ownerOld", "end": "element"}
+        ]
+    }
+  `}</script>
+</g6-graph>
+
 ## Adding new owners
+
+The new owner is granted explicit ownership of the element by creating an `OWNS`-relation:
 
 ```bash
 curl -X POST \
@@ -21,6 +40,20 @@ curl -X POST \
       }' \
   https://api.example.com/
 ```
+
+<g6-graph mode="manual" layout="antv-dagre-LR">
+    <script type="application/json">{`
+    {
+        "elements": [
+            { "id": "ownerOld", "type": "User", "data": { "name": "Old owner" }},
+            { "id": "ownerNew", "type": "User", "data": { "name": "New owner" }},
+            { "id": "element", "type": "Data", "data": { "name": "Element" }},
+            { "id": "ownsOld", "type": "OWNS", "start": "ownerOld", "end": "element"},
+            { "id": "ownsNew", "type": "OWNS", "start": "ownerNew", "end": "element", "data": { "hl": "1" }}
+        ]
+    }
+  `}</script>
+</g6-graph>
 
 ## Removing old owners
 
@@ -96,6 +129,23 @@ curl -X DELETE \
   -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' \
   https://api.example.com/0c4cabca-a519-4ace-9b7b-2f4d57c31259
 ```
+
+The graph will then look like this:
+
+<g6-graph mode="manual" layout="antv-dagre-LR">
+    <script type="application/json">{`
+    {
+        "elements": [
+            { "id": "ownerOld", "type": "User", "data": { "name": "Old owner" }},
+            { "id": "ownerNew", "type": "User", "data": { "name": "New owner" }},
+            { "id": "element", "type": "Data", "data": { "name": "Element" }},
+            { "id": "ownsNew", "type": "OWNS", "start": "ownerNew", "end": "element"}
+        ]
+    }
+  `}</script>
+</g6-graph>
+
+And the old owner can no longer access the element - unless he has access to it through alternative paths.
 
 ## Notes
 
