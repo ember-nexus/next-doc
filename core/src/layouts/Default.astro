@@ -59,6 +59,18 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.url.origin).href;
 </head>
 
 <body class="min-h-screen bg-white text-gray-900 antialiased dark:bg-zinc-950 dark:text-zinc-100">
+<a
+    href="#main-content"
+    id="skip-to-main-content"
+    class="fixed left-4 top-4 z-[60] -translate-y-[calc(100%+2rem)] rounded-lg border border-gray-200
+           bg-white px-4 py-2.5 text-sm font-medium text-gray-900 shadow-xl outline-none
+           transition-transform duration-200 ease-out
+           focus:translate-y-0 focus:ring-2 focus:ring-[var(--color-focus)]
+           focus:ring-offset-2 focus:ring-offset-white
+           dark:border-zinc-800 dark:bg-black dark:text-zinc-100 dark:focus:ring-offset-black"
+>
+    Skip to main content
+</a>
 <Header />
 <Sidebar />
 
@@ -71,7 +83,8 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.url.origin).href;
 
 <div
     id="main-content"
-    class="flex min-h-screen flex-col pt-14 transition-[padding] duration-200 ease-in-out pl-0 sm:pt-16"
+    tabindex="-1"
+    class="flex min-h-screen flex-col pt-14 transition-[padding] duration-200 ease-in-out pl-0 sm:pt-16 focus:outline-none"
 >
     {headings.length > 0 && (
         /* Desktop fixed TOC — position:fixed takes it out of normal flow on screen,
@@ -339,6 +352,29 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.url.origin).href;
     document.addEventListener('astro:page-load', initPrintToc);
 </script>
 
+<script>
+    // Move focus to the main content area for keyboard users when the skip link is activated.
+    function initSkipLink() {
+        const skipLink = document.getElementById('skip-to-main-content');
+        if (!skipLink) return;
+
+        skipLink.addEventListener('click', (event) => {
+            const target = document.getElementById('main-content');
+            if (!target) return;
+
+            event.preventDefault();
+            target.focus({ preventScroll: true });
+            window.scrollTo({ top: 0, behavior: 'instant' });
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSkipLink);
+    } else {
+        initSkipLink();
+    }
+    document.addEventListener('astro:page-load', initSkipLink);
+</script>
 
 </body>
 </html>
