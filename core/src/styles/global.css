@@ -114,6 +114,21 @@ main.content-grid {
     padding-bottom: var(--ec-codePadBlk) !important;
 }
 
+/* Comparison cards: make Expressive Code blocks fill the full height of the card body. */
+.comparison-card .expressive-code,
+.comparison-card .expressive-code figure,
+.comparison-card .expressive-code .frame {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.comparison-card .expressive-code pre {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
 .font-qanelas-soft-custom {
     font-family: "Qanelas Soft Custom";
 }

@@ -38,14 +38,14 @@ const icon = icons[variant];
 const style = styles[variant];
 ---
 
-<div class={`comparison-card rounded-lg border ${style.border} overflow-hidden`}>
+<div class={`comparison-card rounded-lg border ${style.border} overflow-hidden flex flex-col`}>
     <header class={`px-4 py-2 font-medium ${style.bg} ${style.text}`}>
         {icon && <Icon
             name={icon}
             class="inline-block size-4 align-text-bottom mr-1.5"
         />}<span>{title}</span>
     </header>
-    <div>
+    <div class="flex flex-col flex-1">
         <slot />
     </div>
 </div>
