@@ -15,7 +15,7 @@ const { name, presence, description, links } = Astro.props;
 ---
 <div class="flex flex-col gap-2 px-4 py-3">
     <div class="flex items-center justify-between mb-1">
-        <p class="font-mono text-sm font-medium">{name}</p>
+        <p class="font-mono text-sm font-medium" translate="no">{name}</p>
         <p class={`text-xs font-semibold tracking-wider uppercase text-gray-400`}>
             {presence}
         </p>

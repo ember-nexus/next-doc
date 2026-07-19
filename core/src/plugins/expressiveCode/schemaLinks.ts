@@ -1,6 +1,6 @@
 // @ts-check
-import { definePlugin, ExpressiveCodeAnnotation } from 'astro-expressive-code'
-import { h } from 'astro-expressive-code/hast'
+import { definePlugin, ExpressiveCodeAnnotation } from 'astro-expressive-code';
+import { h } from 'astro-expressive-code/hast';
 
 /**
  * Converts a PascalCase/camelCase schema name to the URL slug used by the
@@ -43,7 +43,7 @@ class SchemaRefAnnotation extends ExpressiveCodeAnnotation {
 // within the full line so we can build a precise inlineRange.
 const SCHEMA_REF_RE = /#\/components\/schemas\/([A-Za-z0-9_]+)/g
 
-export function pluginSchemaLinks() {
+export function schemaLinks() {
   return definePlugin({
     name: 'Schema Links',
 

@@ -109,6 +109,23 @@ describe("parse", () => {
     const p = parse("curl -H 'BadHeader' https://x.com");
     expect(p.errors).toContain("Malformed header: BadHeader");
   });
+
+  it("parses unquoted URL containing whitespace", () => {
+    const p = parse("curl https://api.example.com/<uuid of element>/parents");
+    expect(p.url).toBe("https://api.example.com/<uuid of element>/parents");
+    expect(p.errors).toEqual([]);
+  });
+
+  it("parses unquoted URL with whitespace followed by flags", () => {
+    const p = parse("curl -s https://api.example.com/<uuid of element>/parents --compressed");
+    expect(p.url).toBe("https://api.example.com/<uuid of element>/parents");
+    expect(p.flags).toEqual([{ flag: "-s" }, { flag: "--compressed" }]);
+  });
+
+  it("parses --url value containing whitespace", () => {
+    const p = parse("curl --url https://api.example.com/<uuid of element>/parents");
+    expect(p.url).toBe("https://api.example.com/<uuid of element>/parents");
+  });
 });
 
 // ── extractDomain ──
@@ -210,6 +227,12 @@ describe("format", () => {
     const out = format(p);
     expect(out).toContain("| jq . | head -n5");
   });
+
+  it("single-quotes URL containing whitespace", () => {
+    const p = parse("curl https://api.example.com/<uuid of element>/parents");
+    const out = format(p);
+    expect(out).toContain("'https://api.example.com/<uuid of element>/parents'");
+  });
 });
 
 // ── curlfmt (main entry) ──
@@ -233,6 +256,15 @@ describe("curlfmt", () => {
 
   it("returns null-safe: throws on empty input", () => {
     expect(() => curlfmt("")).toThrow(CurlValidationError);
+  });
+
+  it("formats URL containing whitespace", () => {
+    const out = curlfmt(
+      "curl -X GET -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' https://api.example.com/<uuid of element>/parents",
+      { domainWhitelist: ["api.example.com"] },
+    );
+    expect(out).toContain("curl -X GET");
+    expect(out).toContain("'https://api.example.com/<uuid of element>/parents'");
   });
 
   it("full round-trip with all features", () => {

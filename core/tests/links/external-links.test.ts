@@ -45,7 +45,9 @@ const DOMAIN_WHITELIST: string[] = [
     'datatracker.ietf.org',
     'www.rfc-editor.org',
     'www.openapis.org',
-    'sourcefirst.com'
+    'sourcefirst.com',
+    'symfony.com',
+    'xxhash.com'
 ]
 
 // ── helpers ──

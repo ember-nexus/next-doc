@@ -36,7 +36,7 @@ const ogType = (entry.data.type === 'tutorial' || entry.data.type === 'guide')
     : 'website';
 ---
 
-<Default title={entry.data.title} description={entry.data.description} ogType={ogType} headings={allHeadings}>
+<Default title={entry.data.title} description={entry.data.description} ogType={ogType} headings={allHeadings} hidden={entry.data.hidden ?? false}>
     <div class="page-title-block">
         <h1 id={titleSlug} class="page-title-text">{entry.data.title}</h1>
         <div class="page-title-divider"></div>

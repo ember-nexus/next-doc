@@ -30,5 +30,5 @@ const bodyHtml = parse(raw).querySelector('body')?.innerHTML ?? raw;
 {label && <h3 id={id} class="api-block-title">{label}</h3>}
 <div class="terminal-example not-prose">
     <Code code={command} lang="bash" />
-    <div class="terminal-output" set:html={bodyHtml} data-pagefind-ignore="all"></div>
+    <div class="terminal-output" set:html={bodyHtml} data-pagefind-ignore="all" translate="no"></div>
 </div>
