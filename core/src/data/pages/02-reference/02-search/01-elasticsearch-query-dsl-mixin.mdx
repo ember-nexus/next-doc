@@ -2,11 +2,68 @@
 type: reference
 title: Elasticsearch Query DSL Mixin Search Step
 ---
+import ComparisonCard from '../../../../component/ComparisonCard.astro';
+import TwoColumn from '../../../../component/TwoColumn.astro';
 
-The Elasticsearch Query DSL Mixin Search Step combines a user defined Elasticsearch Query DSL with an internal Query DSL
-mixin, which guarantees that the user defined query can only work on elements the current user has access to.
+The Elasticsearch Query DSL Mixin Search Step allows users to execute queries against the internal Elasticsearch
+database. As Elasticsearch is a document-based database, **only a list of individual elements** can be returned.
 
-Otherwise, all query features of the Elasticsearch Query DSL language are supported.
+## Core features
+
+- [Full-text search](https://www.elastic.co/docs/solutions/search/full-text), including optional fuzziness,
+  singular/plural handling etc.
+- [Keyword search](https://www.elastic.co/docs/reference/elasticsearch/mapping-reference/keyword), i.e. searching for
+  exact string matches.
+- [Vector search](https://www.elastic.co/docs/solutions/search/vector/knn), useful for semantic search.
+  - Ember Nexus does not yet generate vector embeddings itself, i.e. the user or some bot needs to provide vectors. It
+    is a planned feature: [Issue #110](https://github.com/ember-nexus/api/issues/110).
+  - Alternatively Elasticsearch also offers a [semantic search](https://www.elastic.co/docs/solutions/search/semantic-search/semantic-search-semantic-text)
+    feature, where Elasticsearch handles the text-to-vector conversion itself. However, this feature seems to be
+    restricted towards enterprise-customers only.
+- [Geospatial search](https://www.elastic.co/docs/reference/query-languages/query-dsl/geo-queries), i.e. searching for
+  coordinates, lines, polygons, distances to other points, inside/outside polygon checks and more.
+- [Boolean queries](https://www.elastic.co/docs/reference/query-languages/query-dsl/query-dsl-bool-query), which allow
+  multiple smaller queries to be combined.
+- [Range queries](https://www.elastic.co/docs/reference/query-languages/query-dsl/query-dsl-range-query), used to
+  compare numeric fields.
+
+**Note**: Elasticsearch indices are currently managed automatically, which works for most use cases. Advanced features
+like vector search need manual index setup - this is possible, just not through the Ember Nexus API yet.
+Support for this is planned - see [ticket #477](https://github.com/ember-nexus/api/issues/477).
+
+## Examples
+
+## How to write a custom query
+
+If you have administrative access to the Elasticsearch database, then you can use [Kibana's console](https://www.elastic.co/docs/explore-analyze/query-filter/tools/console)
+to experiment and test custom queries, as well as explore the data schemas of Elasticsearch.  
+Note that **Kibana's console requires a full query**, while Ember Nexus API's [`POST /search`](/api/post-search)
+endpoint only accepts the **content of the `query` property**:
+
+<TwoColumn>
+    <ComparisonCard title="Ember Nexus">
+        ```bash
+        blib blub
+        ```
+    </ComparisonCard>
+    <ComparisonCard title="Kibana's console">
+        ```txt
+        blib blub
+        ```
+    </ComparisonCard>
+</TwoColumn>
+
+If you do not have direct access, you need to build the query blindly. As small errors can break the whole query, it is
+recommended to slowly build your query up, and to test it frequently.
+
+As the base of your query you can use one of the provided [examples](#examples).
+
+## Unsupported Elasticsearch features
+
+- Other query languages like ES|QL, PromQL, SQL, EQL and others are not supported.  
+  If there is demand, please open a [feature request ticket on GitHub](https://github.com/ember-nexus/api/issues/new).
+- Aggregations and join-like features are generally not supported - see [security aspects](#security-aspects).
+- Defining a custom sort direction is not yet supported. It is tracked in [GitHub issue #456](https://github.com/ember-nexus/api/issues/456).
 
 ## Security aspects
 
@@ -15,6 +72,7 @@ This search step is limited in three ways:
 - Elasticsearch search requests are readonly by default.
 - Only elements accessible by the user can be searched.
 - Only accessible element ids are returned.  
+
 While this removes support for aggregated properties and direct property lookups, this approach also disables
 additional dangerous approaches like the [terms lookup query](https://www.elastic.co/docs/reference/query-languages/query-dsl/query-dsl-terms-query#query-dsl-terms-lookup)
 and [joins](https://www.elastic.co/docs/reference/query-languages/query-dsl/joining-queries). Note that joins are
@@ -22,6 +80,20 @@ considered to be expensive, and are therefore already disabled in normal Elastic
 
 As there is no way to manipulate or exfiltrate arbitrary data, this search step **is considered safe** and can therefore
 be executed by any user.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Input parameters
 
