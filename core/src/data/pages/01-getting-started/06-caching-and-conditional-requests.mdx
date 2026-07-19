@@ -41,7 +41,7 @@ As we do not yet know the `ETag` value associated with the first request, we sim
 ```bash
 curl \
   -H "Authorization: Bearer secret-token:M3WHIDj4q62EY0XiZFMLnv" \
-  https://api.localhost/35cd3b18-0d0c-4e98-876e-898b930797f2
+  https://api.example.com/35cd3b18-0d0c-4e98-876e-898b930797f2
 ```
 
 The response then contains the `Etag`-header.
@@ -90,7 +90,7 @@ response headers.
 curl \
   -H "Authorization: Bearer secret-token:M3WHIDj4q62EY0XiZFMLnv" \
   -H "If-None-Match: \"6JM8JahrCeu\"" \
-  https://api.localhost/35cd3b18-0d0c-4e98-876e-898b930797f2
+  https://api.example.com/35cd3b18-0d0c-4e98-876e-898b930797f2
 ```
 
 Response:
@@ -121,7 +121,7 @@ and return up-to-date data for the endpoint:
 curl \
   -H "Authorization: Bearer secret-token:M3WHIDj4q62EY0XiZFMLnv" \
   -H "If-None-Match: \"invalid\"" \
-  https://api.localhost/35cd3b18-0d0c-4e98-876e-898b930797f2
+  https://api.example.com/35cd3b18-0d0c-4e98-876e-898b930797f2
 ```
 
 Response:
@@ -159,6 +159,82 @@ X-Powered-By: Ember Nexus API
 Conditional requests are useful to avoid lost updates, i.e. when you only want a change to be executed when you know
 that no other person has changed it in the meantime.
 
+### Initial request
+
 Similarly to the `If-None-Match`-header, we first need to find out the `ETag` of the element to be updated:
 
-...
+```bash
+curl \
+  -H "Authorization: Bearer secret-token:M3WHIDj4q62EY0XiZFMLnv" \
+  https://api.example.com/35cd3b18-0d0c-4e98-876e-898b930797f2
+```
+
+The response then contains the `Etag`-header.
+
+```http /ETag:.*/
+Access-Control-Allow-Headers: Authorization, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method
+Access-Control-Allow-Methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
+Access-Control-Allow-Origin: *
+Access-Control-Expose-Headers: ETag, Location
+Allow: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
+Cache-Control: no-cache, private
+Content-Type: application/json; charset=utf-8
+Date: Wed, 10 Sep 2025 11:53:42 GMT
+ETag: "6JM8JahrCeu"
+Server: Unit
+Transfer-Encoding: chunked
+X-Powered-By: Ember Nexus API
+```
+
+```json
+{
+  "type": "Data",
+  "id": "35cd3b18-0d0c-4e98-876e-898b930797f2",
+  "data": {
+    "created": "2020-01-01T00:00:00+00:00",
+    "updated": "2020-01-01T00:00:00+00:00",
+    "name": "Data",
+    "scenario": "general.if-match"
+  }
+}
+```
+
+### Sending a conditional successful request
+
+If the element has not been changed in the meantime, a conditional request will be successful:
+
+```bash /If-Match: .\w+./
+curl -X PATCH \
+  -H 'Authorization: Bearer secret-token:M3WHIDj4q62EY0XiZFMLnv' \
+  -H 'If-Match: "6JM8JahrCeu"' \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "key": "some update to the element"
+      }' \
+  https://api.example.com/35cd3b18-0d0c-4e98-876e-898b930797f2
+```
+
+```http
+wip
+```
+
+### Sending a conditional invalid request
+
+If we repeat the same request with the old `ETag`, which is no longer valid, as we have just updated the element, the
+request will fail:
+
+
+```bash /If-Match: .\w+./
+curl -X PATCH \
+  -H 'Authorization: Bearer secret-token:M3WHIDj4q62EY0XiZFMLnv' \
+  -H 'If-Match: "6JM8JahrCeu"' \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "key": "some update to the element"
+      }' \
+  https://api.example.com/35cd3b18-0d0c-4e98-876e-898b930797f2
+```
+
+```http
+wip
+```
