@@ -148,6 +148,16 @@ const METHOD_SHORTHANDS: Record<string, string> = {
   "--head": "HEAD",
 };
 
+function collectUrlWithSpaces(tokens: string[], startIdx: number): { url: string; nextIdx: number } {
+  let url = tokens[startIdx];
+  let i = startIdx + 1;
+  while (i < tokens.length && !tokens[i].startsWith("-")) {
+    url += " " + tokens[i];
+    i++;
+  }
+  return { url, nextIdx: i };
+}
+
 export function parse(raw: string): ParsedCurl {
   const { curl, pipe } = splitPipe(raw);
   const tokens = tokenize(curl);
@@ -190,7 +200,12 @@ export function parse(raw: string): ParsedCurl {
       }
     } else if (URL_FLAGS.has(rawTok)) {
       idx++;
-      if (idx < tokens.length) result.url = tokens[idx];
+      if (idx < tokens.length) {
+        const { url, nextIdx } = collectUrlWithSpaces(tokens, idx);
+        result.url = url;
+        idx = nextIdx;
+        continue;
+      }
     } else if (DATA_FLAGS.has(tok)) {
       idx++;
       if (idx < tokens.length) result.data = { flag: "-d", value: tokens[idx] };
@@ -213,8 +228,17 @@ export function parse(raw: string): ParsedCurl {
         result.flags.push({ flag: tok });
       }
     } else {
-      if (!result.url) result.url = tok;
-      else result.errors.push(`Extra positional arg: ${tok}`);
+      if (!result.url) {
+        if (/^https?:\/\//.test(tok)) {
+          const { url, nextIdx } = collectUrlWithSpaces(tokens, idx);
+          result.url = url;
+          idx = nextIdx;
+          continue;
+        }
+        result.url = tok;
+      } else {
+        result.errors.push(`Extra positional arg: ${tok}`);
+      }
     }
     idx++;
   }
