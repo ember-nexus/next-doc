@@ -30,88 +30,27 @@ All the dependencies can be operated as Docker containers as well.
 
 ## Docker Compose
 
-```yml
-services:
+import { Code } from 'astro-expressive-code/components';
+import Link from '../../../component/Link.astro';
+import dockerCompose from "../../../../public/docker-compose.yml?raw"
 
-  api:
-    container_name: api
-    build:
-      context: ..
-      dockerfile: ./docker/Dockerfile
-      target: development
-    volumes:
-      - ./well-known-security.txt:/well-known-security.txt
-    ports:
-      - "80:80"
+<Code code={dockerCompose} lang="yaml" />
 
-  neo4j:
-    container_name: neo4j
-    image: neo4j:5.25
-    environment:
-      - NEO4J_AUTH=neo4j/password
-    ports:
-      - "7474:7474"
-      - "7687:7687"
-
-  mongodb:
-    container_name: mongodb
-    image: mongo:8.0
-    ports:
-      - "27017:27017"
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=mongodb
-      - MONGO_INITDB_ROOT_PASSWORD=password
-      - GLIBC_TUNABLES="glibc.cpu.hwcaps=-SHSTK" # see https://github.com/docker-library/mongo/discussions/748#discussioncomment-15927486
-
-  elasticsearch:
-    container_name: elasticsearch
-    image: elasticsearch:8.16.1
-    ports:
-      - "9200:9200"
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - xpack.security.enrollment.enabled=true
-
-  redis:
-    container_name: redis
-    image: redis:8.0-M02
-    ports:
-      - "6379:6379"
-    command: redis-server --save 20 1 --loglevel warning --requirepass redis-password
-
-  rabbitmq:
-    container_name: rabbitmq
-    image: rabbitmq:3-management
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      - RABBITMQ_DEFAULT_USER=user
-      - RABBITMQ_DEFAULT_PASS=password
-
-  minio:
-    container_name: minio
-    image: quay.io/minio/minio:latest
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    volumes:
-      - ../volumes/minio:/data
-    environment:
-      - MINIO_ROOT_USER=ROOTNAME
-      - MINIO_ROOT_PASSWORD=CHANGEME123
-    command: server /data --console-address ":9001"
-```
-
-**Note**: This setup is for demonstration purposes only, and should not be directly used for production systems.
-Especially volumes and security relevant settings should be adapted to your setup.
+This file can be <Link link={{ url: '/docker-compose.yml', name: 'downloaded directly' }} download />.
 
 ## Reverse proxy
 
 Ember Nexus is designed to be used behind a reverse proxy like [Traefik](https://traefik.io/traefik) or
 [Caddy](https://caddyserver.com/), and for that reason, it does not offer options to configure TLS and similar settings
 itself.
+
+### Traefik example configuration
+
+import dockerComposeTraefik from "../../../../public/docker-compose.traefik.yml?raw"
+
+<Code code={dockerComposeTraefik} lang="yaml" collapse={["20-88"]} />
+
+This file can be <Link link={{ url: '/docker-compose.traefik.yml', name: 'downloaded directly' }} download />.
 
 ## High-availability setup (HA)
 
