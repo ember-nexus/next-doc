@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { readdirSync, readFileSync } from "fs";
 import { join } from "path";
-import { curlfmt } from "../../src/util/curl-fmt";
+import { curlfmt } from "../../../src/util/curl-fmt";
 
 // ── MDX discovery ──
 
-const SRC_DATA_DIR = join(import.meta.dirname, "../../src/data");
+const SRC_DATA_DIR = join(import.meta.dirname, "../../../src/data");
 
 function findMdxFiles(dir: string): string[] {
   const entries = readdirSync(dir, { recursive: true, withFileTypes: false }) as string[];

@@ -8,7 +8,7 @@ import {
   validateDomain,
   format,
   CurlValidationError,
-} from "../../src/util/curl-fmt";
+} from "../../../src/util/curl-fmt";
 
 // ── tokenizer ──
 

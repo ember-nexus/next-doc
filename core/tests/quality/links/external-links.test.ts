@@ -47,7 +47,8 @@ const DOMAIN_WHITELIST: string[] = [
     'www.openapis.org',
     'sourcefirst.com',
     'symfony.com',
-    'xxhash.com'
+    'xxhash.com',
+    'expr-lang.org'
 ]
 
 // ── helpers ──
@@ -83,7 +84,7 @@ function extractFullUrls(text: string): string[] {
 
 // ── MDX files ──
 
-const MDX_ROOT = join(import.meta.dirname, '../../src/data')
+const MDX_ROOT = join(import.meta.dirname, '../../../src/data')
 
 function findMdxFiles(dir: string): string[] {
     return (readdirSync(dir, { recursive: true, withFileTypes: false }) as string[])
@@ -127,7 +128,7 @@ describe('MDX files — external link domain whitelist', () => {
 
 // ── Swagger spec ──
 
-const SWAGGER_PATH = join(import.meta.dirname, '../../src/data/swagger.json')
+const SWAGGER_PATH = join(import.meta.dirname, '../../../src/data/swagger.json')
 
 interface SwaggerLinkCase {
     url: string

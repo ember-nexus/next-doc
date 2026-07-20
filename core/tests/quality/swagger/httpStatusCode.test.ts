@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { readdirSync, readFileSync } from 'fs'
 import { join } from 'path'
 
-const PATHS_DIR = join(import.meta.dirname, '../../src/data/swagger/paths')
+const PATHS_DIR = join(import.meta.dirname, '../../../src/data/swagger/paths')
 const THREE_DIGIT_NUMBER = /\b\d{3}\b/g
 const UUID_PATTERN = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi
 
