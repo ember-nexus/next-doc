@@ -30,7 +30,7 @@ The current owner has ownership over the element, while the new owner has not:
 The new owner is granted explicit ownership of the element by creating an `OWNS`-relation:
 
 ```bash
-curl -X POST \
+curl \
   -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -60,7 +60,7 @@ curl -X POST \
 First find out which ownership claims exist:
 
 ```bash
-curl -X GET \
+curl \
   -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' \
   'https://api.example.com/<uuid of element>/parents'
 ```

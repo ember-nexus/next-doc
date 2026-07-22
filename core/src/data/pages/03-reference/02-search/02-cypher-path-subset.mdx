@@ -63,10 +63,10 @@ List of paths result objects, which contain a list of node ids and relation ids.
 ```
 
 ```bash
-curl -X POST \
+curl \
   -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' \
   -H 'Content-Type: application/json' \
-  -d @payload.json \
+  --data-binary @payload.json \
   https://api.example.com/search
 ```
 

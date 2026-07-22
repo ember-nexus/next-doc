@@ -49,7 +49,12 @@ export function splitPipe(raw: string): { curl: string; pipe: string } {
     if (!quote && (c === "'" || c === '"')) { quote = c; continue; }
     if (quote === c) { quote = null; continue; }
     if (!quote && c === "|") {
-      return { curl: raw.substring(0, i).trim(), pipe: raw.substring(i).trim() };
+      // Drop a shell line-continuation backslash (and surrounding whitespace)
+      // that appears immediately before the pipe.
+      return {
+        curl: raw.substring(0, i).replace(/\s*\\\s*$/, "").trim(),
+        pipe: raw.substring(i).trim(),
+      };
     }
   }
   return { curl: raw.trim(), pipe: "" };
@@ -304,10 +309,19 @@ export function format(parsed: ParsedCurl, opts: FormatOptions = {}): string {
   const hasVerbose = parsed.flags.some((f) => verboseFlags.has(f.flag));
   const nonVerboseFlags = parsed.flags.filter((f) => !verboseFlags.has(f.flag));
 
-  // First line: curl -X METHOD, with -v appended if present
-  const firstLine = hasVerbose
-    ? `curl -X ${parsed.method} -v`
-    : `curl -X ${parsed.method}`;
+  // Build the first line.
+  // - GET is curl's default, so `-X GET` is redundant.
+  // - HEAD should use the dedicated `-I` flag instead of `-X HEAD`.
+  // - POST is implied by `-d` / data flags, so omit `-X POST` when data is present.
+  let firstLine = "curl";
+  if (parsed.method === "HEAD") {
+    firstLine += " -I";
+  } else if (parsed.method !== "GET" && !(parsed.method === "POST" && parsed.data)) {
+    firstLine += ` -X ${parsed.method}`;
+  }
+  if (hasVerbose) {
+    firstLine += " -v";
+  }
   const lines: string[] = [firstLine];
 
   // sort headers
@@ -334,7 +348,11 @@ export function format(parsed: ParsedCurl, opts: FormatOptions = {}): string {
       ? tryPrettyJson(parsed.data.value)
       : { text: parsed.data.value, isJson: false };
 
-    const flag = parsed.data.flag;
+    let flag = parsed.data.flag;
+    // File uploads must use --data-binary so curl does not strip newlines.
+    if (text.startsWith("@")) {
+      flag = "--data-binary";
+    }
     if (isJson && text.includes("\n")) {
       const jsonLines = text.split("\n");
       const inner = jsonLines.slice(1, -1);
@@ -355,7 +373,7 @@ export function format(parsed: ParsedCurl, opts: FormatOptions = {}): string {
   lines.push(`  ${shellQuote(parsed.url!)}`);
 
   let out = lines.join(" \\\n");
-  if (parsed.pipe) out += "\n  " + parsed.pipe;
+  if (parsed.pipe) out += " \\\n  " + parsed.pipe;
   return out;
 }
 

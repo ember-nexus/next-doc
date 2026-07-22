@@ -39,7 +39,7 @@ happen at least one microsecond apart.
 As we do not yet know the `ETag` value associated with the first request, we simply execute the request normally:
 
 ```bash
-curl -X GET \
+curl \
   -H 'Authorization: Bearer secret-token:M3WHIDj4q62EY0XiZFMLnv' \
   https://api.example.com/35cd3b18-0d0c-4e98-876e-898b930797f2
 ```
@@ -87,7 +87,7 @@ Should the element did change, the API returns the up-to-date data in its repons
 response headers.
 
 ```bash /If-None-Match: .\w+./
-curl -X GET \
+curl \
   -H 'Authorization: Bearer secret-token:M3WHIDj4q62EY0XiZFMLnv' \
   -H 'If-None-Match: "6JM8JahrCeu"' \
   https://api.example.com/35cd3b18-0d0c-4e98-876e-898b930797f2
@@ -118,7 +118,7 @@ We can lastly modify the `Etag` value to another string, effectively invalidatin
 and return up-to-date data for the endpoint:
 
 ```bash /If-None-Match: .\w+./
-curl -X GET \
+curl \
   -H 'Authorization: Bearer secret-token:M3WHIDj4q62EY0XiZFMLnv' \
   -H 'If-None-Match: "invalid"' \
   https://api.example.com/35cd3b18-0d0c-4e98-876e-898b930797f2
@@ -164,7 +164,7 @@ that no other person has changed it in the meantime.
 Similarly to the `If-None-Match`-header, we first need to find out the `ETag` of the element to be updated:
 
 ```bash
-curl -X GET \
+curl \
   -H 'Authorization: Bearer secret-token:M3WHIDj4q62EY0XiZFMLnv' \
   https://api.example.com/35cd3b18-0d0c-4e98-876e-898b930797f2
 ```

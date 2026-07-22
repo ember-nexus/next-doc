@@ -175,17 +175,32 @@ describe("format", () => {
     expect(lines[lines.length - 1].trim()).toBe("https://x.com");
   });
 
-  it("attaches -v to the first line after the method", () => {
+  it("attaches -v to the first line and omits redundant -X GET", () => {
     const p = parse("curl -X GET -v https://x.com");
     const out = format(p);
-    expect(out.split("\n")[0]).toMatch(/^curl -X GET -v/);
+    expect(out.split("\n")[0]).toMatch(/^curl -v/);
     expect(out).not.toMatch(/^\s+-v\s*(\\)?$/m);
   });
 
-  it("attaches -v to first line even without explicit method flag", () => {
+  it("attaches -v to first line and omits default GET method", () => {
     const p = parse("curl -v https://x.com");
     const out = format(p);
-    expect(out.split("\n")[0]).toMatch(/^curl -X GET -v/);
+    expect(out.split("\n")[0]).toMatch(/^curl -v/);
+  });
+
+  it("uses -I instead of -X HEAD", () => {
+    const p = parse("curl -X HEAD -v https://x.com");
+    const out = format(p);
+    expect(out.split("\n")[0]).toMatch(/^curl -I -v/);
+    expect(out).not.toContain("-X HEAD");
+  });
+
+  it("adds a continuation backslash before a pipe tail", () => {
+    const p = parse("curl https://x.com | jq '.'");
+    const out = format(p);
+    const lines = out.split("\n");
+    expect(lines[lines.length - 2]).toMatch(/\\$/);
+    expect(lines[lines.length - 1]).toMatch(/^  \| jq/);
   });
 
   it("sorts headers by priority", () => {
@@ -216,6 +231,19 @@ describe("format", () => {
     expect(out).not.toContain("\n       ");
   });
 
+  it("uses --data-binary for file uploads", () => {
+    const p = parse("curl -d @./image.jpg https://x.com");
+    const out = format(p);
+    expect(out).toContain("--data-binary @./image.jpg");
+    expect(out).not.toContain("-d @./image.jpg");
+  });
+
+  it("preserves --data-binary for file uploads", () => {
+    const p = parse("curl --data-binary @./image.jpg https://x.com");
+    const out = format(p);
+    expect(out).toContain("--data-binary @./image.jpg");
+  });
+
   it("appends pipe tail", () => {
     const p = parse("curl https://x.com | jq '.'");
     const out = format(p);
@@ -242,7 +270,7 @@ describe("curlfmt", () => {
     const out = curlfmt("curl https://api.example.com/users", {
       domainWhitelist: ["api.example.com"],
     });
-    expect(out).toContain("curl -X GET");
+    expect(out.startsWith("curl")).toBe(true);
     expect(out).toContain("api.example.com/users");
   });
 
@@ -263,7 +291,7 @@ describe("curlfmt", () => {
       "curl -X GET -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' https://api.example.com/<uuid of element>/parents",
       { domainWhitelist: ["api.example.com"] },
     );
-    expect(out).toContain("curl -X GET");
+    expect(out.startsWith("curl")).toBe(true);
     expect(out).toContain("'https://api.example.com/<uuid of element>/parents'");
   });
 
@@ -280,8 +308,9 @@ describe("curlfmt", () => {
       prettyJson: true,
     });
 
-    // method first
-    expect(out).toMatch(/^curl -X POST/);
+    // method first (POST is implied by -d, so no -X POST)
+    expect(out).toMatch(/^curl/);
+    expect(out).not.toContain("-X POST");
     // auth before accept
     const authIdx = out.indexOf("Authorization");
     const acceptIdx = out.indexOf("Accept");

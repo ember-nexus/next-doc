@@ -197,10 +197,10 @@ results are available. Very high numbers of results might be rounded or estimate
 ```
 
 ```bash
-curl -X POST \
+curl \
   -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' \
   -H 'Content-Type: application/json' \
-  -d @payload.json \
+  --data-binary @payload.json \
   https://api.example.com/search
 ```
 

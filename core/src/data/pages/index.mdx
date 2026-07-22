@@ -27,7 +27,7 @@ Ember Nexus is [source first](https://sourcefirst.com/) and ships as a single
 Create a node — any type, any properties, no migration:
 
 ```bash
-curl -X POST \
+curl \
   -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -46,7 +46,7 @@ curl -X POST \
 Connect it to another element — relations are data too:
 
 ```bash
-curl -X POST \
+curl \
   -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -60,7 +60,7 @@ curl -X POST \
 Search it — full-text and graph traversal in a single request:
 
 ```bash
-curl -X POST \
+curl \
   -H 'Authorization: Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc' \
   -H 'Content-Type: application/json' \
   -d '{
