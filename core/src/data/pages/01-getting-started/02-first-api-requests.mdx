@@ -117,7 +117,7 @@ Which will return a response like this:
 < x-powered-by: Ember Nexus API
 < content-length: 0
 <
-* Connection #0 to host reference-dataset.ember-nexus.dev:443 left intact
+* Connection #0 to host api.example.com:443 left intact
 ```
 
 Note that the response headers include a `location`-header: This absolute path includes the id of the newly created element.
@@ -246,7 +246,7 @@ curl -X GET \
 
 ```json
 {
-  "type": "http://reference-dataset.ember-nexus.dev/error/404/not-found",
+  "type": "http://api.example.com/error/404/not-found",
   "title": "Not found",
   "status": 404,
   "detail": "Requested element was not found."
