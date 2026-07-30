@@ -7,4 +7,20 @@ endpointUrl: /<uuid>
 swaggerUrl: /{uuid}
 ---
 
-Creates a new child node, attached to the referenced parent node. Endpoint can not be used to create relations.
+Creates a new child node, attached to the referenced `parent  {.hl-1}`-node.
+
+Endpoint can not be used to create relations.
+
+<g6-graph mode="manual" layout="antv-dagre-LR">
+    <script type="application/json">{`
+    {
+        "elements": [
+            { "id": "user", "type": "User", "data": { "name": "User" }},
+            { "id": "parent", "type": "Data", "data": { "name": "Parent", "hl": "1" }},
+            { "id": "node", "type": "Data", "data": { "name": "Node", "hl": "2" }},
+            { "id": "owns", "type": "OWNS", "start": "parent", "end": "node"},
+            { "id": "created", "type": "CREATED", "start": "user", "end": "node"}
+        ]
+    }
+`}</script>
+</g6-graph>
