@@ -37,6 +37,8 @@
 
     /* Card-tab hover/focus bottom border */
     --c-tab-hover-border:       #d1d5db;  /* gray-300 */
+    
+    --c-primary:                #ff073a;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -65,8 +67,8 @@
     --c-link-hover:             var(--color-violet-600);
 
     /* Highlight annotation colors — kept in sync with Graph.ts HIGHLIGHTS */
-    --c-hl-1:                   var(--color-blue-600);   /* hl-1: blue */
-    --c-hl-2:                   var(--color-orange-600); /* hl-2: orange */
+    --c-hl-1:                   var(--c-primary); /* hl-1: orange */
+    --c-hl-2:                   var(--color-blue-600);   /* hl-2: blue */
     --c-hl-m:                   var(--color-zinc-700);   /* hl-m: muted */
 }
 
@@ -472,8 +474,8 @@
     --c-hl-graph-m-dark:        #a1a1aa;  /* zinc-400 */
     --c-hl-graph-1-light:       #2563eb;  /* blue-600 */
     --c-hl-graph-1-dark:        #3b82f6;  /* blue-500 */
-    --c-hl-graph-2-light:       #ea580c;  /* orange-600 */
-    --c-hl-graph-2-dark:        #f97316;  /* orange-500 */
+    --c-hl-graph-2-light:       #ff073a;  /* orange-600 */
+    --c-hl-graph-2-dark:        #ff073a;  /* orange-500 */
 }
 
 
