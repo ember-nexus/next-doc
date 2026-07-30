@@ -101,6 +101,23 @@
 }
 
 
+/* ─── 2b. Note callout (Note.astro) ─────────────────────────────────────── */
+
+:root {
+    --c-note-bg:                #ffffff;
+    --c-note-border:            #ef4444;  /* red-500 */
+    --c-note-icon:              #ef4444;  /* red-500 */
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --c-note-bg:            #18181b;  /* zinc-900, keeps the note visibly lighter than the near-black surface */
+        --c-note-border:        #fca5a5;  /* red-300 */
+        --c-note-icon:          #fca5a5;  /* red-300 */
+    }
+}
+
+
 /* ─── 3b. List-link cards (EndpointGroupList, CommandGroupList, SchemaList) ─ */
 /*
  *  These share a common pattern: a hairline-bordered card with a subtle

@@ -7,9 +7,9 @@ endpointUrl: /<uuid>
 swaggerUrl: /{uuid}
 ---
 
-Creates a new child node, attached to the referenced `parent  {.hl-1}`-node.
+import Note from '../../../component/Note.astro';
 
-Endpoint can not be used to create relations.
+Creates a new child node, attached to the referenced `parent  {.hl-1}`-node.
 
 <g6-graph mode="manual" layout="antv-dagre-LR">
     <script type="application/json">{`
@@ -24,3 +24,7 @@ Endpoint can not be used to create relations.
     }
 `}</script>
 </g6-graph>
+
+<Note>
+    Endpoint can not be used to create relations.
+</Note>
