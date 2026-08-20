@@ -32,6 +32,23 @@ export const pageSlug = (id: string): string =>
 /** "guides/01-auth" -> "/guides/auth" */
 export const pagePath = (id: string): string => "/" + pageSlug(id);
 
+// Both `[...slug].astro` (HTML) and `[...slug].md.ts` (markdown) build their
+// `getStaticPaths()` param from the same `pages` collection entry, and both
+// need to special-case the "index" entry — but not the same way. The HTML
+// route wants `undefined` so [...slug] claims the bare "/" route; the
+// markdown route is an *endpoint*, not a page, so it needs the literal
+// string "index" or `basename()` on an empty pathname resolves to "".
+// Keeping the cleaning logic (`pageSlug`) in one shared place means the two
+// route sets can't quietly drift apart.
+
+/** Route param for the HTML page shell. */
+export const pageRouteParam = (id: string): string | undefined =>
+  id === "index" ? undefined : pageSlug(id);
+
+/** Route param for the markdown endpoint. */
+export const pageRouteParamMd = (id: string): string =>
+  id === "index" ? "index" : pageSlug(id);
+
 // --- commands: routed by command/[command] ------------------------------------
 
 /** "config:set" -> "config-set" */

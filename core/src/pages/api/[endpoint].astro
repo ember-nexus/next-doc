@@ -2,6 +2,7 @@
 import SwaggerParser from '@apidevtools/swagger-parser';
 import { getCollection, render } from 'astro:content';
 
+import { htmlComponents } from '../../component/registry.html';
 import RequestBodyCard from "../../component/RequestBodyCard.astro";
 import RequestCard from '../../component/RequestCard.astro';
 import RequestHeaderCard from '../../component/RequestHeaderCard.astro';
@@ -67,7 +68,7 @@ const cardHeadings: { depth: number; slug: string; text: string }[] = [
     </div>
     
     <div class="prose dark:prose-invert">
-        <Content />
+        <Content components={htmlComponents} />
     </div>
 
     <RequestCard request={request} id="request" />

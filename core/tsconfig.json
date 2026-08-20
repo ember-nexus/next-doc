@@ -10,6 +10,10 @@
     "moduleResolution": "bundler",
     "outDir": "dist",
     "baseUrl": ".",
+    "paths": {
+      "mdmx/jsx-runtime": ["./src/mdmx/jsx-runtime.ts"],
+      "mdmx/jsx-dev-runtime": ["./src/mdmx/jsx-runtime.ts"]
+    },
     "allowSyntheticDefaultImports": true,
     "importHelpers": true,
     "alwaysStrict": true,

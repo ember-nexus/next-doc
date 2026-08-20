@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { commandsInGroup, prime } from '../lib/collections';
 import { commandPath } from '../lib/routes';
 
 interface Props {
@@ -14,14 +14,8 @@ interface Props {
 
 const { group } = Astro.props;
 
-const entries = (await getCollection('commands'))
-    .filter((e) => {
-        const cmd = e.data.command;
-        const colonIdx = cmd.indexOf(':');
-        const namespace = colonIdx === -1 ? 'system' : cmd.slice(0, colonIdx);
-        return namespace === group;
-    })
-    .sort((a, b) => a.data.command.localeCompare(b.data.command));
+await prime();
+const entries = commandsInGroup(group);
 ---
 <ul class="not-prose cgl-list">
     {entries.map((e) => (
