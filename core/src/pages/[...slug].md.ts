@@ -6,8 +6,9 @@
 // `basename(pathname)` verbatim — see task.md §9.3.
 import type { APIRoute, GetStaticPaths } from "astro";
 
-import { pageRouteParamMd, prime } from "../lib";
+import { pagePath, pageRouteParamMd, prime } from "../lib";
 import { getCollection, renderMd } from "../mdmx";
+import { footerNav } from "../mdmx/footerNav";
 import { serialize } from "../mdmx/serialize";
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -21,6 +22,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const GET: APIRoute = async ({ props: { entry } }) => {
   await prime();
   const body = await renderMd(entry);
+  // The "index" entry's HTML route is "/", not "/index" — see the routing
+  // note in `lib/sidebar.ts`'s pagesSection().
+  const htmlPath = entry.id === "index" ? "/" : pagePath(entry.id);
   const md = serialize([
     {
       type: "heading",
@@ -28,6 +32,7 @@ export const GET: APIRoute = async ({ props: { entry } }) => {
       children: [{ type: "text", value: entry.data.title }],
     },
     ...body,
+    ...(await footerNav(htmlPath)),
   ]);
   return new Response(md, {
     headers: { "Content-Type": "text/markdown; charset=utf-8" },

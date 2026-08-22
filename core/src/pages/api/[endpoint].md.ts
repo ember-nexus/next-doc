@@ -3,7 +3,7 @@
 import SwaggerParser from "@apidevtools/swagger-parser";
 import type { APIRoute, GetStaticPaths } from "astro";
 
-import { endpointParam, prime } from "../../lib";
+import { endpointParam, endpointPath, prime } from "../../lib";
 import { getCollection, renderMd } from "../../mdmx";
 import {
   requestBodyCard,
@@ -13,6 +13,7 @@ import {
   responseCard,
   responseHeaderCard,
 } from "../../mdmx/cards";
+import { footerNav } from "../../mdmx/footerNav";
 import { serialize } from "../../mdmx/serialize";
 import {
   extractHarExample,
@@ -66,6 +67,7 @@ export const GET: APIRoute = async ({ props: { entry } }) => {
     ...requestHeaderCard(requestHeaders),
     ...(requestBody ? requestBodyCard(requestBody) : []),
     ...responseHeaderCard(responseHeaders),
+    ...(await footerNav(endpointPath(entry.data.endpoint))),
   ]);
 
   return new Response(md, {

@@ -6,8 +6,9 @@ import path from "node:path";
 import type { APIRoute, GetStaticPaths } from "astro";
 import { parse } from "node-html-parser";
 
-import { commandParam, prime } from "../../lib";
+import { commandParam, commandPath, prime } from "../../lib";
 import { getCollection, renderMd } from "../../mdmx";
+import { footerNav } from "../../mdmx/footerNav";
 import { serialize } from "../../mdmx/serialize";
 
 // `TerminalExample.astro` keeps these files as ANSI-colorized HTML (`aha`
@@ -70,6 +71,7 @@ export const GET: APIRoute = async ({ props: { entry } }) => {
     },
     { type: "code", lang: "bash", value: exampleCommand },
     { type: "code", lang: "text", value: example },
+    ...(await footerNav(commandPath(command))),
   ]);
 
   return new Response(md, {

@@ -5,7 +5,9 @@ import SwaggerParser from "@apidevtools/swagger-parser";
 import type { APIRoute, GetStaticPaths } from "astro";
 import type { OpenAPIObject } from "openapi3-ts/oas31";
 
+import { schemaPath } from "../../lib/routes";
 import { schemaPropertyList } from "../../mdmx/cards";
+import { footerNav } from "../../mdmx/footerNav";
 import { serialize } from "../../mdmx/serialize";
 import type { Schema } from "../../type";
 import { extractSchemas } from "../../util";
@@ -20,7 +22,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }));
 };
 
-export const GET: APIRoute = ({
+export const GET: APIRoute = async ({
   props: { schema },
 }: {
   props: { schema: Schema };
@@ -59,6 +61,7 @@ export const GET: APIRoute = ({
       lang: "json",
       value: JSON.stringify(schema.schema, null, 2),
     },
+    ...(await footerNav(schemaPath(schema.id))),
   ]);
 
   return new Response(md, {

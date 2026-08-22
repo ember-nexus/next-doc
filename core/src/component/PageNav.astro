@@ -1,6 +1,5 @@
 ---
-import { buildSidebar } from '../lib/sidebar.ts';
-import type { SidebarItem } from '../type';
+import { buildNavItems, findPrevNext } from '../lib/pageNav.ts';
 
 interface Props {
     currentPath: string;
@@ -13,84 +12,7 @@ if (hidden) {
     return null;
 }
 
-type NavCategory = 'page' | 'command' | 'endpoint' | 'schema';
-
-interface NavItem {
-    name: string;
-    url: string;
-    category: NavCategory;
-    method?: string;
-    endpointUrl?: string;
-}
-
-const sectionCategory = (name: string): NavCategory | null => {
-    const lower = name.toLowerCase();
-    if (lower === 'getting started' || lower === 'reference') return 'page';
-    if (lower === 'commands') return 'command';
-    if (lower === 'endpoints') return 'endpoint';
-    if (lower === 'schemas') return 'schema';
-    return null;
-};
-
-const flatten = (items: SidebarItem[], category: NavCategory | null): NavItem[] => {
-    const result: NavItem[] = [];
-
-    for (const item of items) {
-        if (item.type === 'group') {
-            if (item.variant === 'section') {
-                const cat = sectionCategory(item.name);
-                if (cat) {
-                    result.push(...flatten(item.items, cat));
-                }
-            } else {
-                result.push(...flatten(item.items, category));
-            }
-            continue;
-        }
-
-        const cat = category ?? 'page';
-
-        if (item.type === 'link-group') {
-            result.push({ name: item.name, url: item.url, category: cat });
-            result.push(...flatten(item.items, cat));
-        } else if (item.type === 'link') {
-            result.push({ name: item.name, url: item.url, category: cat });
-        } else if (item.type === 'endpoint') {
-            result.push({
-                name: item.name,
-                url: item.url,
-                category: cat,
-                method: item.method,
-                endpointUrl: item.endpointUrl,
-            });
-        }
-    }
-
-    return result;
-};
-
-const normalizePath = (path: string): string =>
-    path === '/' ? path : path.replace(/\/$/, '');
-
-const items = flatten(await buildSidebar(), null);
-const currentIndex = items.findIndex(
-    (item) => normalizePath(item.url) === normalizePath(currentPath),
-);
-
-if (currentIndex === -1) {
-    return null;
-}
-
-const category = items[currentIndex].category;
-
-const prev = items
-    .slice(0, currentIndex)
-    .reverse()
-    .find((item) => item.category === category);
-
-const next = items
-    .slice(currentIndex + 1)
-    .find((item) => item.category === category);
+const { prev, next } = findPrevNext(await buildNavItems(), currentPath);
 
 if (!prev && !next) {
     return null;
