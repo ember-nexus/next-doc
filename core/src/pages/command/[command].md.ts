@@ -10,15 +10,24 @@ import { commandParam, commandPath, prime } from "../../lib";
 import { getCollection, renderMd } from "../../mdmx";
 import { footerNav } from "../../mdmx/footerNav";
 import { serialize } from "../../mdmx/serialize";
+import { trimBlankLines } from "../../util/htmlUtil";
 
 // `TerminalExample.astro` keeps these files as ANSI-colorized HTML (`aha`
 // output) and renders the markup directly. There's no HTML in the markdown
 // pipeline (see task.md acceptance criteria), so only the plain text
 // survives — the color spans carry no information a terminal reader needs.
+//
+// `node-html-parser` treats `<pre>` as a "block text" element by default, so
+// `body.textContent` would return its contents unparsed — tags and all. Pull
+// the `<pre>` markup out and re-parse it on its own so the spans are actually
+// parsed as elements (and their entities decoded) rather than surviving as
+// literal text.
 async function readTerminalOutput(file: string): Promise<string> {
   const raw = await readFile(path.resolve(process.cwd(), file), "utf-8");
-  const body = parse(raw).querySelector("body");
-  return (body?.textContent ?? raw).replace(/\n+$/, "");
+  const preInnerHtml = parse(raw).querySelector("pre")?.innerHTML;
+  const text =
+    preInnerHtml !== undefined ? parse(preInnerHtml).textContent : raw;
+  return trimBlankLines(text);
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
