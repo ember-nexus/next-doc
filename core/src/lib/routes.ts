@@ -69,6 +69,31 @@ export const markdownPath = (pathname: string): string => {
   return trimmed === "" ? "/index.md" : `${trimmed}.md`;
 };
 
+/**
+ * Same idea as `markdownPath`, but for a link `href` found inside generated
+ * markdown content rather than the current page's own pathname — used by
+ * `serialize()` to rewrite every cross-page link in the `.md` output so it
+ * points at the linked page's markdown variant too, instead of dead-ending
+ * back into an HTML page.
+ *
+ * Leaves untouched: external links (no leading "/"), protocol-relative links
+ * ("//..."), and asset links — anything whose last path segment already has
+ * a file extension, e.g. "/swagger.json", "/logo.svg". A "#hash" suffix is
+ * preserved across the rewrite.
+ */
+export const markdownLink = (href: string): string => {
+  if (!href.startsWith("/") || href.startsWith("//")) return href;
+
+  const hashIndex = href.indexOf("#");
+  const path = hashIndex === -1 ? href : href.slice(0, hashIndex);
+  const hash = hashIndex === -1 ? "" : href.slice(hashIndex);
+
+  const lastSegment = path.split("/").pop() ?? "";
+  if (lastSegment.includes(".")) return href; // asset, not a page
+
+  return markdownPath(path) + hash;
+};
+
 // --- commands: routed by command/[command] ------------------------------------
 
 /** "config:set" -> "config-set" */

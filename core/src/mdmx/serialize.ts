@@ -5,7 +5,27 @@ import type { RootContent } from "mdast";
 import { gfmToMarkdown } from "mdast-util-gfm";
 import { toMarkdown } from "mdast-util-to-markdown";
 
+import { markdownLink } from "../lib/routes";
+
+// Every `.md.ts` route (pages, schema, command, api) funnels its whole tree
+// through this one function before it becomes text, regardless of whether a
+// link came from hand-written MDX prose, the `<Link>` component, or a
+// registry list (EndpointGroupList, CommandGroupList, SchemaList, ...). That
+// makes it the single choke point to rewrite cross-page links to their
+// markdown variant — see `markdownLink`.
+function rewriteLinks(nodes: RootContent[]): void {
+  for (const node of nodes) {
+    if (node.type === "link") {
+      node.url = markdownLink(node.url);
+    }
+    if ("children" in node && Array.isArray(node.children)) {
+      rewriteLinks(node.children as RootContent[]);
+    }
+  }
+}
+
 export function serialize(children: RootContent[]): string {
+  rewriteLinks(children);
   return toMarkdown(
     { type: "root", children },
     {
