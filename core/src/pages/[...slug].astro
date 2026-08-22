@@ -1,15 +1,15 @@
 ---
 import { getCollection, render } from 'astro:content';
 
+import { htmlComponents } from '../component/registry.html';
 import Default from '../layouts/Default.astro';
-import { pageSlug } from '../lib';
+import { pageRouteParam } from '../lib';
 
 export async function getStaticPaths() {
     const pages = await getCollection('pages');
     return pages.map((entry) => ({
-        // Same helper the sidebar uses for hrefs -> routes & links can't drift.
-        // "index" entry maps to undefined so [...slug] claims the root "/" route.
-        params: { slug: entry.id === 'index' ? undefined : pageSlug(entry.id) },
+        // Same helper the markdown route set uses -> routes & links can't drift.
+        params: { slug: pageRouteParam(entry.id) },
         props: { entry },
     }));
 }
@@ -43,6 +43,6 @@ const ogType = (entry.data.type === 'tutorial' || entry.data.type === 'guide')
     </div>
 
     <div class="prose dark:prose-invert">
-        <Content />
+        <Content components={htmlComponents} />
     </div>
 </Default>

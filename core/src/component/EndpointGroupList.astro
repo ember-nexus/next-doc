@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { endpointsInGroup, prime } from '../lib/collections';
 import { endpointPath } from '../lib/routes';
 
 interface Props {
@@ -9,9 +9,8 @@ interface Props {
 
 const { group } = Astro.props;
 
-const entries = (await getCollection('endpoints'))
-    .filter((e) => e.data.group === group)
-    .sort((a, b) => a.id.localeCompare(b.id));
+await prime();
+const entries = endpointsInGroup(group);
 ---
 <ul class="not-prose egl-list">
     {entries.map((e) => (

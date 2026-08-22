@@ -7,4 +7,35 @@ endpointUrl: /
 swaggerUrl: /
 ---
 
-Creates a new element - either a new root level element, or a new relation.
+Creates a new element - either a new root level element which is directly owned by the current user, or a new relation,
+which is created between any two nodes.
+
+<TwoColumn>
+    <ComparisonCard title="Node">
+        <g6-graph mode="manual" layout="antv-dagre-LR">
+            <script type="application/json">{`
+    {
+        "elements": [
+            { "id": "user", "type": "User", "data": { "name": "User" }},
+            { "id": "node", "type": "Data", "data": { "name": "Node", "hl": "1" }},
+            { "id": "owns", "type": "OWNS", "start": "user", "end": "node"},
+            { "id": "created", "type": "CREATED", "start": "user", "end": "node"}
+        ]
+    }
+  `}</script>
+        </g6-graph>
+    </ComparisonCard>
+    <ComparisonCard title="Relation">
+        <g6-graph mode="manual" layout="antv-dagre-LR">
+            <script type="application/json">{`
+    {
+        "elements": [
+            { "id": "start", "type": "Data", "data": { "name": "Start" }},
+            { "id": "end", "type": "Data", "data": { "name": "End" }},
+            { "id": "relation", "type": "RELATION", "start": "start", "end": "end", "data": { "hl": "1" }}
+        ]
+    }
+  `}</script>
+        </g6-graph>
+    </ComparisonCard>
+</TwoColumn>

@@ -12,18 +12,18 @@ child node.
 
 Usually only one parent node and one `OWNS` relation is returned.
 
-In the following example, the response would include the nodes `Parent 1 {.hl-1}` and `Parent 2 {.hl-1}`, as well as the
-two `OWNS {.hl-1}`-relations, when the id of the `Child {.hl-2}`-node is used in the `/<uuid>/parents` endpoint:
+In the following example, the response would include the nodes `Parent 1 {.hl-2}` and `Parent 2 {.hl-2}`, as well as the
+two `OWNS {.hl-2}`-relations, when the id of the `Child {.hl-1}`-node is used in the `/<uuid>/parents` endpoint:
 
 <g6-graph mode="manual" layout="antv-dagre-LR">
     <script type="application/json">{`
     {
         "elements": [
-            { "id": "child", "type": "Data", "data": { "name": "Child", "hl": "2" }},
-            { "id": "parent1", "type": "Data", "data": { "name": "Parent 1", "hl": "1" }},
-            { "id": "parent2", "type": "Data", "data": { "name": "Parent 2", "hl": "1" }},
-            { "id": "owns1", "type": "OWNS", "start": "parent1", "end": "child", "data": { "hl": "1" }},
-            { "id": "owns2", "type": "OWNS", "start": "parent2", "end": "child", "data": { "hl": "1" }}
+            { "id": "child", "type": "Data", "data": { "name": "Child", "hl": "1" }},
+            { "id": "parent1", "type": "Data", "data": { "name": "Parent 1", "hl": "2" }},
+            { "id": "parent2", "type": "Data", "data": { "name": "Parent 2", "hl": "2" }},
+            { "id": "owns1", "type": "OWNS", "start": "parent1", "end": "child", "data": { "hl": "2" }},
+            { "id": "owns2", "type": "OWNS", "start": "parent2", "end": "child", "data": { "hl": "2" }}
         ]
     }
   `}</script>

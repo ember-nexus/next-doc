@@ -36,9 +36,63 @@ import icon from 'astro-icon';
 import {httpMethodAugmentation, inlineCodeAttrs, linkAugmentation} from "./src/plugins/rehype";
 import pagefind from "astro-pagefind";
 
+import mdxRollup from '@mdx-js/rollup';
+import remarkFrontmatter from 'remark-frontmatter';
+import remarkGfm from 'remark-gfm';
+
+/**
+ * Second MDX compilation, for the markdown render target (`<route>.md`).
+ *
+ * @astrojs/mdx's own vite plugin filters on the exact id `/\.mdx$/`, so a
+ * query-suffixed id like `foo.mdx?md` never reaches it and is free for this
+ * plugin to claim instead — see fact 2 in task.md.
+ *
+ * @mdx-js/rollup can't be handed `include: /\.mdx\?md$/` directly: its
+ * `transform` hook does `id.split('?')[0]` *before* running the `include`
+ * filter (see node_modules/@mdx-js/rollup/lib/index.js), so the filter only
+ * ever sees the query-less path and a query-based include can never match.
+ * This thin wrapper gates on the raw id itself and calls the underlying
+ * compiler directly, bypassing that filter entirely.
+ */
+function mdxMarkdownPlugin() {
+  const compiler = mdxRollup({
+    jsxImportSource: 'mdmx',
+    elementAttributeNameCase: 'react',
+    remarkPlugins: [remarkFrontmatter, remarkGfm],
+    rehypePlugins: [], // deliberately none — no expressive-code, no link augmentation
+  });
+  const isMdMdx = (id) => id.endsWith('.mdx?md');
+
+  return {
+    name: 'mdx-markdown-target',
+    enforce: 'pre',
+    async resolveId(source, importer, options) {
+      if (!isMdMdx(source)) return null;
+      // Force the query to survive resolution: resolve the bare path, then
+      // re-attach `?md` to whatever id Vite's default resolver produced.
+      const resolved = await this.resolve(source.slice(0, -3), importer, {
+        ...options,
+        skipSelf: true,
+      });
+      if (!resolved) return null;
+      return `${resolved.id.split('?')[0]}?md`;
+    },
+    async transform(code, id) {
+      if (!isMdMdx(id)) return null;
+      return compiler.transform.call(this, code, id.slice(0, -3));
+    },
+  };
+}
+
 export default defineConfig({
   vite: {
-    plugins: [tailwindcss(), copySwaggerPlugin()],
+    plugins: [tailwindcss(), copySwaggerPlugin(), mdxMarkdownPlugin()],
+    resolve: {
+      alias: {
+        'mdmx/jsx-runtime': resolve('./src/mdmx/jsx-runtime.ts'),
+        'mdmx/jsx-dev-runtime': resolve('./src/mdmx/jsx-runtime.ts'),
+      },
+    },
     build: {
       rollupOptions: {
         output: {

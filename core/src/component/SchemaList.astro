@@ -1,10 +1,8 @@
 ---
-import SwaggerParser from '@apidevtools/swagger-parser';
-import type { OpenAPIObject } from 'openapi3-ts/oas31';
+import { allSchemas, prime } from '../lib/collections';
 
-import { extractSchemas } from '../util';
-const spec = (await SwaggerParser.parse('./src/data/swagger.json')) as OpenAPIObject;
-const schemas = extractSchemas(spec).sort((a, b) => a.name.localeCompare(b.name));
+await prime();
+const schemas = allSchemas();
 ---
 <ul class="not-prose sl-list">
     {schemas.map((s) => (

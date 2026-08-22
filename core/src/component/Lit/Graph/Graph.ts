@@ -72,8 +72,8 @@ const HL_MUTED = "m";
 
 const HIGHLIGHTS: Record<string, HlStyle> = {
   m: { light: "#3f3f46", dark: "#a1a1aa" }, // --c-hl-graph-m-*  zinc-700  / zinc-400
-  1: { light: "#2563eb", dark: "#3b82f6" }, // --c-hl-graph-1-*  blue-600  / blue-500
-  2: { light: "#ea580c", dark: "#f97316" }, // --c-hl-graph-2-*  orange-600 / orange-500
+  1: { light: "#ff073a", dark: "#ff073a" }, // --c-hl-graph-2-*  orange-600 / orange-500
+  2: { light: "#2563eb", dark: "#3b82f6" }, // --c-hl-graph-1-*  blue-600  / blue-500
 };
 
 /** Resolve an `hl` key to a fill color for the active scheme. */

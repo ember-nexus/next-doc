@@ -1,9 +1,11 @@
 ---
 import { getCollection, render } from 'astro:content';
 
+import TerminalExample from 'src/component/TerminalExample.astro';
+
+import { htmlComponents } from '../../component/registry.html';
 import Default from '../../layouts/Default.astro';
 import { commandParam } from '../../lib';
-import TerminalExample from 'src/component/TerminalExample.astro';
 
 export async function getStaticPaths() {
     const entries = await getCollection('commands');
@@ -35,7 +37,7 @@ const terminalHeadings = [
     </div>
 
     <div class="prose dark:prose-invert">
-        <Content />
+        <Content components={htmlComponents} />
 
         <TerminalExample
             file={`src/data/command-output/${helpOutput}`}

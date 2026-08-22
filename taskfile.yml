@@ -16,7 +16,7 @@ tasks:
 
   dev:cli:
     cmds:
-      - docker compose -f ./tools/docker-compose.yml exec core /bin/bash
+      - docker compose -f ./tools/docker-compose.yml exec --user astro core /bin/bash
 
   prod:build:
     cmds:

@@ -154,7 +154,8 @@ async function pagesSection(): Promise<SidebarItem[]> {
 
   const sectionDefs: Array<{ key: string; label: string }> = [
     { key: "01-getting-started", label: "Getting started" },
-    { key: "02-reference", label: "Reference" },
+    { key: "02-guide", label: "Guide" },
+    { key: "03-reference", label: "Reference" },
   ];
 
   for (const { key, label } of sectionDefs) {

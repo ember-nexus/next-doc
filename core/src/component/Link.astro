@@ -31,6 +31,11 @@ const icon = download ? "arrow-down" : (isExternal ? "arrow-up-right" : "arrow-r
         color: var(--color-blue-700);
         border-radius: 0.15em;
     }
+    @media (prefers-color-scheme: dark) {
+        .link-component {
+            color: var(--color-blue-500);
+        }
+    }
     .link-component:focus {
         outline: none;
     }
