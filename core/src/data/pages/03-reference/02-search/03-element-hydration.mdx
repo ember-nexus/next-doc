@@ -28,6 +28,11 @@ element ids (string).
 
 List of hydrated elements.
 
+## Examples
+
+- [Explicit element ids](/reference/search/element-hydration/explicit-element-ids)
+- [Parameterized element ids](/reference/search/element-hydration/parameterized-element-ids)
+
 ## Example
 
 ### Request
@@ -60,17 +65,11 @@ curl \
 
 ### Response
 
-<div class="code-title auto-refresh">Response Headers</div>
+import explicitElementIds from './03-element-hydration/01-explicit-element-ids/result.json';
+import explicitElementIdsHeader from './03-element-hydration/01-explicit-element-ids/header.txt?raw';
 
-[Response Header](../example/element-hydration/explicit-elementids-hydration/response-header.txt ':include :type=code')
-
-<div class="code-title auto-refresh">Response Body</div>
-
-[Response Body](../example/element-hydration/explicit-elementids-hydration/response-body.json ':include :type=code')
-
-## Further examples
-
-- [Implicit Elements Hydration](/search/example/element-hydration/implicit-elements-hydration)
-- [Implicit Paths Hydration](/search/example/element-hydration/implicit-paths-hydration)
-- [Explicit ElementIds Hydration](/search/example/element-hydration/explicit-elementids-hydration)
-- [Parameterized ElementIds Hydration](/search/example/element-hydration/parameterized-elementids-hydration)
+<SearchResponseCard
+    responseBody={explicitElementIds}
+    responseHeaders={explicitElementIdsHeader}
+    graphLayout="grid"
+></SearchResponseCard>

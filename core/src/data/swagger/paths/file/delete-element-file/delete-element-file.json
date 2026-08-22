@@ -3,7 +3,7 @@
     "/{uuid}/file": {
       "delete": {
         "summary": "Delete element file",
-        "description": "Deletes the file of an given element.",
+        "description": "Deletes the file attached to an element, along with the file-related metadata on the element itself. Does not delete the element.",
         "operationId": "delete-element-file",
         "tags": [
           "File"
@@ -23,7 +23,7 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Id of the element to be deleted."
+            "description": "Id of the element whose file is to be deleted."
           }
         ],
         "x-ember-nexus-har-example": {

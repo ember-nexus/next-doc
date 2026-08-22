@@ -23,38 +23,34 @@
                 "type": "object",
                 "required": [
                   "type",
-                  "data"
+                  "password",
+                  "uniqueUserIdentifier"
                 ],
                 "properties": {
                   "type": {
                     "type": "string",
-                    "description": "The type of element to be created.",
-                    "example": "Demo"
+                    "description": "Must be `User`. No other values are currently possible.",
+                    "enum": [
+                      "User"
+                    ],
+                    "example": "User"
                   },
-                  "id": {
+                  "password": {
                     "type": "string",
-                    "format": "uuid",
-                    "description": "The element's UUID. Auto-generated if not provided.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
+                    "description": "The plain text password of the new user. Any string is accepted and is hashed internally; no password complexity check is performed. Leading/trailing whitespace is preserved, though discouraged.",
+                    "example": "1234"
                   },
-                  "start": {
+                  "uniqueUserIdentifier": {
                     "type": "string",
-                    "format": "uuid",
-                    "description": "The start node's UUID. Required for relations.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
-                  },
-                  "end": {
-                    "type": "string",
-                    "format": "uuid",
-                    "description": "The end node's UUID. Required for relations.",
-                    "example": "ecfe46ff-d3c7-4ca7-9b41-9be5476d36e0"
+                    "description": "Some attribute uniquely identifying a user, normally an email address. The property name used to store it can be configured server-side.",
+                    "example": "test@example.com"
                   },
                   "data": {
                     "type": "object",
-                    "description": "Arbitrary data related to the element.",
+                    "description": "Optional, arbitrary properties stored on the new user element.",
                     "additionalProperties": true,
                     "example": {
-                      "hello": "world :D"
+                      "key": "value"
                     }
                   }
                 }
@@ -69,10 +65,6 @@
           "cookies": [],
           "headers": [
             {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             }
@@ -82,7 +74,7 @@
           "bodySize": -1,
           "postData": {
             "mimeType": "application/json",
-            "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
+            "text": "{\"type\": \"User\", \"password\": \"1234\", \"uniqueUserIdentifier\": \"test@example.com\"}"
           }
         }
       }

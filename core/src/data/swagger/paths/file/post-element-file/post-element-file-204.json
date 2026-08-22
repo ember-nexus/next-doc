@@ -1,10 +1,10 @@
 {
   "paths": {
-    "/change-password": {
+    "/{uuid}/file": {
       "post": {
         "responses": {
-          "404": {
-            "description": "The referenced parent node does not exist.",
+          "204": {
+            "description": "A resumable upload (`Upload-Complete: ?0`) was created successfully. Its URL is returned in the `Location` header - continue it with `PATCH`, inspect it with `HEAD`, or abort it with `DELETE` against that URL.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -24,32 +24,38 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
+              "Location": {
+                "$ref": "#/components/headers/Location-created"
+              },
+              "Upload-Complete": {
+                "$ref": "#/components/headers/Upload-Complete"
+              },
+              "Upload-Offset": {
+                "$ref": "#/components/headers/Upload-Offset"
+              },
+              "Upload-Length": {
+                "$ref": "#/components/headers/Upload-Length"
+              },
+              "Upload-Limit": {
+                "$ref": "#/components/headers/Upload-Limit"
+              },
+              "Expires": {
+                "$ref": "#/components/headers/Expires"
+              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/404",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/204",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/404",
+                "url": "https://http.dev/204",
                 "name": "HTTP.dev"
               }
-            ],
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                },
-                "examples": {
-                  "notFound": {
-                    "$ref": "#/components/examples/NotFoundProblemExample"
-                  }
-                }
-              }
-            }
+            ]
           }
         }
       }

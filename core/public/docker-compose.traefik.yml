@@ -7,6 +7,13 @@ services:
       - ./well-known-security.txt:/well-known-security.txt:ro
     expose:
       - 80
+    environment:
+      - APP_ENV=prod
+      - CYPHER_AUTH=bolt://neo4j:password@neo4j
+      - MONGO_AUTH=mongodb://mongodb:password@mongodb:27017
+      - ELASTIC_AUTH=elasticsearch:9200
+      - REDIS_AUTH=tcp://redis?password=redis-password
+      - RABBITMQ_AUTH=amqp://user:password@rabbitmq:5672
     networks:
       - default   # to reach neo4j, mongodb, elasticsearch, redis, rabbitmq, minio
       - traefik   # to be reachable by traefik

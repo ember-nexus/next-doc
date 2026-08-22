@@ -3,7 +3,7 @@
     "/upload/{uuid}": {
       "delete": {
         "summary": "Delete upload",
-        "description": "Deletes resumable upload instance.",
+        "description": "Aborts a resumable upload: already-uploaded chunks are removed from storage and the upload itself ceases to exist. The target element is left untouched. Only the user who created the upload can delete it.",
         "operationId": "delete-upload",
         "tags": [
           "File"
@@ -23,7 +23,7 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Id of the element to be deleted."
+            "description": "Id of the resumable upload, as returned in the `Location` header of the request that created it."
           }
         ],
         "x-ember-nexus-har-example": {

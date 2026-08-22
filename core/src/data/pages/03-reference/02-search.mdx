@@ -12,21 +12,37 @@ allowing **cross-database search logic**.
 **Note**: Due to security reasons, most search steps are limited in scope. Specific details and workarounds can be found
 on their detail pages.
 
+### How parameters are resolved
+
+Every step can read a `parameters` object, which is assembled in the following priority order (later entries win):
+
+1. Results of previous steps (available as `stepResults`).
+2. Global `parameters`, set on the request body.
+3. Step-local `parameters`, set on the individual step definition.
+
+This means step-local parameters always take priority over global parameters, which in turn take priority over
+whatever earlier steps returned - allowing later steps to override values injected by earlier ones.
+
 ## Search steps
 
 ### Elasticsearch Query DSL Mixin
 
 Executes search queries against **Elasticsearch**. Great for full text search, explorative search requests, small logic
-etc.
+etc. Supports (almost) the full [Elasticsearch Query DSL](https://www.elastic.co/docs/explore-analyze/query-filter/languages/querydsl).
+See the [detail page](/reference/search/elasticsearch-query-dsl-mixin) for its parameters, security aspects and examples.
 
 ### Cypher Path
 
-Executes search queries against **Neo4j**. Great for structural search, e.g. "list all comments on blog post X".
+Executes search queries against **Neo4j**. Great for structural search, e.g. "list all comments on blog post X". Uses a
+restricted subset of Cypher 25 dedicated to path searches only, called Cypher Path Subset.
+See the [detail page](/reference/search/cypher-path-subset) for its parameters, security aspects and examples.
 
 ### Element Hydration
 
 Converts a list of element ids to a collection response, containing elements and all their properties.  
-This step is mostly used to convert results of other search steps to collection responses usable by clients.
+This step is mostly used to convert results of other search steps to collection responses usable by clients, and is
+therefore commonly used as the last step of a search request.
+See the [detail page](/reference/search/element-hydration) for its parameters and examples.
 
 ## Examples
 
@@ -147,3 +163,62 @@ import combinedFullTextAndPathSearchHeader from '../assets/combined-full-text-an
 Due to the unlimited path length, the resulting graph can become quite big.
 
 Duplicated nodes etc. are already filtered out by the API itself, as can be seen in the debug view.
+
+### Cypher-first polyglot search
+
+Polyglot pipelines do not need to start with Elasticsearch - a Cypher step can run first and pass its results on to a
+later Elasticsearch step instead. Here, Neo4j is queried for all plants tagged with a color given as a global
+parameter (`color: "red"`), and the resulting node ids are then combined with a full text search against
+Elasticsearch, further restricting the plants to those whose `description` also mentions the same color.  
+Both the `color` parameter and the previous step's `nodeIds` are substituted into the Elasticsearch query as
+[expressions](/reference/search/elasticsearch-query-dsl-mixin#parameterized-elasticsearch-queries).
+
+import cypherFirstPolyglotSearch from '../assets/cypher-first-polyglot-search.json';
+import cypherFirstPolyglotSearchHeader from '../assets/cypher-first-polyglot-search.txt?raw';
+
+```json
+{
+  "debug": true,
+  "steps": [
+    {
+      "type": "cypher-path-subset",
+      "query": "MATCH path=((plant:Plant)-[:HAS_TAG]->(:Tag {name: $color})) RETURN path ORDER BY plant.name"
+    },
+    {
+      "type": "elasticsearch-query-dsl-mixin",
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "match": {
+                "description": {
+                  "query": "{{color}}"
+                }
+              }
+            },
+            {
+              "terms": {
+                "_id": "{{map(stepResults[0].paths, #.nodeIds[0])}}"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "element-hydration"
+    }
+  ],
+  "parameters": {
+    "color": "red"
+  }
+}
+```
+
+<SearchResponseCard
+    responseBody={cypherFirstPolyglotSearch}
+    responseHeaders={cypherFirstPolyglotSearchHeader}
+></SearchResponseCard>
+
+Only plants tagged `red` whose description also contains the word "red" are returned - the Cypher step narrows the
+candidate set structurally, while the Elasticsearch step re-checks the text content of exactly those candidates.

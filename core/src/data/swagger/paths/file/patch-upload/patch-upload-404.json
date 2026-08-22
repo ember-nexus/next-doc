@@ -4,7 +4,7 @@
       "patch": {
         "responses": {
           "404": {
-            "description": "The referenced element does not exist.",
+            "description": "No resumable upload with this id exists, it already completed, it belongs to a different user, or the current user has since lost `UPDATE` access to the upload's target element.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"

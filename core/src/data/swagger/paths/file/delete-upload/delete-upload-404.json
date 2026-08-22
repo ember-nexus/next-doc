@@ -4,7 +4,7 @@
       "delete": {
         "responses": {
           "404": {
-            "description": "The referenced element does not exist.",
+            "description": "No resumable upload with this id exists, it already expired or completed, or it belongs to a different user.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"

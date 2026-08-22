@@ -1,10 +1,10 @@
 {
   "paths": {
-    "/register": {
-      "post": {
+    "/upload/{uuid}": {
+      "head": {
         "responses": {
-          "404": {
-            "description": "The referenced parent node does not exist.",
+          "204": {
+            "description": "Resumable upload found. Its current state is returned entirely through response headers - there is no response body.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -24,32 +24,35 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
+              "Upload-Complete": {
+                "$ref": "#/components/headers/Upload-Complete"
+              },
+              "Upload-Offset": {
+                "$ref": "#/components/headers/Upload-Offset"
+              },
+              "Upload-Length": {
+                "$ref": "#/components/headers/Upload-Length"
+              },
+              "Upload-Limit": {
+                "$ref": "#/components/headers/Upload-Limit"
+              },
+              "Expires": {
+                "$ref": "#/components/headers/Expires"
+              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/404",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/204",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/404",
+                "url": "https://http.dev/204",
                 "name": "HTTP.dev"
               }
-            ],
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                },
-                "examples": {
-                  "notFound": {
-                    "$ref": "#/components/examples/NotFoundProblemExample"
-                  }
-                }
-              }
-            }
+            ]
           }
         }
       }

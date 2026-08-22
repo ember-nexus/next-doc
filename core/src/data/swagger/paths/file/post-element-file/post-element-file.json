@@ -3,7 +3,7 @@
     "/{uuid}/file": {
       "post": {
         "summary": "Post element file",
-        "description": "Creates a new file. Requires that the element does not have a file attached already.",
+        "description": "Creates a new file for an element, either by uploading the complete file directly or by starting a resumable upload. Fails if the element already has a file attached.",
         "operationId": "post-element-file",
         "tags": [
           "File"
@@ -14,38 +14,55 @@
           },
           {}
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Id of the element the file is attached to."
+          },
+          {
+            "name": "Upload-Complete",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "?1"
+            },
+            "description": "`?1` uploads the request body as the complete, final file. `?0` starts a resumable upload instead - the request body, if any, is stored as the first chunk. Omitting the header behaves like `?1`."
+          },
+          {
+            "name": "Upload-Length",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 20971520
+            },
+            "description": "Total size in bytes of the finished file. Only read when starting a resumable upload (`Upload-Complete: ?0`); optional even then."
+          },
+          {
+            "name": "Content-Disposition",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "attachment; filename=\"report.pdf\""
+            },
+            "description": "Original filename of the uploaded file, used to derive the file's extension. Falls back to `bin` if omitted or if no extension can be parsed."
+          }
+        ],
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
-            "application/json": {
+            "application/octet-stream": {
               "schema": {
-                "type": "object",
-                "required": [
-                  "type",
-                  "data"
-                ],
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "description": "The type of element to be created.",
-                    "example": "Demo"
-                  },
-                  "id": {
-                    "type": "string",
-                    "format": "uuid",
-                    "description": "The element's UUID. Auto-generated if not provided.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
-                  },
-                  "data": {
-                    "type": "object",
-                    "description": "Arbitrary data related to the element.",
-                    "additionalProperties": true,
-                    "example": {
-                      "hello": "world :D"
-                    }
-                  }
-                }
+                "type": "string",
+                "format": "binary"
               }
             }
           }
@@ -62,15 +79,23 @@
             },
             {
               "name": "Content-Type",
-              "value": "application/json"
+              "value": "application/octet-stream"
+            },
+            {
+              "name": "Content-Disposition",
+              "value": "attachment; filename=\"report.pdf\""
+            },
+            {
+              "name": "Upload-Complete",
+              "value": "?1"
             }
           ],
           "queryString": [],
           "headersSize": -1,
           "bodySize": -1,
           "postData": {
-            "mimeType": "application/json",
-            "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
+            "mimeType": "application/octet-stream",
+            "text": "<binary file data>"
           }
         }
       }

@@ -12,6 +12,7 @@ import { join } from 'path'
 const DOMAIN_WHITELIST: string[] = [
     // Ember Nexus domains
     'reference-dataset.ember-nexus.dev',
+    'ember-nexus.dev',
     
     // Ember Nexus related domains
     'github.com',
@@ -48,7 +49,12 @@ const DOMAIN_WHITELIST: string[] = [
     'sourcefirst.com',
     'symfony.com',
     'xxhash.com',
-    'expr-lang.org'
+    'expr-lang.org',
+    'opencypher.org',
+    'ember-nexus.github.io',
+    'opengql.github.io',
+    'en.wikipedia.org',
+    'www.php.net'
 ]
 
 // ── helpers ──

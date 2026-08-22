@@ -1,10 +1,10 @@
 {
   "paths": {
-    "/upload/{uuid}": {
-      "head": {
+    "/graph-structure": {
+      "get": {
         "responses": {
-          "200": {
-            "description": "Resumable upload found. Response headers include meta data about the upload.",
+          "403": {
+            "description": "The endpoint has been disabled by the instance's administrator (`instanceConfiguration.enabled` set to `false`).",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -30,33 +30,22 @@
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/403",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/200",
+                "url": "https://http.dev/403",
                 "name": "HTTP.dev"
               }
             ],
             "content": {
-              "application/json": {
+              "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Element"
+                  "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "default": {
-                    "summary": "Resumable upload found, returning its meta data in the response headers.",
-                    "x-ember-nexus-name": "Node",
-                    "value": {
-                      "type": "Comment",
-                      "id": "74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-                      "data": {
-                        "created": "2025-09-27T10:39:51+00:00",
-                        "updated": "2025-09-27T10:39:51+00:00",
-                        "name": "Blue",
-                        "content": "Blue is one of the three primary colours in the RYB colour model...\n"
-                      }
-                    }
+                  "forbidden": {
+                    "$ref": "#/components/examples/ForbiddenProblemExample"
                   }
                 }
               }

@@ -4,7 +4,7 @@
       "delete": {
         "responses": {
           "401": {
-            "description": "The provided token is either invalid or expired.",
+            "description": "The provided token is either invalid or expired, or no token was provided at all (the default anonymous user has no token to delete).",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"

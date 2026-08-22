@@ -3,7 +3,7 @@
     "/token": {
       "get": {
         "summary": "Get token",
-        "description": "Alias endpoint, returns the current sessions's token element.",
+        "description": "Alias endpoint, returns the current session's token element.",
         "operationId": "get-token",
         "tags": [
           "User"

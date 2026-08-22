@@ -9,3 +9,10 @@ swaggerUrl: /{uuid}
 
 Deletes the referenced element, as well as its file (if it has one) and relations directly attached to the element (if
 it is a node).
+
+<Note>
+    Since access to a node is granted through its `OWNS`-relations, deleting a parent before its children leaves those
+    children without an owner. They are not deleted themselves, but become unreachable through the API, as there is no
+    longer any element the current user has access to that owns them. To avoid this, delete children first, or attach
+    them to another parent before deleting the current one.
+</Note>

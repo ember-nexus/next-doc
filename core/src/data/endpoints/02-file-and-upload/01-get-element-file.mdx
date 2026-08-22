@@ -7,4 +7,17 @@ endpointUrl: /<uuid>/file
 swaggerUrl: /{uuid}/file
 ---
 
-Returns the binary file attached to an element.
+Returns the binary file attached to an element as a stream, together with a `Content-Disposition` header describing
+the original filename.
+
+The filename is built from the element's `name` property, if it has one and it is a string, falling back to the
+element's id otherwise. The extension is taken from the file that was actually uploaded (see
+[Post element file](/api/post-element-file)), or `bin` if none could be determined.
+
+<Note>
+    Returns `404` both when the element does not exist (or is not accessible to the current user) and when the
+    element exists but has no file attached - the two cases cannot be told apart from the response alone.
+</Note>
+
+Like most other element endpoints, this endpoint supports conditional requests via `If-Match` and `If-None-Match`,
+using an `ETag` derived from the file's content.

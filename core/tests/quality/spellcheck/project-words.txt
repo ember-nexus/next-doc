@@ -22,10 +22,31 @@ dagre
 healthcheck
 Symfony
 
+# CPU architectures (hardware requirements reference)
+ppc64le
+s390x
+mips64le
+riscv64
+vCPUs
+
+# graph database vendors / variants mentioned in hardware requirements
+openCypher
+AuraDB
+Memgraph
+SaaS
+
 # valid English words missing from the base dictionary
 explorative
 Geospatial
 lilytree
+colour
+
+# technologies / grammar tooling
+FrankenPHP
+ANTLR
+
+# reference-dataset botanical terms
+Liliales
 
 # markdown-bold parsing artifacts (e.g. "**c**reate, **r**ead, **u**pdate, **d**elete")
 reate

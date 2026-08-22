@@ -4,7 +4,7 @@
       "post": {
         "responses": {
           "404": {
-            "description": "At least one of the referenced nodes (start / end) does not exist, relevant only for relations.",
+            "description": "The referenced parent element does not exist, is not a node (e.g. it is a relation), or the current user does not have permission to create elements under it.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"

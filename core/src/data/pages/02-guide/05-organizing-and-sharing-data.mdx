@@ -3,6 +3,9 @@ type: guide
 title: Organizing and sharing data
 ---
 
+This page focuses on practical patterns for organizing and sharing data. For the underlying mechanics of ownership,
+access grants and groups, see the [access model](/reference/access-model) reference page.
+
 Organizing your data is important because:
 
 - Organized data can be easily accessed, searched and used.
@@ -118,3 +121,13 @@ Organizing your data is important because:
         </g6-graph>
     </ComparisonCard>
 </TwoColumn>
+
+## Sharing and transferring ownership
+
+To share an element with someone else, grant their user (or, following the tip above, a group they belong to) one of
+the `HAS_X_ACCESS` relations, or `OWNS` for full access - see [access model](/reference/access-model) for the full set
+of operations and how conditional access (per type, per parent, per creator) works.
+
+To hand ownership of an element over to someone else entirely, rather than just sharing it, see
+[transfer of ownership](/reference/access-model/transfer-of-ownership) - it also covers what to watch out for so you
+don't lock yourself out mid-transfer.

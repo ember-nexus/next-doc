@@ -29,7 +29,7 @@
                     "type": "array",
                     "description": "List of search steps, which should be executed sequentially.",
                     "items": {
-                      "type": "#/components/schemas/SearchStep"
+                      "$ref": "#/components/schemas/SearchStep"
                     }
                   },
                   "parameters": {

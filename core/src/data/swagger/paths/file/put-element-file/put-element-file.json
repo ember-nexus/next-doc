@@ -3,7 +3,7 @@
     "/{uuid}/file": {
       "put": {
         "summary": "Put element file",
-        "description": "Creates or replaces the file of an element.",
+        "description": "Creates or replaces the file of an element, either by uploading the complete file directly or by starting a resumable upload. Unlike `POST`, this succeeds even if the element already has a file attached - the existing file is replaced.",
         "operationId": "put-element-file",
         "tags": [
           "File"
@@ -24,19 +24,48 @@
               "format": "uuid"
             },
             "description": "Id of the element whose file is to be created or replaced."
+          },
+          {
+            "$ref": "#/components/parameters/If-Match"
+          },
+          {
+            "name": "Upload-Complete",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "?1"
+            },
+            "description": "`?1` uploads the request body as the complete, final file. `?0` starts a resumable upload instead - the request body, if any, is stored as the first chunk. Omitting the header behaves like `?1`."
+          },
+          {
+            "name": "Upload-Length",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 20971520
+            },
+            "description": "Total size in bytes of the finished file. Only read when starting a resumable upload (`Upload-Complete: ?0`); optional even then."
+          },
+          {
+            "name": "Content-Disposition",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "attachment; filename=\"report.pdf\""
+            },
+            "description": "Original filename of the uploaded file, used to derive the file's extension. Falls back to `bin` if omitted or if no extension can be parsed."
           }
         ],
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
-            "application/json": {
+            "application/octet-stream": {
               "schema": {
-                "type": "object",
-                "description": "Arbitrary data related to the element.",
-                "additionalProperties": true,
-                "example": {
-                  "hello": "world :D"
-                }
+                "type": "string",
+                "format": "binary"
               }
             }
           }
@@ -53,15 +82,23 @@
             },
             {
               "name": "Content-Type",
-              "value": "application/json"
+              "value": "application/octet-stream"
+            },
+            {
+              "name": "Content-Disposition",
+              "value": "attachment; filename=\"report.pdf\""
+            },
+            {
+              "name": "Upload-Complete",
+              "value": "?1"
             }
           ],
           "queryString": [],
           "headersSize": -1,
           "bodySize": -1,
           "postData": {
-            "mimeType": "application/json",
-            "text": "{\"someDataKey\": \"some new value :D\"}"
+            "mimeType": "application/octet-stream",
+            "text": "<binary file data>"
           }
         }
       }

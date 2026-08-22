@@ -7,4 +7,7 @@ endpointUrl: /token
 swaggerUrl: /token
 ---
 
-Deletes the currently used token.
+Deletes the currently used token. The token is invalid for any further request immediately afterwards.
+
+**Note**: `401 Unauthorized` is returned both for an invalid/expired token and for a missing token (i.e. the default
+anonymous user, which has no token to delete).

@@ -140,7 +140,7 @@ export function extractCommonRequestHeaders(
         header: param.name,
         presence: param.required ? "required" : "optional",
         description: param.description,
-        links: param["x-ember-nexus-links"] as Link[] | undefined,
+        links: (param["x-ember-nexus-links"] as Link[] | undefined) ?? [],
       };
     });
 }
@@ -431,14 +431,18 @@ export function extractResponseExamples(
             continue;
           }
           const example = exampleOrRef;
+          const isJsonMimeType = mimeType.includes("json");
           results.push({
             httpStatusCode: Number(statusCode) as HttpStatusCode,
             name: (example["x-ember-nexus-name"] as string | undefined) ?? null,
             description: example.summary ?? response.description ?? "",
             links,
             body: {
-              content: JSON.stringify(example.value, null, 2),
-              type: mimeType.includes("json") ? "json" : "plain",
+              content:
+                isJsonMimeType || typeof example.value !== "string"
+                  ? JSON.stringify(example.value, null, 2)
+                  : example.value,
+              type: isJsonMimeType ? "json" : "plain",
             },
             headers,
             schema,

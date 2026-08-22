@@ -6,6 +6,19 @@ title: Caching and conditional requests
 This page handles client side caching through the usage of the `ETag` header. Other forms of caching exist, e.g. inside
 the internal databases, in a proxy between the user and the API etc., but are outside the scope of this article.
 
+## Other caching layers
+
+Besides client-side `ETag` caching, two other cache-related aspects exist:
+
+- The internal databases Ember Nexus depends on, e.g. Neo4j and Elasticsearch, have their own caches. They may show
+  slower "cold start" performance until their own caches are warmed up.
+- Ember Nexus itself stores/caches computed `ETag` values. They can be cleared and recalculated with the
+  [`cache:clear:etag`](/command/cache-clear-etag) command.
+
+Collections larger than the configured `cache.etagUpperLimitInCollectionEndpoints` (see the
+[configuration reference](/reference/configuration)) do not receive an `ETag` at all, as computing one for very large
+collections would cause performance problems.
+
 ## What is the `ETag` header?
 
 The `ETag` header, short for "entity tag", is an identifier for a version of an element. It is sent in `HEAD` and `GET`

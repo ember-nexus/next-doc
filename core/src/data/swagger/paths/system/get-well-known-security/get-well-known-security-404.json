@@ -1,10 +1,10 @@
 {
   "paths": {
-    "/upload/{uuid}": {
-      "head": {
+    "/.well-known/security.txt": {
+      "get": {
         "responses": {
-          "304": {
-            "description": "Not modified. Returned when `If-None-Match` header matches current `ETag`.",
+          "404": {
+            "description": "No `security.txt` file has been configured on this instance.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -24,23 +24,32 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
-              "ETag": {
-                "$ref": "#/components/headers/ETag"
-              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/304",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/404",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/304",
+                "url": "https://http.dev/404",
                 "name": "HTTP.dev"
               }
-            ]
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "notFound": {
+                    "$ref": "#/components/examples/NotFoundProblemExample"
+                  }
+                }
+              }
+            }
           }
         }
       }

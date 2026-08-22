@@ -1,0 +1,20 @@
+{
+  "components": {
+    "headers": {
+      "Upload-Length": {
+        "description": "Total number of bytes the finished file will have. Optional - omitted when the total size is not known ahead of time.",
+        "schema": {
+          "type": "integer",
+          "example": 20971520
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://datatracker.ietf.org/doc/draft-ietf-httpbis-resumable-upload/",
+            "name": "IETF draft"
+          }
+        ],
+        "required": false
+      }
+    }
+  }
+}

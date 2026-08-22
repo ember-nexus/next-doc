@@ -1,0 +1,100 @@
+---
+type: reference
+title: Grammars
+---
+
+Grammar files define the syntax, rules and features of a technical language. While additional limits and
+restrictions may apply on top, a grammar file gives a good idea of what is fundamentally supported by a language.
+
+Ember Nexus exposes the following languages.
+
+## Cypher
+
+The Cypher query language is available in a few different variants. While Ember Nexus mostly relies on openCypher, it
+uses extended variants where necessary.
+
+### openCypher 9
+
+A standardized set of core features, supported by many graph databases. Ember Nexus tries to restrict its own graph
+queries to openCypher so they stay graph-database-agnostic, although this is not always possible.
+
+Links:
+
+- [Project website](https://opencypher.org/)
+- [openCypher grammar resources (original)](https://opencypher.org/resources/)
+- [openCypher ANTLR grammar (copy)](https://github.com/ember-nexus/api/tree/main/antlr/src/openCypher9.g4)
+- [openCypher railroad diagram (copy)](https://ember-nexus.github.io/api/antlr/open-cypher-9.html)
+
+### Cypher 25
+
+Neo4j's own Cypher variant, extending openCypher with additional features, graph pattern matching, GQL-style
+features and more.
+
+Links:
+
+- [Cypher documentation](https://neo4j.com/docs/getting-started/cypher/)
+- [Cypher 25 railroad diagram (copy)](https://ember-nexus.github.io/api/antlr/cypher-25.html)
+- [Cypher 25 ANTLR grammar (copy)](https://github.com/ember-nexus/api/tree/main/antlr/src/Cypher25Parser.g4)
+
+### Cypher Path Subset
+
+Ember Nexus' own Cypher variant, also called "safe Cypher". It is a query language based on Cypher 25, with
+potentially problematic features and keywords removed. It's used as the query language for the
+[Cypher Path Subset search step](/reference/search/cypher-path-subset) and still contains many features useful for
+graph search, without the risks of data leakage or non-readonly queries.
+
+Links:
+
+- [Cypher Path Subset railroad diagram](https://ember-nexus.github.io/api/antlr/cypher-path-subset.html)
+- [Cypher Path Subset ANTLR grammar](https://github.com/ember-nexus/api/tree/main/antlr/src/CypherPathSubset.g4)
+
+### GQL
+
+GQL, short for Graph Query Language, is an official graph database query language standard that will likely replace
+openCypher over time. Ember Nexus does not yet use GQL internally, but is likely to adopt it once it's supported
+across multiple graph databases.
+
+Links:
+
+- [GQL grammar files](https://github.com/opengql/railroad)
+- [GQL railroad diagrams](https://opengql.github.io/railroad/)
+
+## Elasticsearch
+
+### Elasticsearch Query DSL
+
+Used by the [Elasticsearch Query DSL Mixin search step](/reference/search/elasticsearch-query-dsl-mixin). There is no
+dedicated grammar file for the Query DSL; its [documentation](https://www.elastic.co/docs/explore-analyze/query-filter/languages/querydsl)
+is the closest thing to a language definition.
+
+### Elasticsearch ES|QL
+
+Not yet supported by Ember Nexus, but likely to be added in the future.
+
+Links:
+
+- [ES|QL documentation](https://www.elastic.co/docs/reference/query-languages/esql/esql-getting-started)
+- [ES|QL ANTLR grammar files](https://github.com/elastic/elasticsearch/tree/main/x-pack/plugin/esql/src/main/antlr)
+
+## Expr
+
+[Expr](https://github.com/expr-lang/expr) is an expression library used within Ember Nexus to manipulate data inside
+search queries.
+
+Expressions are defined as strings surrounded by double curly brackets, e.g. `{{your_expression}}`; the expression
+string is replaced by its evaluated result inside the query. The result can be a plain string, but any other JSON
+data type — numbers, arrays, objects — is supported as well.
+
+Expressions are not supported in every location of a search request; see the relevant search step's documentation for
+details.
+
+<Note title="Security">
+Expressions can be deactivated entirely, and expression strings are limited to a length of 10 KB by default.
+Expressions longer than 512 characters are additionally logged. These limits can be changed in
+[Ember Nexus's configuration](/reference/configuration).
+</Note>
+
+Links:
+
+- [Expr library's language documentation](https://expr-lang.org/docs/language-definition)
+- [Playground to test your own expressions](https://expr-lang.org/playground)

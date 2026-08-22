@@ -3,8 +3,8 @@
     "/upload/{uuid}": {
       "patch": {
         "responses": {
-          "412": {
-            "description": "Precondition failed. `If-Match` or `If-None-Match` condition not met.",
+          "409": {
+            "description": "The `Upload-Offset` in the request does not match the upload's current offset, or the appended chunk would exceed the upload's declared `Upload-Length`.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -30,11 +30,11 @@
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/412",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/409",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/412",
+                "url": "https://http.dev/409",
                 "name": "HTTP.dev"
               }
             ],
@@ -44,8 +44,11 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "preconditionFailed": {
-                    "$ref": "#/components/examples/PreconditionFailedProblemExample"
+                  "offsetMismatch": {
+                    "$ref": "#/components/examples/OffsetMismatchProblemExample"
+                  },
+                  "uploadLengthExceeded": {
+                    "$ref": "#/components/examples/UploadLengthExceededProblemExample"
                   }
                 }
               }

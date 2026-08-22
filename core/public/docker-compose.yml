@@ -7,6 +7,20 @@ services:
       - ./well-known-security.txt:/well-known-security.txt:ro
     ports:
       - "80:80"
+    environment:
+      - APP_ENV=prod
+      - CYPHER_AUTH=bolt://neo4j:password@neo4j
+      - MONGO_AUTH=mongodb://mongodb:password@mongodb:27017
+      - ELASTIC_AUTH=elasticsearch:9200
+      - REDIS_AUTH=tcp://redis?password=redis-password
+      - RABBITMQ_AUTH=amqp://user:password@rabbitmq:5672
+    depends_on:
+      - neo4j
+      - mongodb
+      - elasticsearch
+      - redis
+      - rabbitmq
+      - minio
 
   neo4j:
     container_name: neo4j

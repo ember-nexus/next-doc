@@ -1,6 +1,47 @@
 {
   "components": {
     "examples": {
+      "BadContentProblemExample": {
+        "summary": "A provided property has the wrong type or fails a validation rule.",
+        "value": {
+          "type": "https://api.example.com/error/400/bad-content",
+          "title": "Bad content",
+          "status": 400,
+          "detail": "Endpoint expects property 'newPassword' to be password which is not identical to the old password, got string '<redacted>'."
+        }
+      },
+      "FileAlreadyExistsProblemExample": {
+        "value": {
+          "type": "https://api.example.com/error/409/conflict",
+          "title": "Conflict",
+          "status": 409,
+          "detail": "Element with id '7b80b203-2b82-40f5-accd-c7089fe6114e' already has an associated file; can not create new file. Delete existing file first or replace it with PUT."
+        }
+      },
+      "ForbiddenProblemExample": {
+        "value": {
+          "type": "https://api.example.com/error/403/forbidden",
+          "title": "Forbidden",
+          "status": 403,
+          "detail": "Requested endpoint, element or action is forbidden."
+        }
+      },
+      "ForbiddenPropertyProblemExample": {
+        "value": {
+          "type": "https://api.example.com/error/400/forbidden-property",
+          "title": "Forbidden property",
+          "status": 400,
+          "detail": "Endpoint does not accept setting the property 'created' in the request."
+        }
+      },
+      "GoneProblemExample": {
+        "value": {
+          "type": "https://api.example.com/error/410/gone",
+          "title": "Gone",
+          "status": 410,
+          "detail": "Requested resource is no longer available and is expected to soon be permanently deleted."
+        }
+      },
       "MissingPropertyProblemExample": {
         "value": {
           "type": "https://api.example.com/error/400/missing-property",
@@ -17,6 +58,16 @@
           "detail": "Requested element was not found."
         }
       },
+      "OffsetMismatchProblemExample": {
+        "value": {
+          "type": "https://api.example.com/error/409/conflict",
+          "title": "Conflict",
+          "status": 409,
+          "detail": "Offset from request does not match offset of resource.",
+          "expected-offset": 20971520,
+          "provided-offset": 10485760
+        }
+      },
       "PreconditionFailedProblemExample": {
         "summary": "Precondition failed. `If-Match` or `If-None-Match` condition not met.",
         "value": {
@@ -26,12 +77,29 @@
           "detail": "Precondition does not match."
         }
       },
+      "ReservedIdentifierProblemExample": {
+        "summary": "The unique user identifier is already used by another account.",
+        "value": {
+          "type": "https://api.example.com/error/400/reserved-identifier",
+          "title": "Reserved identifier",
+          "status": 400,
+          "detail": "The requested identifier 'test@example.com' is reserved and can not be used."
+        }
+      },
       "UnauthorizedProblemExample": {
         "value": {
           "type": "https://api.example.com/error/401/unauthorized",
           "title": "Unauthorized",
           "status": 401,
           "detail": "Authorization for the request failed due to possible problems with the token (incorrect or expired), password (incorrect or changed), the user's unique identifier, or the user's status (e.g., missing, blocked, or deleted)."
+        }
+      },
+      "UploadLengthExceededProblemExample": {
+        "value": {
+          "type": "https://api.example.com/error/409/conflict",
+          "title": "Conflict",
+          "status": 409,
+          "detail": "Already uploaded data exceeds defined upload length."
         }
       }
     },
@@ -209,6 +277,25 @@
         "x-ember-nexus-important": true,
         "required": false
       },
+      "Expires": {
+        "description": "Point in time after which the unfinished resumable upload is discarded, if it is not completed before then.",
+        "schema": {
+          "type": "string",
+          "example": "Sat, 22 Aug 2026 21:22:07 GMT"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Expires",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/expires",
+            "name": "HTTP.dev"
+          }
+        ],
+        "x-ember-nexus-important": true,
+        "required": true
+      },
       "Location-created": {
         "description": "URL of the newly created resource.",
         "schema": {
@@ -223,6 +310,65 @@
           {
             "url": "https://http.dev/location",
             "name": "HTTP.dev"
+          }
+        ],
+        "x-ember-nexus-important": true,
+        "required": true
+      },
+      "Upload-Complete": {
+        "description": "Structured boolean indicating whether the upload is finished: `?1` for complete, `?0` for still in progress.",
+        "schema": {
+          "type": "string",
+          "example": "?0"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://datatracker.ietf.org/doc/draft-ietf-httpbis-resumable-upload/",
+            "name": "IETF draft"
+          }
+        ],
+        "x-ember-nexus-important": true,
+        "required": true
+      },
+      "Upload-Length": {
+        "description": "Total number of bytes the finished file will have. Optional - omitted when the total size is not known ahead of time.",
+        "schema": {
+          "type": "integer",
+          "example": 20971520
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://datatracker.ietf.org/doc/draft-ietf-httpbis-resumable-upload/",
+            "name": "IETF draft"
+          }
+        ],
+        "required": false
+      },
+      "Upload-Limit": {
+        "description": "Structured field listing the server's limits for this upload: `max-age` (seconds an unfinished upload is kept alive since its first request), `max-size` (maximum total file size in bytes), `min-append-size` (minimum size in bytes for a non-final chunk) and `max-append-size` (maximum size in bytes per chunk).",
+        "schema": {
+          "type": "string",
+          "example": "max-age=10800, max-size=10737418240, min-append-size=5242880, max-append-size=105906176"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://datatracker.ietf.org/doc/draft-ietf-httpbis-resumable-upload/",
+            "name": "IETF draft"
+          }
+        ],
+        "x-ember-nexus-important": true,
+        "required": true
+      },
+      "Upload-Offset": {
+        "description": "Number of bytes already stored for the resumable upload. On a request, it must match the upload's current offset exactly; on a response, it reflects the offset after the request was processed.",
+        "schema": {
+          "type": "integer",
+          "example": 5242880
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://datatracker.ietf.org/doc/draft-ietf-httpbis-resumable-upload/",
+            "name": "IETF draft"
           }
         ],
         "x-ember-nexus-important": true,
@@ -434,6 +580,128 @@
           }
         }
       },
+      "GraphStructure": {
+        "type": "object",
+        "description": "The node and relation types currently present in the graph.",
+        "required": [
+          "nodeTypes",
+          "relationTypes"
+        ],
+        "properties": {
+          "nodeTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Collection",
+              "Comment",
+              "Data",
+              "Group",
+              "Location",
+              "Tag",
+              "Token",
+              "User"
+            ]
+          },
+          "relationTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "HAS_READ_ACCESS",
+              "HAS_SEARCH_ACCESS",
+              "HAS_TAG",
+              "IS_IN_GROUP",
+              "IS_MEMBER_OF",
+              "OWNS",
+              "RELATED"
+            ]
+          }
+        }
+      },
+      "InstanceConfiguration": {
+        "type": "object",
+        "description": "Configuration parameters and limits of the current API instance.",
+        "properties": {
+          "version": {
+            "type": "string",
+            "nullable": true,
+            "description": "API version. `null` if the administrator has disabled exposing it via `instanceConfiguration.showVersion`.",
+            "example": "0.1.31"
+          },
+          "pageSize": {
+            "type": "object",
+            "properties": {
+              "min": {
+                "type": "integer",
+                "example": 5
+              },
+              "default": {
+                "type": "integer",
+                "example": 25
+              },
+              "max": {
+                "type": "integer",
+                "example": 100
+              }
+            }
+          },
+          "register": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "example": true
+              },
+              "uniqueIdentifier": {
+                "type": "string",
+                "example": "email"
+              },
+              "uniqueIdentifierRegex": {
+                "type": "boolean",
+                "nullable": true,
+                "example": false
+              }
+            }
+          },
+          "expression": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "example": true
+              },
+              "maxLength": {
+                "type": "integer",
+                "example": 10240
+              }
+            }
+          },
+          "file": {
+            "type": "object",
+            "properties": {
+              "maxFileSizeInBytes": {
+                "type": "integer",
+                "example": 10737418240
+              },
+              "uploadExpiresInSecondsAfterFirstRequest": {
+                "type": "integer",
+                "example": 10800
+              },
+              "uploadMinChunkSizeInBytes": {
+                "type": "integer",
+                "example": 5242880
+              },
+              "uploadMaxChunkSizeInBytes": {
+                "type": "integer",
+                "example": 105906176
+              }
+            }
+          }
+        }
+      },
       "PartialCollection": {
         "type": "object",
         "required": [
@@ -490,6 +758,44 @@
           },
           "detail": {
             "type": "string"
+          }
+        }
+      },
+      "SearchResultResponse": {
+        "type": "object",
+        "required": [
+          "type",
+          "results"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "_SearchResultResponse"
+            ]
+          },
+          "results": {
+            "description": "The result of the last executed search step. If the last step is an `element-hydration` step, this is a plain array of hydrated elements. Otherwise, its shape depends on the last step's type (e.g. `{ elements, totalHits, maxScore }` for `elasticsearch-query-dsl-mixin`, or `{ paths }` for `cypher-path-subset`).",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Element"
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": true
+              }
+            ]
+          },
+          "debug": {
+            "type": "array",
+            "description": "Only present if the request body's `debug` property was set to true. Contains one entry per executed search step, with step-specific timing and query information.",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
           }
         }
       },
@@ -583,6 +889,43 @@
                     }
                   }
                 }
+              },
+              "parameters": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Step-local parameters. In addition to arbitrary values used by expressions inside `query`, this step recognizes the following well-known keys.",
+                "properties": {
+                  "nodeTypes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Restricts the search to the given node types."
+                  },
+                  "relationTypes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Restricts the search to the given relation types."
+                  },
+                  "page": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "Page of results to return."
+                  },
+                  "pageSize": {
+                    "type": "integer",
+                    "default": 25,
+                    "description": "Number of results per page."
+                  },
+                  "minScore": {
+                    "type": "number",
+                    "nullable": true,
+                    "default": null,
+                    "description": "If set, removes all results with a lower Elasticsearch relevance score."
+                  }
+                }
               }
             }
           }
@@ -611,6 +954,28 @@
             }
           }
         ]
+      },
+      "TokenResponse": {
+        "type": "object",
+        "description": "Response returned after successfully creating a new token. Unlike other endpoints, this is not an Element.",
+        "required": [
+          "type",
+          "token"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "_TokenResponse"
+            ],
+            "example": "_TokenResponse"
+          },
+          "token": {
+            "type": "string",
+            "description": "The newly created token, in the RFC 8959 `secret-token:` scheme. It is only ever shown once; use `GET /token` or `GET /me` afterwards to inspect the resulting elements instead.",
+            "example": "secret-token:PIPeJGUt7c00ENn8a5uDlc"
+          }
+        }
       }
     }
   },
@@ -1188,7 +1553,7 @@
             ]
           },
           "400": {
-            "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
+            "description": "General issues with the user provided request, e.g. malformed content, or the request tries to set a protected property (e.g. `created`, `updated`) directly.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -1228,8 +1593,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "missingProperty": {
-                    "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  "forbiddenProperty": {
+                    "$ref": "#/components/examples/ForbiddenPropertyProblemExample"
                   }
                 }
               }
@@ -1581,7 +1946,7 @@
             }
           },
           "404": {
-            "description": "At least one of the referenced nodes (start / end) does not exist, relevant only for relations.",
+            "description": "The referenced parent element does not exist, is not a node (e.g. it is a relation), or the current user does not have permission to create elements under it.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -1743,7 +2108,7 @@
             ]
           },
           "400": {
-            "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
+            "description": "General issues with the user provided request, e.g. malformed content, or the request tries to set a protected property (e.g. `created`, `updated`) directly.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -1783,8 +2148,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "missingProperty": {
-                    "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  "forbiddenProperty": {
+                    "$ref": "#/components/examples/ForbiddenPropertyProblemExample"
                   }
                 }
               }
@@ -3843,7 +4208,7 @@
           }
         },
         "summary": "Delete element file",
-        "description": "Deletes the file of an given element.",
+        "description": "Deletes the file attached to an element, along with the file-related metadata on the element itself. Does not delete the element.",
         "operationId": "delete-element-file",
         "tags": [
           "File"
@@ -3863,7 +4228,7 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Id of the element to be deleted."
+            "description": "Id of the element whose file is to be deleted."
           }
         ],
         "x-ember-nexus-har-example": {
@@ -4166,7 +4531,43 @@
       "post": {
         "responses": {
           "201": {
-            "description": "`POST` element file request was successful.  \nSpecific meaning depends on request:\n\n- When a complete file was uploaded: The element's file was successfully created.\n- When a resumable file upload was requested: The resumable file upload was created successfully, and its URL is written to the `Location` response header.",
+            "description": "The complete file was uploaded directly (`Upload-Complete: ?1`, or the header was omitted) and is now attached to the element. Returned without a response body.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/201",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/201",
+                "name": "HTTP.dev"
+              }
+            ]
+          },
+          "204": {
+            "description": "A resumable upload (`Upload-Complete: ?0`) was created successfully. Its URL is returned in the `Location` header - continue it with `PATCH`, inspect it with `HEAD`, or abort it with `DELETE` against that URL.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -4189,23 +4590,38 @@
               "Location": {
                 "$ref": "#/components/headers/Location-created"
               },
+              "Upload-Complete": {
+                "$ref": "#/components/headers/Upload-Complete"
+              },
+              "Upload-Offset": {
+                "$ref": "#/components/headers/Upload-Offset"
+              },
+              "Upload-Length": {
+                "$ref": "#/components/headers/Upload-Length"
+              },
+              "Upload-Limit": {
+                "$ref": "#/components/headers/Upload-Limit"
+              },
+              "Expires": {
+                "$ref": "#/components/headers/Expires"
+              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/201",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/204",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/201",
+                "url": "https://http.dev/204",
                 "name": "HTTP.dev"
               }
             ]
           },
           "400": {
-            "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
+            "description": "General issues with the request, e.g. a malformed or inconsistent upload header, or an uploaded chunk that violates the configured min/max chunk size.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -4245,8 +4661,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "missingProperty": {
-                    "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  "badContent": {
+                    "$ref": "#/components/examples/BadContentProblemExample"
                   }
                 }
               }
@@ -4347,10 +4763,58 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "The element already has a file attached. Delete the existing file first, or replace it with `PUT`.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/409",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/409",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "fileAlreadyExists": {
+                    "$ref": "#/components/examples/FileAlreadyExistsProblemExample"
+                  }
+                }
+              }
+            }
           }
         },
         "summary": "Post element file",
-        "description": "Creates a new file. Requires that the element does not have a file attached already.",
+        "description": "Creates a new file for an element, either by uploading the complete file directly or by starting a resumable upload. Fails if the element already has a file attached.",
         "operationId": "post-element-file",
         "tags": [
           "File"
@@ -4361,38 +4825,55 @@
           },
           {}
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Id of the element the file is attached to."
+          },
+          {
+            "name": "Upload-Complete",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "?1"
+            },
+            "description": "`?1` uploads the request body as the complete, final file. `?0` starts a resumable upload instead - the request body, if any, is stored as the first chunk. Omitting the header behaves like `?1`."
+          },
+          {
+            "name": "Upload-Length",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 20971520
+            },
+            "description": "Total size in bytes of the finished file. Only read when starting a resumable upload (`Upload-Complete: ?0`); optional even then."
+          },
+          {
+            "name": "Content-Disposition",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "attachment; filename=\"report.pdf\""
+            },
+            "description": "Original filename of the uploaded file, used to derive the file's extension. Falls back to `bin` if omitted or if no extension can be parsed."
+          }
+        ],
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
-            "application/json": {
+            "application/octet-stream": {
               "schema": {
-                "type": "object",
-                "required": [
-                  "type",
-                  "data"
-                ],
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "description": "The type of element to be created.",
-                    "example": "Demo"
-                  },
-                  "id": {
-                    "type": "string",
-                    "format": "uuid",
-                    "description": "The element's UUID. Auto-generated if not provided.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
-                  },
-                  "data": {
-                    "type": "object",
-                    "description": "Arbitrary data related to the element.",
-                    "additionalProperties": true,
-                    "example": {
-                      "hello": "world :D"
-                    }
-                  }
-                }
+                "type": "string",
+                "format": "binary"
               }
             }
           }
@@ -4409,22 +4890,66 @@
             },
             {
               "name": "Content-Type",
-              "value": "application/json"
+              "value": "application/octet-stream"
+            },
+            {
+              "name": "Content-Disposition",
+              "value": "attachment; filename=\"report.pdf\""
+            },
+            {
+              "name": "Upload-Complete",
+              "value": "?1"
             }
           ],
           "queryString": [],
           "headersSize": -1,
           "bodySize": -1,
           "postData": {
-            "mimeType": "application/json",
-            "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
+            "mimeType": "application/octet-stream",
+            "text": "<binary file data>"
           }
         }
       },
       "put": {
         "responses": {
           "201": {
-            "description": "`PUT` element file request was successful.  \nSpecific meaning depends on request:\n\n- When a complete file was uploaded: The element's file was successfully replaced.\n- When a resumable file upload was requested: The resumable file upload was created successfully, and its URL is written to the `Location` response header.",
+            "description": "The complete file was uploaded directly (`Upload-Complete: ?1`, or the header was omitted) and is now attached to the element, replacing any previous file. Returned without a response body.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/201",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/201",
+                "name": "HTTP.dev"
+              }
+            ]
+          },
+          "204": {
+            "description": "A resumable upload (`Upload-Complete: ?0`) was created successfully. Its URL is returned in the `Location` header - continue it with `PATCH`, inspect it with `HEAD`, or abort it with `DELETE` against that URL.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -4447,23 +4972,38 @@
               "Location": {
                 "$ref": "#/components/headers/Location-created"
               },
+              "Upload-Complete": {
+                "$ref": "#/components/headers/Upload-Complete"
+              },
+              "Upload-Offset": {
+                "$ref": "#/components/headers/Upload-Offset"
+              },
+              "Upload-Length": {
+                "$ref": "#/components/headers/Upload-Length"
+              },
+              "Upload-Limit": {
+                "$ref": "#/components/headers/Upload-Limit"
+              },
+              "Expires": {
+                "$ref": "#/components/headers/Expires"
+              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/201",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/204",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/201",
+                "url": "https://http.dev/204",
                 "name": "HTTP.dev"
               }
             ]
           },
           "400": {
-            "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
+            "description": "General issues with the request, e.g. a malformed or inconsistent upload header, or an uploaded chunk that violates the configured min/max chunk size.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -4503,8 +5043,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "missingProperty": {
-                    "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  "badContent": {
+                    "$ref": "#/components/examples/BadContentProblemExample"
                   }
                 }
               }
@@ -4656,7 +5196,7 @@
           }
         },
         "summary": "Put element file",
-        "description": "Creates or replaces the file of an element.",
+        "description": "Creates or replaces the file of an element, either by uploading the complete file directly or by starting a resumable upload. Unlike `POST`, this succeeds even if the element already has a file attached - the existing file is replaced.",
         "operationId": "put-element-file",
         "tags": [
           "File"
@@ -4677,19 +5217,48 @@
               "format": "uuid"
             },
             "description": "Id of the element whose file is to be created or replaced."
+          },
+          {
+            "$ref": "#/components/parameters/If-Match"
+          },
+          {
+            "name": "Upload-Complete",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "?1"
+            },
+            "description": "`?1` uploads the request body as the complete, final file. `?0` starts a resumable upload instead - the request body, if any, is stored as the first chunk. Omitting the header behaves like `?1`."
+          },
+          {
+            "name": "Upload-Length",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 20971520
+            },
+            "description": "Total size in bytes of the finished file. Only read when starting a resumable upload (`Upload-Complete: ?0`); optional even then."
+          },
+          {
+            "name": "Content-Disposition",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "attachment; filename=\"report.pdf\""
+            },
+            "description": "Original filename of the uploaded file, used to derive the file's extension. Falls back to `bin` if omitted or if no extension can be parsed."
           }
         ],
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
-            "application/json": {
+            "application/octet-stream": {
               "schema": {
-                "type": "object",
-                "description": "Arbitrary data related to the element.",
-                "additionalProperties": true,
-                "example": {
-                  "hello": "world :D"
-                }
+                "type": "string",
+                "format": "binary"
               }
             }
           }
@@ -4706,15 +5275,23 @@
             },
             {
               "name": "Content-Type",
-              "value": "application/json"
+              "value": "application/octet-stream"
+            },
+            {
+              "name": "Content-Disposition",
+              "value": "attachment; filename=\"report.pdf\""
+            },
+            {
+              "name": "Upload-Complete",
+              "value": "?1"
             }
           ],
           "queryString": [],
           "headersSize": -1,
           "bodySize": -1,
           "postData": {
-            "mimeType": "application/json",
-            "text": "{\"someDataKey\": \"some new value :D\"}"
+            "mimeType": "application/octet-stream",
+            "text": "<binary file data>"
           }
         }
       }
@@ -4807,7 +5384,7 @@
             }
           },
           "404": {
-            "description": "The referenced element does not exist.",
+            "description": "No resumable upload with this id exists, it already expired or completed, or it belongs to a different user.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -4853,58 +5430,10 @@
                 }
               }
             }
-          },
-          "412": {
-            "description": "Precondition failed. `If-Match` or `If-None-Match` condition not met.",
-            "headers": {
-              "Access-Control-Allow-Headers": {
-                "$ref": "#/components/headers/Access-Control-Allow-Headers"
-              },
-              "Access-Control-Allow-Methods": {
-                "$ref": "#/components/headers/Access-Control-Allow-Methods"
-              },
-              "Access-Control-Allow-Origin": {
-                "$ref": "#/components/headers/Access-Control-Allow-Origin"
-              },
-              "Access-Control-Expose-Headers": {
-                "$ref": "#/components/headers/Access-Control-Expose-Headers"
-              },
-              "Allow": {
-                "$ref": "#/components/headers/Allow"
-              },
-              "Cache-Control": {
-                "$ref": "#/components/headers/Cache-Control"
-              },
-              "X-Powered-By": {
-                "$ref": "#/components/headers/X-Powered-By"
-              }
-            },
-            "x-ember-nexus-links": [
-              {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/412",
-                "name": "MDN"
-              },
-              {
-                "url": "https://http.dev/412",
-                "name": "HTTP.dev"
-              }
-            ],
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                },
-                "examples": {
-                  "preconditionFailed": {
-                    "$ref": "#/components/examples/PreconditionFailedProblemExample"
-                  }
-                }
-              }
-            }
           }
         },
         "summary": "Delete upload",
-        "description": "Deletes resumable upload instance.",
+        "description": "Aborts a resumable upload: already-uploaded chunks are removed from storage and the upload itself ceases to exist. The target element is left untouched. Only the user who created the upload can delete it.",
         "operationId": "delete-upload",
         "tags": [
           "File"
@@ -4924,7 +5453,7 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Id of the element to be deleted."
+            "description": "Id of the resumable upload, as returned in the `Location` header of the request that created it."
           }
         ],
         "x-ember-nexus-har-example": {
@@ -4945,8 +5474,8 @@
       },
       "head": {
         "responses": {
-          "200": {
-            "description": "Resumable upload found. Response headers include meta data about the upload.",
+          "204": {
+            "description": "Resumable upload found. Its current state is returned entirely through response headers - there is no response body.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -4966,67 +5495,20 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
-              "X-Powered-By": {
-                "$ref": "#/components/headers/X-Powered-By"
-              }
-            },
-            "x-ember-nexus-links": [
-              {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
-                "name": "MDN"
+              "Upload-Complete": {
+                "$ref": "#/components/headers/Upload-Complete"
               },
-              {
-                "url": "https://http.dev/200",
-                "name": "HTTP.dev"
-              }
-            ],
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Element"
-                },
-                "examples": {
-                  "default": {
-                    "summary": "Resumable upload found, returning its meta data in the response headers.",
-                    "x-ember-nexus-name": "Node",
-                    "value": {
-                      "type": "Comment",
-                      "id": "74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-                      "data": {
-                        "created": "2025-09-27T10:39:51+00:00",
-                        "updated": "2025-09-27T10:39:51+00:00",
-                        "name": "Blue",
-                        "content": "Blue is one of the three primary colours in the RYB colour model...\n"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "304": {
-            "description": "Not modified. Returned when `If-None-Match` header matches current `ETag`.",
-            "headers": {
-              "Access-Control-Allow-Headers": {
-                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              "Upload-Offset": {
+                "$ref": "#/components/headers/Upload-Offset"
               },
-              "Access-Control-Allow-Methods": {
-                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              "Upload-Length": {
+                "$ref": "#/components/headers/Upload-Length"
               },
-              "Access-Control-Allow-Origin": {
-                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              "Upload-Limit": {
+                "$ref": "#/components/headers/Upload-Limit"
               },
-              "Access-Control-Expose-Headers": {
-                "$ref": "#/components/headers/Access-Control-Expose-Headers"
-              },
-              "Allow": {
-                "$ref": "#/components/headers/Allow"
-              },
-              "Cache-Control": {
-                "$ref": "#/components/headers/Cache-Control"
-              },
-              "ETag": {
-                "$ref": "#/components/headers/ETag"
+              "Expires": {
+                "$ref": "#/components/headers/Expires"
               },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
@@ -5034,11 +5516,11 @@
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/304",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/204",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/304",
+                "url": "https://http.dev/204",
                 "name": "HTTP.dev"
               }
             ]
@@ -5092,7 +5574,7 @@
             }
           },
           "404": {
-            "description": "Element does not exist, or the current user does not have permissions to access the element.",
+            "description": "No resumable upload with this id exists, it already expired or completed, or it belongs to a different user.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -5138,58 +5620,10 @@
                 }
               }
             }
-          },
-          "412": {
-            "description": "Precondition failed. `If-Match` or `If-None-Match` condition not met.",
-            "headers": {
-              "Access-Control-Allow-Headers": {
-                "$ref": "#/components/headers/Access-Control-Allow-Headers"
-              },
-              "Access-Control-Allow-Methods": {
-                "$ref": "#/components/headers/Access-Control-Allow-Methods"
-              },
-              "Access-Control-Allow-Origin": {
-                "$ref": "#/components/headers/Access-Control-Allow-Origin"
-              },
-              "Access-Control-Expose-Headers": {
-                "$ref": "#/components/headers/Access-Control-Expose-Headers"
-              },
-              "Allow": {
-                "$ref": "#/components/headers/Allow"
-              },
-              "Cache-Control": {
-                "$ref": "#/components/headers/Cache-Control"
-              },
-              "X-Powered-By": {
-                "$ref": "#/components/headers/X-Powered-By"
-              }
-            },
-            "x-ember-nexus-links": [
-              {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/412",
-                "name": "MDN"
-              },
-              {
-                "url": "https://http.dev/412",
-                "name": "HTTP.dev"
-              }
-            ],
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                },
-                "examples": {
-                  "preconditionFailed": {
-                    "$ref": "#/components/examples/PreconditionFailedProblemExample"
-                  }
-                }
-              }
-            }
           }
         },
         "summary": "Head upload",
-        "description": "Retrieves metadata of a single resumable upload process.",
+        "description": "Retrieves the current state of a resumable upload without transferring any of its already-uploaded data. Only the user who created the upload can query it.",
         "operationId": "head-upload",
         "tags": [
           "File"
@@ -5208,7 +5642,8 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
+            },
+            "description": "Id of the resumable upload, as returned in the `Location` header of the request that created it."
           }
         ],
         "x-ember-nexus-har-example": {
@@ -5230,7 +5665,7 @@
       "patch": {
         "responses": {
           "204": {
-            "description": "Resumable upload was updated successfully.",
+            "description": "The chunk was stored successfully.  \nSpecific meaning depends on `Upload-Complete`:\n\n- `?0`: The chunk was appended, and the upload remains open for further chunks. Its new state is returned in the response headers.\n- `?1`: The chunk was appended and the upload is now complete - the uploaded chunks were merged and attached as the target element's file, and the resumable upload no longer exists.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -5250,6 +5685,21 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
+              "Upload-Complete": {
+                "$ref": "#/components/headers/Upload-Complete"
+              },
+              "Upload-Offset": {
+                "$ref": "#/components/headers/Upload-Offset"
+              },
+              "Upload-Length": {
+                "$ref": "#/components/headers/Upload-Length"
+              },
+              "Upload-Limit": {
+                "$ref": "#/components/headers/Upload-Limit"
+              },
+              "Expires": {
+                "$ref": "#/components/headers/Expires"
+              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
@@ -5266,7 +5716,7 @@
             ]
           },
           "400": {
-            "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
+            "description": "General issues with the request, e.g. a missing or malformed `Upload-Offset` header, or a `Content-Type` other than `application/partial-upload`.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -5306,8 +5756,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "missingProperty": {
-                    "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  "badContent": {
+                    "$ref": "#/components/examples/BadContentProblemExample"
                   }
                 }
               }
@@ -5362,7 +5812,7 @@
             }
           },
           "404": {
-            "description": "The referenced element does not exist.",
+            "description": "No resumable upload with this id exists, it already completed, it belongs to a different user, or the current user has since lost `UPDATE` access to the upload's target element.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -5409,8 +5859,8 @@
               }
             }
           },
-          "412": {
-            "description": "Precondition failed. `If-Match` or `If-None-Match` condition not met.",
+          "409": {
+            "description": "The `Upload-Offset` in the request does not match the upload's current offset, or the appended chunk would exceed the upload's declared `Upload-Length`.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -5436,11 +5886,11 @@
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/412",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/409",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/412",
+                "url": "https://http.dev/409",
                 "name": "HTTP.dev"
               }
             ],
@@ -5450,8 +5900,59 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "preconditionFailed": {
-                    "$ref": "#/components/examples/PreconditionFailedProblemExample"
+                  "offsetMismatch": {
+                    "$ref": "#/components/examples/OffsetMismatchProblemExample"
+                  },
+                  "uploadLengthExceeded": {
+                    "$ref": "#/components/examples/UploadLengthExceededProblemExample"
+                  }
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "The upload has expired and its data has already been discarded.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/410",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/410",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "gone": {
+                    "$ref": "#/components/examples/GoneProblemExample"
                   }
                 }
               }
@@ -5459,7 +5960,7 @@
           }
         },
         "summary": "Patch upload",
-        "description": "Appends data to a resumable upload instance.",
+        "description": "Appends the next chunk to a resumable upload. Set `Upload-Complete: ?1` on the chunk that finishes the upload - the request body may be empty, which both completes an upload without transmitting further data and behaves like `HEAD /upload/<uuid>` otherwise.",
         "operationId": "patch-upload",
         "tags": [
           "File"
@@ -5479,20 +5980,36 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Id of the element whose data is to be updated."
+            "description": "Id of the resumable upload, as returned in the `Location` header of the request that created it."
+          },
+          {
+            "name": "Upload-Offset",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 5242880
+            },
+            "description": "Byte offset the appended chunk starts at. Must match the upload's current `Upload-Offset` exactly, otherwise the request fails with `409 Conflict`."
+          },
+          {
+            "name": "Upload-Complete",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "?0"
+            },
+            "description": "`?1` marks this as the final chunk, completing the upload; omitted or `?0` keeps the upload open for further chunks."
           }
         ],
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
-            "application/json": {
+            "application/partial-upload": {
               "schema": {
-                "type": "object",
-                "description": "Arbitrary data related to the element.",
-                "additionalProperties": true,
-                "example": {
-                  "hello": "world :D"
-                }
+                "type": "string",
+                "format": "binary"
               }
             }
           }
@@ -5509,15 +6026,23 @@
             },
             {
               "name": "Content-Type",
-              "value": "application/json"
+              "value": "application/partial-upload"
+            },
+            {
+              "name": "Upload-Offset",
+              "value": "5242880"
+            },
+            {
+              "name": "Upload-Complete",
+              "value": "?1"
             }
           ],
           "queryString": [],
           "headersSize": -1,
           "bodySize": -1,
           "postData": {
-            "mimeType": "application/json",
-            "text": "{\"someDataKey\": \"some new value :D\"}"
+            "mimeType": "application/partial-upload",
+            "text": "<binary chunk data>"
           }
         }
       }
@@ -5559,7 +6084,34 @@
                 "url": "https://http.dev/200",
                 "name": "HTTP.dev"
               }
-            ]
+            ],
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResultResponse"
+                },
+                "examples": {
+                  "default": {
+                    "summary": "Full text search, hydrated into a collection of elements.",
+                    "value": {
+                      "type": "_SearchResultResponse",
+                      "results": [
+                        {
+                          "type": "Plant",
+                          "id": "258c0dfe-b1d8-4839-beed-d00d1b544a96",
+                          "data": {
+                            "created": "2025-09-25T18:35:28+00:00",
+                            "updated": "2025-09-25T18:35:28+00:00",
+                            "name": "Flame Lily",
+                            "description": "Gloriosa superba is a species of flowering plant in the family Colchicaceae."
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
@@ -5685,7 +6237,7 @@
                     "type": "array",
                     "description": "List of search steps, which should be executed sequentially.",
                     "items": {
-                      "type": "#/components/schemas/SearchStep"
+                      "$ref": "#/components/schemas/SearchStep"
                     }
                   },
                   "parameters": {
@@ -5735,7 +6287,7 @@
       "get": {
         "responses": {
           "200": {
-            "description": "Token found. Returns a node.",
+            "description": "Returns the node and relation types currently present in the graph.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -5755,9 +6307,6 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
-              "ETag": {
-                "$ref": "#/components/headers/ETag"
-              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
@@ -5775,17 +6324,30 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Element"
+                  "$ref": "#/components/schemas/GraphStructure"
                 },
                 "examples": {
-                  "node": {
-                    "type": "Token",
-                    "id": "74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-                    "data": {
-                      "created": "2025-09-27T10:39:51+00:00",
-                      "updated": "2025-09-27T10:39:51+00:00",
-                      "name": "Blue",
-                      "content": "Blue is one of the three primary colours in the RYB colour model...\n"
+                  "graphStructure": {
+                    "value": {
+                      "nodeTypes": [
+                        "Collection",
+                        "Comment",
+                        "Data",
+                        "Group",
+                        "Location",
+                        "Tag",
+                        "Token",
+                        "User"
+                      ],
+                      "relationTypes": [
+                        "HAS_READ_ACCESS",
+                        "HAS_SEARCH_ACCESS",
+                        "HAS_TAG",
+                        "IS_IN_GROUP",
+                        "IS_MEMBER_OF",
+                        "OWNS",
+                        "RELATED"
+                      ]
                     }
                   }
                 }
@@ -5835,6 +6397,54 @@
                 "examples": {
                   "unauthorized": {
                     "$ref": "#/components/examples/UnauthorizedProblemExample"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The endpoint has been disabled by the instance's administrator (`instanceConfiguration.enabled` set to `false`).",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/403",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/403",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "forbidden": {
+                    "$ref": "#/components/examples/ForbiddenProblemExample"
                   }
                 }
               }
@@ -5875,7 +6485,7 @@
       "get": {
         "responses": {
           "200": {
-            "description": "Token found. Returns a node.",
+            "description": "Returns the instance's configuration parameters and limits.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -5895,9 +6505,6 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
-              "ETag": {
-                "$ref": "#/components/headers/ETag"
-              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
@@ -5915,17 +6522,32 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Element"
+                  "$ref": "#/components/schemas/InstanceConfiguration"
                 },
                 "examples": {
-                  "node": {
-                    "type": "Token",
-                    "id": "74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-                    "data": {
-                      "created": "2025-09-27T10:39:51+00:00",
-                      "updated": "2025-09-27T10:39:51+00:00",
-                      "name": "Blue",
-                      "content": "Blue is one of the three primary colours in the RYB colour model...\n"
+                  "instanceConfiguration": {
+                    "value": {
+                      "version": "0.1.31",
+                      "pageSize": {
+                        "min": 5,
+                        "default": 25,
+                        "max": 100
+                      },
+                      "register": {
+                        "enabled": true,
+                        "uniqueIdentifier": "email",
+                        "uniqueIdentifierRegex": false
+                      },
+                      "expression": {
+                        "enabled": true,
+                        "maxLength": 10240
+                      },
+                      "file": {
+                        "maxFileSizeInBytes": 10737418240,
+                        "uploadExpiresInSecondsAfterFirstRequest": 10800,
+                        "uploadMinChunkSizeInBytes": 5242880,
+                        "uploadMaxChunkSizeInBytes": 105906176
+                      }
                     }
                   }
                 }
@@ -5979,6 +6601,54 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "The endpoint has been disabled by the instance's administrator (`instanceConfiguration.enabled` set to `false`).",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/403",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/403",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "forbidden": {
+                    "$ref": "#/components/examples/ForbiddenProblemExample"
+                  }
+                }
+              }
+            }
           }
         },
         "summary": "Get instance configuration",
@@ -6015,7 +6685,7 @@
       "get": {
         "responses": {
           "200": {
-            "description": "Token found. Returns a node.",
+            "description": "Returns the configured `security.txt` file's content as-is.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -6035,9 +6705,6 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
-              "ETag": {
-                "$ref": "#/components/headers/ETag"
-              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
@@ -6053,20 +6720,109 @@
               }
             ],
             "content": {
-              "application/json": {
+              "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Element"
+                  "type": "string"
                 },
                 "examples": {
-                  "node": {
-                    "type": "Token",
-                    "id": "74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-                    "data": {
-                      "created": "2025-09-27T10:39:51+00:00",
-                      "updated": "2025-09-27T10:39:51+00:00",
-                      "name": "Blue",
-                      "content": "Blue is one of the three primary colours in the RYB colour model...\n"
-                    }
+                  "securityTxt": {
+                    "value": "Contact: https://ember-nexus.dev/contact\nExpires: 2026-01-01T00:00:00.000Z\n"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The provided token is either invalid or expired.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/401",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "unauthorized": {
+                    "$ref": "#/components/examples/UnauthorizedProblemExample"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No `security.txt` file has been configured on this instance.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/404",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/404",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "notFound": {
+                    "$ref": "#/components/examples/NotFoundProblemExample"
                   }
                 }
               }
@@ -6143,7 +6899,7 @@
             ]
           },
           "401": {
-            "description": "The provided token is either invalid or expired.",
+            "description": "The provided token is either invalid or expired, or no token was provided at all (the default anonymous user has no token to delete).",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -6515,7 +7271,7 @@
           }
         },
         "summary": "Get token",
-        "description": "Alias endpoint, returns the current sessions's token element.",
+        "description": "Alias endpoint, returns the current session's token element.",
         "operationId": "get-token",
         "tags": [
           "User"
@@ -6573,9 +7329,6 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
-              "Location": {
-                "$ref": "#/components/headers/Location-created"
-              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
@@ -6589,7 +7342,22 @@
                 "url": "https://http.dev/201",
                 "name": "HTTP.dev"
               }
-            ]
+            ],
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                },
+                "examples": {
+                  "default": {
+                    "value": {
+                      "type": "_TokenResponse",
+                      "token": "secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
@@ -6686,58 +7454,10 @@
                 }
               }
             }
-          },
-          "404": {
-            "description": "The referenced parent node does not exist.",
-            "headers": {
-              "Access-Control-Allow-Headers": {
-                "$ref": "#/components/headers/Access-Control-Allow-Headers"
-              },
-              "Access-Control-Allow-Methods": {
-                "$ref": "#/components/headers/Access-Control-Allow-Methods"
-              },
-              "Access-Control-Allow-Origin": {
-                "$ref": "#/components/headers/Access-Control-Allow-Origin"
-              },
-              "Access-Control-Expose-Headers": {
-                "$ref": "#/components/headers/Access-Control-Expose-Headers"
-              },
-              "Allow": {
-                "$ref": "#/components/headers/Allow"
-              },
-              "Cache-Control": {
-                "$ref": "#/components/headers/Cache-Control"
-              },
-              "X-Powered-By": {
-                "$ref": "#/components/headers/X-Powered-By"
-              }
-            },
-            "x-ember-nexus-links": [
-              {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/404",
-                "name": "MDN"
-              },
-              {
-                "url": "https://http.dev/404",
-                "name": "HTTP.dev"
-              }
-            ],
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                },
-                "examples": {
-                  "notFound": {
-                    "$ref": "#/components/examples/NotFoundProblemExample"
-                  }
-                }
-              }
-            }
           }
         },
         "summary": "Post token",
-        "description": "Creates a new token.",
+        "description": "Creates a new token for the current user.",
         "operationId": "post-token",
         "tags": [
           "User"
@@ -6757,38 +7477,39 @@
                 "type": "object",
                 "required": [
                   "type",
-                  "data"
+                  "uniqueUserIdentifier",
+                  "password"
                 ],
                 "properties": {
                   "type": {
                     "type": "string",
-                    "description": "The type of element to be created.",
-                    "example": "Demo"
+                    "description": "Must be `Token`. No other values are currently possible.",
+                    "enum": [
+                      "Token"
+                    ],
+                    "example": "Token"
                   },
-                  "id": {
+                  "uniqueUserIdentifier": {
                     "type": "string",
-                    "format": "uuid",
-                    "description": "The element's UUID. Auto-generated if not provided.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
+                    "description": "Some attribute uniquely identifying a user, normally an email address. The property name used to store it can be configured server-side.",
+                    "example": "test@example.com"
                   },
-                  "start": {
+                  "password": {
                     "type": "string",
-                    "format": "uuid",
-                    "description": "The start node's UUID. Required for relations.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
+                    "description": "The plain text password of the user.",
+                    "example": "1234"
                   },
-                  "end": {
-                    "type": "string",
-                    "format": "uuid",
-                    "description": "The end node's UUID. Required for relations.",
-                    "example": "ecfe46ff-d3c7-4ca7-9b41-9be5476d36e0"
+                  "lifetimeInSeconds": {
+                    "type": "integer",
+                    "description": "Optional requested token lifetime, in seconds. Silently clamped to the server-configured minimum/maximum lifetime. Defaults to the server-configured default lifetime if omitted.",
+                    "example": 3600
                   },
                   "data": {
                     "type": "object",
-                    "description": "Arbitrary data related to the element.",
+                    "description": "Optional, arbitrary properties stored on the new token element.",
                     "additionalProperties": true,
                     "example": {
-                      "hello": "world :D"
+                      "key": "value"
                     }
                   }
                 }
@@ -6803,10 +7524,6 @@
           "cookies": [],
           "headers": [
             {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             }
@@ -6816,7 +7533,7 @@
           "bodySize": -1,
           "postData": {
             "mimeType": "application/json",
-            "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
+            "text": "{\"type\": \"Token\", \"uniqueUserIdentifier\": \"test@example.com\", \"password\": \"1234\"}"
           }
         }
       }
@@ -7081,9 +7798,6 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
-              "Location": {
-                "$ref": "#/components/headers/Location-created"
-              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
@@ -7142,6 +7856,9 @@
                 "examples": {
                   "missingProperty": {
                     "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  },
+                  "badContent": {
+                    "$ref": "#/components/examples/BadContentProblemExample"
                   }
                 }
               }
@@ -7195,8 +7912,8 @@
               }
             }
           },
-          "404": {
-            "description": "The referenced parent node does not exist.",
+          "403": {
+            "description": "The identified user is the default anonymous user, which can not change its password.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -7222,11 +7939,11 @@
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/404",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/403",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/404",
+                "url": "https://http.dev/403",
                 "name": "HTTP.dev"
               }
             ],
@@ -7236,8 +7953,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "notFound": {
-                    "$ref": "#/components/examples/NotFoundProblemExample"
+                  "forbidden": {
+                    "$ref": "#/components/examples/ForbiddenProblemExample"
                   }
                 }
               }
@@ -7245,7 +7962,7 @@
           }
         },
         "summary": "Post change password",
-        "description": "Changes the password for the current user.",
+        "description": "Changes the password for the current user. Knowledge of the currently used (old) password is required.",
         "operationId": "post-change-password",
         "tags": [
           "User"
@@ -7265,39 +7982,33 @@
                 "type": "object",
                 "required": [
                   "type",
-                  "data"
+                  "currentPassword",
+                  "newPassword",
+                  "uniqueUserIdentifier"
                 ],
                 "properties": {
                   "type": {
                     "type": "string",
-                    "description": "The type of element to be created.",
-                    "example": "Demo"
+                    "description": "Must be `ActionChangePassword`. No other values are currently possible.",
+                    "enum": [
+                      "ActionChangePassword"
+                    ],
+                    "example": "ActionChangePassword"
                   },
-                  "id": {
+                  "currentPassword": {
                     "type": "string",
-                    "format": "uuid",
-                    "description": "The element's UUID. Auto-generated if not provided.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
+                    "description": "The user's currently used password, in plain text.",
+                    "example": "1234"
                   },
-                  "start": {
+                  "newPassword": {
                     "type": "string",
-                    "format": "uuid",
-                    "description": "The start node's UUID. Required for relations.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
+                    "description": "The user's new password, in plain text. Must be different from `currentPassword`. Any string is accepted and is hashed internally; no password complexity check is performed.",
+                    "example": "9876"
                   },
-                  "end": {
+                  "uniqueUserIdentifier": {
                     "type": "string",
-                    "format": "uuid",
-                    "description": "The end node's UUID. Required for relations.",
-                    "example": "ecfe46ff-d3c7-4ca7-9b41-9be5476d36e0"
-                  },
-                  "data": {
-                    "type": "object",
-                    "description": "Arbitrary data related to the element.",
-                    "additionalProperties": true,
-                    "example": {
-                      "hello": "world :D"
-                    }
+                    "description": "Some attribute uniquely identifying a user, normally an email address. The property name used to store it can be configured server-side.",
+                    "example": "test@example.com"
                   }
                 }
               }
@@ -7311,10 +8022,6 @@
           "cookies": [],
           "headers": [
             {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             }
@@ -7324,7 +8031,7 @@
           "bodySize": -1,
           "postData": {
             "mimeType": "application/json",
-            "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
+            "text": "{\"type\": \"ActionChangePassword\", \"currentPassword\": \"1234\", \"newPassword\": \"9876\", \"uniqueUserIdentifier\": \"test@example.com\"}"
           }
         }
       }
@@ -7414,6 +8121,9 @@
                 "examples": {
                   "missingProperty": {
                     "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  },
+                  "reservedIdentifier": {
+                    "$ref": "#/components/examples/ReservedIdentifierProblemExample"
                   }
                 }
               }
@@ -7467,8 +8177,8 @@
               }
             }
           },
-          "404": {
-            "description": "The referenced parent node does not exist.",
+          "403": {
+            "description": "The register endpoint is disabled via server configuration.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -7494,11 +8204,11 @@
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/404",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/403",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/404",
+                "url": "https://http.dev/403",
                 "name": "HTTP.dev"
               }
             ],
@@ -7508,8 +8218,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "notFound": {
-                    "$ref": "#/components/examples/NotFoundProblemExample"
+                  "forbidden": {
+                    "$ref": "#/components/examples/ForbiddenProblemExample"
                   }
                 }
               }
@@ -7537,38 +8247,34 @@
                 "type": "object",
                 "required": [
                   "type",
-                  "data"
+                  "password",
+                  "uniqueUserIdentifier"
                 ],
                 "properties": {
                   "type": {
                     "type": "string",
-                    "description": "The type of element to be created.",
-                    "example": "Demo"
+                    "description": "Must be `User`. No other values are currently possible.",
+                    "enum": [
+                      "User"
+                    ],
+                    "example": "User"
                   },
-                  "id": {
+                  "password": {
                     "type": "string",
-                    "format": "uuid",
-                    "description": "The element's UUID. Auto-generated if not provided.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
+                    "description": "The plain text password of the new user. Any string is accepted and is hashed internally; no password complexity check is performed. Leading/trailing whitespace is preserved, though discouraged.",
+                    "example": "1234"
                   },
-                  "start": {
+                  "uniqueUserIdentifier": {
                     "type": "string",
-                    "format": "uuid",
-                    "description": "The start node's UUID. Required for relations.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
-                  },
-                  "end": {
-                    "type": "string",
-                    "format": "uuid",
-                    "description": "The end node's UUID. Required for relations.",
-                    "example": "ecfe46ff-d3c7-4ca7-9b41-9be5476d36e0"
+                    "description": "Some attribute uniquely identifying a user, normally an email address. The property name used to store it can be configured server-side.",
+                    "example": "test@example.com"
                   },
                   "data": {
                     "type": "object",
-                    "description": "Arbitrary data related to the element.",
+                    "description": "Optional, arbitrary properties stored on the new user element.",
                     "additionalProperties": true,
                     "example": {
-                      "hello": "world :D"
+                      "key": "value"
                     }
                   }
                 }
@@ -7583,10 +8289,6 @@
           "cookies": [],
           "headers": [
             {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             }
@@ -7596,7 +8298,7 @@
           "bodySize": -1,
           "postData": {
             "mimeType": "application/json",
-            "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
+            "text": "{\"type\": \"User\", \"password\": \"1234\", \"uniqueUserIdentifier\": \"test@example.com\"}"
           }
         }
       }

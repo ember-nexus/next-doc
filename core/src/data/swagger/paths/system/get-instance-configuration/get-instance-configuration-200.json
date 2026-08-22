@@ -4,7 +4,7 @@
       "get": {
         "responses": {
           "200": {
-            "description": "Token found. Returns a node.",
+            "description": "Returns the instance's configuration parameters and limits.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -24,9 +24,6 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
-              "ETag": {
-                "$ref": "#/components/headers/ETag"
-              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
@@ -44,17 +41,32 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Element"
+                  "$ref": "#/components/schemas/InstanceConfiguration"
                 },
                 "examples": {
-                  "node": {
-                    "type": "Token",
-                    "id": "74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-                    "data": {
-                      "created": "2025-09-27T10:39:51+00:00",
-                      "updated": "2025-09-27T10:39:51+00:00",
-                      "name": "Blue",
-                      "content": "Blue is one of the three primary colours in the RYB colour model...\n"
+                  "instanceConfiguration": {
+                    "value": {
+                      "version": "0.1.31",
+                      "pageSize": {
+                        "min": 5,
+                        "default": 25,
+                        "max": 100
+                      },
+                      "register": {
+                        "enabled": true,
+                        "uniqueIdentifier": "email",
+                        "uniqueIdentifierRegex": false
+                      },
+                      "expression": {
+                        "enabled": true,
+                        "maxLength": 10240
+                      },
+                      "file": {
+                        "maxFileSizeInBytes": 10737418240,
+                        "uploadExpiresInSecondsAfterFirstRequest": 10800,
+                        "uploadMinChunkSizeInBytes": 5242880,
+                        "uploadMaxChunkSizeInBytes": 105906176
+                      }
                     }
                   }
                 }
