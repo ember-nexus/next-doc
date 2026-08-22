@@ -179,7 +179,7 @@
             "name": "HTTP.dev"
           },
           {
-            "url": "/guide/caching-guide-todo",
+            "url": "/guide/caching-and-conditional-requests",
             "name": "Caching guide"
           }
         ],
@@ -202,7 +202,7 @@
             "name": "HTTP.dev"
           },
           {
-            "url": "/guide/caching-guide-todo",
+            "url": "/guide/caching-and-conditional-requests",
             "name": "Caching guide"
           }
         ],
@@ -264,7 +264,7 @@
             "name": "HTTP.dev"
           },
           {
-            "url": "/guide/caching-guide-todo",
+            "url": "/guide/caching-and-conditional-requests",
             "name": "Caching guide"
           }
         ],
@@ -288,7 +288,7 @@
             "name": "HTTP.dev"
           },
           {
-            "url": "/guide/caching-guide-todo",
+            "url": "/guide/caching-and-conditional-requests",
             "name": "Caching guide"
           }
         ],
@@ -304,7 +304,7 @@
         "description": "Index of the page to be accessed. First page / index is 1.",
         "x-ember-nexus-links": [
           {
-            "url": "/guide/pagination-todo",
+            "url": "/guide/pagination",
             "name": "Pagination tutorial"
           }
         ],
@@ -322,7 +322,7 @@
         "description": "Number of elements to be returned in a single page.",
         "x-ember-nexus-links": [
           {
-            "url": "/guide/pagination-todo",
+            "url": "/guide/pagination",
             "name": "Pagination tutorial"
           }
         ],
@@ -348,7 +348,7 @@
             "name": "HTTP.dev"
           },
           {
-            "url": "/guide/getting-started-guide-todo",
+            "url": "/getting-started/installation",
             "name": "Getting started guide"
           }
         ]

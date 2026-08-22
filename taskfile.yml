@@ -18,6 +18,30 @@ tasks:
     cmds:
       - docker compose -f ./tools/docker-compose.yml exec --user astro core /bin/bash
 
+  check:all:
+    desc: Run every check (build, tests, lint, spellcheck) in the order the build depends on.
+    cmds:
+      - task: check:build
+      - task: check:test
+      - task: check:lint
+      - task: check:spellcheck
+
+  check:build:
+    cmds:
+      - docker compose -f ./tools/docker-compose.yml exec --user astro core sh -c "cd /core && pnpm run build"
+
+  check:test:
+    cmds:
+      - docker compose -f ./tools/docker-compose.yml exec --user astro core sh -c "cd /core && pnpm run test"
+
+  check:lint:
+    cmds:
+      - docker compose -f ./tools/docker-compose.yml exec --user astro core sh -c "cd /core && pnpm run cs"
+
+  check:spellcheck:
+    cmds:
+      - docker compose -f ./tools/docker-compose.yml exec --user astro core sh -c "cd /core && pnpm run spellcheck"
+
   prod:build:
     cmds:
       - docker build -f tools/Dockerfile --target prod -t ember-nexus-api-docs:latest .

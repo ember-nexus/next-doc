@@ -586,9 +586,9 @@ Neo4j and Elasticsearch are memory-hungry. A complete Docker Compose setup is pa
 
 - [Installation](/getting-started/installation.md) — running in minutes with Docker Compose
 
-- [First steps](/getting-started/first-steps.md) — create a user, get a token, store your first data
+- [First steps](/getting-started/first-api-requests.md) — create a user, get a token, store your first data
 
-- [Search](/getting-started/search.md) — write your first search pipeline
+- [Search](/guide/search.md) — write your first search pipeline
 
 - [Live demo](https://reference-dataset.ember-nexus.dev/) — explore a running instance with
   example data

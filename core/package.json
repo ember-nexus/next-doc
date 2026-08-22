@@ -9,7 +9,8 @@
     "astro": "astro",
     "test": "vitest run quality",
     "cs": "eslint ./src",
-    "cs:fix": "eslint ./src --fix"
+    "cs:fix": "eslint ./src --fix",
+    "spellcheck": "cspell --config cspell.json --no-progress"
   },
   "dependencies": {
     "@antv/g6": "^5.1.1",
@@ -66,6 +67,7 @@
     "@typescript-eslint/parser": "^8.65.0",
     "@vitest/eslint-plugin": "^1.6.24",
     "astro-eslint-parser": "^3.0.0",
+    "cspell": "^10.0.1",
     "eslint": "^10.8.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.5",
