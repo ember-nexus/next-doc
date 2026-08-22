@@ -19,12 +19,13 @@ tasks:
       - docker compose -f ./tools/docker-compose.yml exec --user astro core /bin/bash
 
   check:all:
-    desc: Run every check (build, tests, lint, spellcheck) in the order the build depends on.
+    desc: Run every check (build, tests, lint, spellcheck, e2e) in the order the build depends on.
     cmds:
       - task: check:build
       - task: check:test
       - task: check:lint
       - task: check:spellcheck
+      - task: check:e2e
 
   check:build:
     cmds:
@@ -41,6 +42,11 @@ tasks:
   check:spellcheck:
     cmds:
       - docker compose -f ./tools/docker-compose.yml exec --user astro core sh -c "cd /core && pnpm run spellcheck"
+
+  check:e2e:
+    desc: Run Playwright e2e tests (Chromium, in the separate `e2e` container) against a preview server of dist/.
+    cmds:
+      - sh ./tools/run-e2e.sh
 
   prod:build:
     cmds:

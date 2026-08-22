@@ -42,7 +42,18 @@
 	}
 
 	handle_errors 404 {
-		rewrite * /404.html
-		file_server
+		# Unresolved `*.md` requests get the markdown 404 (see [404.md.ts]),
+		# so an LLM/agent fetching a bad path gets markdown back, not HTML.
+		@error_md path_regexp errormd \.md$
+		handle @error_md {
+			header Content-Type "text/markdown; charset=utf-8"
+			header X-Robots-Tag "noindex, nofollow, noarchive"
+			rewrite * /404.md
+			file_server
+		}
+		handle {
+			rewrite * /404.html
+			file_server
+		}
 	}
 }

@@ -18,14 +18,18 @@ export interface NavItem {
 
 const sectionCategory = (name: string): NavCategory | null => {
   const lower = name.toLowerCase();
-  if (lower === "getting started" || lower === "reference") return "page";
+  if (lower === "getting started" || lower === "guide" || lower === "reference")
+    return "page";
   if (lower === "commands") return "command";
   if (lower === "endpoints") return "endpoint";
   if (lower === "schemas") return "schema";
   return null;
 };
 
-const flatten = (items: SidebarItem[], category: NavCategory | null): NavItem[] => {
+const flatten = (
+  items: SidebarItem[],
+  category: NavCategory | null,
+): NavItem[] => {
   const result: NavItem[] = [];
 
   for (const item of items) {
@@ -62,7 +66,8 @@ const flatten = (items: SidebarItem[], category: NavCategory | null): NavItem[] 
   return result;
 };
 
-const normalizePath = (path: string): string => (path === "/" ? path : path.replace(/\/$/, ""));
+const normalizePath = (path: string): string =>
+  path === "/" ? path : path.replace(/\/$/, "");
 
 /** The whole site flattened into one ordered list, sidebar order preserved, tagged by category. */
 export async function buildNavItems(): Promise<NavItem[]> {
@@ -90,7 +95,9 @@ export function findPrevNext(
     .reverse()
     .find((item) => item.category === category);
 
-  const next = items.slice(currentIndex + 1).find((item) => item.category === category);
+  const next = items
+    .slice(currentIndex + 1)
+    .find((item) => item.category === category);
 
   return { prev, next };
 }

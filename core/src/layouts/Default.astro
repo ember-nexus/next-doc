@@ -105,7 +105,8 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.url.origin).href;
     // <g6-graph> or <json-table> custom elements.
     //
     // Strategy:
-    //   1. If neither element is present in the DOM → skip entirely (most pages).
+    //   1. If neither element is present in the DOM → nothing to upgrade on
+    //      this page, but see warmCacheInBackground() below.
     //   2. If elements exist but none are visible yet → load when the browser is
     //      idle (requestIdleCallback) so the heavy bundle doesn't compete with
     //      first-paint rendering.
@@ -121,13 +122,45 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.url.origin).href;
         return import('../component/Lit/index.ts');
     }
 
+    // The bundle (~1.5MB) is only ever fetched by a page that actually
+    // renders a graph. A visitor who never lands on such a page — then goes
+    // offline, or hits the site again when the server is unreachable — has
+    // simply never cached it, so it silently fails to load and every graph
+    // renders blank. This isn't fixable via response headers alone (a
+    // Cache-Control policy can't make the browser cache a request it never
+    // made), so instead: warm the cache in the background, once per session,
+    // on every OTHER page too — during idle time, and only on a connection
+    // that isn't metered/slow, so it doesn't cost mobile data proactively.
+    let warmed = false;
+
+    function warmCacheInBackground() {
+        if (warmed) return;
+        warmed = true;
+
+        const connection = (navigator as any).connection;
+        if (connection?.saveData) return;
+        if (connection?.effectiveType && /2g/.test(connection.effectiveType)) return;
+
+        const schedule =
+            'requestIdleCallback' in window
+                ? (fn: () => void) => requestIdleCallback(fn, { timeout: 10000 })
+                : (fn: () => void) => setTimeout(fn, 3000);
+
+        schedule(() => {
+            loadLitBundle();
+        });
+    }
+
     let loaded = false;
 
     function maybeLoad() {
         if (loaded) return;
 
         const elements = document.querySelectorAll(LIT_SELECTORS);
-        if (elements.length === 0) return; // This page needs no Lit components.
+        if (elements.length === 0) {
+            warmCacheInBackground();
+            return; // This page needs no Lit components of its own.
+        }
 
         // Check if any element is already intersecting the viewport.
         const anyVisible = Array.from(elements).some((el) => {
