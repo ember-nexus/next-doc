@@ -1,5 +1,7 @@
 import type { RootContent } from "mdast";
 
+import { truncateJson } from "../truncateJson";
+
 interface Props {
   responseBody: object;
   responseHeaders: string;
@@ -8,7 +10,14 @@ interface Props {
 /**
  * No interactive equivalent exists for the graph/table tabs — emit the raw
  * response instead of stripping it, same principle as the rest of this
- * registry: never silently drop content.
+ * registry: never silently drop content. Real search responses can run to
+ * hundreds of KB (mixed node/relationship shapes, long text fields), so the
+ * body goes through `truncateJson` first: small responses are untouched,
+ * large ones keep one representative of every distinct shape plus capped
+ * leaf strings, so the *structure* stays complete even when the *data*
+ * doesn't. The `debug` step in this component's HTML counterpart likewise
+ * isn't dropped — the LLM reading this page may itself be debugging a
+ * search request.
  */
 export function SearchResponseCard(props: Props): RootContent[] {
   return [
@@ -20,7 +29,7 @@ export function SearchResponseCard(props: Props): RootContent[] {
     {
       type: "code",
       lang: "json",
-      value: JSON.stringify(props.responseBody, null, 2),
+      value: JSON.stringify(truncateJson(props.responseBody), null, 2),
     },
     {
       type: "heading",
