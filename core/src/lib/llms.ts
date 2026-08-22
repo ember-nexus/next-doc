@@ -1,132 +1,103 @@
 // Dynamic content for /llms.txt (https://llmstxt.org/).
 //
-// Mirrors the grouping `sidebar.ts` uses for on-site navigation, but flattened:
-// llms.txt sections are a single level of "## Heading" followed by a flat
-// bullet list of links, not a nested tree. Reusing the same collections and
-// route helpers means the link targets here can't drift from the sidebar's.
-import SwaggerParser from "@apidevtools/swagger-parser";
-import { getCollection } from "astro:content";
-import type { OpenAPIObject } from "openapi3-ts/oas31";
+// Renders the exact same tree `buildSidebar()` produces for the HTML
+// sidebar — same sections, same nesting (groups, link-groups, endpoints) —
+// as nested markdown lists instead of a flat one, so link targets and
+// structure can't drift from what's actually in the on-site nav. The only
+// transform applied here is pointing every link at its markdown twin
+// (`markdownPath`), same helper the header button and footer nav use.
+import type { RootContent } from "mdast";
 
-import { commandPath, endpointPath, humanize, markdownPath, pagePathMd, schemaPath } from "./routes";
-import { extractSchemas } from "../util";
+import { buildSidebar } from "./sidebar";
+import { markdownPath } from "./routes";
+import type { SidebarItem } from "../type";
 
-const byId = (a: { id: string }, b: { id: string }) => a.id.localeCompare(b.id);
+const linkChild = (url: string, children: RootContent[]): RootContent => ({
+  type: "link",
+  url: markdownPath(url),
+  title: null,
+  children,
+});
 
-export interface LlmsEntry {
-  name: string;
-  url: string; // markdown href
-  description?: string;
-}
+const list = (children: RootContent[]): RootContent => ({
+  type: "list",
+  ordered: false,
+  start: null,
+  spread: false,
+  children,
+});
 
-export interface LlmsSection {
-  title: string;
-  entries: LlmsEntry[];
-}
+const listItem = (children: RootContent[]): RootContent => ({
+  type: "listItem",
+  checked: null,
+  spread: false,
+  children,
+});
 
-/** Content pages, split the same way `sidebar.ts` splits them into sections. */
-async function pagesSections(): Promise<LlmsSection[]> {
-  const allEntries = (await getCollection("pages")).sort(byId);
-  const sections: LlmsSection[] = [];
+// The "Commands" section renders each command name as code (`backup:create`)
+// — same treatment `CommandGroupList.ts` and `SchemaList.ts` give identifiers
+// embedded in page bodies. Threaded through the recursion so namespace-folder
+// group labels (e.g. "Backup") stay plain text; only the leaf links get it.
+type ItemKind = "command" | undefined;
 
-  const indexEntry = allEntries.find((e) => e.id === "index" && !e.data.hidden);
-  if (indexEntry) {
-    sections.push({
-      title: "Overview",
-      entries: [
+/** One SidebarItem -> one (possibly nested) list item, mirroring SidebarNode.astro. */
+function itemToListItem(item: SidebarItem, kind?: ItemKind): RootContent {
+  switch (item.type) {
+    case "link": {
+      const label: RootContent =
+        kind === "command"
+          ? { type: "inlineCode", value: item.name }
+          : { type: "text", value: item.name };
+      return listItem([{ type: "paragraph", children: [linkChild(item.url, [label])] }]);
+    }
+
+    case "link-group":
+      return listItem([
+        { type: "paragraph", children: [linkChild(item.url, [{ type: "text", value: item.name }])] },
+        list(item.items.map((i) => itemToListItem(i, kind))),
+      ]);
+
+    case "group":
+      return listItem([
+        { type: "paragraph", children: [{ type: "text", value: item.name }] },
+        list(item.items.map((i) => itemToListItem(i, kind))),
+      ]);
+
+    case "endpoint":
+      return listItem([
         {
-          name: indexEntry.data.name ?? indexEntry.data.title,
-          url: pagePathMd(indexEntry.id),
-          description: indexEntry.data.description,
+          type: "paragraph",
+          children: [
+            linkChild(item.url, [
+              { type: "inlineCode", value: `${item.method.toUpperCase()} ${item.endpointUrl}` },
+              { type: "text", value: ` — ${item.name}` },
+            ]),
+          ],
         },
-      ],
-    });
+      ]);
+  }
+}
+
+/**
+ * The whole sidebar as `## Heading` + nested list per top-level section. The
+ * "index" entry is the one bare `link` `buildSidebar()` emits outside of any
+ * section group (see `sidebar.ts`'s pagesSection()); everything else is a
+ * top-level `group` (variant "section").
+ */
+export async function buildLlmsBody(): Promise<RootContent[]> {
+  const items = await buildSidebar();
+  const nodes: RootContent[] = [];
+
+  for (const item of items) {
+    if (item.type === "link") {
+      nodes.push({ type: "heading", depth: 2, children: [{ type: "text", value: "Overview" }] });
+      nodes.push(list([itemToListItem(item)]));
+    } else if (item.type === "group" && item.variant === "section") {
+      nodes.push({ type: "heading", depth: 2, children: [{ type: "text", value: item.name }] });
+      const kind: ItemKind = item.name === "Commands" ? "command" : undefined;
+      nodes.push(list(item.items.map((i) => itemToListItem(i, kind))));
+    }
   }
 
-  const sectionDefs: Array<{ key: string; label: string }> = [
-    { key: "01-getting-started", label: "Getting started" },
-    { key: "02-guide", label: "Guide" },
-    { key: "03-reference", label: "Reference" },
-  ];
-
-  for (const { key, label } of sectionDefs) {
-    const entries = allEntries.filter((e) => e.id.startsWith(`${key}/`) && !e.data.hidden);
-    if (entries.length === 0) continue;
-
-    sections.push({
-      title: label,
-      entries: entries.map((e) => ({
-        name: e.data.name ?? e.data.title,
-        url: pagePathMd(e.id),
-        description: e.data.description,
-      })),
-    });
-  }
-
-  return sections;
-}
-
-/** CLI commands — one flat, alphabetical list. */
-async function commandsSection(): Promise<LlmsSection | null> {
-  const entries = (await getCollection("commands")).sort((a, b) =>
-    a.data.command.localeCompare(b.data.command),
-  );
-  if (entries.length === 0) return null;
-
-  return {
-    title: "Commands",
-    entries: entries.map((e) => ({
-      name: e.data.command,
-      url: markdownPath(commandPath(e.data.command)),
-      description: e.data.description ?? e.data.name,
-    })),
-  };
-}
-
-/** API endpoints — one section per `group`, same grouping as the sidebar. */
-async function apiSections(): Promise<LlmsSection[]> {
-  const entries = (await getCollection("endpoints")).sort(byId);
-
-  const groups = new Map<string, LlmsEntry[]>();
-  for (const e of entries) {
-    const item: LlmsEntry = {
-      name: `${e.data.method.toUpperCase()} ${e.data.endpointUrl}`,
-      url: markdownPath(endpointPath(e.data.endpoint)),
-      description: e.data.description ?? e.data.name,
-    };
-    if (!groups.has(e.data.group)) groups.set(e.data.group, []);
-    groups.get(e.data.group)!.push(item);
-  }
-
-  return [...groups].map(([group, groupEntries]) => ({
-    title: `Endpoints: ${humanize(group)}`,
-    entries: groupEntries,
-  }));
-}
-
-/** OpenAPI schemas — one flat, alphabetical list. */
-async function schemasSection(): Promise<LlmsSection | null> {
-  const spec = (await SwaggerParser.parse("./src/data/swagger.json")) as OpenAPIObject;
-  const schemas = extractSchemas(spec).sort((a, b) => a.name.localeCompare(b.name));
-  if (schemas.length === 0) return null;
-
-  return {
-    title: "Schemas",
-    entries: schemas.map((s) => ({
-      name: s.name,
-      url: markdownPath(schemaPath(s.id)),
-    })),
-  };
-}
-
-/** All dynamic sections, content pages first, then commands/API/schemas — same order as the sidebar. */
-export async function buildLlmsSections(): Promise<LlmsSection[]> {
-  const [pages, commands, api, schemas] = await Promise.all([
-    pagesSections(),
-    commandsSection(),
-    apiSections(),
-    schemasSection(),
-  ]);
-
-  return [...pages, ...(commands ? [commands] : []), ...api, ...(schemas ? [schemas] : [])];
+  return nodes;
 }
