@@ -97,12 +97,13 @@ function parseAlign(
 function leafCode(
   lang: string | null,
   cleanValue: (v: string) => string,
+  meta?: string,
 ): Handler {
   return (_props, children) => {
     const value = textOf(children);
     const node: any = { type: "inlineCode", value };
     Object.defineProperty(node, "block", {
-      value: { type: "code", lang, value: cleanValue(value) },
+      value: { type: "code", lang, meta: meta ?? null, value: cleanValue(value) },
       enumerable: false,
     });
     return node;
@@ -257,10 +258,37 @@ const intrinsics: Record<string, Handler> = {
 
   // `<g6-graph><script type="application/json">{...}</script></g6-graph>`
   // renders an interactive graph with no markdown equivalent. The closest
-  // useful substitute is the JSON payload itself, as a fenced code block.
+  // useful substitute is the element list, as a fenced code block — the
+  // graph's other config (layout, mode, ...) lives on `<g6-graph>`'s own
+  // props, not in this JSON, and is display-only anyway, so it's dropped
+  // rather than dumped alongside the actual data. Each element is one line
+  // (no internal line breaks — an element is one flat record, breaking it
+  // across lines just makes it harder to scan), but the surrounding array is
+  // still indented one level per line — a hybrid between fully-inlined and
+  // fully-expanded JSON. Tagged with a "graph-example" info-string suffix
+  // (fence becomes ```json graph-example) rather than a made-up language
+  // like "json+graph": `lang` stays a real, highlightable language, and the
+  // extra word rides in `meta`, which mdast-util-to-markdown appends to the
+  // same fence line — still a hint a reader (or an LLM) can pick up, without
+  // breaking every syntax highlighter that doesn't recognize the tag.
   script: (props, children) =>
-    leafCode(props.type === "application/json" ? "json" : null, (v) =>
-      v.trim(),
+    leafCode(
+      props.type === "application/json" ? "json" : null,
+      (v) => {
+        if (props.type !== "application/json") return v.trim();
+        try {
+          const parsed: unknown = JSON.parse(v);
+          const elements = Array.isArray((parsed as { elements?: unknown })?.elements)
+            ? (parsed as { elements: unknown[] }).elements
+            : parsed;
+          if (!Array.isArray(elements)) return JSON.stringify(parsed, null, 2);
+          if (elements.length === 0) return "[]";
+          return `[\n${elements.map((el) => `  ${JSON.stringify(el)}`).join(",\n")}\n]`;
+        } catch {
+          return v.trim();
+        }
+      },
+      props.type === "application/json" ? "graph-example" : undefined,
     )(props, children),
   "g6-graph": unwrapCode,
 };
