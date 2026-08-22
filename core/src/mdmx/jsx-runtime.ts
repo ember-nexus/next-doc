@@ -325,7 +325,13 @@ export function flatten(children: Child | Child[]): RootContent[] {
 
 export function jsx(type: unknown, props: Record<string, any>): any {
   const children = flatten(props?.children);
-  if (type === Fragment) return children;
+  // The document root is a block-level container just like `blockquote` /
+  // `li` / `div` — a component used as its own top-level block (e.g. a bare
+  // `<Link />` on its own line) can return phrasing content, which mdast
+  // requires to be wrapped in a `paragraph` before it can sit among root
+  // siblings. Skipping this turned every such page into unparseable
+  // concatenated output — see the `swagger.mdx` regression.
+  if (type === Fragment) return groupIntoBlocks(children);
   if (typeof type === "function") return type({ ...props, children });
   if (typeof type === "string") {
     const handler = intrinsics[type];
