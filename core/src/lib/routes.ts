@@ -49,6 +49,26 @@ export const pageRouteParam = (id: string): string | undefined =>
 export const pageRouteParamMd = (id: string): string =>
   id === "index" ? "index" : pageSlug(id);
 
+/** "guides/01-auth" -> "/guides/auth.md", "index" -> "/index.md" */
+export const pagePathMd = (id: string): string =>
+  "/" + pageRouteParamMd(id) + ".md";
+
+/**
+ * Generic HTML path -> markdown path mapping, used to link from *any*
+ * currently-rendered page (pages, schemas, commands, endpoints) to its
+ * markdown twin without knowing which collection produced it.
+ *
+ * Mirrors `pageRouteParamMd`'s index special-case: the root "/" has no
+ * basename to append ".md" to (and `foo.md/index.html` is not a valid
+ * static file — see the routing note in `[...slug].md.ts`), so it maps to
+ * "/index.md" instead of "/.md". Every other path just gets ".md" appended
+ * after trimming a trailing slash.
+ */
+export const markdownPath = (pathname: string): string => {
+  const trimmed = pathname.replace(/\/$/, "");
+  return trimmed === "" ? "/index.md" : `${trimmed}.md`;
+};
+
 // --- commands: routed by command/[command] ------------------------------------
 
 /** "config:set" -> "config-set" */
