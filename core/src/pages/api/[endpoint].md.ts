@@ -16,7 +16,7 @@ import {
 import { footerNav } from "../../mdmx/footerNav";
 import { serialize } from "../../mdmx/serialize";
 import {
-  extractHarExample,
+  extractHarExamples,
   extractRequestBody,
   extractRequestHeaders,
   extractRequestParameters,
@@ -40,7 +40,7 @@ export const GET: APIRoute = async ({ props: { entry } }) => {
   const path = swaggerUrl ?? "/";
   const specMethod = swaggerUrl === undefined ? "get" : method;
 
-  const request = extractHarExample(spec, path, specMethod);
+  const requests = extractHarExamples(spec, path, specMethod);
   const requestParameters = extractRequestParameters(spec, path, specMethod);
   const requestHeaders = extractRequestHeaders(spec, path, specMethod);
   const requestBody = extractRequestBody(spec, path, specMethod);
@@ -61,7 +61,7 @@ export const GET: APIRoute = async ({ props: { entry } }) => {
       ],
     },
     ...body,
-    ...requestCard(request),
+    ...requestCard(requests),
     ...responseCard(responseExamples),
     ...requestParameterCard(requestParameters),
     ...requestHeaderCard(requestHeaders),

@@ -12,7 +12,7 @@ import ResponseHeaderCard from '../../component/ResponseHeaderCard.astro';
 import Default from '../../layouts/Default.astro';
 import { endpointParam } from '../../lib';
 import {
-    extractHarExample,
+    extractHarExamples,
     extractRequestBody,
     extractRequestHeaders,
     extractRequestParameters,
@@ -37,7 +37,7 @@ const spec = await SwaggerParser.dereference('./src/data/swagger.json');
 const path = swaggerUrl ?? '/';
 const method2 = swaggerUrl == null ? 'get' : method;
 
-const request = extractHarExample(spec, path, method2);
+const requests = extractHarExamples(spec, path, method2);
 const requestParameters = extractRequestParameters(spec, path, method2);
 const requestHeaders = extractRequestHeaders(spec, path, method2);
 const requestBody = extractRequestBody(spec, path, method2);
@@ -71,7 +71,7 @@ const cardHeadings: { depth: number; slug: string; text: string }[] = [
         <Content components={htmlComponents} />
     </div>
 
-    <RequestCard request={request} id="request" />
+    <RequestCard requests={requests} id="request" />
     <ResponseCard examples={responseExamples} id="response" />
     <RequestParameterCard parameters={requestParameters} id="request-parameters" />
     <RequestHeaderCard headers={requestHeaders} id="request-header" />

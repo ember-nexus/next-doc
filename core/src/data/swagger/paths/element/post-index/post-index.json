@@ -62,29 +62,60 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "POST",
-          "url": "https://api.example.com/",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "name": "Node request",
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
+          },
+          {
+            "name": "Relation request",
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"type\": \"RELATION\", \"start\": \"f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103\", \"end\": \"ecfe46ff-d3c7-4ca7-9b41-9be5476d36e0\", \"data\": {\"hello\": \"world :D\"}}"
+              }
+            }
           }
-        }
+        ]
       }
     }
   }

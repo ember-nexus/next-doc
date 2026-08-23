@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { readdirSync, readFileSync } from 'fs'
-import { join } from 'path'
+import { join, sep } from 'path'
 
 const PATHS_DIR = join(import.meta.dirname, '../../../src/data/swagger/paths')
 const THREE_DIGIT_NUMBER = /\b\d{3}\b/g
@@ -53,6 +53,10 @@ function stripExamplesFromResponses(obj: unknown): unknown {
 
 const testCases = readdirSync(PATHS_DIR, { recursive: true })
     .filter(filename => (filename as string).endsWith('.json'))
+    // The `error/` group documents static `/error/<code>/<slug>` pages (e.g. get-error-500-...json).
+    // The 3-digit number there identifies which problem type the page explains, not the HTTP status
+    // of the (always 200) GET request itself, so it doesn't fit this filename-encodes-status-code check.
+    .filter(filename => !(filename as string).startsWith(`error${sep}`))
     .flatMap(filename => {
         const statusCode = (filename as string).match(/\b(\d{3})\b/)?.[1]
         if (!statusCode) return []

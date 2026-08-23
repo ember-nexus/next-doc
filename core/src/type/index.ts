@@ -1,6 +1,7 @@
 export * from "./HttpStatusCode.ts";
 export * from "./Link.ts";
 export * from "./RequestBody.ts";
+export * from "./RequestExample.ts";
 export * from "./RequestHeader.ts";
 export * from "./RequestParameter.ts";
 export * from "./ResponseExample.ts";

@@ -70,37 +70,76 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "PUT",
-          "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/octet-stream"
-            },
-            {
-              "name": "Content-Disposition",
-              "value": "attachment; filename=\"report.pdf\""
-            },
-            {
-              "name": "Upload-Complete",
-              "value": "?1"
+        "x-ember-nexus-har-example": [
+          {
+            "name": "Create file directly",
+            "har": {
+              "method": "PUT",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/octet-stream"
+                },
+                {
+                  "name": "Content-Disposition",
+                  "value": "attachment; filename=\"report.pdf\""
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/octet-stream",
+                "text": "@report.pdf"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/octet-stream",
-            "text": "<binary file data>"
+          },
+          {
+            "name": "Create resumable upload",
+            "har": {
+              "method": "PUT",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/octet-stream"
+                },
+                {
+                  "name": "Content-Disposition",
+                  "value": "attachment; filename=\"report.pdf\""
+                },
+                {
+                  "name": "Upload-Complete",
+                  "value": "?0"
+                },
+                {
+                  "name": "Upload-Length",
+                  "value": "20971520"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/octet-stream",
+                "text": "@report.pdf.part1"
+              }
+            }
           }
-        }
+        ]
       }
     }
   }

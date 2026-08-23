@@ -494,8 +494,8 @@
             "name": "HTTP.dev"
           },
           {
-            "url": "/getting-started/installation",
-            "name": "Getting started guide"
+            "url": "/guide/authentication",
+            "name": "Authentication guide"
           }
         ]
       }
@@ -1188,21 +1188,25 @@
             "description": "Id of the element to be deleted."
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "DELETE",
-          "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "DELETE",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       },
       "get": {
         "responses": {
@@ -1495,21 +1499,25 @@
             "$ref": "#/components/parameters/If-None-Match"
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       },
       "patch": {
         "responses": {
@@ -1784,29 +1792,33 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "PATCH",
-          "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "PATCH",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"someDataKey\": \"some new value :D\"}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"someDataKey\": \"some new value :D\"}"
           }
-        }
+        ]
       },
       "post": {
         "responses": {
@@ -2042,29 +2054,33 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "POST",
-          "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
           }
-        }
+        ]
       },
       "put": {
         "responses": {
@@ -2339,29 +2355,33 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "PUT",
-          "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "PUT",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"someDataKey\": \"some new value :D\"}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"someDataKey\": \"some new value :D\"}"
           }
-        }
+        ]
       }
     },
     "/{uuid}/children": {
@@ -2773,21 +2793,25 @@
             "$ref": "#/components/parameters/If-None-Match"
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac/children",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac/children",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       }
     },
     "/": {
@@ -3048,21 +3072,25 @@
             "$ref": "#/components/parameters/If-None-Match"
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       },
       "post": {
         "responses": {
@@ -3310,29 +3338,60 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "POST",
-          "url": "https://api.example.com/",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "name": "Node request",
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
+          },
+          {
+            "name": "Relation request",
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"type\": \"RELATION\", \"start\": \"f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103\", \"end\": \"ecfe46ff-d3c7-4ca7-9b41-9be5476d36e0\", \"data\": {\"hello\": \"world :D\"}}"
+              }
+            }
           }
-        }
+        ]
       }
     },
     "/{uuid}/parents": {
@@ -3642,21 +3701,25 @@
             "$ref": "#/components/parameters/If-None-Match"
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac/parents",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac/parents",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       }
     },
     "/{uuid}/related": {
@@ -4006,20 +4069,1056 @@
             "$ref": "#/components/parameters/If-None-Match"
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac/related",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac/related",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
+          }
+        ]
+      }
+    },
+    "/error/400/bad-content": {
+      "get": {
+        "summary": "Get error 400 bad content",
+        "description": "Static informational page for the `https://api.example.com/error/400/bad-content` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-400-bad-content",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/400/bad-content",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "400_bad_content": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 400 - Bad Content\n\n This error is thrown, when a required request property is set, but does not contain a valid value.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 400 error code: https://http.dev/400\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/400/forbidden-property": {
+      "get": {
+        "summary": "Get error 400 forbidden property",
+        "description": "Static informational page for the `https://api.example.com/error/400/forbidden-property` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-400-forbidden-property",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/400/forbidden-property",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "400_forbidden_property": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 400 - Forbidden Property\n\n This error is thrown when the request body contains a property, which is either generally not allowed or can not be\n changed manually.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 400 error code: https://http.dev/400\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/400/incomplete-mutual-dependency": {
+      "get": {
+        "summary": "Get error 400 incomplete mutual dependency",
+        "description": "Static informational page for the `https://api.example.com/error/400/incomplete-mutual-dependency` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-400-incomplete-mutual-dependency",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/400/incomplete-mutual-dependency",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "400_incomplete_mutual_dependency": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 400 - Incomplete Mutual Dependency\n\n This error is thrown when there are properties which depend on ech other, i.e. must be all defined, but at least one\n is missing from the request body. Try to add the missing properties.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 400 error code: https://http.dev/400\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/400/missing-property": {
+      "get": {
+        "summary": "Get error 400 missing property",
+        "description": "Static informational page for the `https://api.example.com/error/400/missing-property` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-400-missing-property",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/400/missing-property",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "400_missing_property": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 400 - Missing Property\n\n This error is thrown when the request body does not contain a required property.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 400 error code: https://http.dev/400\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/400/reserved-identifier": {
+      "get": {
+        "summary": "Get error 400 reserved identifier",
+        "description": "Static informational page for the `https://api.example.com/error/400/reserved-identifier` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-400-reserved-identifier",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/400/reserved-identifier",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "400_reserved_identifier": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 400 - Reserved Identifier\n\n The exception is thrown when an identifier is used which is already in use or reserved.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 400 error code: https://http.dev/400\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/400/reserved-type": {
+      "get": {
+        "summary": "Get error 400 reserved type",
+        "description": "Static informational page for the `https://api.example.com/error/400/reserved-type` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-400-reserved-type",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/400/reserved-type",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "400_reserved_type": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 400 - Reserved Type\n\n The exception is thrown when a reserved type is used.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 400 error code: https://http.dev/400\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/401/unauthorized": {
+      "get": {
+        "summary": "Get error 401 unauthorized",
+        "description": "Static informational page for the `https://api.example.com/error/401/unauthorized` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-401-unauthorized",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/401/unauthorized",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "401_unauthorized": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 401 - Unauthorized\n\n Request does not contain valid token, or anonymous user is disabled.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 401 error code: https://http.dev/401\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/403/forbidden": {
+      "get": {
+        "summary": "Get error 403 forbidden",
+        "description": "Static informational page for the `https://api.example.com/error/403/forbidden` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-403-forbidden",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/403/forbidden",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "403_forbidden": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 403 - Forbidden\n\n This error is thrown when the requested endpoint, element or action is forbidden.\n\n There are a few things you can check:\n\n - Is the endpoint available via the GET method?\n - Do you have access to the endpoint?\n - Is the endpoint disabled in the configuration?\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 403 error code: https://http.dev/403\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/404/not-found": {
+      "get": {
+        "summary": "Get error 404 not found",
+        "description": "Static informational page for the `https://api.example.com/error/404/not-found` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-404-not-found",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/404/not-found",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "404_not_found": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 404 - Not Found\n\n The requested element was not found.\n\n This can happen due to multiple reasons:\n\n - The requested route does not exist.\n - The requested element did never exist.\n - There is a typo within the element's UUID.\n - You do not have access to the element.\n - You do not have the correct type of access to the element.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 404 error code: https://http.dev/404\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/412/precondition-failed": {
+      "get": {
+        "summary": "Get error 412 precondition failed",
+        "description": "Static informational page for the `https://api.example.com/error/412/precondition-failed` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-412-precondition-failed",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/412/precondition-failed",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "412_precondition_failed": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 412 - Precondition Failed\n\n Precondition does not match.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 412 error code: https://http.dev/412\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/500/internal-server-error": {
+      "get": {
+        "summary": "Get error 500 internal server error",
+        "description": "Static informational page for the `https://api.example.com/error/500/internal-server-error` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-500-internal-server-error",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/500/internal-server-error",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "500_internal_server_error": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 500 - Internal Server Error\n\n The server has some internal problem. You can try to repeat your request at a later time.\n Should the problem persist, contact this site's administrator.\n\n As an administrator, you should be able to find the cause in the server's logs.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 500 error code: https://http.dev/500\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/501/not-implemented": {
+      "get": {
+        "summary": "Get error 501 not implemented",
+        "description": "Static informational page for the `https://api.example.com/error/501/not-implemented` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-501-not-implemented",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/501/not-implemented",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "501_not_implemented": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 501 - Not Implemented\n\n Endpoint is currently not implemented. Try upgrading the software.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 501 error code: https://http.dev/501\n\n"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -4231,21 +5330,25 @@
             "description": "Id of the element whose file is to be deleted."
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "DELETE",
-          "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "DELETE",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       },
       "get": {
         "responses": {
@@ -4512,21 +5615,25 @@
             "$ref": "#/components/parameters/If-None-Match"
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac/file",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac/file",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       },
       "post": {
         "responses": {
@@ -4878,37 +5985,76 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "POST",
-          "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/octet-stream"
-            },
-            {
-              "name": "Content-Disposition",
-              "value": "attachment; filename=\"report.pdf\""
-            },
-            {
-              "name": "Upload-Complete",
-              "value": "?1"
+        "x-ember-nexus-har-example": [
+          {
+            "name": "Create file directly",
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/octet-stream"
+                },
+                {
+                  "name": "Content-Disposition",
+                  "value": "attachment; filename=\"report.pdf\""
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/octet-stream",
+                "text": "@report.pdf"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/octet-stream",
-            "text": "<binary file data>"
+          },
+          {
+            "name": "Create resumable upload",
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/octet-stream"
+                },
+                {
+                  "name": "Content-Disposition",
+                  "value": "attachment; filename=\"report.pdf\""
+                },
+                {
+                  "name": "Upload-Complete",
+                  "value": "?0"
+                },
+                {
+                  "name": "Upload-Length",
+                  "value": "20971520"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/octet-stream",
+                "text": "@report.pdf.part1"
+              }
+            }
           }
-        }
+        ]
       },
       "put": {
         "responses": {
@@ -5263,37 +6409,76 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "PUT",
-          "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/octet-stream"
-            },
-            {
-              "name": "Content-Disposition",
-              "value": "attachment; filename=\"report.pdf\""
-            },
-            {
-              "name": "Upload-Complete",
-              "value": "?1"
+        "x-ember-nexus-har-example": [
+          {
+            "name": "Create file directly",
+            "har": {
+              "method": "PUT",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/octet-stream"
+                },
+                {
+                  "name": "Content-Disposition",
+                  "value": "attachment; filename=\"report.pdf\""
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/octet-stream",
+                "text": "@report.pdf"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/octet-stream",
-            "text": "<binary file data>"
+          },
+          {
+            "name": "Create resumable upload",
+            "har": {
+              "method": "PUT",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/octet-stream"
+                },
+                {
+                  "name": "Content-Disposition",
+                  "value": "attachment; filename=\"report.pdf\""
+                },
+                {
+                  "name": "Upload-Complete",
+                  "value": "?0"
+                },
+                {
+                  "name": "Upload-Length",
+                  "value": "20971520"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/octet-stream",
+                "text": "@report.pdf.part1"
+              }
+            }
           }
-        }
+        ]
       }
     },
     "/upload/{uuid}": {
@@ -5456,21 +6641,25 @@
             "description": "Id of the resumable upload, as returned in the `Location` header of the request that created it."
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "DELETE",
-          "url": "https://api.example.com/upload/7b80b203-2b82-40f5-accd-c7089fe6114e",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "DELETE",
+              "url": "https://api.example.com/upload/7b80b203-2b82-40f5-accd-c7089fe6114e",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       },
       "head": {
         "responses": {
@@ -5646,21 +6835,25 @@
             "description": "Id of the resumable upload, as returned in the `Location` header of the request that created it."
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "HEAD",
-          "url": "https://api.example.com/upload/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "HEAD",
+              "url": "https://api.example.com/upload/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       },
       "patch": {
         "responses": {
@@ -6014,37 +7207,41 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "PATCH",
-          "url": "https://api.example.com/upload/7b80b203-2b82-40f5-accd-c7089fe6114e",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/partial-upload"
-            },
-            {
-              "name": "Upload-Offset",
-              "value": "5242880"
-            },
-            {
-              "name": "Upload-Complete",
-              "value": "?1"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "PATCH",
+              "url": "https://api.example.com/upload/7b80b203-2b82-40f5-accd-c7089fe6114e",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/partial-upload"
+                },
+                {
+                  "name": "Upload-Offset",
+                  "value": "5242880"
+                },
+                {
+                  "name": "Upload-Complete",
+                  "value": "?1"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/partial-upload",
+                "text": "<binary chunk data>"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/partial-upload",
-            "text": "<binary chunk data>"
           }
-        }
+        ]
       }
     },
     "/search": {
@@ -6258,29 +7455,33 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "POST",
-          "url": "https://api.example.com/search",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/search",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"debug\":true,\"steps\":[{\"type\":\"elasticsearch-query-dsl-mixin\",\"query\":{\"match\":{\"description\":{\"query\":\"lily\"}}}},{\"type\":\"element-hydration\"}]}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"debug\":true,\"steps\":[{\"type\":\"elasticsearch-query-dsl-mixin\",\"query\":{\"match\":{\"description\":{\"query\":\"lily\"}}}},{\"type\":\"element-hydration\"}]}"
           }
-        }
+        ]
       }
     },
     "/graph-structure": {
@@ -6464,21 +7665,25 @@
           {}
         ],
         "parameters": [],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/graph-structure",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/graph-structure",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       }
     },
     "/instance-configuration": {
@@ -6664,21 +7869,25 @@
           {}
         ],
         "parameters": [],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/instance-configuration",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/instance-configuration",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       }
     },
     "/.well-known/security.txt": {
@@ -6842,21 +8051,25 @@
           {}
         ],
         "parameters": [],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/.well-known/security.txt",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/.well-known/security.txt",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       }
     },
     "/token": {
@@ -7056,21 +8269,25 @@
           {}
         ],
         "parameters": [],
-        "x-ember-nexus-har-example": {
-          "method": "DELETE",
-          "url": "https://api.example.com/token",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "DELETE",
+              "url": "https://api.example.com/token",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       },
       "get": {
         "responses": {
@@ -7290,21 +8507,25 @@
             "$ref": "#/components/parameters/If-None-Match"
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/token",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/token",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       },
       "post": {
         "responses": {
@@ -7517,25 +8738,29 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "POST",
-          "url": "https://api.example.com/token",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/token",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"type\": \"Token\", \"uniqueUserIdentifier\": \"test@example.com\", \"password\": \"1234\"}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"type\": \"Token\", \"uniqueUserIdentifier\": \"test@example.com\", \"password\": \"1234\"}"
           }
-        }
+        ]
       }
     },
     "/me": {
@@ -7757,21 +8982,25 @@
             "$ref": "#/components/parameters/If-None-Match"
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/me",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/me",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       }
     },
     "/change-password": {
@@ -8015,25 +9244,29 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "POST",
-          "url": "https://api.example.com/change-password",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/change-password",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"type\": \"ActionChangePassword\", \"currentPassword\": \"1234\", \"newPassword\": \"9876\", \"uniqueUserIdentifier\": \"test@example.com\"}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"type\": \"ActionChangePassword\", \"currentPassword\": \"1234\", \"newPassword\": \"9876\", \"uniqueUserIdentifier\": \"test@example.com\"}"
           }
-        }
+        ]
       }
     },
     "/register": {
@@ -8282,25 +9515,29 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "POST",
-          "url": "https://api.example.com/register",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/register",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"type\": \"User\", \"password\": \"1234\", \"uniqueUserIdentifier\": \"test@example.com\"}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"type\": \"User\", \"password\": \"1234\", \"uniqueUserIdentifier\": \"test@example.com\"}"
           }
-        }
+        ]
       }
     }
   },

@@ -58,25 +58,29 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "POST",
-          "url": "https://api.example.com/register",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/register",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"type\": \"User\", \"password\": \"1234\", \"uniqueUserIdentifier\": \"test@example.com\"}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"type\": \"User\", \"password\": \"1234\", \"uniqueUserIdentifier\": \"test@example.com\"}"
           }
-        }
+        ]
       }
     }
   }

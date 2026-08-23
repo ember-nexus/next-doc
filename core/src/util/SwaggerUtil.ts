@@ -19,6 +19,7 @@ import type {
   Link,
   RequestBody,
   RequestBodyContent,
+  RequestExample,
   RequestHeader,
   RequestParameter,
   ResponseExample,
@@ -321,16 +322,23 @@ export function extractRequestBody(
   };
 }
 
-export function extractHarExample(
+export function extractHarExamples(
   spec: OpenAPIObject,
   path: string,
   method: string,
-): null | Partial<HarRequest> {
+): RequestExample[] {
   const op = getOperation(spec, path, method);
   if (!op || !("x-ember-nexus-har-example" in op)) {
-    return null;
+    return [];
   }
-  return op["x-ember-nexus-har-example"] as Partial<HarRequest>;
+  const examples = op["x-ember-nexus-har-example"] as {
+    name?: string;
+    har: Partial<HarRequest>;
+  }[];
+  return examples.map((example) => ({
+    name: example.name ?? null,
+    har: example.har,
+  }));
 }
 
 export function extractResponseHeaders(
