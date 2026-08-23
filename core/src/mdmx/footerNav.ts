@@ -7,8 +7,8 @@
 // renders on the HTML page, so the two can't drift apart — see `lib/pageNav`.
 import type { RootContent } from "mdast";
 
-import { buildNavItems, findPrevNext, type NavItem } from "../lib/pageNav";
-import { markdownPath } from "../lib/routes";
+import { type NavItem, buildNavItems, findPrevNext } from "../lib/pageNav.ts";
+import { markdownPath } from "../lib/routes.ts";
 
 const navLink = (label: string, name: string, href: string): RootContent => ({
   type: "paragraph",

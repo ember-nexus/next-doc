@@ -6,10 +6,10 @@
 // `basename(pathname)` verbatim — see task.md §9.3.
 import type { APIRoute, GetStaticPaths } from "astro";
 
-import { pagePath, pageRouteParamMd, prime } from "../lib";
-import { getCollection, renderMd } from "../mdmx";
-import { footerNav } from "../mdmx/footerNav";
-import { serialize } from "../mdmx/serialize";
+import { pagePath, pageRouteParamMd, prime } from "../lib/index.ts";
+import { footerNav } from "../mdmx/footerNav.ts";
+import { getCollection, renderMd } from "../mdmx/index.ts";
+import { serialize } from "../mdmx/serialize.ts";
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const pages = await getCollection("pages");

@@ -1,7 +1,7 @@
 import type { RootContent } from "mdast";
 
-import { commandsInGroup } from "../../lib/collections";
-import { commandPath } from "../../lib/routes";
+import { commandsInGroup } from "../../lib/collections.ts";
+import { commandPath } from "../../lib/routes.ts";
 
 interface Props {
   group: string;

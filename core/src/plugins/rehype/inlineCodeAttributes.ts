@@ -52,45 +52,6 @@ interface ParsedAttrs {
   attrs: Record<string, string>;
 }
 
-export function inlineCodeAttrs() {
-  return (tree: Root): void => {
-    visit(tree, "element", (node, _index, parent) => {
-      if (node.tagName !== "code") return;
-      // inline code only — skip `code` inside a `pre` (fenced/code blocks)
-      if (parent?.type === "element" && parent.tagName === "pre") return;
-      applyAttrs(node);
-    });
-  };
-}
-
-function applyAttrs(node: Element): void {
-  const last = node.children[node.children.length - 1];
-  if (!last || last.type !== "text") return;
-  const text = last as Text;
-
-  const match = text.value.match(ATTR_RE);
-  if (!match) return;
-
-  const parsed = parseAttrs(match[1]);
-  if (!parsed) return; // didn't look like a real attr block — leave text intact
-
-  // 1. strip the meta (and the whitespace before it) from the visible text
-  text.value = text.value.slice(0, match.index ?? 0);
-
-  // 2. merge into the element's properties, *appending* classes
-  const classes = [
-    ...toClassArray(node.properties.className),
-    ...parsed.classes,
-  ];
-
-  node.properties = {
-    ...node.properties,
-    ...parsed.attrs,
-    ...(parsed.id ? { id: parsed.id } : {}),
-    ...(classes.length ? { className: classes } : {}),
-  };
-}
-
 function parseAttrs(raw: string): ParsedAttrs | null {
   const tokens = raw.trim().split(/\s+/).filter(Boolean);
 
@@ -126,4 +87,43 @@ function toClassArray(value: PropertyValue): string[] {
   if (!value) return [];
   if (Array.isArray(value)) return value.map(String);
   return String(value).split(/\s+/).filter(Boolean);
+}
+
+function applyAttrs(node: Element): void {
+  const last = node.children[node.children.length - 1];
+  if (!last || last.type !== "text") return;
+  const text = last as Text;
+
+  const match = text.value.match(ATTR_RE);
+  if (!match) return;
+
+  const parsed = parseAttrs(match[1]);
+  if (!parsed) return; // didn't look like a real attr block — leave text intact
+
+  // 1. strip the meta (and the whitespace before it) from the visible text
+  text.value = text.value.slice(0, match.index ?? 0);
+
+  // 2. merge into the element's properties, *appending* classes
+  const classes = [
+    ...toClassArray(node.properties.className),
+    ...parsed.classes,
+  ];
+
+  node.properties = {
+    ...node.properties,
+    ...parsed.attrs,
+    ...(parsed.id ? { id: parsed.id } : {}),
+    ...(classes.length ? { className: classes } : {}),
+  };
+}
+
+export function inlineCodeAttrs() {
+  return (tree: Root): void => {
+    visit(tree, "element", (node, _index, parent) => {
+      if (node.tagName !== "code") return;
+      // inline code only — skip `code` inside a `pre` (fenced/code blocks)
+      if (parent?.type === "element" && parent.tagName === "pre") return;
+      applyAttrs(node);
+    });
+  };
 }

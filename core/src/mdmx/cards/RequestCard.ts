@@ -2,7 +2,7 @@ import { HTTPSnippet, type TargetId } from "httpsnippet";
 import type { RootContent } from "mdast";
 
 import type { RequestExample } from "../../type";
-import { curlfmt } from "../../util/curl-fmt";
+import { curlfmt } from "../../util/curl-fmt.ts";
 
 // `RequestCard.astro` renders four language tabs (curl, Python, JS, PHP) for
 // human readers comparing client libraries. The markdown target is read by
@@ -33,7 +33,11 @@ export function requestCard(requests: RequestExample[]): RootContent[] {
 
     const snippet = new HTTPSnippet(request.har);
     const opts = { indent: "\t" };
-    const raw = snippet.convert("shell" as unknown as TargetId, "curl", opts) as string;
+    const raw = snippet.convert(
+      "shell" as unknown as TargetId,
+      "curl",
+      opts,
+    ) as string;
     const example = curlfmt(raw, {
       headerPriority: ["Authorization", "Content-Type", "Accept"],
     });

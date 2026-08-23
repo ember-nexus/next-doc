@@ -1,12 +1,39 @@
 import { h } from "hastscript";
 import { visit } from "unist-util-visit";
 
+// --- minimal local hast/vfile types (avoids depending on @types/hast) ------
+
+type Properties = Record<string, unknown>;
+
+interface Element {
+  type: "element";
+  tagName: string;
+  properties: Properties;
+  children: ElementContent[];
+  position?: { start?: { line?: number } };
+}
+
+interface Root {
+  type: "root";
+  children: ElementContent[];
+}
+
+// Permissive catch-all: the real hast tree also contains comment / doctype /
+// text / raw nodes, so this keeps it assignable to the minimal types above.
+type ElementContent = Element | { type: string; [key: string]: unknown };
+
+interface File {
+  path?: string;
+}
+
+// -----------------------------------------------------------------------
+
 const ICON_PATHS: Record<string, string> = {
   "arrow-right": "M5 12h14M12 5l7 7-7 7",
   "arrow-up-right": "M7 17L17 7M7 7h10v10",
 };
 
-function makeIconNode(name: string) {
+function makeIconNode(name: string): ElementContent {
   return h(
     "svg",
     {
@@ -39,8 +66,8 @@ export function isExternalHref(href: string): boolean {
 }
 
 export function linkAugmentation() {
-  return (tree: any, file: any) => {
-    visit(tree, "element", (node: any) => {
+  return (tree: Root, file: File): void => {
+    visit(tree, "element", (node: Element) => {
       if (node.tagName !== "a") return;
 
       const href = node.properties?.href as string | undefined;
@@ -59,6 +86,9 @@ export function linkAugmentation() {
         const filePath = file?.path ?? "unknown file";
         const line = node.position?.start?.line;
         const location = line !== undefined ? `${filePath}:${line}` : filePath;
+        // Intentional build-time diagnostic — surfaces broken/placeholder
+        // links in the terminal during `astro build`.
+        // eslint-disable-next-line no-console
         console.warn(
           `[linkAugmentation] Broken/placeholder link (href="${href}") at ${location}`,
         );

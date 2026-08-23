@@ -1,8 +1,9 @@
 ---
 import SwaggerParser from '@apidevtools/swagger-parser';
+import type { GetStaticPaths } from 'astro';
 import { getCollection, render } from 'astro:content';
 
-import { htmlComponents } from '../../component/registry.html';
+import { htmlComponents } from '../../component/registry.html.ts';
 import RequestBodyCard from "../../component/RequestBodyCard.astro";
 import RequestCard from '../../component/RequestCard.astro';
 import RequestHeaderCard from '../../component/RequestHeaderCard.astro';
@@ -10,7 +11,7 @@ import RequestParameterCard from '../../component/RequestParameterCard.astro';
 import ResponseCard from '../../component/ResponseCard.astro';
 import ResponseHeaderCard from '../../component/ResponseHeaderCard.astro';
 import Default from '../../layouts/Default.astro';
-import { endpointParam } from '../../lib';
+import { endpointParam } from '../../lib/index.ts';
 import {
     extractHarExamples,
     extractRequestBody,
@@ -18,15 +19,15 @@ import {
     extractRequestParameters,
     extractResponseExamples,
     extractResponseHeaders,
-} from '../../util';
+} from '../../util/index.ts';
 
-export async function getStaticPaths() {
+export const getStaticPaths: GetStaticPaths = async () => {
     const entries = await getCollection('endpoints');
     return entries.map((entry) => ({
         params: { endpoint: endpointParam(entry.data.endpoint) },
         props: { entry },
     }));
-}
+};
 
 const { entry } = Astro.props;
 const { Content, headings: contentHeadings } = await render(entry);
@@ -35,7 +36,7 @@ const { method, endpointUrl, swaggerUrl, name, description } = entry.data;
 const spec = await SwaggerParser.dereference('./src/data/swagger.json');
 
 const path = swaggerUrl ?? '/';
-const method2 = swaggerUrl == null ? 'get' : method;
+const method2 = swaggerUrl === undefined ? 'get' : method;
 
 const requests = extractHarExamples(spec, path, method2);
 const requestParameters = extractRequestParameters(spec, path, method2);

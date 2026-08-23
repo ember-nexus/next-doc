@@ -1,8 +1,8 @@
 import type { RootContent } from "mdast";
 
-import { linksParagraph } from "./linkNode";
+import { linksParagraph } from "./linkNode.ts";
 import type { RequestHeader } from "../../type";
-import { parseMarkdownSource } from "../markdownSource";
+import { parseMarkdownSource } from "../markdownSource.ts";
 
 export function requestHeaderCard(headers: RequestHeader[]): RootContent[] {
   const nodes: RootContent[] = [

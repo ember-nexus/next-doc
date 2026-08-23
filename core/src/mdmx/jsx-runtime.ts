@@ -15,10 +15,27 @@ export const Fragment = Symbol.for("mdmx.fragment");
 type Child =
   RootContent | RootContent[] | string | number | null | undefined | false;
 
+// JSX props are an arbitrary bag supplied by whatever tag/component is being
+// rendered — there's no single shape to check against here, so each handler
+// narrows the specific keys it reads.
+type Props = Record<string, unknown>;
+
 type Handler = (
-  props: Record<string, any>,
+  props: Props,
   children: RootContent[],
 ) => RootContent | RootContent[];
+
+// Three intrinsics stash an extra payload on the mdast node they return, as a
+// non-enumerable property invisible to mdast-util-to-markdown, for a sibling
+// handler further up the tree to read back out:
+//   - leafCode()   attaches `block`      (the real "code" node, see below)
+//   - `input`      attaches `__checkbox` (for the `li` handler)
+//   - `th`/`td`    attaches `__align`    (for the `table` handler)
+type CodeCarrier = RootContent & { block?: RootContent };
+type CheckboxCarrier = RootContent & { __checkbox?: boolean };
+type AlignCarrier = RootContent & {
+  __align?: "left" | "right" | "center" | null;
+};
 
 /**
  * mdast node types that may appear as siblings inside phrasing (inline)
@@ -68,18 +85,18 @@ function groupIntoBlocks(nodes: RootContent[]): RootContent[] {
 
 export function textOf(nodes: RootContent[]): string {
   return nodes
-    .map((n: any) => {
+    .map((n) => {
       if (n.type === "text" || n.type === "inlineCode") return n.value;
-      if (Array.isArray(n.children)) return textOf(n.children);
+      if ("children" in n && Array.isArray(n.children))
+        return textOf(n.children as RootContent[]);
       return "";
     })
     .join("");
 }
 
-function parseAlign(
-  props: Record<string, any>,
-): "left" | "right" | "center" | null {
-  const raw = props.align ?? props.style?.textAlign ?? null;
+function parseAlign(props: Props): "left" | "right" | "center" | null {
+  const style = props.style as { textAlign?: unknown } | undefined;
+  const raw = props.align ?? style?.textAlign ?? null;
   if (raw === "left" || raw === "right" || raw === "center") return raw;
   return null;
 }
@@ -101,21 +118,23 @@ function leafCode(
 ): Handler {
   return (_props, children) => {
     const value = textOf(children);
-    const node: any = { type: "inlineCode", value };
+    const node = { type: "inlineCode", value } as RootContent;
     Object.defineProperty(node, "block", {
-      value: { type: "code", lang, meta: meta ?? null, value: cleanValue(value) },
+      value: {
+        type: "code",
+        lang,
+        meta: meta ?? null,
+        value: cleanValue(value),
+      },
       enumerable: false,
     });
     return node;
   };
 }
 
-function unwrapCode(
-  _props: Record<string, any>,
-  children: RootContent[],
-): RootContent {
+function unwrapCode(_props: Props, children: RootContent[]): RootContent {
   return (
-    (children[0] as any)?.block ?? {
+    (children[0] as CodeCarrier | undefined)?.block ?? {
       type: "code",
       lang: null,
       value: textOf(children),
@@ -142,8 +161,8 @@ const intrinsics: Record<string, Handler> = {
   a: (props, children) =>
     ({
       type: "link",
-      url: props.href ?? "",
-      title: props.title ?? null,
+      url: (props.href as string | undefined) ?? "",
+      title: (props.title as string | undefined) ?? null,
       children,
     }) as RootContent,
 
@@ -155,7 +174,7 @@ const intrinsics: Record<string, Handler> = {
       ordered: true,
       start:
         props.start !== null && props.start !== undefined
-          ? Number(props.start)
+          ? Number(props.start as string | number)
           : null,
       children,
     }) as RootContent,
@@ -163,7 +182,7 @@ const intrinsics: Record<string, Handler> = {
   li: (_props, children) => {
     let checked: boolean | null = null;
     let rest = children;
-    const first = children[0] as any;
+    const first = children[0] as CheckboxCarrier | undefined;
     if (first && first.__checkbox !== undefined) {
       checked = first.__checkbox;
       rest = children.slice(1);
@@ -180,7 +199,7 @@ const intrinsics: Record<string, Handler> = {
   // type="checkbox" checked disabled /> ...</li>`. Not real content — the
   // `li` handler above reads `__checkbox` off it and strips it.
   input: (props) => {
-    const node: any = { type: "text", value: "" };
+    const node = { type: "text", value: "" } as RootContent;
     Object.defineProperty(node, "__checkbox", {
       value: Boolean(props.checked),
       enumerable: false,
@@ -204,15 +223,17 @@ const intrinsics: Record<string, Handler> = {
   img: (props) =>
     ({
       type: "image",
-      url: props.src ?? "",
-      alt: props.alt ?? null,
-      title: props.title ?? null,
+      url: (props.src as string | undefined) ?? "",
+      alt: (props.alt as string | undefined) ?? null,
+      title: (props.title as string | undefined) ?? null,
     }) as RootContent,
 
   table: (_props, children) => {
-    const rows = children as any[];
-    const align = ((rows[0]?.children ?? []) as any[]).map(
-      (cell) => cell.__align ?? null,
+    const rows = children;
+    const firstRow = rows[0] as
+      (RootContent & { children?: RootContent[] }) | undefined;
+    const align = (firstRow?.children ?? []).map(
+      (cell) => (cell as AlignCarrier).__align ?? null,
     );
     return { type: "table", align, children: rows } as RootContent;
   },
@@ -220,7 +241,7 @@ const intrinsics: Record<string, Handler> = {
   tbody: (_props, children) => children,
   tr: (_props, children) => ({ type: "tableRow", children }) as RootContent,
   th: (props, children) => {
-    const node: any = { type: "tableCell", children };
+    const node = { type: "tableCell", children } as RootContent;
     Object.defineProperty(node, "__align", {
       value: parseAlign(props),
       enumerable: false,
@@ -228,7 +249,7 @@ const intrinsics: Record<string, Handler> = {
     return node;
   },
   td: (props, children) => {
-    const node: any = { type: "tableCell", children };
+    const node = { type: "tableCell", children } as RootContent;
     Object.defineProperty(node, "__align", {
       value: parseAlign(props),
       enumerable: false,
@@ -238,7 +259,9 @@ const intrinsics: Record<string, Handler> = {
 
   code: (props, children) =>
     leafCode(
-      /(?:^|\s)language-([\w-]+)/.exec(props.className ?? "")?.[1] ?? null,
+      /(?:^|\s)language-([\w-]+)/.exec(
+        (props.className as string | undefined) ?? "",
+      )?.[1] ?? null,
       (v) => v.replace(/\n$/, ""),
     )(props, children),
   pre: unwrapCode,
@@ -278,7 +301,9 @@ const intrinsics: Record<string, Handler> = {
         if (props.type !== "application/json") return v.trim();
         try {
           const parsed: unknown = JSON.parse(v);
-          const elements = Array.isArray((parsed as { elements?: unknown })?.elements)
+          const elements = Array.isArray(
+            (parsed as { elements?: unknown })?.elements,
+          )
             ? (parsed as { elements: unknown[] }).elements
             : parsed;
           if (!Array.isArray(elements)) return JSON.stringify(parsed, null, 2);
@@ -323,8 +348,8 @@ export function flatten(children: Child | Child[]): RootContent[] {
   return [children];
 }
 
-export function jsx(type: unknown, props: Record<string, any>): any {
-  const children = flatten(props?.children);
+export function jsx(type: unknown, props: Props): RootContent | RootContent[] {
+  const children = flatten(props?.children as Child | Child[]);
   // The document root is a block-level container just like `blockquote` /
   // `li` / `div` — a component used as its own top-level block (e.g. a bare
   // `<Link />` on its own line) can return phrasing content, which mdast
@@ -332,7 +357,12 @@ export function jsx(type: unknown, props: Record<string, any>): any {
   // siblings. Skipping this turned every such page into unparseable
   // concatenated output — see the `swagger.mdx` regression.
   if (type === Fragment) return groupIntoBlocks(children);
-  if (typeof type === "function") return type({ ...props, children });
+  if (typeof type === "function") {
+    // Registered mdmx components (see `registry/`, `cards/`) all share this
+    // shape: a props bag ending in `children`, returning mdast node(s).
+    const component = type as (props: Props) => RootContent | RootContent[];
+    return component({ ...props, children });
+  }
   if (typeof type === "string") {
     const handler = intrinsics[type];
     if (!handler) throw new Error(`[mdmx] no mdast mapping for <${type}>`);

@@ -5,7 +5,7 @@ import path from 'node:path';
 import { Code } from 'astro-expressive-code/components';
 import { parse } from 'node-html-parser';
 
-import { trimBlankLines } from '../util/htmlUtil';
+import { trimBlankLines } from '../util/htmlUtil.ts';
 
 interface Props {
     /** Path to the HTML file to embed. Absolute, or relative to the project root. */

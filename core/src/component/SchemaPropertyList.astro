@@ -1,6 +1,6 @@
 ---
 import SchemaPropertyRow from './SchemaPropertyRow.astro';
-import { schemaParam } from '../util';
+import { schemaParam } from '../util/index.ts';
 
 interface Props {
     schema: unknown;
@@ -8,7 +8,7 @@ interface Props {
 
 const { schema } = Astro.props;
 
-const raw = (schema != null && typeof schema === 'object' ? schema : {}) as Record<string, unknown>;
+const raw = (schema !== null && schema !== undefined && typeof schema === 'object' ? schema : {}) as Record<string, unknown>;
 
 const requiredNames = new Set<string>(
     Array.isArray(raw.required) ? (raw.required as string[]) : [],

@@ -6,6 +6,7 @@
 // we want the `$ref`s left intact so we can render them as cross-links, and so
 // self-referential schemas (e.g. Element → Element) don't expand forever.
 import SwaggerParser from '@apidevtools/swagger-parser';
+import type { GetStaticPaths } from 'astro';
 import { Code } from 'astro-expressive-code/components';
 import { marked } from 'marked';
 import type { OpenAPIObject } from 'openapi3-ts/oas31';
@@ -13,9 +14,9 @@ import type { OpenAPIObject } from 'openapi3-ts/oas31';
 import SchemaPropertyList from '../../component/SchemaPropertyList.astro';
 import Default from '../../layouts/Default.astro';
 import type { Schema } from '../../type';
-import { extractSchemas } from '../../util';
+import { extractSchemas } from '../../util/index.ts';
 
-export async function getStaticPaths() {
+export const getStaticPaths: GetStaticPaths = async () => {
     const spec = (await SwaggerParser.parse(
         './src/data/swagger.json',
     )) as OpenAPIObject;
@@ -24,7 +25,7 @@ export async function getStaticPaths() {
         params: { schema: schema.id },
         props: { schema },
     }));
-}
+};
 
 interface Props {
     schema: Schema;
@@ -40,13 +41,14 @@ const pretty = JSON.stringify(schema.schema, null, 2);
 
 // Mirror the hasContent check from SchemaPropertyList to conditionally include
 // the Properties entry in the TOC.
-const hasProperties = (() => {
+const hasProperties = ((): boolean => {
     const properties =
         raw.type === 'object' && raw.properties && typeof raw.properties === 'object'
             ? Object.keys(raw.properties as Record<string, unknown>).length > 0
             : false;
     const composition = (['oneOf', 'anyOf', 'allOf'] as const).find(k => Array.isArray(raw[k]));
-    const hasVariantsOrRefs = composition != null && (raw[composition] as unknown[]).length > 0;
+    const hasVariantsOrRefs =
+        composition !== undefined && (raw[composition] as unknown[]).length > 0;
     return properties || hasVariantsOrRefs;
 })();
 

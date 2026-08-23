@@ -1,8 +1,9 @@
 ---
 import { Icon } from "astro-icon/components";
+
 import DesktopSearch from "./DesktopSearch.astro";
 import SidebarToggle from "./SidebarToggle.astro";
-import { markdownPath } from "../lib";
+import { markdownPath } from "../lib/index.ts";
 
 let version = import.meta.env.VERSION;
 if (!version || version === '') {

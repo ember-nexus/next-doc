@@ -5,13 +5,13 @@ import SwaggerParser from "@apidevtools/swagger-parser";
 import type { APIRoute, GetStaticPaths } from "astro";
 import type { OpenAPIObject } from "openapi3-ts/oas31";
 
-import { schemaPath } from "../../lib/routes";
-import { schemaPropertyList } from "../../mdmx/cards";
-import { footerNav } from "../../mdmx/footerNav";
-import { parseMarkdownSource } from "../../mdmx/markdownSource";
-import { serialize } from "../../mdmx/serialize";
+import { schemaPath } from "../../lib/routes.ts";
+import { schemaPropertyList } from "../../mdmx/cards/index.ts";
+import { footerNav } from "../../mdmx/footerNav.ts";
+import { parseMarkdownSource } from "../../mdmx/markdownSource.ts";
+import { serialize } from "../../mdmx/serialize.ts";
 import type { Schema } from "../../type";
-import { extractSchemas } from "../../util";
+import { extractSchemas } from "../../util/index.ts";
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const spec = (await SwaggerParser.parse(

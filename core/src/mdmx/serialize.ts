@@ -5,7 +5,7 @@ import type { RootContent } from "mdast";
 import { gfmToMarkdown } from "mdast-util-gfm";
 import { toMarkdown } from "mdast-util-to-markdown";
 
-import { markdownLink } from "../lib/routes";
+import { markdownLink } from "../lib/routes.ts";
 
 // Every `.md.ts` route (pages, schema, command, api) funnels its whole tree
 // through this one function before it becomes text, regardless of whether a

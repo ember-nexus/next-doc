@@ -3,7 +3,7 @@
 // Both flatten the sidebar into a single ordered list per top-level category
 // and walk outward from the current page, so the two render targets can't
 // silently compute different "next" pages for the same content.
-import { buildSidebar } from "./sidebar";
+import { buildSidebar } from "./sidebar.ts";
 import type { HttpMethod, SidebarItem } from "../type";
 
 export type NavCategory = "page" | "command" | "endpoint" | "schema";

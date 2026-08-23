@@ -5,8 +5,8 @@
 // has no Caddy in front of it.
 import type { APIRoute } from "astro";
 
-import { footerNav } from "../mdmx/footerNav";
-import { serialize } from "../mdmx/serialize";
+import { footerNav } from "../mdmx/footerNav.ts";
+import { serialize } from "../mdmx/serialize.ts";
 
 export async function render404Md(): Promise<string> {
   return serialize([

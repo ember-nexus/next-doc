@@ -17,7 +17,7 @@ import { type CollectionEntry, getCollection } from "astro:content";
 import type { OpenAPIObject } from "openapi3-ts/oas31";
 
 import type { Schema } from "../type";
-import { extractSchemas } from "../util";
+import { extractSchemas } from "../util/index.ts";
 
 let endpoints: CollectionEntry<"endpoints">[] = [];
 let commands: CollectionEntry<"commands">[] = [];

@@ -58,7 +58,9 @@ function resolveParameters(
   const pathItem = spec.paths?.[path] as PathItemObject | undefined;
   const op = getOperation(spec, path, method);
 
-  const concrete = (params: PathItemObject["parameters"] = []) =>
+  const concrete = (
+    params: PathItemObject["parameters"] = [],
+  ): ParameterObject[] =>
     params.filter((p): p is ParameterObject => !isReferenceObject(p));
 
   const byKey = new Map<string, ParameterObject>();

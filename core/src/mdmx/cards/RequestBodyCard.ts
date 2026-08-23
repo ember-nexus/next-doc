@@ -1,7 +1,7 @@
 import type { RootContent } from "mdast";
 
 import type { RequestBody } from "../../type";
-import { parseMarkdownSource } from "../markdownSource";
+import { parseMarkdownSource } from "../markdownSource.ts";
 
 export function requestBodyCard(body: RequestBody): RootContent[] {
   if (body.contents.length === 0) return [];

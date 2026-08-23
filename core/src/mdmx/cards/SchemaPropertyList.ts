@@ -1,7 +1,7 @@
 import type { RootContent } from "mdast";
 
-import { schemaParam } from "../../util";
-import { parseMarkdownSource } from "../markdownSource";
+import { schemaParam } from "../../util/index.ts";
+import { parseMarkdownSource } from "../markdownSource.ts";
 
 // Markdown port of `SchemaPropertyList.astro` + `SchemaPropertyRow.astro`.
 // The HTML version is a nested tree of cards; markdown has no equivalent

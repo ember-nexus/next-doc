@@ -1,8 +1,8 @@
-import { LitElement, css, html } from "lit";
 import "@vaadin/grid";
-import "@vaadin/grid/vaadin-grid-column.js";
-import { gridRowDetailsRenderer } from "@vaadin/grid/lit.js";
 import type { GridActiveItemChangedEvent } from "@vaadin/grid";
+import { gridRowDetailsRenderer } from "@vaadin/grid/lit.js";
+import "@vaadin/grid/vaadin-grid-column.js";
+import { LitElement, type TemplateResult, css, html } from "lit";
 
 import { escapeHtml } from "../../util/htmlUtil.ts";
 
@@ -66,7 +66,7 @@ const UUID_KEYS = new Set(["id", "start", "end"]);
 function deriveColumns(records: JsonRecord[], hasElements: boolean): ColDef[] {
   const seen = new Map<string, ColDef>();
 
-  const add = (key: string, header: string, priority: number) => {
+  const add = (key: string, header: string, priority: number): void => {
     if (!seen.has(key)) seen.set(key, { key, header, priority });
   };
 
@@ -217,11 +217,21 @@ export class JsonTable extends LitElement {
     }
 
     /* syntax highlight tokens — values mirror --c-json-* in colors.css */
-    .json-key  { color: var(--c-json-key,  #7dd3fc); }  /* sky-300   */
-    .json-str  { color: var(--c-json-str,  #86efac); }  /* green-300 */
-    .json-num  { color: var(--c-json-num,  #fbbf24); }  /* amber-400 */
-    .json-bool { color: var(--c-json-bool, #f472b6); }  /* pink-400  */
-    .json-null { color: var(--c-json-null, #94a3b8); }  /* slate-400 */
+    .json-key {
+      color: var(--c-json-key, #7dd3fc);
+    } /* sky-300   */
+    .json-str {
+      color: var(--c-json-str, #86efac);
+    } /* green-300 */
+    .json-num {
+      color: var(--c-json-num, #fbbf24);
+    } /* amber-400 */
+    .json-bool {
+      color: var(--c-json-bool, #f472b6);
+    } /* pink-400  */
+    .json-null {
+      color: var(--c-json-null, #94a3b8);
+    } /* slate-400 */
   `;
 
   static properties = {
@@ -236,31 +246,33 @@ export class JsonTable extends LitElement {
   private _hasElements = false;
   private _openItems: JsonRecord[] = [];
 
-  connectedCallback() {
+  connectedCallback(): void {
     super.connectedCallback();
     this._parseData();
   }
 
-  firstUpdated() {
+  firstUpdated(): void {
     // The (auto-width) type column gets measured immediately, possibly
     // before the 'Fira Code' web font has loaded. Re-measuring once fonts
     // are ready prevents the type badge from being clipped.
     const grid = this.renderRoot.querySelector("vaadin-grid") as
       (HTMLElement & { recalculateColumnWidths?: () => void }) | null;
-    const recalc = () => grid?.recalculateColumnWidths?.();
+    const recalc = (): void => grid?.recalculateColumnWidths?.();
 
     const fonts = (
       document as unknown as { fonts?: { ready?: Promise<unknown> } }
     ).fonts;
     if (fonts?.ready?.then) {
-      fonts.ready.then(recalc);
+      fonts.ready.then(recalc).catch(() => {
+        // Font loading failed — fall back to the already-measured widths.
+      });
     } else {
       requestAnimationFrame(recalc);
     }
   }
 
-  private _parseData() {
-    let raw = "";
+  private _parseData(): void {
+    let raw: string;
     if (this.src) {
       raw = this.src;
     } else {
@@ -271,6 +283,9 @@ export class JsonTable extends LitElement {
     try {
       const parsed = JSON.parse(raw);
       if (!Array.isArray(parsed)) {
+        // Intentional diagnostic — malformed content in the page's own
+        // embedded JSON, worth surfacing in the reader's browser console.
+        // eslint-disable-next-line no-console
         console.warn("JsonTable: expected JSON array");
         return;
       }
@@ -278,15 +293,20 @@ export class JsonTable extends LitElement {
       this._hasElements = this._records.some(isElement);
       this._columns = deriveColumns(this._records, this._hasElements);
     } catch (e) {
+      // eslint-disable-next-line no-console -- see rationale above
       console.error("JsonTable: JSON parse error", e);
     }
   }
 
   // ── rendering ────────────────────────────────────────────────────────────
 
-  render() {
+  render(): TemplateResult {
     if (!this._records.length) {
-      return html`<p style="color:var(--c-json-null,#94a3b8);font-size:0.85rem;">No data.</p>`;
+      return html`<p
+        style="color:var(--c-json-null,#94a3b8);font-size:0.85rem;"
+      >
+        No data.
+      </p>`;
     }
 
     return html`
@@ -305,7 +325,7 @@ export class JsonTable extends LitElement {
     `;
   }
 
-  private _renderColumn(col: ColDef) {
+  private _renderColumn(col: ColDef): TemplateResult {
     const isType = col.key === "type";
     const isUuid = UUID_KEYS.has(col.key);
 
@@ -325,7 +345,7 @@ export class JsonTable extends LitElement {
           root: HTMLElement,
           _col: unknown,
           model: { item: JsonRecord },
-        ) => {
+        ): void => {
           const val = readKey(model.item, col.key);
           const full = stringify(val);
 
@@ -344,7 +364,7 @@ export class JsonTable extends LitElement {
     `;
   }
 
-  private _renderDetail(rec: JsonRecord) {
+  private _renderDetail(rec: JsonRecord): TemplateResult {
     return html`
       <pre class="json-detail">
 ${this._highlightJson(JSON.stringify(rec, null, 2))}</pre>
@@ -401,7 +421,9 @@ ${this._highlightJson(JSON.stringify(rec, null, 2))}</pre>
     return tpl.content.cloneNode(true);
   }
 
-  private _onActiveItemChanged(e: GridActiveItemChangedEvent<JsonRecord>) {
+  private _onActiveItemChanged(
+    e: GridActiveItemChangedEvent<JsonRecord>,
+  ): void {
     const item = e.detail.value;
     this._openItems = item ? [item] : [];
     this.requestUpdate();

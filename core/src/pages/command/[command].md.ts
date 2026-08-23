@@ -6,11 +6,11 @@ import path from "node:path";
 import type { APIRoute, GetStaticPaths } from "astro";
 import { parse } from "node-html-parser";
 
-import { commandParam, commandPath, prime } from "../../lib";
-import { getCollection, renderMd } from "../../mdmx";
-import { footerNav } from "../../mdmx/footerNav";
-import { serialize } from "../../mdmx/serialize";
-import { trimBlankLines } from "../../util/htmlUtil";
+import { commandParam, commandPath, prime } from "../../lib/index.ts";
+import { footerNav } from "../../mdmx/footerNav.ts";
+import { getCollection, renderMd } from "../../mdmx/index.ts";
+import { serialize } from "../../mdmx/serialize.ts";
+import { trimBlankLines } from "../../util/htmlUtil.ts";
 
 // `TerminalExample.astro` keeps these files as ANSI-colorized HTML (`aha`
 // output) and renders the markup directly. There's no HTML in the markdown

@@ -7,7 +7,7 @@
 // lookup table for the markdown-compiled ones.
 import type { RootContent } from "mdast";
 
-import { mdComponents } from "./registry";
+import { mdComponents } from "./registry/index.ts";
 
 type MdxMarkdownModule = (props: {
   components: typeof mdComponents;

@@ -1,8 +1,8 @@
 import type { RootContent } from "mdast";
 
-import { linksParagraph } from "./linkNode";
+import { linksParagraph } from "./linkNode.ts";
 import type { ResponseHeader } from "../../type";
-import { parseMarkdownSource } from "../markdownSource";
+import { parseMarkdownSource } from "../markdownSource.ts";
 
 function headerSection(h: ResponseHeader, depth: 3 | 4): RootContent[] {
   const nodes: RootContent[] = [

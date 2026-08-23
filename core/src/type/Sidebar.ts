@@ -49,7 +49,4 @@ export interface SidebarGroup {
 }
 
 export type SidebarItem =
-  | SidebarLink
-  | SidebarLinkGroup
-  | SidebarEndpoint
-  | SidebarGroup;
+  SidebarLink | SidebarLinkGroup | SidebarEndpoint | SidebarGroup;

@@ -11,12 +11,11 @@ interface Props {
     title: string
     description?: string
     ogType?: 'website' | 'article'
-    version?: string
     headings?: { depth: number; slug: string; text: string }[]
     hidden?: boolean
 }
 
-const { title, description, ogType = 'website', version = 'latest', headings = [], hidden = false } = Astro.props
+const { title, description, ogType = 'website', headings = [], hidden = false } = Astro.props
 
 // Derive the OG image URL from the current page path.
 // Convention: /open-graph/<slug>.png mirrors the public URL.

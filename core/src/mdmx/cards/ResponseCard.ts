@@ -1,8 +1,11 @@
 import type { RootContent } from "mdast";
 
-import { linksParagraph } from "./linkNode";
-import { type ResponseExample, getHttpStatusCodeLabel } from "../../type";
-import { parseMarkdownSource } from "../markdownSource";
+import { linksParagraph } from "./linkNode.ts";
+import {
+  type ResponseExample,
+  getHttpStatusCodeLabel,
+} from "../../type/index.ts";
+import { parseMarkdownSource } from "../markdownSource.ts";
 
 export function responseCard(examples: ResponseExample[]): RootContent[] {
   const nodes: RootContent[] = [

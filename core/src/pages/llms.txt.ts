@@ -6,8 +6,8 @@
 // silently drift out of sync with the actual site nav.
 import type { APIRoute } from "astro";
 
-import { buildLlmsBody } from "../lib";
-import { serialize } from "../mdmx/serialize";
+import { buildLlmsBody } from "../lib/index.ts";
+import { serialize } from "../mdmx/serialize.ts";
 
 const staticHeader = `# Ember Nexus API
 

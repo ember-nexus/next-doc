@@ -3,8 +3,7 @@
 import SwaggerParser from "@apidevtools/swagger-parser";
 import type { APIRoute, GetStaticPaths } from "astro";
 
-import { endpointParam, endpointPath, prime } from "../../lib";
-import { getCollection, renderMd } from "../../mdmx";
+import { endpointParam, endpointPath, prime } from "../../lib/index.ts";
 import {
   requestBodyCard,
   requestCard,
@@ -12,9 +11,10 @@ import {
   requestParameterCard,
   responseCard,
   responseHeaderCard,
-} from "../../mdmx/cards";
-import { footerNav } from "../../mdmx/footerNav";
-import { serialize } from "../../mdmx/serialize";
+} from "../../mdmx/cards/index.ts";
+import { footerNav } from "../../mdmx/footerNav.ts";
+import { getCollection, renderMd } from "../../mdmx/index.ts";
+import { serialize } from "../../mdmx/serialize.ts";
 import {
   extractHarExamples,
   extractRequestBody,
@@ -22,7 +22,7 @@ import {
   extractRequestParameters,
   extractResponseExamples,
   extractResponseHeaders,
-} from "../../util";
+} from "../../util/index.ts";
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const entries = await getCollection("endpoints");

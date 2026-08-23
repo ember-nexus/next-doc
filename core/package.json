@@ -2,6 +2,9 @@
   "name": "ember-nexus-docs",
   "type": "module",
   "version": "0.1.0",
+  "browserslist": [
+    "last 1 year"
+  ],
   "scripts": {
     "dev": "astro dev --ignore-lock",
     "build": "astro build && ./build-summary.sh",

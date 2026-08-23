@@ -1,7 +1,7 @@
 ---
 import OverlayPanel from './OverlayPanel.astro';
-import { buildSidebar } from '../lib';
 import SidebarNode from './SidebarNode.astro';
+import { buildSidebar } from '../lib/index.ts';
 
 const items = await buildSidebar();
 const currentPath = Astro.url.pathname;

@@ -2,11 +2,19 @@ import { Graph } from "@antv/g6";
 import type {
   EdgeData,
   EdgeOptions,
+  ElementDatum,
   GraphOptions,
+  IElementEvent,
   NodeData,
   NodeOptions,
 } from "@antv/g6";
-import { LitElement, type PropertyValues, css, html } from "lit";
+import {
+  LitElement,
+  type PropertyValues,
+  type TemplateResult,
+  css,
+  html,
+} from "lit";
 
 import {
   type EdgeDatum,
@@ -36,19 +44,19 @@ const ZOOM_RANGE: [number, number] = [0.05, 2.0]; // shared by zoomRange + manua
 const THEMES: Record<Scheme, Theme> = {
   light: {
     nodeLabelFill: "#ffffff",
-    edgeStroke:    "#8b949e", // --c-graph-edge (light)
+    edgeStroke: "#8b949e", // --c-graph-edge (light)
     edgeLabelFill: "#3f3f46", // --c-graph-edge-label (light)       zinc-700
-    edgeLabelBg:   "rgba(255, 255, 255, 0.9)", // --c-graph-edge-label-bg (light)
-    tooltipBg:     "#1f2430", // --c-graph-tooltip-bg (light)
-    tooltipFill:   "#ffffff", // --c-graph-tooltip-fg (light)
+    edgeLabelBg: "rgba(255, 255, 255, 0.9)", // --c-graph-edge-label-bg (light)
+    tooltipBg: "#1f2430", // --c-graph-tooltip-bg (light)
+    tooltipFill: "#ffffff", // --c-graph-tooltip-fg (light)
   },
   dark: {
     nodeLabelFill: "#ffffff",
-    edgeStroke:    "#6e7681", // --c-graph-edge (dark)
+    edgeStroke: "#6e7681", // --c-graph-edge (dark)
     edgeLabelFill: "#e6edf3", // --c-graph-edge-label (dark)
-    edgeLabelBg:   "rgba(22, 27, 34, 0.92)", // --c-graph-edge-label-bg (dark)
-    tooltipBg:     "#0d1117", // --c-graph-tooltip-bg (dark)
-    tooltipFill:   "#e6edf3", // --c-graph-tooltip-fg (dark)
+    edgeLabelBg: "rgba(22, 27, 34, 0.92)", // --c-graph-edge-label-bg (dark)
+    tooltipBg: "#0d1117", // --c-graph-tooltip-bg (dark)
+    tooltipFill: "#e6edf3", // --c-graph-tooltip-fg (dark)
   },
 };
 
@@ -78,14 +86,15 @@ const HIGHLIGHTS: Record<string, HlStyle> = {
 
 /** Resolve an `hl` key to a fill color for the active scheme. */
 function hlColor(hl: unknown, scheme: Scheme): string {
-  const key = hl == null || hl === "" ? HL_MUTED : String(hl);
+  const key =
+    hl === null || hl === undefined || hl === "" ? HL_MUTED : String(hl);
   return (HIGHLIGHTS[key] ?? HIGHLIGHTS[HL_MUTED])[scheme];
 }
 
 /** WCAG relative luminance of a #rrggbb color. */
 function luminance(hex: string): number {
   const h = hex.replace("#", "");
-  const toLin = (c: number) =>
+  const toLin = (c: number): number =>
     c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
   const r = toLin(parseInt(h.slice(0, 2), 16) / 255);
   const g = toLin(parseInt(h.slice(2, 4), 16) / 255);
@@ -212,7 +221,7 @@ export class G6Graph extends LitElement {
   private _dragSuspended = false;
 
   // Stable reference so we can add/remove the same listener.
-  private _onSchemeChange = () => {
+  private _onSchemeChange = (): void => {
     if (this.scheme === "auto") this._applyTheme();
   };
 
@@ -233,13 +242,13 @@ export class G6Graph extends LitElement {
     return THEMES[this._scheme];
   }
 
-  render() {
+  render(): TemplateResult {
     return html` <div class="wrapper">
       <div class="canvas"></div>
     </div>`;
   }
 
-  connectedCallback() {
+  connectedCallback(): void {
     super.connectedCallback();
     if (typeof window !== "undefined" && window.matchMedia) {
       this._mql = window.matchMedia("(prefers-color-scheme: dark)");
@@ -351,7 +360,7 @@ export class G6Graph extends LitElement {
 
     // In manual mode the stroke (and the arrow, which inherits it) takes the
     // edge's `hl` color; the label text is tinted to match for prose unity.
-    const strokeOf = (d: EdgeData) =>
+    const strokeOf = (d: EdgeData): string =>
       manual ? hlColor(edgeDatum(d).hl, scheme) : t.edgeStroke;
 
     return {
@@ -376,7 +385,7 @@ export class G6Graph extends LitElement {
     };
   }
 
-  firstUpdated() {
+  firstUpdated(): void {
     const payload = this._readData();
     if (!payload) return;
 
@@ -402,9 +411,9 @@ export class G6Graph extends LitElement {
       plugins: [
         {
           type: "tooltip",
-          enable: (e: any, items?: any[]) =>
+          enable: (e: IElementEvent, items?: ElementDatum[]): boolean =>
             this._tips.has(this._eid(e, items) ?? ""),
-          getContent: (e: any, items?: any[]) => {
+          getContent: (e: IElementEvent, items?: ElementDatum[]): string => {
             const tip = this._tips.get(this._eid(e, items) ?? "");
             if (!tip) return "";
             const t = this._theme;
@@ -423,10 +432,19 @@ export class G6Graph extends LitElement {
 
     this._graph = new Graph(options);
 
-    this._graph.render().then(async () => {
-      await this._fitAndSize();
-      this._firstPaintDone = true;
-    });
+    this._graph
+      .render()
+      .then(async () => {
+        await this._fitAndSize();
+        this._firstPaintDone = true;
+        return;
+      })
+      .catch((err: unknown) => {
+        // Intentional diagnostic — surfaces render failures in the
+        // reader's browser console.
+        // eslint-disable-next-line no-console
+        console.error("[g6-graph] Failed to render graph:", err);
+      });
 
     // Manual pinch-zoom: bind pointer events to our own canvas element so the
     // gesture stays isolated to this component instance.
@@ -449,7 +467,7 @@ export class G6Graph extends LitElement {
     this._ro.observe(this);
   }
 
-  updated(changed: PropertyValues) {
+  updated(changed: PropertyValues): void {
     // React to runtime scheme changes (the initial scheme is already baked
     // into the first render via the option builders, so skip until painted).
     if (this._firstPaintDone && changed.has("scheme")) this._applyTheme();
@@ -463,7 +481,7 @@ export class G6Graph extends LitElement {
    *  Manual pinch-zoom handlers
    * -------------------------------------------------------------- */
 
-  private _onPointerDown = (e: PointerEvent) => {
+  private _onPointerDown = (e: PointerEvent): void => {
     if (e.pointerType !== "touch") return;
     this._canvasEl?.setPointerCapture?.(e.pointerId);
     this._pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -479,7 +497,7 @@ export class G6Graph extends LitElement {
     }
   };
 
-  private _onPointerMove = (e: PointerEvent) => {
+  private _onPointerMove = (e: PointerEvent): void => {
     if (!this._pointers.has(e.pointerId) || !this._graph) return;
     this._pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (this._pointers.size !== 2 || this._pinchStartDist <= 0) return;
@@ -504,7 +522,7 @@ export class G6Graph extends LitElement {
     this._graph.zoomTo(target, false, [ox, oy]);
   };
 
-  private _onPointerUp = (e: PointerEvent) => {
+  private _onPointerUp = (e: PointerEvent): void => {
     this._pointers.delete(e.pointerId);
     if (this._pointers.size < 2) {
       this._pinchStartDist = 0;
@@ -516,7 +534,7 @@ export class G6Graph extends LitElement {
   };
 
   /** Re-skin the graph in place for the current scheme/mode — no relayout. */
-  private async _applyTheme() {
+  private async _applyTheme(): Promise<void> {
     if (!this._graph) return;
     this._graph.setNode(this._nodeOptions());
     this._graph.setEdge(this._edgeOptions());
@@ -524,7 +542,7 @@ export class G6Graph extends LitElement {
   }
 
   /** Swap to the current `layout` variant and re-run layout in place. */
-  private async _applyLayout() {
+  private async _applyLayout(): Promise<void> {
     if (!this._graph) return;
     this._graph.setLayout(this._layoutOptions());
     await this._graph.layout();
@@ -562,7 +580,7 @@ export class G6Graph extends LitElement {
    * the tallest ideal height wins and re-applies to the whole group, so a
    * late-finishing taller sibling still corrects an already-sized shorter one.
    */
-  private async _syncGroupHeight(localIdeal: number) {
+  private async _syncGroupHeight(localIdeal: number): Promise<void> {
     this._idealH = localIdeal;
 
     if (!this._isSideBySide()) {
@@ -590,7 +608,7 @@ export class G6Graph extends LitElement {
   }
 
   /** Apply a (possibly externally-decided) height and refit content into it. */
-  private async _applyHeight(h: number) {
+  private async _applyHeight(h: number): Promise<void> {
     this._appliedH = h;
     this.style.height = `${h}px`;
 
@@ -602,14 +620,14 @@ export class G6Graph extends LitElement {
 
     this._graph.setSize(containerW, h);
 
-    await new Promise<void>((r) =>
-      requestAnimationFrame(() => requestAnimationFrame(() => r())),
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
     );
 
     await this._graph.fitView({ when: "always", direction: "both" });
   }
 
-  private async _fitAndSize() {
+  private async _fitAndSize(): Promise<void> {
     if (!this._graph) return;
 
     const nodes = this._graph.getNodeData();
@@ -622,7 +640,9 @@ export class G6Graph extends LitElement {
     await this._graph.zoomTo(1, false);
     await this._graph.translateTo([0, 0], false);
 
-    await new Promise<void>((r) => requestAnimationFrame(() => r()));
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => resolve()),
+    );
 
     let minX = Infinity,
       minY = Infinity,
@@ -654,8 +674,11 @@ export class G6Graph extends LitElement {
     await this._syncGroupHeight(neededH);
   }
 
-  private _eid(e: any, items?: any[]): string | undefined {
-    return items?.[0]?.id ?? e?.target?.id;
+  private _eid(e: IElementEvent, items?: ElementDatum[]): string | undefined {
+    return (
+      (items?.[0]?.id as string | undefined) ??
+      (e.target as { id?: string } | undefined)?.id
+    );
   }
 
   _readData(): ElementsPayload | null {
@@ -664,18 +687,22 @@ export class G6Graph extends LitElement {
     raw = raw.trim();
     raw = raw.replace(/^\{`/, "").replace(/`\}$/, "").trim();
     if (!raw) {
+      // Intentional diagnostic — malformed content in the page's own
+      // embedded JSON, worth surfacing in the reader's browser console.
+      // eslint-disable-next-line no-console
       console.warn("[g6-graph] No JSON data found in element.");
       return null;
     }
     try {
       return JSON.parse(raw) as ElementsPayload;
     } catch (err) {
+      // eslint-disable-next-line no-console -- see rationale above
       console.error("[g6-graph] Failed to parse graph JSON data:", err);
       return null;
     }
   }
 
-  disconnectedCallback() {
+  disconnectedCallback(): void {
     super.disconnectedCallback();
     this._mql?.removeEventListener("change", this._onSchemeChange);
     this._ro?.disconnect();

@@ -1,7 +1,7 @@
 import type { RootContent } from "mdast";
 
-import { allSchemas } from "../../lib/collections";
-import { schemaPath } from "../../lib/routes";
+import { allSchemas } from "../../lib/collections.ts";
+import { schemaPath } from "../../lib/routes.ts";
 
 /** Same query as the HTML `SchemaList.astro` — see `src/lib/collections.ts`. */
 export function SchemaList(): RootContent {
