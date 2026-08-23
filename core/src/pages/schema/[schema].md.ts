@@ -8,6 +8,7 @@ import type { OpenAPIObject } from "openapi3-ts/oas31";
 import { schemaPath } from "../../lib/routes";
 import { schemaPropertyList } from "../../mdmx/cards";
 import { footerNav } from "../../mdmx/footerNav";
+import { parseMarkdownSource } from "../../mdmx/markdownSource";
 import { serialize } from "../../mdmx/serialize";
 import type { Schema } from "../../type";
 import { extractSchemas } from "../../util";
@@ -37,14 +38,7 @@ export const GET: APIRoute = async ({
       depth: 1,
       children: [{ type: "inlineCode", value: schema.name }],
     },
-    ...(description
-      ? [
-          {
-            type: "paragraph",
-            children: [{ type: "text", value: description }],
-          } as const,
-        ]
-      : []),
+    ...(description ? parseMarkdownSource(description) : []),
     {
       type: "heading",
       depth: 2,

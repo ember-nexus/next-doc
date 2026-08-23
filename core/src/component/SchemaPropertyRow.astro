@@ -1,5 +1,6 @@
 ---
 import { Code } from 'astro-expressive-code/components';
+import { marked } from 'marked';
 
 import { schemaParam } from '../util';
 
@@ -185,7 +186,7 @@ const discriminatorProp: string | null =
     </div>
 
     {description && (
-        <p class="text-sm text-gray-600 dark:text-gray-400">{description}</p>
+        <div class="text-sm text-gray-600 dark:text-gray-400" set:html={marked.parse(description)}></div>
     )}
 
     {exampleKind === 'scalar' && (

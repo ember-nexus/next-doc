@@ -1,6 +1,7 @@
 import type { RootContent } from "mdast";
 
 import { schemaParam } from "../../util";
+import { parseMarkdownSource } from "../markdownSource";
 
 // Markdown port of `SchemaPropertyList.astro` + `SchemaPropertyRow.astro`.
 // The HTML version is a nested tree of cards; markdown has no equivalent
@@ -120,11 +121,7 @@ function propertyRow(
   const block: RootContent[] = [{ type: "paragraph", children: header }];
 
   const description = typeof n.description === "string" ? n.description : null;
-  if (description)
-    block.push({
-      type: "paragraph",
-      children: [{ type: "text", value: description }],
-    });
+  if (description) block.push(...parseMarkdownSource(description));
 
   if (n.example !== undefined) {
     block.push({
