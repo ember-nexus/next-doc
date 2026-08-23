@@ -24,29 +24,35 @@ export interface OgData {
 // Font + logo (loaded once, cached at module level)
 // ---------------------------------------------------------------------------
 
-let _fontData: ArrayBuffer | null = null;
-let _logoDataUri: string | null = null;
+// Cache the in-flight *promise*, not the awaited result — assigning it
+// synchronously (before the first `await`) means concurrent callers (this
+// runs once per page during the build) reuse the same read instead of each
+// racing to see a still-null cache and redundantly re-reading the file.
+let _fontDataPromise: Promise<ArrayBuffer> | null = null;
+let _logoDataUriPromise: Promise<string> | null = null;
 
-async function getFontData(): Promise<ArrayBuffer> {
-  if (!_fontData) {
-    const buf = await readFile(
+function getFontData(): Promise<ArrayBuffer> {
+  if (!_fontDataPromise) {
+    _fontDataPromise = readFile(
       "./public/fonts/qanelas-soft-custom-semi-bold.woff",
+    ).then(
+      (buf) =>
+        buf.buffer.slice(
+          buf.byteOffset,
+          buf.byteOffset + buf.byteLength,
+        ) as ArrayBuffer,
     );
-    _fontData = buf.buffer.slice(
-      buf.byteOffset,
-      buf.byteOffset + buf.byteLength,
-    ) as ArrayBuffer;
   }
-  return _fontData;
+  return _fontDataPromise;
 }
 
-async function getLogoDataUri(): Promise<string> {
-  if (!_logoDataUri) {
-    const svgBuf = await readFile("./public/logo.svg");
-    const pngBuf = await sharp(svgBuf).resize(72, 72).png().toBuffer();
-    _logoDataUri = `data:image/png;base64,${pngBuf.toString("base64")}`;
+function getLogoDataUri(): Promise<string> {
+  if (!_logoDataUriPromise) {
+    _logoDataUriPromise = readFile("./public/logo.svg")
+      .then((svgBuf) => sharp(svgBuf).resize(72, 72).png().toBuffer())
+      .then((pngBuf) => `data:image/png;base64,${pngBuf.toString("base64")}`);
   }
-  return _logoDataUri;
+  return _logoDataUriPromise;
 }
 
 // ---------------------------------------------------------------------------

@@ -34,7 +34,8 @@ import expressiveCode from 'astro-expressive-code';
 
 import icon from 'astro-icon';
 import {httpMethodAugmentation, inlineCodeAttrs, linkAugmentation} from "./src/plugins/rehype";
-import pagefind from "astro-pagefind";
+import pagefind from "./src/plugins/pagefind.ts";
+import trailingSlashRedirect from "./src/plugins/trailingSlashRedirect.ts";
 
 import mdxRollup from '@mdx-js/rollup';
 import remarkFrontmatter from 'remark-frontmatter';
@@ -126,6 +127,7 @@ export default defineConfig({
   },
   site: 'https://api.ember-nexus.dev',
   integrations: [
+    trailingSlashRedirect(),
     expressiveCode(),
     mdx(),
     sitemap(),

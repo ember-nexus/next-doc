@@ -1,6 +1,24 @@
 :80 {
 	root * /srv
 	file_server
+
+	# Every route's canonical URL is slash-free (see `core/src/lib/routes.ts`);
+	# `try_files` below already resolves a bare path like `/foo` straight to
+	# `foo/index.html` with no redirect, so `/foo/` is a second, non-canonical
+	# way to reach the same page. Collapse it into the canonical one instead of
+	# serving both — mirrors `core/src/plugins/trailingSlashRedirect.ts`, which
+	# does the same for the dev server. Two rules (rather than one target
+	# string) because `redir`'s target has no conditional syntax to only
+	# append "?{query}" when a query string is actually present.
+	@trailing_slash_query {
+		path_regexp trailing ^(.+)/$
+		expression {http.request.uri.query} != ""
+	}
+	redir @trailing_slash_query {re.trailing.1}?{query} permanent
+
+	@trailing_slash path_regexp trailing2 ^(.+)/$
+	redir @trailing_slash {re.trailing2.1} permanent
+
 	try_files {path} {path}/index.html
 
 	encode {
