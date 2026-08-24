@@ -10,26 +10,20 @@ database. As Elasticsearch is a document-based database, **only a list of indivi
 
 - [Full-text search](https://www.elastic.co/docs/solutions/search/full-text), including optional fuzziness,
   singular/plural handling etc.
-
 - [Keyword search](https://www.elastic.co/docs/reference/elasticsearch/mapping-reference/keyword), i.e. searching for
   exact string matches.
-
 - [Vector search](https://www.elastic.co/docs/solutions/search/vector/knn), useful for semantic search.
   - Ember Nexus does not yet generate vector embeddings itself, i.e. the user or some bot needs to provide vectors. It
     is a planned feature: [Issue #110](https://github.com/ember-nexus/api/issues/110).
-
   - Alternatively Elasticsearch also offers a [semantic search](https://www.elastic.co/docs/solutions/search/semantic-search/semantic-search-semantic-text)
     feature, where Elasticsearch handles the text-to-vector conversion itself. However, this feature seems to be
     restricted towards enterprise-customers only.
-
 - [Geospatial search](https://www.elastic.co/docs/reference/query-languages/query-dsl/geo-queries), i.e. searching for
   coordinates, lines, polygons, distances to other points, inside/outside polygon checks and more.
   - As with vector search, this requires elements to be indexed with a dedicated \`geo_point\` or \`geo_shape\` field
     mapping, which Ember Nexus does not yet set up automatically.
-
 - [Boolean queries](https://www.elastic.co/docs/reference/query-languages/query-dsl/query-dsl-bool-query), which allow
   multiple smaller queries to be combined.
-
 - [Range queries](https://www.elastic.co/docs/reference/query-languages/query-dsl/query-dsl-range-query), used to
   compare numeric or date fields. This works out of the box, as Elasticsearch automatically maps well-formed numbers
   and dates to the appropriate field types.
@@ -43,14 +37,10 @@ Support for this is planned - see [ticket #477](https://github.com/ember-nexus/a
 In addition to \`query\`, the step's \`parameters\` object supports the following options:
 
 - \`nodeTypes\`: Optional, list of node types. If provided the search is restricted to the provided node types.
-
 - \`relationTypes\`: Optional, list of relation types. If provided the search is restricted to the provided relation
   types.
-
 - \`page\`: Optional, int, default is 1. The page of results to return.
-
 - \`pageSize\`: Optional, int, default is 25. Limits the number of results per page.
-
 - \`minScore\`: Optional, numeric, default is \`null\`. If set to a numeric value like \`1.0\`, removes all search results
   with a lower score.
 
@@ -58,35 +48,23 @@ In addition to \`query\`, the step's \`parameters\` object supports the followin
 
 - \`elements\`: List of search element objects returned by Elasticsearch. Each object contains:
   - \`id\`: Element id (UUID).
-
   - \`type\`: Type of the element.
-
   - \`metadata.score\`: Numeric value returned by Elasticsearch. A high score implies a high fit between the query and
     the element.
-
 - \`totalHits\`: Integer, number of total elements found by the query. Can be used to calculate how many pages of
   results are available. Very high numbers of results might be rounded or estimates by Elasticsearch.
-
 - \`maxScore\`: Maximum score achieved by any element, regardless of whether it is part of the current page of results.
 
 ## Examples
 
 - [Full text search](/reference/search/elasticsearch-query-dsl-mixin/full-text-search.md)
-
 - [Exact keyword matching](/reference/search/elasticsearch-query-dsl-mixin/exact-keyword-matching.md)
-
 - [Combining queries with bool](/reference/search/elasticsearch-query-dsl-mixin/combining-queries-with-bool.md)
-
 - [Range queries on numeric fields](/reference/search/elasticsearch-query-dsl-mixin/range-queries-on-numeric-fields.md)
-
 - [Restricting results with minScore](/reference/search/elasticsearch-query-dsl-mixin/restricting-results-with-min-score.md)
-
 - [Query string](/reference/search/elasticsearch-query-dsl-mixin/query-string.md)
-
 - [Text prefix search](/reference/search/elasticsearch-query-dsl-mixin/text-prefix-search.md)
-
 - [Wildcard search](/reference/search/elasticsearch-query-dsl-mixin/wildcard-search.md)
-
 - [Parameterized search](/reference/search/elasticsearch-query-dsl-mixin/parameterized-search.md)
 
 ## How to write a custom query
@@ -123,7 +101,6 @@ curl -X POST \\
         ]
       }' \\
   https://api.example.com/search
-
 \`\`\`
 
 #### Kibana's console
@@ -139,7 +116,6 @@ GET /_search
     }
   }
 }
-
 \`\`\`
 
 ### Without access to Kibana
@@ -196,9 +172,7 @@ Example:
 
 - Other query languages like ES|QL, PromQL, SQL, EQL and others are not supported.\\
   If there is demand, please open a [feature request ticket on GitHub](https://github.com/ember-nexus/api/issues/new).
-
 - Aggregations and join-like features are generally not supported - see [security aspects](#security-aspects).
-
 - Defining a custom sort direction is not yet supported. It is tracked in [GitHub issue #456](https://github.com/ember-nexus/api/issues/456).
 
 ## Security aspects
@@ -206,9 +180,7 @@ Example:
 This search step is limited in three ways:
 
 - Elasticsearch search requests are readonly by default.
-
 - Only elements accessible by the user can be searched.
-
 - Only accessible element ids are returned.
 
 While this removes support for aggregated properties and direct property lookups, this approach also disables
@@ -252,7 +224,6 @@ curl -X POST \\
         ]
       }' \\
   https://api.example.com/search
-
 \`\`\`
 
 ##### Response Body
@@ -441,7 +412,6 @@ Content-Type: application/json; charset=utf-8
 Date: Thu, 11 Sep 2025 20:23:41 GMT
 Transfer-Encoding: chunked
 X-Powered-By: Ember Nexus API
-
 \`\`\`
 
 Every result contains the term "lily" somewhere in its description, including plants that are not lilies botanically -
@@ -467,11 +437,8 @@ Ember Nexus is [source first](https://sourcefirst.com/) and ships as a single
 
 - **Knowledge bases and note apps**: Notes, tags, backlinks and attachments are a graph. Store them as one instead of
   fighting a relational schema.
-
 - **Content platforms and CMS**: Pages, authors, categories and media, with per-user and per-group publishing rights.
-
 - **Private clouds and archives**: Files and metadata side by side, shared deliberately, searchable instantly.
-
 - **Anything multi-user**: Every element is private to its owner until access is explicitly granted. Collaboration is
   built into the data model, not bolted on.
 
@@ -563,16 +530,11 @@ Neo4j and Elasticsearch are memory-hungry. A complete Docker Compose setup is pa
 ## Get started
 
 - [Installation](/getting-started/installation.md) — running in minutes with Docker Compose
-
 - [First steps](/getting-started/first-api-requests.md) — create a user, get a token, store your first data
-
 - [Search](/guide/search.md) — write your first search pipeline
-
 - [Live demo](https://reference-dataset.ember-nexus.dev/) — explore a running instance with
   example data, including tokens that never expire
-
 - [GitHub](https://github.com/ember-nexus/api) — releases, issues, and the source itself
-
 - [Discord](https://discord.gg/qbQFBrJrRC) — ask questions, share what you build
 "
 `;

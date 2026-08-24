@@ -24,8 +24,24 @@ function rewriteLinks(nodes: RootContent[]): void {
   }
 }
 
+// Source content (curl output, response headers, ...) often carries a
+// trailing newline that reads fine in a fenced HTML `<pre>` but shows up as
+// a stray blank line inside the fence in the markdown output. Trim it here,
+// at serialization time, rather than in the content itself.
+function trimCodeBlocks(nodes: RootContent[]): void {
+  for (const node of nodes) {
+    if (node.type === "code") {
+      node.value = node.value.replace(/\n+$/, "");
+    }
+    if ("children" in node && Array.isArray(node.children)) {
+      trimCodeBlocks(node.children as RootContent[]);
+    }
+  }
+}
+
 export function serialize(children: RootContent[]): string {
   rewriteLinks(children);
+  trimCodeBlocks(children);
   return toMarkdown(
     { type: "root", children },
     {

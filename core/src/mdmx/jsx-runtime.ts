@@ -167,7 +167,13 @@ const intrinsics: Record<string, Handler> = {
     }) as RootContent,
 
   ul: (_props, children) =>
-    ({ type: "list", ordered: false, start: null, children }) as RootContent,
+    ({
+      type: "list",
+      ordered: false,
+      start: null,
+      spread: false,
+      children,
+    }) as RootContent,
   ol: (props, children) =>
     ({
       type: "list",
@@ -176,6 +182,7 @@ const intrinsics: Record<string, Handler> = {
         props.start !== null && props.start !== undefined
           ? Number(props.start as string | number)
           : null,
+      spread: false,
       children,
     }) as RootContent,
 
