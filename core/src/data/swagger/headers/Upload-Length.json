@@ -11,6 +11,10 @@
           {
             "url": "https://datatracker.ietf.org/doc/draft-ietf-httpbis-resumable-upload/",
             "name": "IETF draft"
+          },
+          {
+            "url": "https://http.dev/upload-length",
+            "name": "HTTP.dev"
           }
         ],
         "required": false
