@@ -50,7 +50,7 @@ import exampleFileElement from '../assets/example-file-element.json';
 
 The `file` object itself - the same shape shown above, collapsed to just that property:
 
-<Code code={JSON.stringify(exampleFileElement.data.file, null, 2)} lang="json" />
+<Code code={JSON.stringify(exampleFileElement.file, null, 2)} lang="json" />
 
 - `contentLength` - the file's size in bytes.
 - `extension` - taken from the filename in the `Content-Disposition` request header the file was uploaded with, or

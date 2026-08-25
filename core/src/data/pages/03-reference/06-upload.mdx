@@ -10,7 +10,7 @@ Both are started the same way, through [`POST /<uuid>/file`](/api/post-element-f
 
 The resumable upload mechanism implements the
 [IETF "Resumable Uploads for HTTP" draft](https://datatracker.ietf.org/doc/draft-ietf-httpbis-resumable-upload/)
-(`draft-ietf-httpbis-resumable-upload-11`) - not the older tus.io protocol. There is no `Tus-Resumable` header, and
+- not the older tus.io protocol. There is no `Tus-Resumable` header, and
 `Upload-Complete` uses the [structured boolean](https://www.ietf.org/rfc/rfc8941#name-booleans) values `?0`/`?1`
 rather than a plain string.
 
