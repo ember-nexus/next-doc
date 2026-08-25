@@ -23,6 +23,9 @@ etc.
 
 Executes search queries against **Neo4j**. Great for structural search, e.g. "list all comments on blog post X".
 
+Note that properties are internally split across several databases — see [element schema](/reference/element-schema)
+for how this affects queries targeting Neo4j directly.
+
 ### Element hydration
 
 Converts a list of element ids to a collection response, containing elements and all their properties.  

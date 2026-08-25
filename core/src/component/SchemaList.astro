@@ -1,5 +1,6 @@
 ---
 import { allSchemas, prime } from '../lib/collections.ts';
+import { schemaPath } from '../lib/routes.ts';
 
 await prime();
 const schemas = allSchemas();
@@ -7,7 +8,7 @@ const schemas = allSchemas();
 <ul class="not-prose sl-list">
     {schemas.map((s) => (
         <li>
-            <a href={`/schema/${s.id}`} class="sl-link">
+            <a href={schemaPath(s.id)} class="sl-link">
                 <code class="sl-name">{s.name}</code>
             </a>
         </li>

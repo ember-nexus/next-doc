@@ -1,5 +1,6 @@
 import type { RootContent } from "mdast";
 
+import { schemaPath } from "../../lib/routes.ts";
 import { schemaParam } from "../../util/index.ts";
 import { parseMarkdownSource } from "../markdownSource.ts";
 
@@ -24,7 +25,7 @@ function schemaLink(name: string, suffix = ""): RootContent[] {
   const nodes: RootContent[] = [
     {
       type: "link",
-      url: `/schema/${schemaParam(name)}`,
+      url: schemaPath(schemaParam(name)),
       title: null,
       children: [{ type: "inlineCode", value: name }],
     },

@@ -257,7 +257,7 @@ async function apiSection(): Promise<SidebarItem[]> {
   ];
 }
 
-/** OpenAPI schemas — flat alphabetical list under a "Schemas" section heading. */
+/** OpenAPI schemas — flat alphabetical list under an "OpenAPI schemas" section heading. */
 async function schemaSection(): Promise<SidebarItem[]> {
   const spec = (await SwaggerParser.parse(
     "./src/data/swagger.json",
@@ -277,7 +277,7 @@ async function schemaSection(): Promise<SidebarItem[]> {
   return [
     {
       type: "group",
-      name: "Schemas",
+      name: "OpenAPI schemas",
       variant: "section",
       items,
     },

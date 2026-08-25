@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`markdown snapshots > 03-reference/02-search/01-elasticsearch-query-dsl-mixin 1`] = `
+exports[`markdown snapshots > 03-reference/03-search/01-elasticsearch-query-dsl-mixin 1`] = `
 "# Elasticsearch query
 
 The Elasticsearch query step allows users to execute queries against the internal Elasticsearch
@@ -193,7 +193,7 @@ be executed by any user.
 "
 `;
 
-exports[`markdown snapshots > 03-reference/02-search/01-elasticsearch-query-dsl-mixin/01-full-text-search 1`] = `
+exports[`markdown snapshots > 03-reference/03-search/01-elasticsearch-query-dsl-mixin/01-full-text-search 1`] = `
 "# Full text search
 
 This example uses Elasticsearch's [\`match\` query](https://www.elastic.co/docs/reference/query-languages/query-dsl/query-dsl-match-query)

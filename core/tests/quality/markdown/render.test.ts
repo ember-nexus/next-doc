@@ -12,7 +12,7 @@ import { serialize } from '../../../src/mdmx/serialize';
 import * as endpointRoute from '../../../src/pages/api/[endpoint].md';
 import * as commandRoute from '../../../src/pages/command/[command].md';
 import * as pageRoute from '../../../src/pages/[...slug].md';
-import * as schemaRoute from '../../../src/pages/schema/[schema].md';
+import * as schemaRoute from '../../../src/pages/openapi-schema/[schema].md';
 
 await prime();
 
@@ -82,8 +82,8 @@ describe('generated markdown round-trips through remark with no leaked html', ()
 describe('markdown snapshots', () => {
     const fixtures = [
         'index',
-        '03-reference/02-search/01-elasticsearch-query-dsl-mixin',
-        '03-reference/02-search/01-elasticsearch-query-dsl-mixin/01-full-text-search',
+        '03-reference/03-search/01-elasticsearch-query-dsl-mixin',
+        '03-reference/03-search/01-elasticsearch-query-dsl-mixin/01-full-text-search',
     ];
 
     it.each(fixtures)('%s', async (id) => {

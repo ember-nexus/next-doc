@@ -1,4 +1,4 @@
-// Markdown counterpart of `schema/[schema].astro`. Endpoint, not a page —
+// Markdown counterpart of `openapi-schema/[schema].astro`. Endpoint, not a page —
 // see the routing note in `src/pages/[...slug].md.ts`. Generated purely from
 // swagger, same as its HTML twin — no MDX involved.
 import SwaggerParser from "@apidevtools/swagger-parser";

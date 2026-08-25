@@ -10,7 +10,7 @@ import type { Parents } from "hast";
 
 /**
  * Converts a PascalCase/camelCase schema name to the URL slug used by the
- * schema pages, e.g. "ElementId" -> "element-id".
+ * OpenAPI schema pages, e.g. "ElementId" -> "element-id".
  * Must stay in sync with schemaParam() in src/util/SwaggerUtil.ts.
  */
 function schemaParam(name: string): string {
@@ -79,7 +79,8 @@ export function schemaLinks(): ExpressiveCodePlugin {
           let match;
           while ((match = SCHEMA_REF_RE.exec(text)) !== null) {
             const schemaName = match[1];
-            const href = `/schema/${schemaParam(schemaName)}`;
+            // Must stay in sync with schemaPath() in src/lib/routes.ts.
+            const href = `/openapi-schema/${schemaParam(schemaName)}`;
 
             // Annotate the full matched string, e.g. "#/components/schemas/ElementId"
             const columnStart = match.index;

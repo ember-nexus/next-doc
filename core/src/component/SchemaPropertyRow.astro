@@ -2,6 +2,7 @@
 import { Code } from 'astro-expressive-code/components';
 import { marked } from 'marked';
 
+import { schemaPath } from '../lib/routes.ts';
 import { schemaParam } from '../util/index.ts';
 
 interface Props {
@@ -156,7 +157,7 @@ const discriminatorProp: string | null =
             {typeDisplay.refSlug && (
                 <>
                     <a
-                        href={`/schema/${typeDisplay.refSlug}`}
+                        href={schemaPath(typeDisplay.refSlug)}
                         class="font-mono text-sm text-blue-600 dark:text-blue-400 hover:underline"
                     >
                         {typeDisplay.refLabel}
@@ -229,7 +230,7 @@ const discriminatorProp: string | null =
                     <div class="flex flex-col gap-0.5 px-4 py-2.5 bg-white dark:bg-black">
                         <div class="flex items-center gap-2">
                             <a
-                                href={`/schema/${v.slug}`}
+                                href={schemaPath(v.slug)}
                                 class="font-mono text-sm text-blue-600 dark:text-blue-400 hover:underline"
                             >
                                 {v.name} ↗

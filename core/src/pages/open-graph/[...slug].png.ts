@@ -8,7 +8,7 @@
  *   page   /getting-started/installation  → /open-graph/getting-started/installation.png
  *   api    /api/users_{uuid}              → /open-graph/api/users_{uuid}.png
  *   cmd    /command/backup-create         → /open-graph/command/backup-create.png
- *   schema /schema/element-id            → /open-graph/schema/element-id.png
+ *   schema /openapi-schema/element-id     → /open-graph/openapi-schema/element-id.png
  */
 
 import SwaggerParser from "@apidevtools/swagger-parser";
@@ -58,7 +58,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   )) as OpenAPIObject;
   for (const schema of extractSchemas(spec)) {
     result.push({
-      params: { slug: `schema/${schema.id}` },
+      params: { slug: `openapi-schema/${schema.id}` },
       props: { title: `${schema.name} schema` },
     });
   }

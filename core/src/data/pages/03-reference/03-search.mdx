@@ -37,6 +37,9 @@ Executes search queries against **Neo4j**. Great for structural search, e.g. "li
 restricted subset of Cypher 25 dedicated to path searches only, called Cypher Path Subset.
 See the [detail page](/reference/search/cypher-path-subset) for its parameters, security aspects and examples.
 
+Note that properties are internally split across several databases — see [element schema](/reference/element-schema)
+for how this affects queries targeting Neo4j directly.
+
 ### Element hydration
 
 Converts a list of element ids to a collection response, containing elements and all their properties.  
