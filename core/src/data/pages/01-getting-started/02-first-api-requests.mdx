@@ -74,7 +74,7 @@ CRUD is always being used in the context of some data - which in Ember Nexus' ca
 - `data`: An object containing the user's data. A few properties like `created` and `updated` are automatically generated, a few others are reserved for internal usage, but in general you are free to define and use your own properties. The properties' type, i.e. number, string, boolean, list or object, can be freely chosen. Once a type is used, all other types should use a similar, compatible schema.
   The property value `null` has a special meaning: Such property values are not stored, but instead the property will be deleted during update requests.
 - `start` and `end`: Element ids, i.e. UUIDs. They are mandatory for relationships only.
-- `file`: Optional meta data when an element has an associated file. See [files and upload](/guide/files-and-upload) for details.
+- `file`: Optional meta data when an element has an associated file. See [working with files](/guide/working-with-files) for details.
 
 **Important**: The `id` and `type` of elements, as well as `start` and `end` ids of relations, can not be changed after creation. However, you can recreate the element with the old properties and new id/type/start/end-attributes, and then delete the old element.
 

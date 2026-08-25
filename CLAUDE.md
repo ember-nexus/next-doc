@@ -49,6 +49,15 @@ for the two render targets to silently drift, so check both when touching conten
 `llms.txt` (`src/pages/llms.txt.ts`) indexes every markdown page; every page's markdown twin ends
 with a footer nav (Home / site map / prev / next) for LLM crawling.
 
+### Linking to an endpoint
+
+Every in-content link to an endpoint page follows one schema: link text is the method and URL
+template in backticks, `` `METHOD /path` `` (e.g. `` [`PATCH /upload/<uuid>`](/api/patch-upload) ``),
+never the bare method name alone (`` [`PATCH`](...) ``) or the bare path. The link target is
+`/api/<endpoint>`, where `<endpoint>` is that page's `endpoint:` frontmatter value. Keep this even
+when two links to different endpoints sit right next to each other (e.g. "`POST`/`PUT`" listing both
+verbs for the same path) — write out both full links rather than collapsing to one bare method.
+
 ## Before considering a change done
 
 - `pnpm run build` — must succeed; check `dist/**/*.md` as well as `dist/**/*.html` for anything

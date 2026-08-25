@@ -30,14 +30,9 @@ header existed, since no hash was stored for them yet.
 ## Partial downloads with `Range`
 
 This endpoint accepts a `Range` header to download part of a file instead of the whole thing, e.g. to resume an
-interrupted download or stream a large file:
-
-```bash
-curl -v \
-  -H 'Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ' \
-  -H 'Range: bytes=0-1048575' \
-  https://api.example.com/7ac83b11-3c48-4ecd-930c-97e9dbf47ef3/file
-```
+interrupted download or stream a large file. See the [file reference](/reference/file#partial-downloads-with-range)
+for the exact supported syntax and error cases, or the
+[managing big files guide](/guide/managing-big-files#downloading-part-of-a-file) for a worked example.
 
 A satisfiable range responds with `206 Partial Content` and a `Content-Range` header describing what was returned. An
 end beyond the file's actual length is clamped rather than rejected. `Accept-Ranges: bytes` is always present, even on
