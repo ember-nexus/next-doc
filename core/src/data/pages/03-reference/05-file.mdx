@@ -20,14 +20,11 @@ A file can be anywhere from zero bytes up to `file.maxFileSizeInBytes`, an opera
 [configuration reference](/reference/configuration)) that defaults to 10 GiB.
 
 This setting is bounded by the storage backend in use. Ember Nexus currently supports S3-compatible storage only,
-and S3 imposes its own hard technical limits - a maximum object size of 5 TiB, a minimum non-final multipart-upload
-chunk size of 5 MiB, and a maximum of 10,000 chunks per object. Operator configuration is validated against these
-technical limits at server startup: `file.maxFileSizeInBytes` must not exceed the backend's maximum object size,
-`file.uploadMinChunkSizeInBytes` must not be smaller than the backend's minimum chunk size, and the maximum chunk
-count implied by `file.uploadChunkDigitsLength` (10 raised to that many digits) must not exceed the backend's maximum
-chunk count. A configuration that violates any of these is a startup error, not a runtime one - the server refuses to
-start rather than accept requests it can't actually service. See the [upload reference](/reference/upload) for the
-chunk-related settings themselves.
+and S3 imposes its own hard technical maximum object size of 5 TiB, on top of separate hard limits on chunk size and
+count that only matter for resumable uploads - see [Limits](/reference/upload#limits) in the upload reference for
+those. Operator configuration is validated against all of these technical limits at server startup, and a
+configuration that violates any of them is a startup error, not a runtime one - the server refuses to start rather
+than accept requests it can't actually service.
 
 A request whose body (direct upload) or declared/reassembled length (resumable upload) exceeds `maxFileSizeInBytes`
 is rejected with `400 Bad Request`.

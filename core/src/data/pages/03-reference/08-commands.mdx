@@ -23,9 +23,10 @@ need to force the API to recompute responses.
 
 ## Cron
 
-Background maintenance tasks, normally scheduled to run periodically rather than invoked by hand.
-Use these commands to run the scheduled tasks on demand, e.g. to clean up expired resumable
-uploads immediately instead of waiting for the next scheduled run.
+Background maintenance tasks. Every API container instance already runs these automatically every
+few minutes (see [Background tasks](/reference/configuration#background-tasks)) - use these
+commands to run a task on demand instead, e.g. to clean up expired resumable uploads immediately
+rather than waiting for the next automatic run.
 
 <CommandGroupList group="cron" />
 

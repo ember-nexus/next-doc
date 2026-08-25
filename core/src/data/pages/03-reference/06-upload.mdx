@@ -9,8 +9,8 @@ Both are started the same way, through [`POST /<uuid>/file`](/api/post-element-f
 [`PUT /<uuid>/file`](/api/put-element-file), and selected via the `Upload-Complete` request header.
 
 The resumable upload mechanism implements the
-[IETF "Resumable Uploads for HTTP" draft](https://datatracker.ietf.org/doc/draft-ietf-httpbis-resumable-upload/)
-- not the older tus.io protocol. There is no `Tus-Resumable` header, and
+[IETF "Resumable Uploads for HTTP" draft](https://datatracker.ietf.org/doc/draft-ietf-httpbis-resumable-upload/) -
+not the older tus.io protocol. There is no `Tus-Resumable` header, and
 `Upload-Complete` uses the [structured boolean](https://www.ietf.org/rfc/rfc8941#name-booleans) values `?0`/`?1`
 rather than a plain string.
 
@@ -57,10 +57,11 @@ rather than a plain string.
 
 ### Chunk storage
 
-Each accepted chunk is written as its own object in a dedicated upload bucket (`file.S3UploadBucket`), separate from
-the bucket files are ultimately stored in (`file.S3StorageBucket`) - see the
-[configuration reference](/reference/configuration) for these and the bucket-sharding settings
-(`S3*BucketLevels`/`S3*BucketLevelLength`) that control how objects are distributed into subfolders.
+A resumable upload's chunks are written to temporary storage as they arrive, and only moved to permanent storage
+once the upload completes successfully (see [Merge on completion](#merge-on-completion) below) - an upload that
+never finishes never touches permanent storage at all. See the
+[configuration reference](/reference/configuration#file-storage-buckets) for the operator-facing details behind
+this (the two S3 buckets involved, and why).
 
 ### Merge on completion
 
@@ -97,15 +98,16 @@ The chunk-size and count limits ultimately come from the storage backend and the
 see [Size limits](/reference/file#size-limits) in the file reference for how those two interact and are validated
 against each other at startup. In terms of the values actually reported to clients via `Upload-Limit`:
 
-- `min-append-size` (`file.uploadMinChunkSizeInBytes`, default 5 MiB) - every chunk except the last must be at least
-  this large. A smaller chunk is rejected with `400 Bad Request`, unless it is the completing chunk
-  (`Upload-Complete: ?1`) or has zero length - a zero-length chunk is always accepted regardless of this minimum.
+- `min-append-size` (`file.uploadMinChunkSizeInBytes`, default 5 MiB - the S3 backend's own hard minimum) - every
+  chunk except the last must be at least this large. A smaller chunk is rejected with `400 Bad Request`, unless it
+  is the completing chunk (`Upload-Complete: ?1`) or has zero length - a zero-length chunk is always accepted
+  regardless of this minimum.
 - `max-append-size` (`file.uploadMaxChunkSizeInBytes`, default ~101 MiB) - the maximum size of a single chunk.
 - The maximum number of chunks is derived from `file.uploadChunkDigitsLength` (default 4 digits) as 10 raised to
-  that many digits - 10,000 chunks by default.
-- `max-size` (`file.maxFileSizeInBytes`, default 10 GiB) - the maximum size of the finished file. A completing
-  upload whose reassembled length exceeds this is rejected with `400 Bad Request`, and the upload is left
-  incomplete.
+  that many digits - 10,000 chunks by default, matching the S3 backend's own hard maximum.
+- `max-size` (`file.maxFileSizeInBytes`, default 10 GiB) - the maximum size of the finished file, the same setting
+  described in [Size limits](/reference/file#size-limits) in the file reference. A completing upload whose
+  reassembled length exceeds this is rejected with `400 Bad Request`, and the upload is left incomplete.
 
 ## Expiry
 
@@ -120,11 +122,11 @@ the upload has to be recreated from scratch via `POST` or `PUT`.
 
 An expired upload isn't deleted the instant it expires: `file.expiredUploadCanBeDeletedAfterExpirationInSeconds`
 (default 1 hour / `3600`) is a grace period added on top of `expires` before the upload becomes eligible for
-cleanup, giving a client that was right at the boundary a little leeway. Actual deletion (freeing the chunks
-already stored in the upload bucket, and removing the upload) is performed by the
-[`cron:delete-expired-uploads`](/command/cron-delete-expired-uploads) command, which has to be scheduled to run
-periodically (normally as part of [`cron`](/command/cron)) - nothing deletes expired uploads on its own without that
-job running. It skips uploads that were already removed, whether by an explicit
+cleanup, giving a client that was right at the boundary a little leeway. Actual deletion (freeing the chunks already stored in the upload bucket, and removing the upload) is performed by
+the [`cron:delete-expired-uploads`](/command/cron-delete-expired-uploads) task, which every API instance already
+runs automatically as part of [`cron`](/command/cron) - see
+[Background tasks](/reference/configuration#background-tasks) in the configuration reference. It skips uploads that
+were already removed, whether by an explicit
 [`DELETE /upload/<uuid>`](/api/delete-upload) or because the upload's target element was deleted in the meantime.
 
 ## Access control

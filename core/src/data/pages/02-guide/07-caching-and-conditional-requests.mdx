@@ -227,8 +227,18 @@ curl -X PATCH \
   https://api.example.com/35cd3b18-0d0c-4e98-876e-898b930797f2
 ```
 
+The condition matches, so the update is applied and the response is `204 No Content` - the element's `ETag` has now
+changed as a side effect, so this same `If-Match` value can not be reused for a second update.
+
 ```http
-wip
+Access-Control-Allow-Headers: *
+Access-Control-Allow-Methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
+Access-Control-Allow-Origin: *
+Access-Control-Expose-Headers: ETag, Location
+Allow: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
+Cache-Control: no-cache, private
+Date: Tue, 25 Aug 2026 12:52:00 GMT
+X-Powered-By: Ember Nexus API
 ```
 
 ### Sending a conditional invalid request
@@ -249,5 +259,23 @@ curl -X PATCH \
 ```
 
 ```http
-wip
+Access-Control-Allow-Headers: *
+Access-Control-Allow-Methods: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
+Access-Control-Allow-Origin: *
+Access-Control-Expose-Headers: ETag, Location
+Allow: GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK
+Cache-Control: no-cache, private
+Content-Type: application/problem+json; charset=utf-8
+Date: Tue, 25 Aug 2026 12:52:05 GMT
+Transfer-Encoding: chunked
+X-Powered-By: Ember Nexus API
+```
+
+```json
+{
+  "type": "https://api.example.com/error/412/precondition-failed",
+  "title": "Precondition Failed",
+  "status": 412,
+  "detail": "Precondition does not match."
+}
 ```

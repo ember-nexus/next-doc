@@ -27,5 +27,6 @@ the parent, and the parent must itself be a node - a relation can not own childr
 
 <Note>
     Endpoint can not be used to create relations, as the behavior of a relation "owning" other elements is undefined.
-    Use the [`POST /`](/api/post-index) endpoint to create relations instead.
+    Use the [`POST /`](/api/post-index) endpoint to create relations instead. A handful of properties can not be set
+    directly - see [Reserved properties](/reference/security#reserved-properties).
 </Note>

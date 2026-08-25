@@ -31,6 +31,21 @@ once the corresponding tutorial page exists.
 project (looks like it was carried over from a different docs source). Needs either a real
 target or the link removed.
 
+## Caching guide — hand-captured conditional-request examples
+
+`core/src/data/pages/02-guide/07-caching-and-conditional-requests.mdx` ("Sending a conditional
+successful request" / "Sending a conditional invalid request") shows real `204`/`412` responses
+for a conditional `PATCH`, captured by hand from a live run against the `api` dev container's
+reference dataset (mirroring `tests/FeatureTests/General/IfMatchTest.php::testEtagIfMatchWithPatchElement`
+in the `ember-nexus-dev-api/api` repo) rather than sourced from a committed fixture file. Every
+other request/response example on this site is pulled from a generated fixture (the
+`command-output/*.html` pattern for CLI commands, `query.sh`/`header.txt`/`result.json` for search
+examples, `swagger/paths/**/*.json` for endpoint examples) so it can't silently drift from actual
+behavior. These two blocks have no such fixture and will go stale silently if the API's `ETag`
+computation, problem-response shape, or header set ever changes. Worth wiring into the API repo's
+`tests/ExampleGenerationController` pipeline (or equivalent) the same way, so they're generated and
+verified like everything else instead of hand-maintained.
+
 ## Element Hydration — leftover docsify content
 
 `core/src/data/pages/03-reference/02-search/03-element-hydration.mdx` has two separate gaps:

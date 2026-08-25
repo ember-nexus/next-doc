@@ -22,11 +22,33 @@ Ember Nexus specific variables:
 process.
 - `REFERENCE_DATASET_VERSION`: Variable containing the version of the
 [reference dataset](https://github.com/ember-nexus/reference-dataset) used for validating features.
+- `DISABLE_CRON`: Set to `true` to disable the [background tasks](#background-tasks) every API instance would
+otherwise run automatically. Defaults to `false`.
 
 Framework specific variables:
 
 See [Symfony's documentation](https://symfony.com/doc/current/configuration.html#configuration-based-on-environment-variables)
 for details.
+
+## Background tasks
+
+Every API container instance runs the [`cron`](/command/cron) command automatically, every 5 minutes, for as long as
+the container is up - there is nothing to schedule externally, and running multiple instances in parallel is safe
+since the individual tasks (e.g. [`cron:reindex-files`](/command/cron-reindex-files)) consume their work from a
+shared RabbitMQ queue, so the same item is never processed twice regardless of how many instances happen to poll at
+once. Set the `DISABLE_CRON` environment variable to `true` on an instance to opt it out, e.g. to run `cron` on a
+different schedule yourself instead.
+
+## File storage buckets
+
+Ember Nexus stores uploaded files in two separate S3-compatible buckets: `file.S3UploadBucket` holds chunks of
+resumable uploads still in progress, and `file.S3StorageBucket` holds files that have been fully attached to an
+element - see [Uploads operate on temporary storage](/reference/upload#chunk-storage) for how a file moves from one
+to the other. Because nothing in the upload bucket is meant to outlive its upload, and Ember Nexus already cleans up
+expired uploads itself (see [Expiry](/reference/upload#expiry) in the upload reference and the
+[background tasks](#background-tasks) above), operators can safely add a short S3 lifecycle/expiration policy to the
+upload bucket as an extra backstop. The storage bucket holds permanently retained files and should not have such a
+policy applied to it.
 
 ## YML configuration
 

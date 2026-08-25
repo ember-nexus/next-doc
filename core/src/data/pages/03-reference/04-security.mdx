@@ -70,3 +70,20 @@ More generally, any property or type name starting with an underscore (`_`) is t
 example the `_passwordHash` property on `User` nodes. These are set and read by the API itself and are never exposed
 through regular read/write operations. Sticking to non-underscore-prefixed names for your own data avoids clashes with
 current or future internal properties.
+
+## Reserved properties
+
+A handful of non-underscore-prefixed properties are also reserved: the API sets them itself as a side effect of
+other operations, and rejects any [`POST /<uuid>`](/api/post-element)/[`PUT /<uuid>`](/api/put-element)/
+[`PATCH /<uuid>`](/api/patch-element) request that tries to set them directly, with `400 Bad Request`.
+
+On every element:
+
+- `id` - assigned once, when the element is created.
+- `created` / `updated` - timestamps maintained automatically: `created` is set once, `updated` on every change.
+- `file` / `hasFile` - set as a side effect of uploading, replacing, or deleting the element's file; see
+  [Metadata](/reference/file#metadata) in the file reference.
+
+Additionally, on `User` nodes: the property configured as the registration identifier (`email` by default). On
+`Token` nodes: `token`.
+
