@@ -33,7 +33,7 @@ import alpinejs from '@astrojs/alpinejs';
 import expressiveCode from 'astro-expressive-code';
 
 import icon from 'astro-icon';
-import {httpMethodAugmentation, inlineCodeAttrs, linkAugmentation} from "./src/plugins/rehype";
+import {footnoteBackrefAugmentation, httpMethodAugmentation, inlineCodeAttrs, linkAugmentation} from "./src/plugins/rehype";
 import pagefind from "./src/plugins/pagefind.ts";
 import trailingSlashRedirect from "./src/plugins/trailingSlashRedirect.ts";
 
@@ -152,6 +152,6 @@ export default defineConfig({
     // astro-expressive-code appends its own rehypeExpressiveCode plugin via the same
     // mechanism, so it always runs after our plugins. The deprecation warning about
     // this legacy field is an upstream issue in astro-expressive-code.
-    rehypePlugins: [httpMethodAugmentation, linkAugmentation, inlineCodeAttrs],
+    rehypePlugins: [httpMethodAugmentation, linkAugmentation, inlineCodeAttrs, footnoteBackrefAugmentation],
   }
 });

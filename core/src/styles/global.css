@@ -220,7 +220,75 @@ main.content-grid {
         shape-rendering: geometricPrecision;
         vector-effect: non-scaling-stroke;
     }
-    
+
+    /* The inline footnote reference marker (e.g. "[1]") gets its own minimal
+       link style instead of the arrow-icon treatment every other link gets
+       above — linkAugmentation.ts skips it for exactly this reason. The
+       backreference links at the bottom (rebuilt by
+       footnoteBackrefAugmentation.ts into plain numbers) are deliberately
+       left unstyled here so they read as regular inline links. */
+    a[data-footnote-ref] {
+        display: inline-block;
+        /* The `<sup>` wrapper resets line-height to 0 (Tailwind preflight's
+           standard sub/sup fix), which this inline-block inherits — collapsing
+           its own content box to ~0 tall and squashing the vertical padding
+           below. Restore a normal line-height so the padding box is even. */
+        line-height: 1;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.75em;
+        padding: 0.25em;
+        /* Vertical padding is fully offset (no visual shift up/down). Horizontal
+           padding is only half-offset, so the other half becomes a real gap
+           between the marker and the surrounding text. */
+        margin: -0.25em -0.125em;
+    }
+    a[data-footnote-ref]:hover {
+        text-decoration: underline;
+    }
+
+    .footnote-backref-icon {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        vertical-align: -0.15em;
+        color: var(--c-text-muted, currentColor);
+    }
+
+    .footnotes {
+        margin-top: 0.5rem;
+        padding-top: var(--prose-gap);
+        border-top: 1px solid var(--color-hairline);
+        font-size: 0.9em;
+    }
+    .footnotes ol {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5em;
+        padding-left: 1.25em;
+    }
+    .footnotes li {
+        margin: 0;
+    }
+    .footnotes li p {
+        margin: 0;
+    }
+
+    /* The "Footnotes" heading is `sr-only` by default (mdast-util-to-hast's
+       GitHub-style default) — this site shows it instead, matching the
+       visible "## Footnotes" heading the markdown twin renders. */
+    #footnote-label {
+        position: static;
+        width: auto;
+        height: auto;
+        padding: 0;
+        margin: 0;
+        overflow: visible;
+        clip: auto;
+        white-space: normal;
+    }
+
     .comparison-card {
         margin-top: 1rem;
     }

@@ -142,8 +142,43 @@ function unwrapCode(_props: Props, children: RootContent[]): RootContent {
   );
 }
 
+/**
+ * Footnote definitions get a trailing space appended to their last text node
+ * (by mdast-util-to-hast's footer builder) as a separator before the
+ * backreference link that normally follows it. The `a` intrinsic above drops
+ * that link — there's no anchor for it to point back to once the footnote
+ * list is a plain markdown list — which leaves the trailing space stranded;
+ * mdast-util-to-markdown then escapes it as `&#x20;` since a bare trailing
+ * space is otherwise ambiguous in markdown. Harmless to always trim: a
+ * paragraph's trailing whitespace is never meaningful.
+ */
+function trimTrailingText(children: RootContent[]): RootContent[] {
+  const out = children.slice();
+  // A footnote with more than one reference joins its backreference links
+  // with plain " " text nodes — dropping every link can leave several
+  // whitespace-only text nodes in a row, not just one.
+  while (
+    out.length > 0 &&
+    out[out.length - 1].type === "text" &&
+    /^\s*$/.test((out[out.length - 1] as { value: string }).value)
+  ) {
+    out.pop();
+  }
+  const last = out[out.length - 1];
+  if (last?.type === "text") {
+    const trimmed = last.value.replace(/\s+$/, "");
+    if (trimmed !== last.value)
+      out[out.length - 1] = { ...last, value: trimmed };
+  }
+  return out;
+}
+
 const intrinsics: Record<string, Handler> = {
-  p: (_props, children) => ({ type: "paragraph", children }) as RootContent,
+  p: (_props, children) =>
+    ({
+      type: "paragraph",
+      children: trimTrailingText(children),
+    }) as RootContent,
 
   h1: (_props, children) =>
     ({ type: "heading", depth: 1, children }) as RootContent,
@@ -158,13 +193,36 @@ const intrinsics: Record<string, Handler> = {
   h6: (_props, children) =>
     ({ type: "heading", depth: 6, children }) as RootContent,
 
-  a: (props, children) =>
-    ({
+  // remark-gfm's `[^label]` footnotes compile (via mdast-util-to-hast) to a
+  // `<sup><a data-footnote-ref href="#user-content-fn-label" ...>1</a></sup>`
+  // reference and a `<section data-footnotes><h2>Footnotes</h2><ol><li>...<a
+  // data-footnote-backref>↩</a></li></ol></section>` list at the end of the
+  // document (the `sup`/`section` intrinsics below unwrap that structure into
+  // plain heading + list). A CommonMark list item can't carry an `id`, so
+  // there is no per-item anchor left to link to on this side: reference links
+  // point at the "Footnotes" heading instead (`#footnotes`, itself a real
+  // heading and therefore anchorable), and backreference links — which would
+  // otherwise dangle, pointing at a reference site that has no anchor either
+  // — are dropped entirely. The footnote's own number is left as the visible
+  // link text either way, so matching a reference to its list entry is still
+  // just a matter of reading the number.
+  a: (props, children) => {
+    if (props["data-footnote-backref"] !== undefined) return [];
+    if (props["data-footnote-ref"] !== undefined) {
+      return {
+        type: "link",
+        url: "#footnotes",
+        title: null,
+        children,
+      } as RootContent;
+    }
+    return {
       type: "link",
       url: (props.href as string | undefined) ?? "",
       title: (props.title as string | undefined) ?? null,
       children,
-    }) as RootContent,
+    } as RootContent;
+  },
 
   ul: (_props, children) =>
     ({
@@ -285,6 +343,16 @@ const intrinsics: Record<string, Handler> = {
   // (or pass block children through unchanged) same as any other wrapper.
   div: (_props, children) => groupIntoBlocks(children),
   span: (_props, children) => children,
+
+  // `<sup>` only ever wraps a footnote-reference `<a>` in this document set
+  // (see the `a` intrinsic above) — markdown has no superscript, so it's
+  // unwrapped to plain inline content, same as `span`.
+  sup: (_props, children) => children,
+
+  // `<section data-footnotes>` is the footnote list's wrapper (see the `a`
+  // intrinsic above) — unwrapped the same way as `div`, leaving its `<h2>`
+  // heading and `<ol>` list as plain top-level blocks.
+  section: (_props, children) => groupIntoBlocks(children),
 
   // `<g6-graph><script type="application/json">{...}</script></g6-graph>`
   // renders an interactive graph with no markdown equivalent. The closest

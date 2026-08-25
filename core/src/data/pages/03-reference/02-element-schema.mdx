@@ -11,9 +11,13 @@ one of these databases directly, e.g. [Cypher path query](/reference/search/cyph
 
 Property data lives in up to four databases:
 
-- **Neo4j** and **MongoDB** are [primary databases](#primary-database).
-- **S3** — used here simply as a database for file content — is also a [primary database](#primary-database).
-- **Elasticsearch** is a [secondary database](#secondary-database).
+- **Neo4j** and **MongoDB** are primary databases[^primary-database].
+- **S3** — used here simply as a database for file content — is also a primary database[^primary-database].
+- **Elasticsearch** is a secondary database[^secondary-database].
+
+[^primary-database]: Holds the primary, original copy of a piece of data — nothing else generates or supplies it.
+[^secondary-database]: Holds data that is derived or generated from one or more primary databases[^primary-database],
+    or that is otherwise received from elsewhere rather than being the original source.
 
 ## Property types
 
@@ -70,16 +74,3 @@ writes, see [reserved properties](/reference/security#reserved-properties).
 Setting a property to `null` does not store a null value — it deletes the property. This also applies when
 [replacing an element](/api/put-element), where any existing property not mentioned in the request body is treated as
 if it had been set to `null`. See also [`PATCH /<uuid>`](/api/patch-element).
-
-## Notes
-
-### Primary database
-
-A primary database holds the primary, original copy of a piece of data — nothing else generates or supplies it.
-See also [secondary database](#secondary-database).
-
-### Secondary database
-
-A secondary database holds data that is derived or generated from one or more
-[primary databases](#primary-database), or that is otherwise received from elsewhere rather than being the original
-source.
