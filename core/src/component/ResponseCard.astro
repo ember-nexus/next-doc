@@ -9,9 +9,11 @@ import { renderMarkdown } from '../util/index.ts';
 interface Props {
     examples: ResponseExample[];
     id?: string;
+    method?: string;
 }
 
-const { examples, id } = Astro.props;
+const { examples, id, method } = Astro.props;
+const defaultComponentId = method?.toLowerCase() === 'head' ? 'headers' : 'body';
 
 function statusClass(code: number): string {
     if (code >= 200 && code < 300) return "http-status-2xx";
@@ -36,7 +38,7 @@ const firstId = exampleId(examples[0]);
     <CardTitle title="Response" id={id}></CardTitle>
 
     <div
-        x-data={`{ exampleId: '${firstId}', componentId: 'body' }`}
+        x-data={`{ exampleId: '${firstId}', componentId: '${defaultComponentId}' }`}
         class="api-card flex flex-col divide-y divide-gray-200 dark:divide-zinc-800"
     >
         <div class="flex flex-wrap gap-2 p-4">

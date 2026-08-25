@@ -1,10 +1,10 @@
 {
   "paths": {
-    "/upload/{uuid}": {
-      "patch": {
+    "/{uuid}/file": {
+      "get": {
         "responses": {
-          "400": {
-            "description": "General issues with the request, e.g. a missing or malformed `Upload-Offset` header, a `Content-Type` other than `application/partial-upload`, or an uploaded chunk that violates the configured min/max chunk size.",
+          "416": {
+            "description": "The requested `Range` cannot be satisfied - its start is beyond the end of the file, the file is empty, or the range spans zero bytes.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -30,11 +30,11 @@
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/400",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/416",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/400",
+                "url": "https://http.dev/416",
                 "name": "HTTP.dev"
               }
             ],
@@ -44,8 +44,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "badContent": {
-                    "$ref": "#/components/examples/BadContentProblemExample"
+                  "rangeNotSatisfiable": {
+                    "$ref": "#/components/examples/RangeNotSatisfiableProblemExample"
                   }
                 }
               }

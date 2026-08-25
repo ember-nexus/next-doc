@@ -54,6 +54,16 @@
               "example": "attachment; filename=\"report.pdf\""
             },
             "description": "Original filename of the uploaded file, used to derive the file's extension. Falls back to `bin` if omitted or if no extension can be parsed."
+          },
+          {
+            "name": "Repr-Digest",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "sha-256=:X4a4pOezhox2tI5PXW8UAd7NAdOKPjE3wYlYs+eTt7Y=:"
+            },
+            "description": "Cryptographic digest of the complete file, checked against the uploaded content once the direct upload finishes. Only `sha-256` is supported. A mismatch fails with `400 Bad Request` and the file is not stored. `Content-Digest` is accepted as a fallback if `Repr-Digest` is absent. Only meaningful for a complete (non-resumable) upload; for a resumable upload, verify the digest on the completing `PATCH` request instead."
           }
         ],
         "requestBody": {

@@ -73,7 +73,7 @@ const cardHeadings: { depth: number; slug: string; text: string }[] = [
     </div>
 
     <RequestCard requests={requests} id="request" />
-    <ResponseCard examples={responseExamples} id="response" />
+    <ResponseCard examples={responseExamples} id="response" method={method} />
     <RequestParameterCard parameters={requestParameters} id="request-parameters" />
     <RequestHeaderCard headers={requestHeaders} id="request-header" />
     {requestBody && <RequestBodyCard body={requestBody} id="request-body" />}

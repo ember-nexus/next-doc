@@ -46,9 +46,6 @@
                 "examples": {
                   "offsetMismatch": {
                     "$ref": "#/components/examples/OffsetMismatchProblemExample"
-                  },
-                  "uploadLengthExceeded": {
-                    "$ref": "#/components/examples/UploadLengthExceededProblemExample"
                   }
                 }
               }

@@ -44,6 +44,16 @@
               "example": "?0"
             },
             "description": "`?1` marks this as the final chunk, completing the upload; omitted or `?0` keeps the upload open for further chunks."
+          },
+          {
+            "name": "Repr-Digest",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "sha-256=:X4a4pOezhox2tI5PXW8UAd7NAdOKPjE3wYlYs+eTt7Y=:"
+            },
+            "description": "Cryptographic digest of the complete (reassembled) file. Only read on the chunk that sets `Upload-Complete: ?1`, and checked against the merged file once assembled. Only `sha-256` is supported. A mismatch fails with `400 Bad Request`; the uploaded chunks are discarded and the upload's target element keeps its previous file, if any. `Content-Digest` is accepted as a fallback if `Repr-Digest` is absent."
           }
         ],
         "requestBody": {

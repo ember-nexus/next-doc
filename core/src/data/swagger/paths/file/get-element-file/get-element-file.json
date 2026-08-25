@@ -3,7 +3,7 @@
     "/{uuid}/file": {
       "get": {
         "summary": "Get element file",
-        "description": "Retrieves the binary file attached to a specific element.",
+        "description": "Retrieves the binary file attached to a specific element. Supports partial downloads via the `Range` header.",
         "operationId": "get-element-file",
         "tags": [
           "File"
@@ -29,6 +29,16 @@
           },
           {
             "$ref": "#/components/parameters/If-None-Match"
+          },
+          {
+            "name": "Range",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "bytes=0-99"
+            },
+            "description": "Requests a single byte range of the file instead of the full content: `bytes=[start]-[end]`, `bytes=[start]-` (open-ended) or `bytes=-[suffixLength]` (last N bytes) - e.g. `bytes=0-1048575` for the first megabyte. Multiple comma-separated ranges are not supported and fail with `400 Bad Request`."
           }
         ],
         "x-ember-nexus-har-example": [

@@ -10,8 +10,8 @@ User accounts store a password hash, never the plaintext password. Hashing uses 
 The hash is kept in the internal `_passwordHash` property, which - like all underscore-prefixed properties - can never
 be read or written directly through the API.
 
-A user's password is only ever needed to [obtain a new token](/api/post-token) or during
-[registration](/api/post-register). Regular requests authenticate with a token instead, as described below.
+A user's password is only ever needed to obtain a new token via [`POST /token`](/api/post-token) or during
+[`POST /register`](/api/post-register). Regular requests authenticate with a token instead, as described below.
 
 ## Token format and hashing
 

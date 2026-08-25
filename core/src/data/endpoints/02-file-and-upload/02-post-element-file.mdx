@@ -8,7 +8,7 @@ swaggerUrl: /{uuid}/file
 ---
 
 Uploads a file to the referenced element. Fails with `409 Conflict` if the element already has a file attached - use
-[Put element file](/api/put-element-file) to replace an existing file instead.
+[`PUT /<uuid>/file`](/api/put-element-file) to replace an existing file instead.
 
 The endpoint supports two upload modes, selected through the `Upload-Complete` request header:
 
@@ -23,7 +23,7 @@ The endpoint supports two upload modes, selected through the `Upload-Complete` r
 Both modes use the same request headers:
 
 - `Content-Disposition: attachment; filename="<name>"` (optional) - determines the file's extension, which is stored
-  and later used to reconstruct the `Content-Disposition` header on [`GET`](/api/get-element-file). Falls back to
+  and later used to reconstruct the `Content-Disposition` header on [`GET /<uuid>/file`](/api/get-element-file). Falls back to
   `bin` if omitted, or if no extension can be parsed from the filename.
 - `Upload-Length` (optional, resumable uploads only) - total size in bytes of the finished file, once all chunks have
   been appended.
@@ -35,7 +35,7 @@ Both modes use the same request headers:
     boolean values `?0`/`?1` rather than a plain string.
 </Note>
 
-Whenever a resumable upload is created (or continued via [`PATCH`](/api/patch-upload)), the response includes an
+Whenever a resumable upload is created (or continued via [`PATCH /upload/<uuid>`](/api/patch-upload)), the response includes an
 `Upload-Limit` header describing the current server limits: how long an unfinished upload is kept alive, the maximum
 total file size, and the minimum and maximum size of an individual chunk. A chunk smaller than the minimum is
 rejected with `400 Bad Request`, unless it is the upload's last chunk (`Upload-Complete: ?1`) or has zero length. A
@@ -44,4 +44,16 @@ direct upload's `201 Created` response carries none of these headers, since ther
 <Note>
     Since a zero-length chunk is always accepted, `Upload-Complete: ?0` with an empty body can be used purely to
     create the resumable upload and read back its `Upload-Limit`, before deciding on a chunking strategy.
+</Note>
+
+## Verifying upload integrity
+
+A direct upload (`Upload-Complete: ?1`, or the header omitted) can optionally carry a `Repr-Digest` header with the
+SHA-256 digest of the file, in [RFC 9530](https://datatracker.ietf.org/doc/html/rfc9530) structured-field format
+(`sha-256=:[base64]:`). Once the upload finishes, the server recomputes the digest and compares it; a mismatch fails
+with `400 Bad Request` and the file is not stored. `Content-Digest` is accepted as a fallback header name.
+
+<Note>
+    This only verifies a direct upload's complete body. For a resumable upload, send the digest on the completing
+    [`PATCH /upload/<uuid>`](/api/patch-upload) request instead, once the full file has been reassembled server-side.
 </Note>

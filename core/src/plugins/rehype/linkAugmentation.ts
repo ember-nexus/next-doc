@@ -18,9 +18,14 @@ interface Root {
   children: ElementContent[];
 }
 
+interface Text {
+  type: "text";
+  value: string;
+}
+
 // Permissive catch-all: the real hast tree also contains comment / doctype /
 // text / raw nodes, so this keeps it assignable to the minimal types above.
-type ElementContent = Element | { type: string; [key: string]: unknown };
+type ElementContent = Element | Text | { type: string; [key: string]: unknown };
 
 interface File {
   path?: string;
@@ -67,42 +72,72 @@ export function isExternalHref(href: string): boolean {
 
 export function linkAugmentation() {
   return (tree: Root, file: File): void => {
-    visit(tree, "element", (node: Element) => {
-      if (node.tagName !== "a") return;
+    visit(
+      tree,
+      "element",
+      (
+        node: Element,
+        index: number | undefined,
+        parent: Element | Root | undefined,
+      ) => {
+        if (node.tagName !== "a") return;
 
-      const href = node.properties?.href as string | undefined;
-      if (href === undefined) return;
+        const href = node.properties?.href as string | undefined;
+        if (href === undefined) return;
 
-      const broken = isBrokenHref(href);
-      const isExternal = isExternalHref(href);
-      const iconName = isExternal ? "arrow-up-right" : "arrow-right";
+        const broken = isBrokenHref(href);
+        const isExternal = isExternalHref(href);
+        const iconName = isExternal ? "arrow-up-right" : "arrow-right";
 
-      if (broken) {
-        node.properties = {
-          ...node.properties,
-          style: "color: red;",
-        };
+        if (broken) {
+          node.properties = {
+            ...node.properties,
+            style: "color: red;",
+          };
 
-        const filePath = file?.path ?? "unknown file";
-        const line = node.position?.start?.line;
-        const location = line !== undefined ? `${filePath}:${line}` : filePath;
-        // Intentional build-time diagnostic — surfaces broken/placeholder
-        // links in the terminal during `astro build`.
-        // eslint-disable-next-line no-console
-        console.warn(
-          `[linkAugmentation] Broken/placeholder link (href="${href}") at ${location}`,
-        );
-      }
+          const filePath = file?.path ?? "unknown file";
+          const line = node.position?.start?.line;
+          const location =
+            line !== undefined ? `${filePath}:${line}` : filePath;
+          // Intentional build-time diagnostic — surfaces broken/placeholder
+          // links in the terminal during `astro build`.
+          // eslint-disable-next-line no-console
+          console.warn(
+            `[linkAugmentation] Broken/placeholder link (href="${href}") at ${location}`,
+          );
+        }
 
-      // Wrap icon in a no-break span to prevent gap+icon from orphaning onto its own line
-      node.children = [
-        ...node.children,
-        h("span", { class: "link-icon-wrap" }, [makeIconNode(iconName)]),
-      ];
-      if (isExternal) {
-        node.properties.target = "_blank";
-        node.properties.rel = "noopener noreferrer";
-      }
-    });
+        // Wrap icon in a no-break span to prevent gap+icon from orphaning onto its own line
+        node.children = [
+          ...node.children,
+          h("span", { class: "link-icon-wrap" }, [makeIconNode(iconName)]),
+        ];
+
+        // The MDX/JSX compilation step that follows (hast -> estree) drops
+        // whitespace that immediately follows this element once it ends in the
+        // freshly-appended <svg> icon - "[link](url) word" (or a link followed
+        // by a soft line break, i.e. the connecting word starts the next
+        // source line) renders as "linkword" with the whitespace silently
+        // eaten. A non-breaking space survives that step (it isn't collapsible
+        // whitespace), so swap the sibling text's leading whitespace run for
+        // one instead of losing it outright.
+        if (
+          index !== undefined &&
+          parent &&
+          "children" in parent &&
+          parent.children[index + 1]?.type === "text"
+        ) {
+          const nextText = parent.children[index + 1] as Text;
+          if (/^\s/.test(nextText.value)) {
+            nextText.value = "\u00A0" + nextText.value.replace(/^\s+/, "");
+          }
+        }
+
+        if (isExternal) {
+          node.properties.target = "_blank";
+          node.properties.rel = "noopener noreferrer";
+        }
+      },
+    );
   };
 }

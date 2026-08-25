@@ -42,6 +42,15 @@
           "detail": "Requested resource is no longer available and is expected to soon be permanently deleted."
         }
       },
+      "MalformedRangeProblemExample": {
+        "summary": "The `Range` header could not be parsed, or requests more than one range.",
+        "value": {
+          "type": "https://api.example.com/error/400/bad-content",
+          "title": "Bad content",
+          "status": 400,
+          "detail": "Could not parse 'Range' header: 'bytes=0-10,20-30'. Only a single range of the form 'bytes=<start>-<end>', 'bytes=<start>-' or 'bytes=-<suffixLength>' is supported."
+        }
+      },
       "MissingPropertyProblemExample": {
         "value": {
           "type": "https://api.example.com/error/400/missing-property",
@@ -77,6 +86,16 @@
           "detail": "Precondition does not match."
         }
       },
+      "RangeNotSatisfiableProblemExample": {
+        "value": {
+          "type": "https://api.example.com/error/416/range-not-satisfiable",
+          "title": "Range Not Satisfiable",
+          "status": 416,
+          "detail": "Requested range start (200000) is beyond the end of the resource (138937 bytes long).",
+          "requested-start": 200000,
+          "total-length": 138937
+        }
+      },
       "ReservedIdentifierProblemExample": {
         "summary": "The unique user identifier is already used by another account.",
         "value": {
@@ -93,17 +112,26 @@
           "status": 401,
           "detail": "Authorization for the request failed due to possible problems with the token (incorrect or expired), password (incorrect or changed), the user's unique identifier, or the user's status (e.g., missing, blocked, or deleted)."
         }
-      },
-      "UploadLengthExceededProblemExample": {
-        "value": {
-          "type": "https://api.example.com/error/409/conflict",
-          "title": "Conflict",
-          "status": 409,
-          "detail": "Already uploaded data exceeds defined upload length."
-        }
       }
     },
     "headers": {
+      "Accept-Ranges": {
+        "description": "Always `bytes` - indicates that this endpoint honors the `Range` request header for partial downloads.",
+        "schema": {
+          "type": "string",
+          "example": "bytes"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Accept-Ranges",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/accept-ranges",
+            "name": "HTTP.dev"
+          }
+        ]
+      },
       "Access-Control-Allow-Headers": {
         "description": "Specifies which HTTP headers can be used during a cross-origin request, returned in preflight responses.",
         "schema": {
@@ -231,6 +259,25 @@
         "x-ember-nexus-important": true,
         "required": true
       },
+      "Content-Range": {
+        "description": "Byte range actually returned, plus the total size of the file: `bytes [start]-[end]/[total]`, e.g. `bytes 0-99/138937`. Only present on a `206 Partial Content` response.",
+        "schema": {
+          "type": "string",
+          "example": "bytes 0-99/138937"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Range",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/content-range",
+            "name": "HTTP.dev"
+          }
+        ],
+        "x-ember-nexus-important": true,
+        "required": true
+      },
       "ETag": {
         "description": "Entity tag used for caching and optimistic concurrency control.",
         "schema": {
@@ -315,6 +362,24 @@
         "x-ember-nexus-important": true,
         "required": true
       },
+      "Repr-Digest": {
+        "description": "Cryptographic digest of the file's full content, in RFC 9530 structured-field format. Only `sha-256` is supported: `sha-256=:[base64]:`, where the base64 payload is the raw 32-byte SHA-256 digest. Omitted if the element has no stored hash yet (e.g. records predating this feature).",
+        "schema": {
+          "type": "string",
+          "example": "sha-256=:X4a4pOezhox2tI5PXW8UAd7NAdOKPjE3wYlYs+eTt7Y=:"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://datatracker.ietf.org/doc/html/rfc9530",
+            "name": "RFC 9530"
+          },
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Repr-Digest",
+            "name": "MDN"
+          }
+        ],
+        "x-ember-nexus-important": true
+      },
       "Upload-Complete": {
         "description": "Structured boolean indicating whether the upload is finished: `?1` for complete, `?0` for still in progress.",
         "schema": {
@@ -350,6 +415,7 @@
             "name": "HTTP.dev"
           }
         ],
+        "x-ember-nexus-important": true,
         "required": false
       },
       "Upload-Limit": {
@@ -5369,7 +5435,7 @@
       "get": {
         "responses": {
           "200": {
-            "description": "File found and returned as a stream.",
+            "description": "File found and returned as a stream. No `Range` header was sent, so the complete file is returned.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -5383,6 +5449,9 @@
               "Access-Control-Expose-Headers": {
                 "$ref": "#/components/headers/Access-Control-Expose-Headers"
               },
+              "Accept-Ranges": {
+                "$ref": "#/components/headers/Accept-Ranges"
+              },
               "Allow": {
                 "$ref": "#/components/headers/Allow"
               },
@@ -5395,6 +5464,9 @@
               "ETag": {
                 "$ref": "#/components/headers/ETag"
               },
+              "Repr-Digest": {
+                "$ref": "#/components/headers/Repr-Digest"
+              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
@@ -5406,6 +5478,65 @@
               },
               {
                 "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "206": {
+            "description": "Partial file content returned, matching the requested `Range`. The end of an open-ended or overlong range is clamped to the file's actual length rather than rejected.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Accept-Ranges": {
+                "$ref": "#/components/headers/Accept-Ranges"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "Content-Disposition": {
+                "$ref": "#/components/headers/Content-Disposition"
+              },
+              "Content-Range": {
+                "$ref": "#/components/headers/Content-Range"
+              },
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              },
+              "Repr-Digest": {
+                "$ref": "#/components/headers/Repr-Digest"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/206",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/206",
                 "name": "HTTP.dev"
               }
             ],
@@ -5456,6 +5587,54 @@
                 "name": "HTTP.dev"
               }
             ]
+          },
+          "400": {
+            "description": "The `Range` header could not be parsed, or requested more than one range.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/400",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/400",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "malformedRange": {
+                    "$ref": "#/components/examples/MalformedRangeProblemExample"
+                  }
+                }
+              }
+            }
           },
           "401": {
             "description": "The provided token is either invalid or expired.",
@@ -5600,10 +5779,58 @@
                 }
               }
             }
+          },
+          "416": {
+            "description": "The requested `Range` cannot be satisfied - its start is beyond the end of the file, the file is empty, or the range spans zero bytes.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/416",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/416",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "rangeNotSatisfiable": {
+                    "$ref": "#/components/examples/RangeNotSatisfiableProblemExample"
+                  }
+                }
+              }
+            }
           }
         },
         "summary": "Get element file",
-        "description": "Retrieves the binary file attached to a specific element.",
+        "description": "Retrieves the binary file attached to a specific element. Supports partial downloads via the `Range` header.",
         "operationId": "get-element-file",
         "tags": [
           "File"
@@ -5629,6 +5856,16 @@
           },
           {
             "$ref": "#/components/parameters/If-None-Match"
+          },
+          {
+            "name": "Range",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "bytes=0-99"
+            },
+            "description": "Requests a single byte range of the file instead of the full content: `bytes=[start]-[end]`, `bytes=[start]-` (open-ended) or `bytes=-[suffixLength]` (last N bytes) - e.g. `bytes=0-1048575` for the first megabyte. Multiple comma-separated ranges are not supported and fail with `400 Bad Request`."
           }
         ],
         "x-ember-nexus-har-example": [
@@ -5988,6 +6225,16 @@
               "example": "attachment; filename=\"report.pdf\""
             },
             "description": "Original filename of the uploaded file, used to derive the file's extension. Falls back to `bin` if omitted or if no extension can be parsed."
+          },
+          {
+            "name": "Repr-Digest",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "sha-256=:X4a4pOezhox2tI5PXW8UAd7NAdOKPjE3wYlYs+eTt7Y=:"
+            },
+            "description": "Cryptographic digest of the complete file, checked against the uploaded content once the direct upload finishes. Only `sha-256` is supported. A mismatch fails with `400 Bad Request` and the file is not stored. `Content-Digest` is accepted as a fallback if `Repr-Digest` is absent. Only meaningful for a complete (non-resumable) upload; for a resumable upload, verify the digest on the completing `PATCH` request instead."
           }
         ],
         "requestBody": {
@@ -6412,6 +6659,16 @@
               "example": "attachment; filename=\"report.pdf\""
             },
             "description": "Original filename of the uploaded file, used to derive the file's extension. Falls back to `bin` if omitted or if no extension can be parsed."
+          },
+          {
+            "name": "Repr-Digest",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "sha-256=:X4a4pOezhox2tI5PXW8UAd7NAdOKPjE3wYlYs+eTt7Y=:"
+            },
+            "description": "Cryptographic digest of the complete file, checked against the uploaded content once the direct upload finishes. Only `sha-256` is supported. A mismatch fails with `400 Bad Request` and the existing file (if any) is left untouched. `Content-Digest` is accepted as a fallback if `Repr-Digest` is absent. Only meaningful for a complete (non-resumable) upload; for a resumable upload, verify the digest on the completing `PATCH` request instead."
           }
         ],
         "requestBody": {
@@ -6925,7 +7182,7 @@
             ]
           },
           "400": {
-            "description": "General issues with the request, e.g. a missing or malformed `Upload-Offset` header, or a `Content-Type` other than `application/partial-upload`.",
+            "description": "General issues with the request, e.g. a missing or malformed `Upload-Offset` header, a `Content-Type` other than `application/partial-upload`, or an uploaded chunk that violates the configured min/max chunk size.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -7111,9 +7368,6 @@
                 "examples": {
                   "offsetMismatch": {
                     "$ref": "#/components/examples/OffsetMismatchProblemExample"
-                  },
-                  "uploadLengthExceeded": {
-                    "$ref": "#/components/examples/UploadLengthExceededProblemExample"
                   }
                 }
               }
@@ -7210,6 +7464,16 @@
               "example": "?0"
             },
             "description": "`?1` marks this as the final chunk, completing the upload; omitted or `?0` keeps the upload open for further chunks."
+          },
+          {
+            "name": "Repr-Digest",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "sha-256=:X4a4pOezhox2tI5PXW8UAd7NAdOKPjE3wYlYs+eTt7Y=:"
+            },
+            "description": "Cryptographic digest of the complete (reassembled) file. Only read on the chunk that sets `Upload-Complete: ?1`, and checked against the merged file once assembled. Only `sha-256` is supported. A mismatch fails with `400 Bad Request`; the uploaded chunks are discarded and the upload's target element keeps its previous file, if any. `Content-Digest` is accepted as a fallback if `Repr-Digest` is absent."
           }
         ],
         "requestBody": {

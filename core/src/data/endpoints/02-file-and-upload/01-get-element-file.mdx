@@ -12,7 +12,7 @@ the original filename.
 
 The filename is built from the element's `name` property, if it has one and it is a string, falling back to the
 element's id otherwise. The extension is taken from the file that was actually uploaded (see
-[Post element file](/api/post-element-file)), or `bin` if none could be determined.
+[`POST /<uuid>/file`](/api/post-element-file)), or `bin` if none could be determined.
 
 <Note>
     Returns `404` both when the element does not exist (or is not accessible to the current user) and when the
@@ -21,3 +21,30 @@ element's id otherwise. The extension is taken from the file that was actually u
 
 Like most other element endpoints, this endpoint supports conditional requests via `If-Match` and `If-None-Match`,
 using an `ETag` derived from the file's content.
+
+The response also carries a `Repr-Digest` header with the file's SHA-256 hash, in
+[RFC 9530](https://datatracker.ietf.org/doc/html/rfc9530) structured-field format (`sha-256=:[base64]:`), letting the
+client verify the download's integrity without a separate request. It is omitted for files uploaded before this
+header existed, since no hash was stored for them yet.
+
+## Partial downloads with `Range`
+
+This endpoint accepts a `Range` header to download part of a file instead of the whole thing, e.g. to resume an
+interrupted download or stream a large file:
+
+```bash
+curl -v \
+  -H 'Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ' \
+  -H 'Range: bytes=0-1048575' \
+  https://api.example.com/7ac83b11-3c48-4ecd-930c-97e9dbf47ef3/file
+```
+
+A satisfiable range responds with `206 Partial Content` and a `Content-Range` header describing what was returned. An
+end beyond the file's actual length is clamped rather than rejected. `Accept-Ranges: bytes` is always present, even on
+a full, non-ranged response, so clients can detect range support ahead of time.
+
+<Note>
+    Only a single range is supported - `bytes=[start]-[end]`, `bytes=[start]-` or `bytes=-[suffixLength]`, e.g.
+    `bytes=0-1048575` for the first megabyte. A comma-separated list of ranges fails with `400 Bad Request`. A range
+    whose start is beyond the end of the file, or that spans zero bytes, fails with `416 Range Not Satisfiable`.
+</Note>

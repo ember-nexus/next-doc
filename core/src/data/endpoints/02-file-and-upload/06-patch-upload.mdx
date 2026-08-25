@@ -7,8 +7,7 @@ endpointUrl: /upload/<uuid>
 swaggerUrl: /upload/{uuid}
 ---
 
-Appends the next chunk to a resumable upload created by [`POST`](/api/post-element-file) or
-[`PUT /<uuid>/file`](/api/put-element-file).
+Appends the next chunk to a resumable upload created by [`POST /<uuid>/file`](/api/post-element-file) or [`PUT /<uuid>/file`](/api/put-element-file).
 
 Every request requires `Content-Type: application/partial-upload` and an `Upload-Offset` header equal to the upload's
 current offset - the value from the previous response's `Upload-Offset` header (or `HEAD`'s, if reconnecting after a
@@ -21,7 +20,7 @@ Set `Upload-Complete: ?1` on the chunk that finishes the upload. Its body may be
 configured minimum chunk size.
 
 Once the final chunk is stored, all chunks are merged and attached as the target element's file (as if uploaded via
-[`PUT`](/api/put-element-file)), and the resumable upload itself ceases to exist - subsequent requests against its
+[`PUT /<uuid>/file`](/api/put-element-file)), and the resumable upload itself ceases to exist - subsequent requests against its
 URL respond with `404`.
 
 <Note>
@@ -34,3 +33,9 @@ URL respond with `404`.
     This endpoint does not support `If-Match` or `If-None-Match`; unlike the element endpoints, requesting it with
     either header has no effect.
 </Note>
+
+On the chunk that sets `Upload-Complete: ?1`, a `Repr-Digest` header (or `Content-Digest`, as a fallback) can be sent
+with the SHA-256 digest of the complete, reassembled file, in
+[RFC 9530](https://datatracker.ietf.org/doc/html/rfc9530) structured-field format (`sha-256=:[base64]:`), the same as
+for a direct upload on [`POST /<uuid>/file`](/api/post-element-file). A mismatch fails with `400 Bad Request`; the
+uploaded chunks are discarded and the upload's target element keeps whatever file it had before (if any).

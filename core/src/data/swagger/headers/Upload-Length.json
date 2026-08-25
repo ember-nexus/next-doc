@@ -17,6 +17,7 @@
             "name": "HTTP.dev"
           }
         ],
+        "x-ember-nexus-important": true,
         "required": false
       }
     }

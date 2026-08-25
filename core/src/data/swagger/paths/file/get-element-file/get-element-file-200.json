@@ -4,7 +4,7 @@
       "get": {
         "responses": {
           "200": {
-            "description": "File found and returned as a stream.",
+            "description": "File found and returned as a stream. No `Range` header was sent, so the complete file is returned.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -18,6 +18,9 @@
               "Access-Control-Expose-Headers": {
                 "$ref": "#/components/headers/Access-Control-Expose-Headers"
               },
+              "Accept-Ranges": {
+                "$ref": "#/components/headers/Accept-Ranges"
+              },
               "Allow": {
                 "$ref": "#/components/headers/Allow"
               },
@@ -29,6 +32,9 @@
               },
               "ETag": {
                 "$ref": "#/components/headers/ETag"
+              },
+              "Repr-Digest": {
+                "$ref": "#/components/headers/Repr-Digest"
               },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"

@@ -1,10 +1,10 @@
 {
   "paths": {
-    "/upload/{uuid}": {
-      "patch": {
+    "/{uuid}/file": {
+      "get": {
         "responses": {
           "400": {
-            "description": "General issues with the request, e.g. a missing or malformed `Upload-Offset` header, a `Content-Type` other than `application/partial-upload`, or an uploaded chunk that violates the configured min/max chunk size.",
+            "description": "The `Range` header could not be parsed, or requested more than one range.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -44,8 +44,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "badContent": {
-                    "$ref": "#/components/examples/BadContentProblemExample"
+                  "malformedRange": {
+                    "$ref": "#/components/examples/MalformedRangeProblemExample"
                   }
                 }
               }
