@@ -383,7 +383,24 @@ const intrinsics: Record<string, Handler> = {
             : parsed;
           if (!Array.isArray(elements)) return JSON.stringify(parsed, null, 2);
           if (elements.length === 0) return "[]";
-          return `[\n${elements.map((el) => `  ${JSON.stringify(el)}`).join(",\n")}\n]`;
+          // `data.hl` is a highlight-color index consumed by the interactive
+          // graph (see Graph.ts's HIGHLIGHTS) — display-only, and meaningless
+          // in a plain JSON example, so it's dropped here same as the rest of
+          // the display-only config above.
+          const stripHl = (el: unknown): unknown => {
+            if (
+              typeof el !== "object" ||
+              el === null ||
+              !("data" in el) ||
+              typeof (el as { data?: unknown }).data !== "object" ||
+              (el as { data: unknown }).data === null
+            )
+              return el;
+            const data = { ...(el as { data: Record<string, unknown> }).data };
+            delete data.hl;
+            return { ...el, data };
+          };
+          return `[\n${elements.map((el) => `  ${JSON.stringify(stripHl(el))}`).join(",\n")}\n]`;
         } catch {
           return v.trim();
         }

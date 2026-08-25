@@ -60,7 +60,11 @@ function mdxMarkdownPlugin() {
     jsxImportSource: 'mdmx',
     elementAttributeNameCase: 'react',
     remarkPlugins: [remarkFrontmatter, remarkGfm],
-    rehypePlugins: [], // deliberately none — no expressive-code, no link augmentation
+    // Only inlineCodeAttrs: strips the `{.hl-1}`-style meta blob from the
+    // inline code's own text (content, not styling) before the mdmx JSX
+    // runtime sees it. No expressive-code, no link/http-method augmentation —
+    // those only apply to HTML.
+    rehypePlugins: [inlineCodeAttrs],
   });
   const isMdMdx = (id) => id.endsWith('.mdx?md');
 
