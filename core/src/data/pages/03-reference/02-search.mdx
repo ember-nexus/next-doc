@@ -25,19 +25,19 @@ whatever earlier steps returned - allowing later steps to override values inject
 
 ## Search steps
 
-### Elasticsearch Query DSL Mixin
+### Elasticsearch query
 
 Executes search queries against **Elasticsearch**. Great for full text search, explorative search requests, small logic
 etc. Supports (almost) the full [Elasticsearch Query DSL](https://www.elastic.co/docs/explore-analyze/query-filter/languages/querydsl).
 See the [detail page](/reference/search/elasticsearch-query-dsl-mixin) for its parameters, security aspects and examples.
 
-### Cypher Path
+### Cypher path query
 
 Executes search queries against **Neo4j**. Great for structural search, e.g. "list all comments on blog post X". Uses a
 restricted subset of Cypher 25 dedicated to path searches only, called Cypher Path Subset.
 See the [detail page](/reference/search/cypher-path-subset) for its parameters, security aspects and examples.
 
-### Element Hydration
+### Element hydration
 
 Converts a list of element ids to a collection response, containing elements and all their properties.  
 This step is mostly used to convert results of other search steps to collection responses usable by clients, and is

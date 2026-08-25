@@ -1,9 +1,9 @@
 ---
 type: reference
-title: Cypher Path Subset Search Step
+title: Cypher path query
 ---
 
-The Cypher Path Subset search step is a single task, executable within [search requests](/api/post-search).
+The Cypher path query step is a single task, executable within [search requests](/api/post-search).
 
 It executes a user defined Cypher query against the internal Neo4j database.
 
@@ -27,7 +27,7 @@ safe**.
 ## Input parameters
 
 Any parameters available are passed as query variables to the database, i.e. as `$parameterName` inside the query
-string. Unlike the Elasticsearch Query DSL Mixin step, expressions (`{{...}}`) are not supported here.
+string. Unlike the Elasticsearch query step, expressions (`{{...}}`) are not supported here.
 
 ## Input query
 

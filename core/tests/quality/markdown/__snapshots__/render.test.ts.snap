@@ -1,9 +1,9 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`markdown snapshots > 03-reference/02-search/01-elasticsearch-query-dsl-mixin 1`] = `
-"# Elasticsearch Query DSL Mixin Search Step
+"# Elasticsearch query
 
-The Elasticsearch Query DSL Mixin Search Step allows users to execute queries against the internal Elasticsearch
+The Elasticsearch query step allows users to execute queries against the internal Elasticsearch
 database. As Elasticsearch is a document-based database, **only a list of individual elements** can be returned.
 
 ## Core features

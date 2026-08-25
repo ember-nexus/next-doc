@@ -6,9 +6,9 @@ import searchQuery from './03-parameterized-cypher-search/query.sh?raw';
 import searchResultBody from './03-parameterized-cypher-search/result.json';
 import searchResultHeaders from './03-parameterized-cypher-search/header.txt?raw';
 
-This example shows how to pass parameters into a Cypher Path Subset query, as [query variables](/reference/search/cypher-path-subset#input-parameters)
-rather than string interpolation. Cypher Path Subset does not support expressions like the Elasticsearch Query DSL
-Mixin step does - instead, any step or global parameter is directly available inside the query as a `$variable`.  
+This example shows how to pass parameters into a Cypher path query, as [query variables](/reference/search/cypher-path-subset#input-parameters)
+rather than string interpolation. Cypher path query does not support expressions like the Elasticsearch query
+step does - instead, any step or global parameter is directly available inside the query as a `$variable`.  
 Here, `$taxonNames` restricts the search to plants belonging to any of the given taxa, and Cypher's own `IN` operator
 performs the membership check.
 
