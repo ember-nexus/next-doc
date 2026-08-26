@@ -16,6 +16,15 @@ function headerSection(h: ResponseHeader, depth: 3 | 4): RootContent[] {
     },
     ...parseMarkdownSource(h.description),
   ];
+  if (h.example) {
+    nodes.push({
+      type: "paragraph",
+      children: [
+        { type: "text", value: "Example: " },
+        { type: "inlineCode", value: h.example },
+      ],
+    });
+  }
   const links = linksParagraph(h.links);
   if (links) nodes.push(links);
   return nodes;

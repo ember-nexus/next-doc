@@ -9,4 +9,5 @@ export { requestHeaderCard } from "./RequestHeaderCard.ts";
 export { requestParameterCard } from "./RequestParameterCard.ts";
 export { responseCard } from "./ResponseCard.ts";
 export { responseHeaderCard } from "./ResponseHeaderCard.ts";
+export { responseSchemaCard } from "./ResponseSchemaCard.ts";
 export { schemaPropertyList } from "./SchemaPropertyList.ts";

@@ -7,6 +7,7 @@ import {
   type OperationObject,
   type ParameterObject,
   type PathItemObject,
+  type ReferenceObject,
   type ResponseObject,
   type ResponsesObject,
   type SchemaObject,
@@ -375,22 +376,52 @@ export function extractResponseHeaders(
     }
   }
 
-  return merged.map(({ name, header }): ResponseHeader => ({
-    header: name,
-    presence: header.required ? "always" : "optional",
-    important:
-      (header["x-ember-nexus-important"] as boolean | undefined) ?? false,
-    description: header.description ?? "",
-    links: (header["x-ember-nexus-links"] as Link[] | undefined) ?? [],
-  }));
+  return merged.map(({ name, header }): ResponseHeader => {
+    const headerSchema =
+      header.schema && !isReferenceObject(header.schema)
+        ? (header.schema as SchemaObject)
+        : undefined;
+
+    return {
+      header: name,
+      presence: header.required ? "always" : "optional",
+      important:
+        (header["x-ember-nexus-important"] as boolean | undefined) ?? false,
+      description: header.description ?? "",
+      example: stringifyValue(headerSchema?.example) ?? "",
+      links: (header["x-ember-nexus-links"] as Link[] | undefined) ?? [],
+    };
+  });
+}
+
+/**
+ * Name of the `components.schemas` entry a media-type schema is a bare
+ * `$ref` to, taken from an *undereferenced* spec. `null` for an
+ * inline/anonymous schema, or when no schema is given at all.
+ */
+function schemaRefName(
+  schema: SchemaObject | ReferenceObject | undefined,
+): string | null {
+  if (!schema || !isReferenceObject(schema)) {
+    return null;
+  }
+  const match = /^#\/components\/schemas\/([^/]+)$/.exec(schema.$ref);
+  return match ? match[1] : null;
 }
 
 export function extractResponseExamples(
   spec: OpenAPIObject,
   path: string,
   method: string,
+  /**
+   * The same operation, taken from an undereferenced parse of the spec.
+   * Optional — only needed to populate `schemaRefName` for markdown
+   * rendering; the HTML render target doesn't pass it.
+   */
+  rawSpec?: OpenAPIObject,
 ): ResponseExample[] {
   const op = getOperation(spec, path, method);
+  const rawOp = rawSpec ? getOperation(rawSpec, path, method) : undefined;
   const results: ResponseExample[] = [];
 
   const responses = (op?.responses ?? {}) as ResponsesObject;
@@ -400,10 +431,12 @@ export function extractResponseExamples(
     }
     const response = responseOrRef as ResponseObject;
 
-    const headers = Object.entries(response.headers ?? {})
-      .map(([name, headerOrRef]) => {
+    const headerNames = Object.keys(response.headers ?? {});
+    const headers = headerNames
+      .map((name) => {
+        const headerOrRef = response.headers?.[name];
         let example = "";
-        if (!isReferenceObject(headerOrRef)) {
+        if (headerOrRef && !isReferenceObject(headerOrRef)) {
           const headerSchema = headerOrRef.schema;
           if (headerSchema && !isReferenceObject(headerSchema)) {
             example = String(headerSchema.example ?? "");
@@ -414,6 +447,13 @@ export function extractResponseExamples(
       .join("\n");
 
     const content: ContentObject = response.content ?? {};
+    const rawContent = (rawOp?.responses as ResponsesObject | undefined)?.[
+      statusCode
+    ];
+    const rawResponseContent: ContentObject | undefined =
+      rawContent && !isReferenceObject(rawContent)
+        ? (rawContent as ResponseObject).content
+        : undefined;
     const links = (response["x-ember-nexus-links"] as Link[] | undefined) ?? [];
 
     if (Object.keys(content).length === 0) {
@@ -424,7 +464,9 @@ export function extractResponseExamples(
         links,
         body: null,
         headers,
+        headerNames,
         schema: null,
+        schemaRefName: null,
       });
       continue;
     }
@@ -434,6 +476,7 @@ export function extractResponseExamples(
       const schema = mediaType.schema
         ? JSON.stringify(mediaType.schema, null, 2)
         : null;
+      const refName = schemaRefName(rawResponseContent?.[mimeType]?.schema);
 
       if (examples) {
         for (const [, exampleOrRef] of Object.entries(examples)) {
@@ -455,7 +498,9 @@ export function extractResponseExamples(
               type: isJsonMimeType ? "json" : "plain",
             },
             headers,
+            headerNames,
             schema,
+            schemaRefName: refName,
           });
         }
       } else {
@@ -478,7 +523,9 @@ export function extractResponseExamples(
           links,
           body: isBinary ? { type: "binary" } : null,
           headers,
+          headerNames,
           schema,
+          schemaRefName: refName,
         });
       }
     }
