@@ -8,8 +8,8 @@ swaggerUrl: /{uuid}
 ---
 
 
-Creates a new child node, attached to the referenced `parent  {.hl-1}`-node. The current user needs `CREATE`-access to
-the parent, and the parent must itself be a node - a relation can not own children.
+Creates a new child node, attached to the referenced `parent  {.hl-1}`-node. The current user needs `HAS_CREATE_ACCESS`
+to the parent, and the parent must itself be a node - a relation can not own children.
 
 <g6-graph mode="manual" layout="antv-dagre-LR">
     <script type="application/json">{`

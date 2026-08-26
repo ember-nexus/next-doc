@@ -8,6 +8,7 @@ import { parse } from "node-html-parser";
 
 import { commandParam, commandPath, prime } from "../../lib/index.ts";
 import { footerNav } from "../../mdmx/footerNav.ts";
+import { headerMeta } from "../../mdmx/headerMeta.ts";
 import { getCollection, renderMd } from "../../mdmx/index.ts";
 import { serialize } from "../../mdmx/serialize.ts";
 import { trimBlankLines } from "../../util/htmlUtil.ts";
@@ -40,14 +41,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const GET: APIRoute = async ({ props: { entry } }) => {
   await prime();
-  const {
-    command,
-    name,
-    helpCommand,
-    helpOutput,
-    exampleCommand,
-    exampleOutput,
-  } = entry.data;
+  const { command, helpCommand, helpOutput, exampleCommand, exampleOutput } =
+    entry.data;
 
   const [body, help, example] = await Promise.all([
     renderMd(entry),
@@ -56,19 +51,12 @@ export const GET: APIRoute = async ({ props: { entry } }) => {
   ]);
 
   const md = serialize([
+    ...headerMeta(),
     {
       type: "heading",
       depth: 1,
       children: [{ type: "inlineCode", value: command }],
     },
-    ...(name
-      ? [
-          {
-            type: "paragraph",
-            children: [{ type: "text", value: name }],
-          } as const,
-        ]
-      : []),
     ...body,
     { type: "heading", depth: 2, children: [{ type: "text", value: "Help" }] },
     { type: "code", lang: "bash", value: helpCommand },

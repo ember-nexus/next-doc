@@ -60,6 +60,9 @@ The value of `$.token`, i.e. `secret-token:4pKMAMcI0LlGBuqZDKQEUP`, is your new 
 
 Note: The token has a limited lifetime, i.e. has to be recreated every so often. The number of active tokens per user is unlimited.
 
+Note: The registration endpoint can be disabled via the `register.enabled` configuration option, in which case use the
+[`user:create`](/command/user-create) CLI command instead to bootstrap the first account on a fresh instance.
+
 ## CRUD & element properties
 
 CRUD, standing for **c**reate, **r**ead, **u**pdate and **d**elete, is used to present the minimal steps required to interact with the API in a productive manner.
@@ -246,8 +249,8 @@ curl \
 
 ```json
 {
-  "type": "http://api.example.com/error/404/not-found",
-  "title": "Not found",
+  "type": "https://api.example.com/error/404/not-found",
+  "title": "Not Found",
   "status": 404,
   "detail": "Requested element was not found."
 }

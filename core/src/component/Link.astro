@@ -21,7 +21,7 @@ const icon = download ? "arrow-down" : (isExternal ? "arrow-up-right" : "arrow-r
     rel={isExternal && !download ? "noopener noreferrer" : undefined}
     download={download ? "" : undefined}
 >
-    {link.name}&hairsp;<span class="link-component-icon-wrap"><Icon name={icon} class="link-component-icon" /></span>
+    {link.name}&hairsp;<span class="link-component-icon-wrap"><Icon name={icon} class="link-component-icon" aria-hidden="true" /></span>
 </a>
 
 <style>

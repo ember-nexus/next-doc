@@ -56,7 +56,7 @@ incomplete, thereby creating a resumable upload.
 curl -X PUT -v \
   -H 'Authorization: Bearer secret-token:1nc1pFdBO2QLYRMMvULgtQ' \
   -H 'Content-Disposition: inline; filename=image.jpg' \
-  -H 'Content-Type: image/png' \
+  -H 'Content-Type: image/jpeg' \
   -H 'Upload-Complete: ?0' \
   --data-binary @./image.jpg.01.part \
   https://api.example.com/7ac83b11-3c48-4ecd-930c-97e9dbf47ef3/file

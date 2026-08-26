@@ -41,7 +41,7 @@ const others = headers.filter(h => !h.important);
                         class="flex items-center gap-1.5 text-xs font-semibold tracking-wider uppercase text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer whitespace-nowrap"
                     >
                         Other Headers
-                        <Icon name="chevron-down" class="size-4 transition-transform" :class="{ 'rotate-180': open }" />
+                        <Icon name="chevron-down" class="size-4 transition-transform" :class="{ 'rotate-180': open }" aria-hidden="true" />
                     </button>
                     <div class="flex-1 h-px bg-hairline"></div>
                 </div>

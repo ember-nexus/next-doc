@@ -142,7 +142,13 @@ function buildTree(entries: InternalEntry[]): SidebarItem[] {
  *
  * Within each section, buildTree() handles nested folders and link-groups.
  */
-async function pagesSection(): Promise<SidebarItem[]> {
+// `includeHidden` surfaces pages with `hidden: true` frontmatter (and pages
+// outside the three known section folders, e.g. the top-level `swagger.mdx`)
+// as plain top-level links. The HTML sidebar never passes this — those pages
+// stay off the visible nav, e.g. `swagger.mdx` is reachable via the header's
+// download icon instead — but llms.txt does, so an LLM crawler relying on it
+// as a full site index doesn't miss them.
+async function pagesSection(includeHidden = false): Promise<SidebarItem[]> {
   const allEntries = (await getCollection("pages")).sort(byId);
 
   const result: SidebarItem[] = [];
@@ -150,7 +156,9 @@ async function pagesSection(): Promise<SidebarItem[]> {
   // The "index" entry maps to the root "/" path and is handled specially by
   // the catch-all route (slug === undefined -> "/"). Prepend it as a standalone
   // link at the very top of the sidebar so it appears before any section groups.
-  const indexEntry = allEntries.find((e) => e.id === "index" && !e.data.hidden);
+  const indexEntry = allEntries.find(
+    (e) => e.id === "index" && (includeHidden || !e.data.hidden),
+  );
   if (indexEntry) {
     result.push({
       type: "link",
@@ -167,7 +175,9 @@ async function pagesSection(): Promise<SidebarItem[]> {
 
   for (const { key, label } of sectionDefs) {
     const sectionEntries: InternalEntry[] = allEntries
-      .filter((e) => e.id.startsWith(`${key}/`) && !e.data.hidden)
+      .filter(
+        (e) => e.id.startsWith(`${key}/`) && (includeHidden || !e.data.hidden),
+      )
       .map((e) => ({
         shortId: e.id.slice(key.length + 1), // strip leading "01-getting-started/"
         name: e.data.name ?? e.data.title,
@@ -182,6 +192,21 @@ async function pagesSection(): Promise<SidebarItem[]> {
       variant: "section",
       items: buildTree(sectionEntries),
     });
+  }
+
+  if (includeHidden) {
+    const orphanEntries = allEntries.filter(
+      (e) =>
+        e.id !== "index" &&
+        !sectionDefs.some(({ key }) => e.id.startsWith(`${key}/`)),
+    );
+    for (const e of orphanEntries) {
+      result.push({
+        type: "link",
+        name: e.data.name ?? e.data.title,
+        url: pagePath(e.id),
+      });
+    }
   }
 
   return result;
@@ -287,10 +312,15 @@ async function schemaSection(): Promise<SidebarItem[]> {
 /**
  * The whole sidebar, top to bottom: content pages, then commands, then API.
  * Reorder the spread to taste.
+ *
+ * `includeHidden` is forwarded to `pagesSection()` — see its comment. Only
+ * llms.txt passes `true`; the HTML sidebar uses the default.
  */
-export async function buildSidebar(): Promise<SidebarItem[]> {
+export async function buildSidebar(
+  includeHidden = false,
+): Promise<SidebarItem[]> {
   const [pages, commands, api, schemas] = await Promise.all([
-    pagesSection(),
+    pagesSection(includeHidden),
     apiSection(),
     commandsSection(),
     schemaSection(),

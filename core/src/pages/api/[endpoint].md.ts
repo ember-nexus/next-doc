@@ -13,6 +13,7 @@ import {
   responseHeaderCard,
 } from "../../mdmx/cards/index.ts";
 import { footerNav } from "../../mdmx/footerNav.ts";
+import { headerMeta } from "../../mdmx/headerMeta.ts";
 import { getCollection, renderMd } from "../../mdmx/index.ts";
 import { serialize } from "../../mdmx/serialize.ts";
 import {
@@ -50,6 +51,7 @@ export const GET: APIRoute = async ({ props: { entry } }) => {
   const body = await renderMd(entry);
 
   const md = serialize([
+    ...headerMeta(),
     {
       type: "heading",
       depth: 1,

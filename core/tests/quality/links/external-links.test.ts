@@ -19,6 +19,9 @@ const DOMAIN_WHITELIST: string[] = [
     'api.example.com',
     'hub.docker.com',
     'discord.gg',
+
+    // docker-compose service name used in local example URLs (not a real external host)
+    'minio',
     
     // technologies
     'neo4j.com',

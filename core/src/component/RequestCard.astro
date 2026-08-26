@@ -59,7 +59,7 @@ const isSingle = requestBlocks.length <= 1;
 						<span class="text-gray-300 dark:text-gray-600">/</span>
 						<span x-text="current.sublabel"></span>
 					</span>
-                    <Icon name="chevron-down" class="size-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" />
+                    <Icon name="chevron-down" class="size-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" aria-hidden="true" />
                 </button>
 
                 <div
@@ -126,7 +126,7 @@ const isSingle = requestBlocks.length <= 1;
 									<span class="text-gray-300 dark:text-gray-600">/</span>
 									<span x-text="current.sublabel"></span>
 								</span>
-                                <Icon name="chevron-down" class="size-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" />
+                                <Icon name="chevron-down" class="size-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" aria-hidden="true" />
                             </button>
 
                             <div

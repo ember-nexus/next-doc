@@ -8,6 +8,7 @@ import type { OpenAPIObject } from "openapi3-ts/oas31";
 import { schemaPath } from "../../lib/routes.ts";
 import { schemaPropertyList } from "../../mdmx/cards/index.ts";
 import { footerNav } from "../../mdmx/footerNav.ts";
+import { headerMeta } from "../../mdmx/headerMeta.ts";
 import { parseMarkdownSource } from "../../mdmx/markdownSource.ts";
 import { serialize } from "../../mdmx/serialize.ts";
 import type { Schema } from "../../type";
@@ -33,6 +34,7 @@ export const GET: APIRoute = async ({
     typeof raw.description === "string" ? raw.description : null;
 
   const md = serialize([
+    ...headerMeta(),
     {
       type: "heading",
       depth: 1,

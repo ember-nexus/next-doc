@@ -14,6 +14,11 @@ services:
       - ELASTIC_AUTH=elasticsearch:9200
       - REDIS_AUTH=tcp://redis?password=redis-password
       - RABBITMQ_AUTH=amqp://user:password@rabbitmq:5672
+      - S3_ENDPOINT=http://minio:9000
+      - S3_ACCESS_KEY_ID=ROOTNAME
+      - S3_SECRET_ACCESS_KEY=CHANGEME123
+    depends_on:
+      - minio-init
     networks:
       - default   # to reach neo4j, mongodb, elasticsearch, redis, rabbitmq, minio
       - traefik   # to be reachable by traefik
@@ -93,6 +98,21 @@ services:
       - MINIO_ROOT_USER=ROOTNAME
       - MINIO_ROOT_PASSWORD=CHANGEME123
     command: server /data --console-address ":9001"
+
+  # one-shot container that creates the two S3 buckets Ember Nexus expects (file.S3StorageBucket
+  # and file.S3UploadBucket, see the configuration reference) and then exits; minio does not create
+  # these on its own
+  minio-init:
+    container_name: minio-init
+    image: quay.io/minio/mc:latest
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      until mc alias set local http://minio:9000 ROOTNAME CHANGEME123; do sleep 1; done;
+      mc mb --ignore-existing local/api-storage;
+      mc mb --ignore-existing local/api-upload;
+      "
 
   traefik:
     container_name: traefik

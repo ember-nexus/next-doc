@@ -3,12 +3,9 @@ import { Icon } from "astro-icon/components";
 
 import DesktopSearch from "./DesktopSearch.astro";
 import SidebarToggle from "./SidebarToggle.astro";
-import { markdownPath } from "../lib/index.ts";
+import { apiVersion, markdownPath } from "../lib/index.ts";
 
-let version = import.meta.env.VERSION;
-if (!version || version === '') {
-    version = 'dev';
-}
+const version = apiVersion();
 
 const markdownHref = markdownPath(Astro.url.pathname);
 

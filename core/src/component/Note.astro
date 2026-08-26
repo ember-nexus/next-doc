@@ -11,7 +11,7 @@ const { title } = Astro.props;
     {title ? (
         <>
             <div class="note-header">
-                <Icon name="triangle-alert" class="note-icon" />
+                <Icon name="triangle-alert" class="note-icon" aria-hidden="true" />
                 <p class="note-title">{title}</p>
             </div>
             <div class="note-content">
@@ -20,7 +20,7 @@ const { title } = Astro.props;
         </>
     ) : (
         <div class="note-inline">
-            <Icon name="triangle-alert" class="note-icon" />
+            <Icon name="triangle-alert" class="note-icon" aria-hidden="true" />
             <div class="note-content">
                 <slot />
             </div>

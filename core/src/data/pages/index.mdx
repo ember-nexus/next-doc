@@ -67,7 +67,7 @@ curl \
   -d '{
         "steps": [
           {
-            "type": "elasticsearchQueryDslMixin",
+            "type": "elasticsearch-query-dsl-mixin",
             "query": {
               "match": {
                 "title": "graph"
@@ -75,7 +75,7 @@ curl \
             }
           },
           {
-            "type": "elementHydration"
+            "type": "element-hydration"
           }
         ]
       }' \

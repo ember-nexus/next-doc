@@ -194,7 +194,7 @@ The following access operations exist:
 
 - `OWNS`: Full permissions.
 
-- `HAS_READ_ACCESS`: Only grants read permissions to the element. If you want to grant this access operation, you will likely want to grant `SEARCH` as well.
+- `HAS_READ_ACCESS`: Only grants read permissions to the element. If you want to grant this access operation, you will likely want to grant `HAS_SEARCH_ACCESS` as well.
 
 - `HAS_CREATE_ACCESS`: Grants the permission to create new child nodes underneath the element.
 
@@ -247,7 +247,7 @@ access grant to elements which have that state set somewhere along their `OWNS`-
             { "id": "blog", "type": "Data", "data": { "name": "Blog" }},
             { "id": "post1", "type": "Data", "data": { "name": "Post 1" }},
             { "id": "post2", "type": "Data", "data": { "name": "Post 2" }},
-            { "id": "state", "type": "Data", "data": { "name": "Active" }},
+            { "id": "state", "type": "State", "data": { "name": "Active" }},
             { "id": "ownsBlog", "type": "OWNS", "start": "admin", "end": "blog" },
             { "id": "ownsPost1", "type": "OWNS", "start": "blog", "end": "post1" },
             { "id": "ownsPost2", "type": "OWNS", "start": "blog", "end": "post2" },
