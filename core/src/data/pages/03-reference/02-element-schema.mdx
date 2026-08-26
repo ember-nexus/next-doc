@@ -47,9 +47,6 @@ field internally, so they remain queryable as dates rather than plain text.
 **Note**: A list of numbers (e.g. an embedding) is currently stored as a plain list, with no special vector handling —
 Elasticsearch does not yet index it as a vector field. Native vector search support is planned for a future release.
 
-**Note**: Elasticsearch is not a real-time database — written changes usually take up to a second before they become
-queryable.
-
 ## Special fields
 
 A handful of fields are always written the same way, independent of their content:

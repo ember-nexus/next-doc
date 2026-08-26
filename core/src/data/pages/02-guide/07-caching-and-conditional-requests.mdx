@@ -96,7 +96,7 @@ As we now know the `ETag` value of the request, we can send a second request wit
 
 If the element has stayed the same, the API will respond with a `304 not modified` response, which does not have a
 response body.  
-Should the element did change, the API returns the up-to-date data in its response, as well as its new `ETag` in the
+Should the element have changed, the API returns the up-to-date data in its response, as well as its new `ETag` in the
 response headers.
 
 ```bash /If-None-Match: .\w+./
