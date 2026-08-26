@@ -34,6 +34,7 @@ import expressiveCode from 'astro-expressive-code';
 
 import icon from 'astro-icon';
 import {footnoteBackrefAugmentation, httpMethodAugmentation, inlineCodeAttrs, linkAugmentation} from "./src/plugins/rehype";
+import mdRobotsHeaders from "./src/plugins/mdRobotsHeaders.ts";
 import pagefind from "./src/plugins/pagefind.ts";
 import trailingSlashRedirect from "./src/plugins/trailingSlashRedirect.ts";
 
@@ -132,6 +133,7 @@ export default defineConfig({
   site: 'https://api.ember-nexus.dev',
   integrations: [
     trailingSlashRedirect(),
+    mdRobotsHeaders(),
     expressiveCode(),
     mdx(),
     sitemap(),
