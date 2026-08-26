@@ -7,6 +7,7 @@ import { Code } from "./Code.ts";
 import { CommandGroupList } from "./CommandGroupList.ts";
 import { ComparisonCard } from "./ComparisonCard.ts";
 import { EndpointGroupList } from "./EndpointGroupList.ts";
+import { Iframe } from "./Iframe.ts";
 import { Link } from "./Link.ts";
 import { Missing } from "./Missing.ts";
 import { Note } from "./Note.ts";
@@ -20,6 +21,7 @@ export const mdComponents = {
   CommandGroupList,
   ComparisonCard,
   EndpointGroupList,
+  Iframe,
   Link,
   Missing,
   Note,

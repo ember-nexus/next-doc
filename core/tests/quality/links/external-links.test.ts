@@ -34,6 +34,7 @@ const DOMAIN_WHITELIST: string[] = [
     'aws.amazon.com',
     'www.mongodb.com',
     'securitytxt.org',
+    'www.antlr.org',
     
     // external technologies
     'insomnia.rest',

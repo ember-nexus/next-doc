@@ -27,7 +27,7 @@ How a step reads its `parameters` depends on the step itself, since each one tal
   variables, e.g. `$parameterName` - see [writing a Cypher query](/guide/search/writing-a-cypher-query).
 - The [Elasticsearch query](/reference/search/elasticsearch-query-dsl-mixin) step has no native concept of
   parameters, so Ember Nexus lets you embed `{{expression}}` placeholders anywhere in the query, evaluated with the
-  [Expr Lang](https://expr-lang.org/docs/language-definition) library - see
+  [Expr Lang](/reference/expr-lang) language - see
   [writing an Elasticsearch query](/guide/search/writing-an-elasticsearch-query#parameterized-elasticsearch-queries).
 - The [Element hydration](/reference/search/element-hydration) step does not define explicit parameters, but its
   `elementIds` input accepts an expression too, commonly used to forward ids collected by earlier steps.

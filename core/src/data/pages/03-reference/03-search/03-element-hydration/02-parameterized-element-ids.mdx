@@ -8,7 +8,7 @@ import searchResultHeaders from './02-parameterized-element-ids/header.txt?raw';
 
 Since `elementIds` accepts an [expression](/reference/search/elasticsearch-query-dsl-mixin#parameterized-elasticsearch-queries)
 string instead of a literal array, the list of ids to hydrate can be computed from the step's parameters. This example
-receives a list of `elements` objects, each carrying an arbitrary `score`, and uses [Expr Lang](https://expr-lang.org/docs/language-definition)'s
+receives a list of `elements` objects, each carrying an arbitrary `score`, and uses [Expr Lang](/reference/expr-lang)'s
 `filter`, `sortBy` and `map` functions to keep only elements scoring above `1.0`, sort them by score descending, and
 extract just their `id`s - all without a prior search step.
 

@@ -40,6 +40,12 @@ explorative
 Geospatial
 lilytree
 colour
+parameterizing
+
+# Expr Lang builtin function names
+bitnot
+bitshl
+bitshr
 
 # technologies / grammar tooling
 FrankenPHP
