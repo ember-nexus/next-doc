@@ -10,7 +10,8 @@ database or technology. Results of earlier search steps are available to later s
 allowing **cross-database search logic**.
 
 **Note**: Due to security reasons, most search steps are limited in scope. Specific details and workarounds can be found
-on their detail pages.
+on their detail pages. See [choosing a search step](/guide/search/choosing-a-search-step) for guidance on which step
+fits a given use case.
 
 ### How parameters are resolved
 
@@ -221,6 +222,7 @@ import cypherFirstPolyglotSearchHeader from '../assets/cypher-first-polyglot-sea
 <SearchResponseCard
     responseBody={cypherFirstPolyglotSearch}
     responseHeaders={cypherFirstPolyglotSearchHeader}
+    graphLayout="grid"
 ></SearchResponseCard>
 
 Only plants tagged `red` whose description also contains the word "red" are returned - the Cypher step narrows the
