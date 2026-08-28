@@ -1,17 +1,4 @@
-# Every HTML page has a `*.md` twin (see `core/src/pages/**/*.md.ts`) meant
-# for LLM/agent consumption, not human search results — it's the same content
-# as its HTML page. Only the human-facing search engines are told not to
-# crawl it here; `X-Robots-Tag: noindex` (set on `.md` responses in
-# `tools/Caddyfile`) is what actually keeps it out of the index for engines
-# that don't match one of these rules, without blocking retrieval for anyone
-# else — LLM/AI crawlers are meant to fetch and use the `.md` twins freely.
 User-agent: *
 Allow: /
 
-User-agent: Googlebot
-Disallow: /*.md$
-
-User-agent: Bingbot
-Disallow: /*.md$
-
-Sitemap: https://api.ember-nexus.dev/sitemap-index.xml
+Sitemap: https://next-doc.ember-nexus.dev/sitemap-index.xml
