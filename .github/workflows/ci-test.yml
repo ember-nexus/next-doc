@@ -47,12 +47,12 @@ jobs:
           docker save api-docs:prod-amd | gzip > api-docs-prod-amd.tar.gz
       - uses: actions/upload-artifact@v6
         with:
-          name: docker-image-api-dev-amd
+          name: docker-image-api-docs-dev-amd
           path: api-docs-dev-amd.tar.gz
           retention-days: 7
       - uses: actions/upload-artifact@v6
         with:
-          name: docker-image-api-prod-amd
+          name: docker-image-api-docs-prod-amd
           path: api-docs-prod-amd.tar.gz
           retention-days: 7
 
@@ -67,11 +67,11 @@ jobs:
       - run: mkdir -p /tmp/docker
       - uses: actions/download-artifact@v8
         with:
-          name: docker-image-api-dev-amd
+          name: docker-image-api-docs-dev-amd
           path: /tmp/docker
       - name: CS
         run: |
-          docker load < /tmp/docker/api-dev-amd.tar.gz
+          docker load < /tmp/docker/api-docs-dev-amd.tar.gz
           docker run -v $(pwd):/core --user "$(id -u):$(id -g)" api-docs:dev-amd sh -c "pnpm install && pnpm run cs"
 
   quality:
@@ -85,9 +85,9 @@ jobs:
       - run: mkdir -p /tmp/docker
       - uses: actions/download-artifact@v8
         with:
-          name: docker-image-api-dev-amd
+          name: docker-image-api-docs-dev-amd
           path: /tmp/docker
       - name: Quality
         run: |
-          docker load < /tmp/docker/api-dev-amd.tar.gz
+          docker load < /tmp/docker/api-docs-dev-amd.tar.gz
           docker run -v $(pwd):/core --user "$(id -u):$(id -g)" api-docs:dev-amd sh -c "pnpm install && pnpm run test"
