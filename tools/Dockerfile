@@ -5,10 +5,10 @@ RUN apk add nodejs npm pnpm git && \
     mkdir /core && \
     chmod 777 /core
 
-FROM core AS dev
+FROM core AS development
 RUN apk add bash
 
-FROM core AS prod-build
+FROM core AS production-build
 ARG VERSION=dev
 WORKDIR /core
 COPY core .
@@ -16,7 +16,7 @@ ENV CI=true
 ENV VERSION=${VERSION}
 RUN pnpm install && pnpm run build
 
-FROM caddy:2.11.4-alpine AS prod
-COPY --from=prod-build /core/dist /srv
+FROM caddy:2.11.4-alpine AS production
+COPY --from=production-build /core/dist /srv
 COPY ./tools/Caddyfile /etc/caddy/Caddyfile
 EXPOSE 80
