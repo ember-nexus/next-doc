@@ -1,7 +1,9 @@
 ---
 import { Code } from 'astro-expressive-code/components';
+import { marked } from 'marked';
 
-import { schemaParam } from '../util';
+import { schemaPath } from '../lib/routes.ts';
+import { schemaParam } from '../util/index.ts';
 
 interface Props {
     name: string;
@@ -12,7 +14,7 @@ interface Props {
 
 const { name, node, required, depth = 0 } = Astro.props;
 
-const n = (node != null && typeof node === 'object' ? node : {}) as Record<string, unknown>;
+const n = (node !== null && node !== undefined && typeof node === 'object' ? node : {}) as Record<string, unknown>;
 
 function refName(ref: unknown): string | null {
     if (typeof ref !== 'string') return null;
@@ -30,7 +32,7 @@ interface TypeDisplay {
 
 function describeType(raw: unknown): TypeDisplay {
     const empty: TypeDisplay = { refSlug: null, refLabel: null, suffix: '', plain: '—', format: null };
-    if (raw == null || typeof raw !== 'object') return empty;
+    if (raw === null || raw === undefined || typeof raw !== 'object') return empty;
     const r = raw as Record<string, unknown>;
 
     const direct = refName(r.$ref);
@@ -155,7 +157,7 @@ const discriminatorProp: string | null =
             {typeDisplay.refSlug && (
                 <>
                     <a
-                        href={`/schema/${typeDisplay.refSlug}`}
+                        href={schemaPath(typeDisplay.refSlug)}
                         class="font-mono text-sm text-blue-600 dark:text-blue-400 hover:underline"
                     >
                         {typeDisplay.refLabel}
@@ -185,7 +187,7 @@ const discriminatorProp: string | null =
     </div>
 
     {description && (
-        <p class="text-sm text-gray-600 dark:text-gray-400">{description}</p>
+        <div class="text-sm text-gray-600 dark:text-gray-400" set:html={marked.parse(description)}></div>
     )}
 
     {exampleKind === 'scalar' && (
@@ -228,7 +230,7 @@ const discriminatorProp: string | null =
                     <div class="flex flex-col gap-0.5 px-4 py-2.5 bg-white dark:bg-black">
                         <div class="flex items-center gap-2">
                             <a
-                                href={`/schema/${v.slug}`}
+                                href={schemaPath(v.slug)}
                                 class="font-mono text-sm text-blue-600 dark:text-blue-400 hover:underline"
                             >
                                 {v.name} ↗

@@ -4,7 +4,7 @@
       "put": {
         "responses": {
           "400": {
-            "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
+            "description": "General issues with the user provided request, e.g. malformed content, or the request tries to set a protected property (e.g. `created`, `updated`) directly.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -44,8 +44,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "missingProperty": {
-                    "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  "forbiddenProperty": {
+                    "$ref": "#/components/examples/ForbiddenPropertyProblemExample"
                   }
                 }
               }

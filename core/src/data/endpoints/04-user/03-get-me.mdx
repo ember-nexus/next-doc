@@ -7,6 +7,8 @@ endpointUrl: /me
 swaggerUrl: /me
 ---
 
-Alias endpoint, returns the current user's node.
+Alias endpoint, returns the current user's node. This is equivalent to `GET /<uuid>` for the authenticated user's own
+`id`, and is especially useful to find out that `id`, e.g. to use it when creating new relations, without already
+knowing it.
 
-This is especially useful to find out the current user's `id`, which can then be used to create new relations.
+If no token is supplied, the request is treated as the default anonymous user.

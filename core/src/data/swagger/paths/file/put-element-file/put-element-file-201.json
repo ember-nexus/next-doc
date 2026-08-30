@@ -4,7 +4,7 @@
       "put": {
         "responses": {
           "201": {
-            "description": "`PUT` element file request was successful.  \nSpecific meaning depends on request:\n\n- When a complete file was uploaded: The element's file was successfully replaced.\n- When a resumable file upload was requested: The resumable file upload was created successfully, and its URL is written to the `Location` response header.",
+            "description": "The complete file was uploaded directly (`Upload-Complete: ?1`, or the header was omitted) and is now attached to the element, replacing any previous file. Returned without a response body.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -23,9 +23,6 @@
               },
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
-              },
-              "Location": {
-                "$ref": "#/components/headers/Location-created"
               },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"

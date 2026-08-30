@@ -1,6 +1,7 @@
 ---
 type: page
 title: "Ember Nexus: Knowledge Graph API"
+name: Overview
 ---
 
 Ember Nexus is a self-hosted backend for connected data. You store **elements** - nodes and the
@@ -66,7 +67,7 @@ curl \
   -d '{
         "steps": [
           {
-            "type": "elasticsearchQueryDslMixin",
+            "type": "elasticsearch-query-dsl-mixin",
             "query": {
               "match": {
                 "title": "graph"
@@ -74,7 +75,7 @@ curl \
             }
           },
           {
-            "type": "elementHydration"
+            "type": "element-hydration"
           }
         ]
       }' \
@@ -110,8 +111,9 @@ Neo4j and Elasticsearch are memory-hungry. A complete Docker Compose setup is pa
 ## Get started
 
 - [Installation](/getting-started/installation) — running in minutes with Docker Compose
-- [First steps](/getting-started/first-steps) — create a user, get a token, store your first data
-- [Search](/getting-started/search) — write your first search pipeline
+- [First steps](/getting-started/first-api-requests) — create a user, get a token, store your first data
+- [Search](/guide/search) — write your first search pipeline
 - [Live demo](https://reference-dataset.ember-nexus.dev/) — explore a running instance with
-example data
+example data, including tokens that never expire
+- [GitHub](https://github.com/ember-nexus/api) — releases, issues, and the source itself
 - [Discord](https://discord.gg/qbQFBrJrRC) — ask questions, share what you build

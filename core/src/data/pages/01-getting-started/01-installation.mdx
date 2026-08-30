@@ -10,8 +10,9 @@ work in upstream dependencies.
 
 ## Requirements
 
-**Hardware requirements**: Normal deployments require at least 8 GB of RAM, because both Neo4j and Elasticsearch -
-mandatory components of the Ember Nexus deployment - are Java based and can consume a lot of memory.
+**Hardware requirements**: Normal deployments require at least 8 GB of RAM, 4+ vCPUs, and 10 GB of SSD storage, because
+both Neo4j and Elasticsearch - mandatory components of the Ember Nexus deployment - are Java based and can consume a
+lot of memory.
 
 **Software requirements**: Docker is required.
 
@@ -46,7 +47,7 @@ itself.
 
 import dockerComposeTraefik from "../../../../public/docker-compose.traefik.yml?raw"
 
-<Code code={dockerComposeTraefik} lang="yaml" collapse={["20-88"]} />
+<Code code={dockerComposeTraefik} lang="yaml" collapse={["27-96"]} mark={["yourEmail@example.com", "api.your-domain.com"]} />
 
 This file can be <Link link={{ url: '/docker-compose.traefik.yml', name: 'downloaded directly' }} download />.
 

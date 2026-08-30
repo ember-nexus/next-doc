@@ -9,7 +9,7 @@
         "description": "Number of elements to be returned in a single page.",
         "x-ember-nexus-links": [
           {
-            "url": "/guide/pagination-todo",
+            "url": "/guide/pagination",
             "name": "Pagination tutorial"
           }
         ],

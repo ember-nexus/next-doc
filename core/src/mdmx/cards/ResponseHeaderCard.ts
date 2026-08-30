@@ -1,8 +1,8 @@
 import type { RootContent } from "mdast";
 
-import { linksParagraph } from "./linkNode";
+import { linksParagraph } from "./linkNode.ts";
 import type { ResponseHeader } from "../../type";
-import { parseMarkdownSource } from "../markdownSource";
+import { parseMarkdownSource } from "../markdownSource.ts";
 
 function headerSection(h: ResponseHeader, depth: 3 | 4): RootContent[] {
   const nodes: RootContent[] = [
@@ -16,6 +16,15 @@ function headerSection(h: ResponseHeader, depth: 3 | 4): RootContent[] {
     },
     ...parseMarkdownSource(h.description),
   ];
+  if (h.example) {
+    nodes.push({
+      type: "paragraph",
+      children: [
+        { type: "text", value: "Example: " },
+        { type: "inlineCode", value: h.example },
+      ],
+    });
+  }
   const links = linksParagraph(h.links);
   if (links) nodes.push(links);
   return nodes;

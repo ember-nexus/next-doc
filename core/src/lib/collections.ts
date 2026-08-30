@@ -17,25 +17,37 @@ import { type CollectionEntry, getCollection } from "astro:content";
 import type { OpenAPIObject } from "openapi3-ts/oas31";
 
 import type { Schema } from "../type";
-import { extractSchemas } from "../util";
+import { extractSchemas } from "../util/index.ts";
 
 let endpoints: CollectionEntry<"endpoints">[] = [];
 let commands: CollectionEntry<"commands">[] = [];
 let schemas: Schema[] = [];
+
+// Cache the in-flight *promise*, not just a "done" flag — assigning it
+// synchronously (before the first `await`) means concurrent callers (every
+// page calls `prime()`) reuse the same fetch instead of each racing to see
+// a still-unprimed cache and redundantly redoing the work. `primed` tracks
+// actual *completion* separately, so `assertPrimed()` still catches a caller
+// that forgot to `await prime()` (as opposed to one that merely called it).
+let primePromise: Promise<void> | null = null;
 let primed = false;
 
 /** Populates the module-level cache. Idempotent — safe to call from every page. */
-export async function prime(): Promise<void> {
-  if (primed) return;
-  const [endpointEntries, commandEntries, spec] = await Promise.all([
-    getCollection("endpoints"),
-    getCollection("commands"),
-    SwaggerParser.parse("./src/data/swagger.json") as Promise<OpenAPIObject>,
-  ]);
-  endpoints = endpointEntries;
-  commands = commandEntries;
-  schemas = extractSchemas(spec);
-  primed = true;
+export function prime(): Promise<void> {
+  if (!primePromise) {
+    primePromise = Promise.all([
+      getCollection("endpoints"),
+      getCollection("commands"),
+      SwaggerParser.parse("./src/data/swagger.json") as Promise<OpenAPIObject>,
+    ]).then(([endpointEntries, commandEntries, spec]) => {
+      endpoints = endpointEntries;
+      commands = commandEntries;
+      schemas = extractSchemas(spec);
+      primed = true;
+      return;
+    });
+  }
+  return primePromise;
 }
 
 function assertPrimed(): void {

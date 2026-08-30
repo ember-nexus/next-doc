@@ -12,12 +12,16 @@ import { join } from 'path'
 const DOMAIN_WHITELIST: string[] = [
     // Ember Nexus domains
     'reference-dataset.ember-nexus.dev',
+    'ember-nexus.dev',
     
     // Ember Nexus related domains
     'github.com',
     'api.example.com',
     'hub.docker.com',
     'discord.gg',
+
+    // docker-compose service name used in local example URLs (not a real external host)
+    'minio',
     
     // technologies
     'neo4j.com',
@@ -30,6 +34,7 @@ const DOMAIN_WHITELIST: string[] = [
     'aws.amazon.com',
     'www.mongodb.com',
     'securitytxt.org',
+    'www.antlr.org',
     
     // external technologies
     'insomnia.rest',
@@ -48,7 +53,12 @@ const DOMAIN_WHITELIST: string[] = [
     'sourcefirst.com',
     'symfony.com',
     'xxhash.com',
-    'expr-lang.org'
+    'expr-lang.org',
+    'opencypher.org',
+    'ember-nexus.github.io',
+    'opengql.github.io',
+    'en.wikipedia.org',
+    'www.php.net'
 ]
 
 // ── helpers ──

@@ -18,6 +18,7 @@ export const HTTP_STATUS_CODE = {
   200: "OK",
   201: "Created",
   204: "No Content",
+  206: "Partial Content",
   304: "Not Modified",
   400: "Bad Request",
   401: "Unauthorized",
@@ -27,6 +28,7 @@ export const HTTP_STATUS_CODE = {
   409: "Conflict",
   410: "Gone",
   412: "Precondition Failed",
+  416: "Range Not Satisfiable",
   429: "Too Many Requests",
   500: "Internal Server Error",
 } as const;

@@ -37,7 +37,34 @@
                 "url": "https://http.dev/200",
                 "name": "HTTP.dev"
               }
-            ]
+            ],
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResultResponse"
+                },
+                "examples": {
+                  "default": {
+                    "summary": "Full text search, hydrated into a collection of elements.",
+                    "value": {
+                      "type": "_SearchResultResponse",
+                      "results": [
+                        {
+                          "type": "Plant",
+                          "id": "258c0dfe-b1d8-4839-beed-d00d1b544a96",
+                          "data": {
+                            "created": "2025-09-25T18:35:28+00:00",
+                            "updated": "2025-09-25T18:35:28+00:00",
+                            "name": "Flame Lily",
+                            "description": "Gloriosa superba is a species of flowering plant in the family Colchicaceae."
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }

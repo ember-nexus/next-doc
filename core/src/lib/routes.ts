@@ -114,7 +114,7 @@ export const endpointParam = (endpoint: string): string =>
 export const endpointPath = (endpoint: string): string =>
   "/api/" + endpointParam(endpoint);
 
-// --- schemas: routed by schema/[schema] ---------------------------------------
+// --- OpenAPI schemas: routed by openapi-schema/[schema] ------------------------
 
 /** "ElementId" -> "element-id" (the id produced by extractSchemas / schemaParam) */
-export const schemaPath = (id: string): string => "/schema/" + id;
+export const schemaPath = (id: string): string => "/openapi-schema/" + id;

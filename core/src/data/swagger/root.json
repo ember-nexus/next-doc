@@ -35,8 +35,8 @@
             "name": "HTTP.dev"
           },
           {
-            "url": "/guide/getting-started-guide-todo",
-            "name": "Getting started guide"
+            "url": "/guide/authentication",
+            "name": "Authentication guide"
           }
         ]
       }

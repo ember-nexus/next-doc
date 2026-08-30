@@ -8,8 +8,8 @@
 // (`markdownPath`), same helper the header button and footer nav use.
 import type { RootContent } from "mdast";
 
-import { buildSidebar } from "./sidebar";
-import { markdownPath } from "./routes";
+import { markdownPath } from "./routes.ts";
+import { buildSidebar } from "./sidebar.ts";
 import type { SidebarItem } from "../type";
 
 const linkChild = (url: string, children: RootContent[]): RootContent => ({
@@ -48,12 +48,17 @@ function itemToListItem(item: SidebarItem, kind?: ItemKind): RootContent {
         kind === "command"
           ? { type: "inlineCode", value: item.name }
           : { type: "text", value: item.name };
-      return listItem([{ type: "paragraph", children: [linkChild(item.url, [label])] }]);
+      return listItem([
+        { type: "paragraph", children: [linkChild(item.url, [label])] },
+      ]);
     }
 
     case "link-group":
       return listItem([
-        { type: "paragraph", children: [linkChild(item.url, [{ type: "text", value: item.name }])] },
+        {
+          type: "paragraph",
+          children: [linkChild(item.url, [{ type: "text", value: item.name }])],
+        },
         list(item.items.map((i) => itemToListItem(i, kind))),
       ]);
 
@@ -69,7 +74,10 @@ function itemToListItem(item: SidebarItem, kind?: ItemKind): RootContent {
           type: "paragraph",
           children: [
             linkChild(item.url, [
-              { type: "inlineCode", value: `${item.method.toUpperCase()} ${item.endpointUrl}` },
+              {
+                type: "inlineCode",
+                value: `${item.method.toUpperCase()} ${item.endpointUrl}`,
+              },
               { type: "text", value: ` — ${item.name}` },
             ]),
           ],
@@ -79,24 +87,41 @@ function itemToListItem(item: SidebarItem, kind?: ItemKind): RootContent {
 }
 
 /**
- * The whole sidebar as `## Heading` + nested list per top-level section. The
- * "index" entry is the one bare `link` `buildSidebar()` emits outside of any
- * section group (see `sidebar.ts`'s pagesSection()); everything else is a
- * top-level `group` (variant "section").
+ * The whole sidebar as `## Heading` + nested list per top-level section. Bare
+ * `link` items outside of any section group - the "index" entry, plus (only
+ * here, via `buildSidebar(true)`) pages hidden from the HTML sidebar like
+ * `swagger.mdx` - are collected under one shared "Overview" heading; every
+ * other item is a top-level `group` (variant "section"); see `sidebar.ts`'s
+ * pagesSection().
  */
 export async function buildLlmsBody(): Promise<RootContent[]> {
-  const items = await buildSidebar();
+  const items = await buildSidebar(true);
   const nodes: RootContent[] = [];
+  const overviewLinks: SidebarItem[] = [];
 
   for (const item of items) {
     if (item.type === "link") {
-      nodes.push({ type: "heading", depth: 2, children: [{ type: "text", value: "Overview" }] });
-      nodes.push(list([itemToListItem(item)]));
+      overviewLinks.push(item);
     } else if (item.type === "group" && item.variant === "section") {
-      nodes.push({ type: "heading", depth: 2, children: [{ type: "text", value: item.name }] });
+      nodes.push({
+        type: "heading",
+        depth: 2,
+        children: [{ type: "text", value: item.name }],
+      });
       const kind: ItemKind = item.name === "Commands" ? "command" : undefined;
       nodes.push(list(item.items.map((i) => itemToListItem(i, kind))));
     }
+  }
+
+  if (overviewLinks.length > 0) {
+    nodes.unshift(
+      {
+        type: "heading",
+        depth: 2,
+        children: [{ type: "text", value: "Overview" }],
+      },
+      list(overviewLinks.map((i) => itemToListItem(i))),
+    );
   }
 
   return nodes;

@@ -24,9 +24,6 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
-              "Location": {
-                "$ref": "#/components/headers/Location-created"
-              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
@@ -40,7 +37,22 @@
                 "url": "https://http.dev/201",
                 "name": "HTTP.dev"
               }
-            ]
+            ],
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                },
+                "examples": {
+                  "default": {
+                    "value": {
+                      "type": "_TokenResponse",
+                      "token": "secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }

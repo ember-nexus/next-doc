@@ -7,6 +7,24 @@ endpointUrl: /<uuid>/file
 swaggerUrl: /{uuid}/file
 ---
 
-Similar to `POST /<uuid>/file`, i.e. the endpoint is used to either attach a file to the referenced element or to create
-a new resumable upload for it, but this endpoint does not return an error if the element already has a file attached to
-it.
+Behaves exactly like [`POST /<uuid>/file`](/api/post-element-file) - the same `Upload-Complete`, `Upload-Length`,
+`Content-Disposition` and `Repr-Digest` headers select between a direct upload (`201 Created`) and a resumable upload
+(`204 No Content` with a `Location` header), verify upload integrity, and the same `Upload-Limit` rules apply to
+chunk sizes.
+
+The only difference is that this endpoint does not require the element to be empty: if it already has a file
+attached, that file is replaced once the (possibly resumable) upload completes - including replacing it with a file
+of a different extension, e.g. overwriting a `.jpg` with a `.txt`. The old file is removed from storage as part of
+the replacement.
+
+<Note>
+    Because a replacement is destructive, this endpoint supports `If-Match` against the current file's `ETag`,
+    letting concurrent writers detect that the file changed since it was last read. `POST` has no such check, since
+    it can only ever create a file, never overwrite one.
+</Note>
+
+<Note>
+    If a `Repr-Digest` (or `Content-Digest`) sent with the upload does not match the uploaded content, the request
+    fails with `400 Bad Request` and the existing file is left untouched - a failed replacement never leaves the
+    element without a file, or with a partially-written one.
+</Note>

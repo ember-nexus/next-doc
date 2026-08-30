@@ -3,7 +3,7 @@
     "/token": {
       "post": {
         "summary": "Post token",
-        "description": "Creates a new token.",
+        "description": "Creates a new token for the current user.",
         "operationId": "post-token",
         "tags": [
           "User"
@@ -23,38 +23,39 @@
                 "type": "object",
                 "required": [
                   "type",
-                  "data"
+                  "uniqueUserIdentifier",
+                  "password"
                 ],
                 "properties": {
                   "type": {
                     "type": "string",
-                    "description": "The type of element to be created.",
-                    "example": "Demo"
+                    "description": "Must be `Token`. No other values are currently possible.",
+                    "enum": [
+                      "Token"
+                    ],
+                    "example": "Token"
                   },
-                  "id": {
+                  "uniqueUserIdentifier": {
                     "type": "string",
-                    "format": "uuid",
-                    "description": "The element's UUID. Auto-generated if not provided.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
+                    "description": "Some attribute uniquely identifying a user, normally an email address. The property name used to store it can be configured server-side.",
+                    "example": "test@example.com"
                   },
-                  "start": {
+                  "password": {
                     "type": "string",
-                    "format": "uuid",
-                    "description": "The start node's UUID. Required for relations.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
+                    "description": "The plain text password of the user.",
+                    "example": "1234"
                   },
-                  "end": {
-                    "type": "string",
-                    "format": "uuid",
-                    "description": "The end node's UUID. Required for relations.",
-                    "example": "ecfe46ff-d3c7-4ca7-9b41-9be5476d36e0"
+                  "lifetimeInSeconds": {
+                    "type": "integer",
+                    "description": "Optional requested token lifetime, in seconds. Silently clamped to the server-configured minimum/maximum lifetime. Defaults to the server-configured default lifetime if omitted.",
+                    "example": 3600
                   },
                   "data": {
                     "type": "object",
-                    "description": "Arbitrary data related to the element.",
+                    "description": "Optional, arbitrary properties stored on the new token element.",
                     "additionalProperties": true,
                     "example": {
-                      "hello": "world :D"
+                      "key": "value"
                     }
                   }
                 }
@@ -62,29 +63,29 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "POST",
-          "url": "https://api.example.com/token",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/token",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"type\": \"Token\", \"uniqueUserIdentifier\": \"test@example.com\", \"password\": \"1234\"}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
           }
-        }
+        ]
       }
     }
   }

@@ -4,7 +4,7 @@
       "get": {
         "responses": {
           "200": {
-            "description": "Token found. Returns a node.",
+            "description": "Returns the configured `security.txt` file's content as-is.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -24,9 +24,6 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
-              "ETag": {
-                "$ref": "#/components/headers/ETag"
-              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
@@ -42,20 +39,13 @@
               }
             ],
             "content": {
-              "application/json": {
+              "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Element"
+                  "type": "string"
                 },
                 "examples": {
-                  "node": {
-                    "type": "Token",
-                    "id": "74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-                    "data": {
-                      "created": "2025-09-27T10:39:51+00:00",
-                      "updated": "2025-09-27T10:39:51+00:00",
-                      "name": "Blue",
-                      "content": "Blue is one of the three primary colours in the RYB colour model...\n"
-                    }
+                  "securityTxt": {
+                    "value": "Contact: https://ember-nexus.dev/contact\nExpires: 2026-01-01T00:00:00.000Z\n"
                   }
                 }
               }

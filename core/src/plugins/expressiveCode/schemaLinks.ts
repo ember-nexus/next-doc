@@ -1,21 +1,24 @@
-// @ts-check
-import { definePlugin, ExpressiveCodeAnnotation } from 'astro-expressive-code';
-import { h } from 'astro-expressive-code/hast';
+import type {
+  AnnotationBaseOptions,
+  AnnotationRenderOptions,
+  ExpressiveCodeHookContext,
+  ExpressiveCodePlugin,
+} from "@expressive-code/core";
+import { ExpressiveCodeAnnotation, definePlugin } from "astro-expressive-code";
+import { h } from "astro-expressive-code/hast";
+import type { Parents } from "hast";
 
 /**
  * Converts a PascalCase/camelCase schema name to the URL slug used by the
- * schema pages, e.g. "ElementId" -> "element-id".
+ * OpenAPI schema pages, e.g. "ElementId" -> "element-id".
  * Must stay in sync with schemaParam() in src/util/SwaggerUtil.ts.
- *
- * @param {string} name
- * @returns {string}
  */
-function schemaParam(name) {
+function schemaParam(name: string): string {
   return name
-    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-    .replace(/[^a-zA-Z0-9]+/g, '-')
+    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+    .replace(/[^a-zA-Z0-9]+/g, "-")
     .toLowerCase()
-    .replace(/^-+|-+$/g, '')
+    .replace(/^-+|-+$/g, "");
 }
 
 /**
@@ -23,17 +26,17 @@ function schemaParam(name) {
  * schema page for the matched ref.
  */
 class SchemaRefAnnotation extends ExpressiveCodeAnnotation {
-  /** @param {{ href: string } & ConstructorParameters<typeof ExpressiveCodeAnnotation>[0]} options */
-  constructor({ href, ...rest }) {
-    super(rest)
-    this.href = href
+  href: string;
+
+  constructor({ href, ...rest }: { href: string } & AnnotationBaseOptions) {
+    super(rest);
+    this.href = href;
   }
 
-  /** @param {import('@expressive-code/core').AnnotationRenderOptions} context */
-  render({ nodesToTransform }) {
+  render({ nodesToTransform }: AnnotationRenderOptions): Parents[] {
     return nodesToTransform.map((node) =>
-      h('a', { href: this.href, class: 'ec-schema-ref' }, [node])
-    )
+      h("a", { href: this.href, class: "ec-schema-ref" }, [node]),
+    );
   }
 }
 
@@ -41,11 +44,11 @@ class SchemaRefAnnotation extends ExpressiveCodeAnnotation {
 //   "#/components/schemas/ElementId"
 // Captures the schema name (group 1) and records the offset of the name
 // within the full line so we can build a precise inlineRange.
-const SCHEMA_REF_RE = /#\/components\/schemas\/([A-Za-z0-9_]+)/g
+const SCHEMA_REF_RE = /#\/components\/schemas\/([A-Za-z0-9_]+)/g;
 
-export function schemaLinks() {
+export function schemaLinks(): ExpressiveCodePlugin {
   return definePlugin({
-    name: 'Schema Links',
+    name: "Schema Links",
 
     baseStyles: `
       a.ec-schema-ref {
@@ -65,32 +68,33 @@ export function schemaLinks() {
     `,
 
     hooks: {
-      annotateCode({ codeBlock }) {
+      annotateCode({ codeBlock }: ExpressiveCodeHookContext): void {
         // Only process JSON code blocks.
-        if (codeBlock.language !== 'json') return
+        if (codeBlock.language !== "json") return;
 
         codeBlock.getLines().forEach((line) => {
-          const text = line.text
-          SCHEMA_REF_RE.lastIndex = 0
+          const text = line.text;
+          SCHEMA_REF_RE.lastIndex = 0;
 
-          let match
+          let match;
           while ((match = SCHEMA_REF_RE.exec(text)) !== null) {
-            const schemaName = match[1]
-            const href = `/schema/${schemaParam(schemaName)}`
+            const schemaName = match[1];
+            // Must stay in sync with schemaPath() in src/lib/routes.ts.
+            const href = `/openapi-schema/${schemaParam(schemaName)}`;
 
             // Annotate the full matched string, e.g. "#/components/schemas/ElementId"
-            const columnStart = match.index
-            const columnEnd = match.index + match[0].length
+            const columnStart = match.index;
+            const columnEnd = match.index + match[0].length;
 
             line.addAnnotation(
               new SchemaRefAnnotation({
                 href,
                 inlineRange: { columnStart, columnEnd },
-              })
-            )
+              }),
+            );
           }
-        })
+        });
       },
     },
-  })
+  });
 }

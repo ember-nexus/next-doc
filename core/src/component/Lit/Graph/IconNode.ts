@@ -8,7 +8,11 @@ const _canvas =
   typeof document !== "undefined" ? document.createElement("canvas") : null;
 const _ctx = _canvas ? _canvas.getContext("2d") : null;
 
-function measureText(text, fontSize, fontFamily) {
+function measureText(
+  text: unknown,
+  fontSize: number,
+  fontFamily: string,
+): [number, number] {
   if (!_ctx) return [String(text).length * fontSize * 0.6, fontSize];
   _ctx.font = `${fontSize}px ${fontFamily}`;
   const m = _ctx.measureText(String(text));
@@ -18,13 +22,30 @@ function measureText(text, fontSize, fontFamily) {
   return [m.width, h];
 }
 
+interface IconNodeGeometryOptions {
+  labelText?: string;
+  fontSize?: number;
+  fontFamily?: string;
+  iconSize?: number;
+}
+
+interface IconNodeGeometry {
+  textSize: [number, number];
+  outerCircleRadius: number;
+  iconY: number;
+  textCenterY: number;
+  iconSize: number;
+  fontSize: number;
+  fontFamily: string;
+}
+
 // Your original geometry, extracted so the layout can reuse the radius (see below).
 export function iconNodeGeometry({
   labelText = "",
   fontSize = 12,
   fontFamily = "Fira Code",
   iconSize = 24,
-}) {
+}: IconNodeGeometryOptions): IconNodeGeometry {
   const textSize = measureText(labelText, fontSize, fontFamily);
   const scw = measureText(" ", fontSize, fontFamily)[0];
 
@@ -56,7 +77,7 @@ export function iconNodeGeometry({
 }
 
 class IconNode extends Circle {
-  render(attributes = this.parsedAttributes, container) {
+  render(attributes = this.parsedAttributes, container): void {
     const labelText = attributes.labelText ?? "";
     const geo = iconNodeGeometry({
       labelText,
@@ -111,7 +132,7 @@ class IconNode extends Circle {
 
   // Pulsating highlight. The halo sub-shape only exists when `halo` is truthy,
   // which Graph.ts sets per-node from `data.highlight`, so its presence is the signal.
-  onCreate() {
+  onCreate(): void {
     super.onCreate?.();
     const halo = this.shapeMap?.halo;
     if (halo && this.attributes.highlight) {

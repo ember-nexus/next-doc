@@ -1,7 +1,7 @@
 import type { RootContent } from "mdast";
 
-import { endpointsInGroup } from "../../lib/collections";
-import { endpointPath } from "../../lib/routes";
+import { endpointsInGroup } from "../../lib/collections.ts";
+import { endpointPath } from "../../lib/routes.ts";
 
 interface Props {
   group: string;

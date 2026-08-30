@@ -1,8 +1,9 @@
 ---
 import SwaggerParser from '@apidevtools/swagger-parser';
+import type { GetStaticPaths } from 'astro';
 import { getCollection, render } from 'astro:content';
 
-import { htmlComponents } from '../../component/registry.html';
+import { htmlComponents } from '../../component/registry.html.ts';
 import RequestBodyCard from "../../component/RequestBodyCard.astro";
 import RequestCard from '../../component/RequestCard.astro';
 import RequestHeaderCard from '../../component/RequestHeaderCard.astro';
@@ -10,23 +11,23 @@ import RequestParameterCard from '../../component/RequestParameterCard.astro';
 import ResponseCard from '../../component/ResponseCard.astro';
 import ResponseHeaderCard from '../../component/ResponseHeaderCard.astro';
 import Default from '../../layouts/Default.astro';
-import { endpointParam } from '../../lib';
+import { endpointParam } from '../../lib/index.ts';
 import {
-    extractHarExample,
+    extractHarExamples,
     extractRequestBody,
     extractRequestHeaders,
     extractRequestParameters,
     extractResponseExamples,
     extractResponseHeaders,
-} from '../../util';
+} from '../../util/index.ts';
 
-export async function getStaticPaths() {
+export const getStaticPaths: GetStaticPaths = async () => {
     const entries = await getCollection('endpoints');
     return entries.map((entry) => ({
         params: { endpoint: endpointParam(entry.data.endpoint) },
         props: { entry },
     }));
-}
+};
 
 const { entry } = Astro.props;
 const { Content, headings: contentHeadings } = await render(entry);
@@ -35,9 +36,9 @@ const { method, endpointUrl, swaggerUrl, name, description } = entry.data;
 const spec = await SwaggerParser.dereference('./src/data/swagger.json');
 
 const path = swaggerUrl ?? '/';
-const method2 = swaggerUrl == null ? 'get' : method;
+const method2 = swaggerUrl === undefined ? 'get' : method;
 
-const request = extractHarExample(spec, path, method2);
+const requests = extractHarExamples(spec, path, method2);
 const requestParameters = extractRequestParameters(spec, path, method2);
 const requestHeaders = extractRequestHeaders(spec, path, method2);
 const requestBody = extractRequestBody(spec, path, method2);
@@ -71,8 +72,8 @@ const cardHeadings: { depth: number; slug: string; text: string }[] = [
         <Content components={htmlComponents} />
     </div>
 
-    <RequestCard request={request} id="request" />
-    <ResponseCard examples={responseExamples} id="response" />
+    <RequestCard requests={requests} id="request" />
+    <ResponseCard examples={responseExamples} id="response" method={method} />
     <RequestParameterCard parameters={requestParameters} id="request-parameters" />
     <RequestHeaderCard headers={requestHeaders} id="request-header" />
     {requestBody && <RequestBodyCard body={requestBody} id="request-body" />}

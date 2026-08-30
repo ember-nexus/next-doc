@@ -2,22 +2,28 @@
 // `mdmx`-side counterpart of `src/component/registry.html.ts`. Every
 // exported function takes the same props its `.astro` twin does and returns
 // mdast node(s) instead of rendering HTML.
-import { Code } from "./Code";
-import { CommandGroupList } from "./CommandGroupList";
-import { ComparisonCard } from "./ComparisonCard";
-import { EndpointGroupList } from "./EndpointGroupList";
-import { Link } from "./Link";
-import { Note } from "./Note";
-import { SchemaList } from "./SchemaList";
-import { SearchResponseCard } from "./SearchResponseCard";
-import { TwoColumn } from "./TwoColumn";
+import { Check } from "./Check.ts";
+import { Code } from "./Code.ts";
+import { CommandGroupList } from "./CommandGroupList.ts";
+import { ComparisonCard } from "./ComparisonCard.ts";
+import { EndpointGroupList } from "./EndpointGroupList.ts";
+import { Iframe } from "./Iframe.ts";
+import { Link } from "./Link.ts";
+import { Missing } from "./Missing.ts";
+import { Note } from "./Note.ts";
+import { SchemaList } from "./SchemaList.ts";
+import { SearchResponseCard } from "./SearchResponseCard.ts";
+import { TwoColumn } from "./TwoColumn.ts";
 
 export const mdComponents = {
+  Check,
   Code,
   CommandGroupList,
   ComparisonCard,
   EndpointGroupList,
+  Iframe,
   Link,
+  Missing,
   Note,
   SchemaList,
   SearchResponseCard,

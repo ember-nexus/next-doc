@@ -39,3 +39,15 @@ which is created between any two nodes.
         </g6-graph>
     </ComparisonCard>
 </TwoColumn>
+
+To create a relation, both `start` and `end` must be provided together - supplying only one of them is rejected. The two
+properties are also checked asymmetrically: the current user needs `HAS_CREATE_ACCESS` on the `start` node (a new
+relation is being attached to it), but only `HAS_READ_ACCESS` on the `end` node. Both `start` and `end` must reference nodes; using
+the id of an existing relation for either property is rejected.
+
+<Note>
+    A handful of types are reserved for internal use (`User`, `Token`, `Upload`) and can not be used as the `type` of a
+    newly created element, and a handful of properties can not be set directly either - see
+    [Reserved data types](/reference/security#reserved-data-types) and
+    [Reserved properties](/reference/security#reserved-properties).
+</Note>

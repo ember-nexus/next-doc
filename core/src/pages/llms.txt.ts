@@ -6,8 +6,8 @@
 // silently drift out of sync with the actual site nav.
 import type { APIRoute } from "astro";
 
-import { buildLlmsBody } from "../lib";
-import { serialize } from "../mdmx/serialize";
+import { apiVersion, buildLlmsBody } from "../lib/index.ts";
+import { serialize } from "../mdmx/serialize.ts";
 
 const staticHeader = `# Ember Nexus API
 
@@ -28,7 +28,7 @@ This site's documentation is also available as plain Markdown: append \`.md\` to
 export const GET: APIRoute = async () => {
   const dynamicBody = serialize(await buildLlmsBody());
 
-  const body = `${staticHeader}\n\n${dynamicBody}`;
+  const body = `${staticHeader}\n\nAPI version: ${apiVersion()}\n\n${dynamicBody}`;
 
   return new Response(body, {
     headers: { "Content-Type": "text/markdown; charset=utf-8" },

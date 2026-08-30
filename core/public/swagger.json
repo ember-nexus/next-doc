@@ -1,6 +1,56 @@
 {
   "components": {
     "examples": {
+      "BadContentProblemExample": {
+        "summary": "A provided property has the wrong type or fails a validation rule.",
+        "value": {
+          "type": "https://api.example.com/error/400/bad-content",
+          "title": "Bad content",
+          "status": 400,
+          "detail": "Endpoint expects property 'newPassword' to be password which is not identical to the old password, got string '<redacted>'."
+        }
+      },
+      "FileAlreadyExistsProblemExample": {
+        "value": {
+          "type": "https://api.example.com/error/409/conflict",
+          "title": "Conflict",
+          "status": 409,
+          "detail": "Element with id '7b80b203-2b82-40f5-accd-c7089fe6114e' already has an associated file; can not create new file. Delete existing file first or replace it with PUT."
+        }
+      },
+      "ForbiddenProblemExample": {
+        "value": {
+          "type": "https://api.example.com/error/403/forbidden",
+          "title": "Forbidden",
+          "status": 403,
+          "detail": "Requested endpoint, element or action is forbidden."
+        }
+      },
+      "ForbiddenPropertyProblemExample": {
+        "value": {
+          "type": "https://api.example.com/error/400/forbidden-property",
+          "title": "Forbidden property",
+          "status": 400,
+          "detail": "Endpoint does not accept setting the property 'created' in the request."
+        }
+      },
+      "GoneProblemExample": {
+        "value": {
+          "type": "https://api.example.com/error/410/gone",
+          "title": "Gone",
+          "status": 410,
+          "detail": "Requested resource is no longer available and is expected to soon be permanently deleted."
+        }
+      },
+      "MalformedRangeProblemExample": {
+        "summary": "The `Range` header could not be parsed, or requests more than one range.",
+        "value": {
+          "type": "https://api.example.com/error/400/bad-content",
+          "title": "Bad content",
+          "status": 400,
+          "detail": "Could not parse 'Range' header: 'bytes=0-10,20-30'. Only a single range of the form 'bytes=<start>-<end>', 'bytes=<start>-' or 'bytes=-<suffixLength>' is supported."
+        }
+      },
       "MissingPropertyProblemExample": {
         "value": {
           "type": "https://api.example.com/error/400/missing-property",
@@ -17,6 +67,16 @@
           "detail": "Requested element was not found."
         }
       },
+      "OffsetMismatchProblemExample": {
+        "value": {
+          "type": "https://api.example.com/error/409/conflict",
+          "title": "Conflict",
+          "status": 409,
+          "detail": "Offset from request does not match offset of resource.",
+          "expected-offset": 20971520,
+          "provided-offset": 10485760
+        }
+      },
       "PreconditionFailedProblemExample": {
         "summary": "Precondition failed. `If-Match` or `If-None-Match` condition not met.",
         "value": {
@@ -24,6 +84,25 @@
           "title": "Precondition Failed",
           "status": 412,
           "detail": "Precondition does not match."
+        }
+      },
+      "RangeNotSatisfiableProblemExample": {
+        "value": {
+          "type": "https://api.example.com/error/416/range-not-satisfiable",
+          "title": "Range Not Satisfiable",
+          "status": 416,
+          "detail": "Requested range start (200000) is beyond the end of the resource (138937 bytes long).",
+          "requested-start": 200000,
+          "total-length": 138937
+        }
+      },
+      "ReservedIdentifierProblemExample": {
+        "summary": "The unique user identifier is already used by another account.",
+        "value": {
+          "type": "https://api.example.com/error/400/reserved-identifier",
+          "title": "Reserved identifier",
+          "status": 400,
+          "detail": "The requested identifier 'test@example.com' is reserved and can not be used."
         }
       },
       "UnauthorizedProblemExample": {
@@ -36,6 +115,23 @@
       }
     },
     "headers": {
+      "Accept-Ranges": {
+        "description": "Always `bytes` - indicates that this endpoint honors the `Range` request header for partial downloads.",
+        "schema": {
+          "type": "string",
+          "example": "bytes"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Accept-Ranges",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/accept-ranges",
+            "name": "HTTP.dev"
+          }
+        ]
+      },
       "Access-Control-Allow-Headers": {
         "description": "Specifies which HTTP headers can be used during a cross-origin request, returned in preflight responses.",
         "schema": {
@@ -163,6 +259,25 @@
         "x-ember-nexus-important": true,
         "required": true
       },
+      "Content-Range": {
+        "description": "Byte range actually returned, plus the total size of the file: `bytes [start]-[end]/[total]`, e.g. `bytes 0-99/138937`. Only present on a `206 Partial Content` response.",
+        "schema": {
+          "type": "string",
+          "example": "bytes 0-99/138937"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Range",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/content-range",
+            "name": "HTTP.dev"
+          }
+        ],
+        "x-ember-nexus-important": true,
+        "required": true
+      },
       "ETag": {
         "description": "Entity tag used for caching and optimistic concurrency control.",
         "schema": {
@@ -179,7 +294,7 @@
             "name": "HTTP.dev"
           },
           {
-            "url": "/guide/caching-guide-todo",
+            "url": "/guide/caching-and-conditional-requests",
             "name": "Caching guide"
           }
         ],
@@ -202,12 +317,31 @@
             "name": "HTTP.dev"
           },
           {
-            "url": "/guide/caching-guide-todo",
+            "url": "/guide/caching-and-conditional-requests",
             "name": "Caching guide"
           }
         ],
         "x-ember-nexus-important": true,
         "required": false
+      },
+      "Expires": {
+        "description": "Point in time after which the unfinished resumable upload is discarded, if it is not completed before then.",
+        "schema": {
+          "type": "string",
+          "example": "Sat, 22 Aug 2026 21:22:07 GMT"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Expires",
+            "name": "MDN"
+          },
+          {
+            "url": "https://http.dev/expires",
+            "name": "HTTP.dev"
+          }
+        ],
+        "x-ember-nexus-important": true,
+        "required": true
       },
       "Location-created": {
         "description": "URL of the newly created resource.",
@@ -222,6 +356,100 @@
           },
           {
             "url": "https://http.dev/location",
+            "name": "HTTP.dev"
+          }
+        ],
+        "x-ember-nexus-important": true,
+        "required": true
+      },
+      "Repr-Digest": {
+        "description": "Cryptographic digest of the file's full content, in RFC 9530 structured-field format. Only `sha-256` is supported: `sha-256=:[base64]:`, where the base64 payload is the raw 32-byte SHA-256 digest. Omitted if the element has no stored hash yet (e.g. records predating this feature).",
+        "schema": {
+          "type": "string",
+          "example": "sha-256=:X4a4pOezhox2tI5PXW8UAd7NAdOKPjE3wYlYs+eTt7Y=:"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://datatracker.ietf.org/doc/html/rfc9530",
+            "name": "RFC 9530"
+          },
+          {
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Repr-Digest",
+            "name": "MDN"
+          }
+        ],
+        "x-ember-nexus-important": true
+      },
+      "Upload-Complete": {
+        "description": "Structured boolean indicating whether the upload is finished: `?1` for complete, `?0` for still in progress.",
+        "schema": {
+          "type": "string",
+          "example": "?0"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://datatracker.ietf.org/doc/draft-ietf-httpbis-resumable-upload/",
+            "name": "IETF draft"
+          },
+          {
+            "url": "https://http.dev/upload-complete",
+            "name": "HTTP.dev"
+          }
+        ],
+        "x-ember-nexus-important": true,
+        "required": true
+      },
+      "Upload-Length": {
+        "description": "Total number of bytes the finished file will have. Optional - omitted when the total size is not known ahead of time.",
+        "schema": {
+          "type": "integer",
+          "example": 20971520
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://datatracker.ietf.org/doc/draft-ietf-httpbis-resumable-upload/",
+            "name": "IETF draft"
+          },
+          {
+            "url": "https://http.dev/upload-length",
+            "name": "HTTP.dev"
+          }
+        ],
+        "x-ember-nexus-important": true,
+        "required": false
+      },
+      "Upload-Limit": {
+        "description": "Structured field listing the server's limits for this upload: `max-age` (seconds an unfinished upload is kept alive since its first request), `max-size` (maximum total file size in bytes), `min-append-size` (minimum size in bytes for a non-final chunk) and `max-append-size` (maximum size in bytes per chunk).",
+        "schema": {
+          "type": "string",
+          "example": "max-age=10800, max-size=10737418240, min-append-size=5242880, max-append-size=105906176"
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://datatracker.ietf.org/doc/draft-ietf-httpbis-resumable-upload/",
+            "name": "IETF draft"
+          },
+          {
+            "url": "https://http.dev/upload-limit",
+            "name": "HTTP.dev"
+          }
+        ],
+        "x-ember-nexus-important": true,
+        "required": true
+      },
+      "Upload-Offset": {
+        "description": "Number of bytes already stored for the resumable upload. On a request, it must match the upload's current offset exactly; on a response, it reflects the offset after the request was processed.",
+        "schema": {
+          "type": "integer",
+          "example": 5242880
+        },
+        "x-ember-nexus-links": [
+          {
+            "url": "https://datatracker.ietf.org/doc/draft-ietf-httpbis-resumable-upload/",
+            "name": "IETF draft"
+          },
+          {
+            "url": "https://http.dev/upload-offset",
             "name": "HTTP.dev"
           }
         ],
@@ -264,7 +492,7 @@
             "name": "HTTP.dev"
           },
           {
-            "url": "/guide/caching-guide-todo",
+            "url": "/guide/caching-and-conditional-requests",
             "name": "Caching guide"
           }
         ],
@@ -288,7 +516,7 @@
             "name": "HTTP.dev"
           },
           {
-            "url": "/guide/caching-guide-todo",
+            "url": "/guide/caching-and-conditional-requests",
             "name": "Caching guide"
           }
         ],
@@ -304,7 +532,7 @@
         "description": "Index of the page to be accessed. First page / index is 1.",
         "x-ember-nexus-links": [
           {
-            "url": "/guide/pagination-todo",
+            "url": "/guide/pagination",
             "name": "Pagination tutorial"
           }
         ],
@@ -322,7 +550,7 @@
         "description": "Number of elements to be returned in a single page.",
         "x-ember-nexus-links": [
           {
-            "url": "/guide/pagination-todo",
+            "url": "/guide/pagination",
             "name": "Pagination tutorial"
           }
         ],
@@ -348,8 +576,8 @@
             "name": "HTTP.dev"
           },
           {
-            "url": "/guide/getting-started-guide-todo",
-            "name": "Getting started guide"
+            "url": "/guide/authentication",
+            "name": "Authentication guide"
           }
         ]
       }
@@ -434,6 +662,128 @@
           }
         }
       },
+      "GraphStructure": {
+        "type": "object",
+        "description": "The node and relation types currently present in the graph.",
+        "required": [
+          "nodeTypes",
+          "relationTypes"
+        ],
+        "properties": {
+          "nodeTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Collection",
+              "Comment",
+              "Data",
+              "Group",
+              "Location",
+              "Tag",
+              "Token",
+              "User"
+            ]
+          },
+          "relationTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "HAS_READ_ACCESS",
+              "HAS_SEARCH_ACCESS",
+              "HAS_TAG",
+              "IS_IN_GROUP",
+              "IS_MEMBER_OF",
+              "OWNS",
+              "RELATED"
+            ]
+          }
+        }
+      },
+      "InstanceConfiguration": {
+        "type": "object",
+        "description": "Configuration parameters and limits of the current API instance.",
+        "properties": {
+          "version": {
+            "type": "string",
+            "nullable": true,
+            "description": "API version. `null` if the administrator has disabled exposing it via `instanceConfiguration.showVersion`.",
+            "example": "0.1.31"
+          },
+          "pageSize": {
+            "type": "object",
+            "properties": {
+              "min": {
+                "type": "integer",
+                "example": 5
+              },
+              "default": {
+                "type": "integer",
+                "example": 25
+              },
+              "max": {
+                "type": "integer",
+                "example": 100
+              }
+            }
+          },
+          "register": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "example": true
+              },
+              "uniqueIdentifier": {
+                "type": "string",
+                "example": "email"
+              },
+              "uniqueIdentifierRegex": {
+                "type": "boolean",
+                "nullable": true,
+                "example": false
+              }
+            }
+          },
+          "expression": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "example": true
+              },
+              "maxLength": {
+                "type": "integer",
+                "example": 10240
+              }
+            }
+          },
+          "file": {
+            "type": "object",
+            "properties": {
+              "maxFileSizeInBytes": {
+                "type": "integer",
+                "example": 10737418240
+              },
+              "uploadExpiresInSecondsAfterFirstRequest": {
+                "type": "integer",
+                "example": 10800
+              },
+              "uploadMinChunkSizeInBytes": {
+                "type": "integer",
+                "example": 5242880
+              },
+              "uploadMaxChunkSizeInBytes": {
+                "type": "integer",
+                "example": 105906176
+              }
+            }
+          }
+        }
+      },
       "PartialCollection": {
         "type": "object",
         "required": [
@@ -490,6 +840,44 @@
           },
           "detail": {
             "type": "string"
+          }
+        }
+      },
+      "SearchResultResponse": {
+        "type": "object",
+        "required": [
+          "type",
+          "results"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "_SearchResultResponse"
+            ]
+          },
+          "results": {
+            "description": "The result of the last executed search step. If the last step is an `element-hydration` step, this is a plain array of hydrated elements. Otherwise, its shape depends on the last step's type (e.g. `{ elements, totalHits, maxScore }` for `elasticsearch-query-dsl-mixin`, or `{ paths }` for `cypher-path-subset`).",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Element"
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": true
+              }
+            ]
+          },
+          "debug": {
+            "type": "array",
+            "description": "Only present if the request body's `debug` property was set to true. Contains one entry per executed search step, with step-specific timing and query information.",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
           }
         }
       },
@@ -583,6 +971,43 @@
                     }
                   }
                 }
+              },
+              "parameters": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Step-local parameters. In addition to arbitrary values used by expressions inside `query`, this step recognizes the following well-known keys.",
+                "properties": {
+                  "nodeTypes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Restricts the search to the given node types."
+                  },
+                  "relationTypes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Restricts the search to the given relation types."
+                  },
+                  "page": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "Page of results to return."
+                  },
+                  "pageSize": {
+                    "type": "integer",
+                    "default": 25,
+                    "description": "Number of results per page."
+                  },
+                  "minScore": {
+                    "type": "number",
+                    "nullable": true,
+                    "default": null,
+                    "description": "If set, removes all results with a lower Elasticsearch relevance score."
+                  }
+                }
               }
             }
           }
@@ -611,6 +1036,28 @@
             }
           }
         ]
+      },
+      "TokenResponse": {
+        "type": "object",
+        "description": "Response returned after successfully creating a new token. Unlike other endpoints, this is not an Element.",
+        "required": [
+          "type",
+          "token"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "_TokenResponse"
+            ],
+            "example": "_TokenResponse"
+          },
+          "token": {
+            "type": "string",
+            "description": "The newly created token, in the RFC 8959 `secret-token:` scheme. It is only ever shown once; use `GET /token` or `GET /me` afterwards to inspect the resulting elements instead.",
+            "example": "secret-token:PIPeJGUt7c00ENn8a5uDlc"
+          }
+        }
       }
     }
   },
@@ -823,21 +1270,25 @@
             "description": "Id of the element to be deleted."
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "DELETE",
-          "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "DELETE",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       },
       "get": {
         "responses": {
@@ -1130,21 +1581,25 @@
             "$ref": "#/components/parameters/If-None-Match"
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       },
       "patch": {
         "responses": {
@@ -1188,7 +1643,7 @@
             ]
           },
           "400": {
-            "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
+            "description": "General issues with the user provided request, e.g. malformed content, or the request tries to set a protected property (e.g. `created`, `updated`) directly.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -1228,8 +1683,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "missingProperty": {
-                    "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  "forbiddenProperty": {
+                    "$ref": "#/components/examples/ForbiddenPropertyProblemExample"
                   }
                 }
               }
@@ -1419,29 +1874,33 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "PATCH",
-          "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "PATCH",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"someDataKey\": \"some new value :D\"}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"someDataKey\": \"some new value :D\"}"
           }
-        }
+        ]
       },
       "post": {
         "responses": {
@@ -1581,7 +2040,7 @@
             }
           },
           "404": {
-            "description": "At least one of the referenced nodes (start / end) does not exist, relevant only for relations.",
+            "description": "The referenced parent element does not exist, is not a node (e.g. it is a relation), or the current user does not have permission to create elements under it.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -1677,29 +2136,33 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "POST",
-          "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
           }
-        }
+        ]
       },
       "put": {
         "responses": {
@@ -1743,7 +2206,7 @@
             ]
           },
           "400": {
-            "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
+            "description": "General issues with the user provided request, e.g. malformed content, or the request tries to set a protected property (e.g. `created`, `updated`) directly.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -1783,8 +2246,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "missingProperty": {
-                    "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  "forbiddenProperty": {
+                    "$ref": "#/components/examples/ForbiddenPropertyProblemExample"
                   }
                 }
               }
@@ -1974,29 +2437,33 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "PUT",
-          "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "PUT",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"someDataKey\": \"some new value :D\"}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"someDataKey\": \"some new value :D\"}"
           }
-        }
+        ]
       }
     },
     "/{uuid}/children": {
@@ -2408,21 +2875,25 @@
             "$ref": "#/components/parameters/If-None-Match"
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac/children",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac/children",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       }
     },
     "/": {
@@ -2683,21 +3154,25 @@
             "$ref": "#/components/parameters/If-None-Match"
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       },
       "post": {
         "responses": {
@@ -2945,29 +3420,60 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "POST",
-          "url": "https://api.example.com/",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "name": "Node request",
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
+          },
+          {
+            "name": "Relation request",
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"type\": \"RELATION\", \"start\": \"f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103\", \"end\": \"ecfe46ff-d3c7-4ca7-9b41-9be5476d36e0\", \"data\": {\"hello\": \"world :D\"}}"
+              }
+            }
           }
-        }
+        ]
       }
     },
     "/{uuid}/parents": {
@@ -3277,21 +3783,25 @@
             "$ref": "#/components/parameters/If-None-Match"
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac/parents",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac/parents",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       }
     },
     "/{uuid}/related": {
@@ -3641,20 +4151,1056 @@
             "$ref": "#/components/parameters/If-None-Match"
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac/related",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac/related",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
+          }
+        ]
+      }
+    },
+    "/error/400/bad-content": {
+      "get": {
+        "summary": "Get error 400 bad content",
+        "description": "Static informational page for the `https://api.example.com/error/400/bad-content` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-400-bad-content",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/400/bad-content",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "400_bad_content": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 400 - Bad Content\n\n This error is thrown, when a required request property is set, but does not contain a valid value.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 400 error code: https://http.dev/400\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/400/forbidden-property": {
+      "get": {
+        "summary": "Get error 400 forbidden property",
+        "description": "Static informational page for the `https://api.example.com/error/400/forbidden-property` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-400-forbidden-property",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/400/forbidden-property",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "400_forbidden_property": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 400 - Forbidden Property\n\n This error is thrown when the request body contains a property, which is either generally not allowed or can not be\n changed manually.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 400 error code: https://http.dev/400\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/400/incomplete-mutual-dependency": {
+      "get": {
+        "summary": "Get error 400 incomplete mutual dependency",
+        "description": "Static informational page for the `https://api.example.com/error/400/incomplete-mutual-dependency` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-400-incomplete-mutual-dependency",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/400/incomplete-mutual-dependency",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "400_incomplete_mutual_dependency": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 400 - Incomplete Mutual Dependency\n\n This error is thrown when there are properties which depend on ech other, i.e. must be all defined, but at least one\n is missing from the request body. Try to add the missing properties.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 400 error code: https://http.dev/400\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/400/missing-property": {
+      "get": {
+        "summary": "Get error 400 missing property",
+        "description": "Static informational page for the `https://api.example.com/error/400/missing-property` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-400-missing-property",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/400/missing-property",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "400_missing_property": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 400 - Missing Property\n\n This error is thrown when the request body does not contain a required property.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 400 error code: https://http.dev/400\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/400/reserved-identifier": {
+      "get": {
+        "summary": "Get error 400 reserved identifier",
+        "description": "Static informational page for the `https://api.example.com/error/400/reserved-identifier` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-400-reserved-identifier",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/400/reserved-identifier",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "400_reserved_identifier": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 400 - Reserved Identifier\n\n The exception is thrown when an identifier is used which is already in use or reserved.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 400 error code: https://http.dev/400\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/400/reserved-type": {
+      "get": {
+        "summary": "Get error 400 reserved type",
+        "description": "Static informational page for the `https://api.example.com/error/400/reserved-type` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-400-reserved-type",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/400/reserved-type",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "400_reserved_type": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 400 - Reserved Type\n\n The exception is thrown when a reserved type is used.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 400 error code: https://http.dev/400\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/401/unauthorized": {
+      "get": {
+        "summary": "Get error 401 unauthorized",
+        "description": "Static informational page for the `https://api.example.com/error/401/unauthorized` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-401-unauthorized",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/401/unauthorized",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "401_unauthorized": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 401 - Unauthorized\n\n Request does not contain valid token, or anonymous user is disabled.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 401 error code: https://http.dev/401\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/403/forbidden": {
+      "get": {
+        "summary": "Get error 403 forbidden",
+        "description": "Static informational page for the `https://api.example.com/error/403/forbidden` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-403-forbidden",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/403/forbidden",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "403_forbidden": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 403 - Forbidden\n\n This error is thrown when the requested endpoint, element or action is forbidden.\n\n There are a few things you can check:\n\n - Is the endpoint available via the GET method?\n - Do you have access to the endpoint?\n - Is the endpoint disabled in the configuration?\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 403 error code: https://http.dev/403\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/404/not-found": {
+      "get": {
+        "summary": "Get error 404 not found",
+        "description": "Static informational page for the `https://api.example.com/error/404/not-found` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-404-not-found",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/404/not-found",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "404_not_found": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 404 - Not Found\n\n The requested element was not found.\n\n This can happen due to multiple reasons:\n\n - The requested route does not exist.\n - The requested element did never exist.\n - There is a typo within the element's UUID.\n - You do not have access to the element.\n - You do not have the correct type of access to the element.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 404 error code: https://http.dev/404\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/412/precondition-failed": {
+      "get": {
+        "summary": "Get error 412 precondition failed",
+        "description": "Static informational page for the `https://api.example.com/error/412/precondition-failed` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-412-precondition-failed",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/412/precondition-failed",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "412_precondition_failed": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 412 - Precondition Failed\n\n Precondition does not match.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 412 error code: https://http.dev/412\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/500/internal-server-error": {
+      "get": {
+        "summary": "Get error 500 internal server error",
+        "description": "Static informational page for the `https://api.example.com/error/500/internal-server-error` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-500-internal-server-error",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/500/internal-server-error",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "500_internal_server_error": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 500 - Internal Server Error\n\n The server has some internal problem. You can try to repeat your request at a later time.\n Should the problem persist, contact this site's administrator.\n\n As an administrator, you should be able to find the cause in the server's logs.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 500 error code: https://http.dev/500\n\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/error/501/not-implemented": {
+      "get": {
+        "summary": "Get error 501 not implemented",
+        "description": "Static informational page for the `https://api.example.com/error/501/not-implemented` problem type, explaining why the error is thrown.",
+        "operationId": "get-error-501-not-implemented",
+        "tags": [
+          "Error"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/error/501/not-implemented",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a static, human-readable explanation of the error.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "501_not_implemented": {
+                    "value": "  _____           _                 _   _                          _    ____ ___\n | ____|_ __ ___ | |__   ___ _ __  | \\ | | _____  ___   _ ___     / \\  |  _ \\_ _|\n |  _| | '_ ` _ \\| '_ \\ / _ \\ '__| |  \\| |/ _ \\ \\/ / | | / __|   / _ \\ | |_) | |\n | |___| | | | | | |_) |  __/ |    | |\\  |  __/⟩  ⟨| |_| \\__ \\  / ___ \\|  __/| |\n |_____|_| |_| |_|_.__/ \\___|_|    |_| \\_|\\___/_/\\_\\\\__,_|___/ /_/   \\_\\_|  |___|\n\n\n Error 501 - Not Implemented\n\n Endpoint is currently not implemented. Try upgrading the software.\n\n Link to the documentation: https://ember-nexus.github.io/api\n\n Link to http.dev's explanation of the 501 error code: https://http.dev/501\n\n"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -3843,7 +5389,7 @@
           }
         },
         "summary": "Delete element file",
-        "description": "Deletes the file of an given element.",
+        "description": "Deletes the file attached to an element, along with the file-related metadata on the element itself. Does not delete the element.",
         "operationId": "delete-element-file",
         "tags": [
           "File"
@@ -3863,29 +5409,33 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Id of the element to be deleted."
+            "description": "Id of the element whose file is to be deleted."
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "DELETE",
-          "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "DELETE",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       },
       "get": {
         "responses": {
           "200": {
-            "description": "File found and returned as a stream.",
+            "description": "File found and returned as a stream. No `Range` header was sent, so the complete file is returned.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -3899,6 +5449,9 @@
               "Access-Control-Expose-Headers": {
                 "$ref": "#/components/headers/Access-Control-Expose-Headers"
               },
+              "Accept-Ranges": {
+                "$ref": "#/components/headers/Accept-Ranges"
+              },
               "Allow": {
                 "$ref": "#/components/headers/Allow"
               },
@@ -3911,6 +5464,9 @@
               "ETag": {
                 "$ref": "#/components/headers/ETag"
               },
+              "Repr-Digest": {
+                "$ref": "#/components/headers/Repr-Digest"
+              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
@@ -3922,6 +5478,65 @@
               },
               {
                 "url": "https://http.dev/200",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "206": {
+            "description": "Partial file content returned, matching the requested `Range`. The end of an open-ended or overlong range is clamped to the file's actual length rather than rejected.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Accept-Ranges": {
+                "$ref": "#/components/headers/Accept-Ranges"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "Content-Disposition": {
+                "$ref": "#/components/headers/Content-Disposition"
+              },
+              "Content-Range": {
+                "$ref": "#/components/headers/Content-Range"
+              },
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              },
+              "Repr-Digest": {
+                "$ref": "#/components/headers/Repr-Digest"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/206",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/206",
                 "name": "HTTP.dev"
               }
             ],
@@ -3972,6 +5587,54 @@
                 "name": "HTTP.dev"
               }
             ]
+          },
+          "400": {
+            "description": "The `Range` header could not be parsed, or requested more than one range.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/400",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/400",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "malformedRange": {
+                    "$ref": "#/components/examples/MalformedRangeProblemExample"
+                  }
+                }
+              }
+            }
           },
           "401": {
             "description": "The provided token is either invalid or expired.",
@@ -4116,10 +5779,58 @@
                 }
               }
             }
+          },
+          "416": {
+            "description": "The requested `Range` cannot be satisfied - its start is beyond the end of the file, the file is empty, or the range spans zero bytes.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/416",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/416",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "rangeNotSatisfiable": {
+                    "$ref": "#/components/examples/RangeNotSatisfiableProblemExample"
+                  }
+                }
+              }
+            }
           }
         },
         "summary": "Get element file",
-        "description": "Retrieves the binary file attached to a specific element.",
+        "description": "Retrieves the binary file attached to a specific element. Supports partial downloads via the `Range` header.",
         "operationId": "get-element-file",
         "tags": [
           "File"
@@ -4145,28 +5856,78 @@
           },
           {
             "$ref": "#/components/parameters/If-None-Match"
+          },
+          {
+            "name": "Range",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "bytes=0-99"
+            },
+            "description": "Requests a single byte range of the file instead of the full content: `bytes=[start]-[end]`, `bytes=[start]-` (open-ended) or `bytes=-[suffixLength]` (last N bytes) - e.g. `bytes=0-1048575` for the first megabyte. Multiple comma-separated ranges are not supported and fail with `400 Bad Request`."
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac/file",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac/file",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       },
       "post": {
         "responses": {
           "201": {
-            "description": "`POST` element file request was successful.  \nSpecific meaning depends on request:\n\n- When a complete file was uploaded: The element's file was successfully created.\n- When a resumable file upload was requested: The resumable file upload was created successfully, and its URL is written to the `Location` response header.",
+            "description": "The complete file was uploaded directly (`Upload-Complete: ?1`, or the header was omitted) and is now attached to the element. Returned without a response body.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/201",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/201",
+                "name": "HTTP.dev"
+              }
+            ]
+          },
+          "204": {
+            "description": "A resumable upload (`Upload-Complete: ?0`) was created successfully. Its URL is returned in the `Location` header - continue it with `PATCH`, inspect it with `HEAD`, or abort it with `DELETE` against that URL.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -4189,23 +5950,38 @@
               "Location": {
                 "$ref": "#/components/headers/Location-created"
               },
+              "Upload-Complete": {
+                "$ref": "#/components/headers/Upload-Complete"
+              },
+              "Upload-Offset": {
+                "$ref": "#/components/headers/Upload-Offset"
+              },
+              "Upload-Length": {
+                "$ref": "#/components/headers/Upload-Length"
+              },
+              "Upload-Limit": {
+                "$ref": "#/components/headers/Upload-Limit"
+              },
+              "Expires": {
+                "$ref": "#/components/headers/Expires"
+              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/201",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/204",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/201",
+                "url": "https://http.dev/204",
                 "name": "HTTP.dev"
               }
             ]
           },
           "400": {
-            "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
+            "description": "General issues with the request, e.g. a malformed or inconsistent upload header, or an uploaded chunk that violates the configured min/max chunk size.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -4245,8 +6021,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "missingProperty": {
-                    "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  "badContent": {
+                    "$ref": "#/components/examples/BadContentProblemExample"
                   }
                 }
               }
@@ -4347,10 +6123,58 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "The element already has a file attached. Delete the existing file first, or replace it with `PUT`.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/409",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/409",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "fileAlreadyExists": {
+                    "$ref": "#/components/examples/FileAlreadyExistsProblemExample"
+                  }
+                }
+              }
+            }
           }
         },
         "summary": "Post element file",
-        "description": "Creates a new file. Requires that the element does not have a file attached already.",
+        "description": "Creates a new file for an element, either by uploading the complete file directly or by starting a resumable upload. Fails if the element already has a file attached.",
         "operationId": "post-element-file",
         "tags": [
           "File"
@@ -4361,70 +6185,180 @@
           },
           {}
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Id of the element the file is attached to."
+          },
+          {
+            "name": "Upload-Complete",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "?1"
+            },
+            "description": "`?1` uploads the request body as the complete, final file. `?0` starts a resumable upload instead - the request body, if any, is stored as the first chunk. Omitting the header behaves like `?1`."
+          },
+          {
+            "name": "Upload-Length",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 20971520
+            },
+            "description": "Total size in bytes of the finished file. Only read when starting a resumable upload (`Upload-Complete: ?0`); optional even then."
+          },
+          {
+            "name": "Content-Disposition",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "attachment; filename=\"report.pdf\""
+            },
+            "description": "Original filename of the uploaded file, used to derive the file's extension. Falls back to `bin` if omitted or if no extension can be parsed."
+          },
+          {
+            "name": "Repr-Digest",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "sha-256=:X4a4pOezhox2tI5PXW8UAd7NAdOKPjE3wYlYs+eTt7Y=:"
+            },
+            "description": "Cryptographic digest of the complete file, checked against the uploaded content once the direct upload finishes. Only `sha-256` is supported. A mismatch fails with `400 Bad Request` and the file is not stored. `Content-Digest` is accepted as a fallback if `Repr-Digest` is absent. Only meaningful for a complete (non-resumable) upload; for a resumable upload, verify the digest on the completing `PATCH` request instead."
+          }
+        ],
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
-            "application/json": {
+            "application/octet-stream": {
               "schema": {
-                "type": "object",
-                "required": [
-                  "type",
-                  "data"
-                ],
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "description": "The type of element to be created.",
-                    "example": "Demo"
-                  },
-                  "id": {
-                    "type": "string",
-                    "format": "uuid",
-                    "description": "The element's UUID. Auto-generated if not provided.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
-                  },
-                  "data": {
-                    "type": "object",
-                    "description": "Arbitrary data related to the element.",
-                    "additionalProperties": true,
-                    "example": {
-                      "hello": "world :D"
-                    }
-                  }
-                }
+                "type": "string",
+                "format": "binary"
               }
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "POST",
-          "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "name": "Create file directly",
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/octet-stream"
+                },
+                {
+                  "name": "Content-Disposition",
+                  "value": "attachment; filename=\"report.pdf\""
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/octet-stream",
+                "text": "@report.pdf"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
+          },
+          {
+            "name": "Create resumable upload",
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/octet-stream"
+                },
+                {
+                  "name": "Content-Disposition",
+                  "value": "attachment; filename=\"report.pdf\""
+                },
+                {
+                  "name": "Upload-Complete",
+                  "value": "?0"
+                },
+                {
+                  "name": "Upload-Length",
+                  "value": "20971520"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/octet-stream",
+                "text": "@report.pdf.part1"
+              }
+            }
           }
-        }
+        ]
       },
       "put": {
         "responses": {
           "201": {
-            "description": "`PUT` element file request was successful.  \nSpecific meaning depends on request:\n\n- When a complete file was uploaded: The element's file was successfully replaced.\n- When a resumable file upload was requested: The resumable file upload was created successfully, and its URL is written to the `Location` response header.",
+            "description": "The complete file was uploaded directly (`Upload-Complete: ?1`, or the header was omitted) and is now attached to the element, replacing any previous file. Returned without a response body.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/201",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/201",
+                "name": "HTTP.dev"
+              }
+            ]
+          },
+          "204": {
+            "description": "A resumable upload (`Upload-Complete: ?0`) was created successfully. Its URL is returned in the `Location` header - continue it with `PATCH`, inspect it with `HEAD`, or abort it with `DELETE` against that URL.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -4447,23 +6381,38 @@
               "Location": {
                 "$ref": "#/components/headers/Location-created"
               },
+              "Upload-Complete": {
+                "$ref": "#/components/headers/Upload-Complete"
+              },
+              "Upload-Offset": {
+                "$ref": "#/components/headers/Upload-Offset"
+              },
+              "Upload-Length": {
+                "$ref": "#/components/headers/Upload-Length"
+              },
+              "Upload-Limit": {
+                "$ref": "#/components/headers/Upload-Limit"
+              },
+              "Expires": {
+                "$ref": "#/components/headers/Expires"
+              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/201",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/204",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/201",
+                "url": "https://http.dev/204",
                 "name": "HTTP.dev"
               }
             ]
           },
           "400": {
-            "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
+            "description": "General issues with the request, e.g. a malformed or inconsistent upload header, or an uploaded chunk that violates the configured min/max chunk size.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -4503,8 +6452,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "missingProperty": {
-                    "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  "badContent": {
+                    "$ref": "#/components/examples/BadContentProblemExample"
                   }
                 }
               }
@@ -4656,7 +6605,7 @@
           }
         },
         "summary": "Put element file",
-        "description": "Creates or replaces the file of an element.",
+        "description": "Creates or replaces the file of an element, either by uploading the complete file directly or by starting a resumable upload. Unlike `POST`, this succeeds even if the element already has a file attached - the existing file is replaced.",
         "operationId": "put-element-file",
         "tags": [
           "File"
@@ -4677,46 +6626,132 @@
               "format": "uuid"
             },
             "description": "Id of the element whose file is to be created or replaced."
+          },
+          {
+            "$ref": "#/components/parameters/If-Match"
+          },
+          {
+            "name": "Upload-Complete",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "?1"
+            },
+            "description": "`?1` uploads the request body as the complete, final file. `?0` starts a resumable upload instead - the request body, if any, is stored as the first chunk. Omitting the header behaves like `?1`."
+          },
+          {
+            "name": "Upload-Length",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 20971520
+            },
+            "description": "Total size in bytes of the finished file. Only read when starting a resumable upload (`Upload-Complete: ?0`); optional even then."
+          },
+          {
+            "name": "Content-Disposition",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "attachment; filename=\"report.pdf\""
+            },
+            "description": "Original filename of the uploaded file, used to derive the file's extension. Falls back to `bin` if omitted or if no extension can be parsed."
+          },
+          {
+            "name": "Repr-Digest",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "sha-256=:X4a4pOezhox2tI5PXW8UAd7NAdOKPjE3wYlYs+eTt7Y=:"
+            },
+            "description": "Cryptographic digest of the complete file, checked against the uploaded content once the direct upload finishes. Only `sha-256` is supported. A mismatch fails with `400 Bad Request` and the existing file (if any) is left untouched. `Content-Digest` is accepted as a fallback if `Repr-Digest` is absent. Only meaningful for a complete (non-resumable) upload; for a resumable upload, verify the digest on the completing `PATCH` request instead."
           }
         ],
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
-            "application/json": {
+            "application/octet-stream": {
               "schema": {
-                "type": "object",
-                "description": "Arbitrary data related to the element.",
-                "additionalProperties": true,
-                "example": {
-                  "hello": "world :D"
-                }
+                "type": "string",
+                "format": "binary"
               }
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "PUT",
-          "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "name": "Create file directly",
+            "har": {
+              "method": "PUT",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/octet-stream"
+                },
+                {
+                  "name": "Content-Disposition",
+                  "value": "attachment; filename=\"report.pdf\""
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/octet-stream",
+                "text": "@report.pdf"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"someDataKey\": \"some new value :D\"}"
+          },
+          {
+            "name": "Create resumable upload",
+            "har": {
+              "method": "PUT",
+              "url": "https://api.example.com/7b80b203-2b82-40f5-accd-c7089fe6114e/file",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/octet-stream"
+                },
+                {
+                  "name": "Content-Disposition",
+                  "value": "attachment; filename=\"report.pdf\""
+                },
+                {
+                  "name": "Upload-Complete",
+                  "value": "?0"
+                },
+                {
+                  "name": "Upload-Length",
+                  "value": "20971520"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/octet-stream",
+                "text": "@report.pdf.part1"
+              }
+            }
           }
-        }
+        ]
       }
     },
     "/upload/{uuid}": {
@@ -4807,7 +6842,7 @@
             }
           },
           "404": {
-            "description": "The referenced element does not exist.",
+            "description": "No resumable upload with this id exists, it already expired or completed, or it belongs to a different user.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -4853,58 +6888,10 @@
                 }
               }
             }
-          },
-          "412": {
-            "description": "Precondition failed. `If-Match` or `If-None-Match` condition not met.",
-            "headers": {
-              "Access-Control-Allow-Headers": {
-                "$ref": "#/components/headers/Access-Control-Allow-Headers"
-              },
-              "Access-Control-Allow-Methods": {
-                "$ref": "#/components/headers/Access-Control-Allow-Methods"
-              },
-              "Access-Control-Allow-Origin": {
-                "$ref": "#/components/headers/Access-Control-Allow-Origin"
-              },
-              "Access-Control-Expose-Headers": {
-                "$ref": "#/components/headers/Access-Control-Expose-Headers"
-              },
-              "Allow": {
-                "$ref": "#/components/headers/Allow"
-              },
-              "Cache-Control": {
-                "$ref": "#/components/headers/Cache-Control"
-              },
-              "X-Powered-By": {
-                "$ref": "#/components/headers/X-Powered-By"
-              }
-            },
-            "x-ember-nexus-links": [
-              {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/412",
-                "name": "MDN"
-              },
-              {
-                "url": "https://http.dev/412",
-                "name": "HTTP.dev"
-              }
-            ],
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                },
-                "examples": {
-                  "preconditionFailed": {
-                    "$ref": "#/components/examples/PreconditionFailedProblemExample"
-                  }
-                }
-              }
-            }
           }
         },
         "summary": "Delete upload",
-        "description": "Deletes resumable upload instance.",
+        "description": "Aborts a resumable upload: already-uploaded chunks are removed from storage and the upload itself ceases to exist. The target element is left untouched. Only the user who created the upload can delete it.",
         "operationId": "delete-upload",
         "tags": [
           "File"
@@ -4924,29 +6911,33 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Id of the element to be deleted."
+            "description": "Id of the resumable upload, as returned in the `Location` header of the request that created it."
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "DELETE",
-          "url": "https://api.example.com/upload/7b80b203-2b82-40f5-accd-c7089fe6114e",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "DELETE",
+              "url": "https://api.example.com/upload/7b80b203-2b82-40f5-accd-c7089fe6114e",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       },
       "head": {
         "responses": {
-          "200": {
-            "description": "Resumable upload found. Response headers include meta data about the upload.",
+          "204": {
+            "description": "Resumable upload found. Its current state is returned entirely through response headers - there is no response body.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -4966,67 +6957,20 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
-              "X-Powered-By": {
-                "$ref": "#/components/headers/X-Powered-By"
-              }
-            },
-            "x-ember-nexus-links": [
-              {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/200",
-                "name": "MDN"
+              "Upload-Complete": {
+                "$ref": "#/components/headers/Upload-Complete"
               },
-              {
-                "url": "https://http.dev/200",
-                "name": "HTTP.dev"
-              }
-            ],
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Element"
-                },
-                "examples": {
-                  "default": {
-                    "summary": "Resumable upload found, returning its meta data in the response headers.",
-                    "x-ember-nexus-name": "Node",
-                    "value": {
-                      "type": "Comment",
-                      "id": "74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-                      "data": {
-                        "created": "2025-09-27T10:39:51+00:00",
-                        "updated": "2025-09-27T10:39:51+00:00",
-                        "name": "Blue",
-                        "content": "Blue is one of the three primary colours in the RYB colour model...\n"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "304": {
-            "description": "Not modified. Returned when `If-None-Match` header matches current `ETag`.",
-            "headers": {
-              "Access-Control-Allow-Headers": {
-                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              "Upload-Offset": {
+                "$ref": "#/components/headers/Upload-Offset"
               },
-              "Access-Control-Allow-Methods": {
-                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              "Upload-Length": {
+                "$ref": "#/components/headers/Upload-Length"
               },
-              "Access-Control-Allow-Origin": {
-                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              "Upload-Limit": {
+                "$ref": "#/components/headers/Upload-Limit"
               },
-              "Access-Control-Expose-Headers": {
-                "$ref": "#/components/headers/Access-Control-Expose-Headers"
-              },
-              "Allow": {
-                "$ref": "#/components/headers/Allow"
-              },
-              "Cache-Control": {
-                "$ref": "#/components/headers/Cache-Control"
-              },
-              "ETag": {
-                "$ref": "#/components/headers/ETag"
+              "Expires": {
+                "$ref": "#/components/headers/Expires"
               },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
@@ -5034,11 +6978,11 @@
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/304",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/204",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/304",
+                "url": "https://http.dev/204",
                 "name": "HTTP.dev"
               }
             ]
@@ -5092,7 +7036,7 @@
             }
           },
           "404": {
-            "description": "Element does not exist, or the current user does not have permissions to access the element.",
+            "description": "No resumable upload with this id exists, it already expired or completed, or it belongs to a different user.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -5138,58 +7082,10 @@
                 }
               }
             }
-          },
-          "412": {
-            "description": "Precondition failed. `If-Match` or `If-None-Match` condition not met.",
-            "headers": {
-              "Access-Control-Allow-Headers": {
-                "$ref": "#/components/headers/Access-Control-Allow-Headers"
-              },
-              "Access-Control-Allow-Methods": {
-                "$ref": "#/components/headers/Access-Control-Allow-Methods"
-              },
-              "Access-Control-Allow-Origin": {
-                "$ref": "#/components/headers/Access-Control-Allow-Origin"
-              },
-              "Access-Control-Expose-Headers": {
-                "$ref": "#/components/headers/Access-Control-Expose-Headers"
-              },
-              "Allow": {
-                "$ref": "#/components/headers/Allow"
-              },
-              "Cache-Control": {
-                "$ref": "#/components/headers/Cache-Control"
-              },
-              "X-Powered-By": {
-                "$ref": "#/components/headers/X-Powered-By"
-              }
-            },
-            "x-ember-nexus-links": [
-              {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/412",
-                "name": "MDN"
-              },
-              {
-                "url": "https://http.dev/412",
-                "name": "HTTP.dev"
-              }
-            ],
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                },
-                "examples": {
-                  "preconditionFailed": {
-                    "$ref": "#/components/examples/PreconditionFailedProblemExample"
-                  }
-                }
-              }
-            }
           }
         },
         "summary": "Head upload",
-        "description": "Retrieves metadata of a single resumable upload process.",
+        "description": "Retrieves the current state of a resumable upload without transferring any of its already-uploaded data. Only the user who created the upload can query it.",
         "operationId": "head-upload",
         "tags": [
           "File"
@@ -5208,29 +7104,34 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
+            },
+            "description": "Id of the resumable upload, as returned in the `Location` header of the request that created it."
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "HEAD",
-          "url": "https://api.example.com/upload/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "HEAD",
+              "url": "https://api.example.com/upload/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       },
       "patch": {
         "responses": {
           "204": {
-            "description": "Resumable upload was updated successfully.",
+            "description": "The chunk was stored successfully.  \nSpecific meaning depends on `Upload-Complete`:\n\n- `?0`: The chunk was appended, and the upload remains open for further chunks. Its new state is returned in the response headers.\n- `?1`: The chunk was appended and the upload is now complete - the uploaded chunks were merged and attached as the target element's file, and the resumable upload no longer exists.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -5250,6 +7151,21 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
+              "Upload-Complete": {
+                "$ref": "#/components/headers/Upload-Complete"
+              },
+              "Upload-Offset": {
+                "$ref": "#/components/headers/Upload-Offset"
+              },
+              "Upload-Length": {
+                "$ref": "#/components/headers/Upload-Length"
+              },
+              "Upload-Limit": {
+                "$ref": "#/components/headers/Upload-Limit"
+              },
+              "Expires": {
+                "$ref": "#/components/headers/Expires"
+              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
@@ -5266,7 +7182,7 @@
             ]
           },
           "400": {
-            "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
+            "description": "General issues with the request, e.g. a missing or malformed `Upload-Offset` header, a `Content-Type` other than `application/partial-upload`, or an uploaded chunk that violates the configured min/max chunk size.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -5306,8 +7222,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "missingProperty": {
-                    "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  "badContent": {
+                    "$ref": "#/components/examples/BadContentProblemExample"
                   }
                 }
               }
@@ -5362,7 +7278,7 @@
             }
           },
           "404": {
-            "description": "The referenced element does not exist.",
+            "description": "No resumable upload with this id exists, it already completed, it belongs to a different user, or the current user has since lost `UPDATE` access to the upload's target element.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -5409,8 +7325,8 @@
               }
             }
           },
-          "412": {
-            "description": "Precondition failed. `If-Match` or `If-None-Match` condition not met.",
+          "409": {
+            "description": "The `Upload-Offset` in the request does not match the upload's current offset, or the appended chunk would exceed the upload's declared `Upload-Length`.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -5436,11 +7352,11 @@
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/412",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/409",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/412",
+                "url": "https://http.dev/409",
                 "name": "HTTP.dev"
               }
             ],
@@ -5450,8 +7366,56 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "preconditionFailed": {
-                    "$ref": "#/components/examples/PreconditionFailedProblemExample"
+                  "offsetMismatch": {
+                    "$ref": "#/components/examples/OffsetMismatchProblemExample"
+                  }
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "The upload has expired and its data has already been discarded.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/410",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/410",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "gone": {
+                    "$ref": "#/components/examples/GoneProblemExample"
                   }
                 }
               }
@@ -5459,7 +7423,7 @@
           }
         },
         "summary": "Patch upload",
-        "description": "Appends data to a resumable upload instance.",
+        "description": "Appends the next chunk to a resumable upload. Set `Upload-Complete: ?1` on the chunk that finishes the upload - the request body may be empty, which both completes an upload without transmitting further data and behaves like `HEAD /upload/<uuid>` otherwise.",
         "operationId": "patch-upload",
         "tags": [
           "File"
@@ -5479,47 +7443,85 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Id of the element whose data is to be updated."
+            "description": "Id of the resumable upload, as returned in the `Location` header of the request that created it."
+          },
+          {
+            "name": "Upload-Offset",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 5242880
+            },
+            "description": "Byte offset the appended chunk starts at. Must match the upload's current `Upload-Offset` exactly, otherwise the request fails with `409 Conflict`."
+          },
+          {
+            "name": "Upload-Complete",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "?0"
+            },
+            "description": "`?1` marks this as the final chunk, completing the upload; omitted or `?0` keeps the upload open for further chunks."
+          },
+          {
+            "name": "Repr-Digest",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "sha-256=:X4a4pOezhox2tI5PXW8UAd7NAdOKPjE3wYlYs+eTt7Y=:"
+            },
+            "description": "Cryptographic digest of the complete (reassembled) file. Only read on the chunk that sets `Upload-Complete: ?1`, and checked against the merged file once assembled. Only `sha-256` is supported. A mismatch fails with `400 Bad Request`; the uploaded chunks are discarded and the upload's target element keeps its previous file, if any. `Content-Digest` is accepted as a fallback if `Repr-Digest` is absent."
           }
         ],
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
-            "application/json": {
+            "application/partial-upload": {
               "schema": {
-                "type": "object",
-                "description": "Arbitrary data related to the element.",
-                "additionalProperties": true,
-                "example": {
-                  "hello": "world :D"
-                }
+                "type": "string",
+                "format": "binary"
               }
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "PATCH",
-          "url": "https://api.example.com/upload/7b80b203-2b82-40f5-accd-c7089fe6114e",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "PATCH",
+              "url": "https://api.example.com/upload/7b80b203-2b82-40f5-accd-c7089fe6114e",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/partial-upload"
+                },
+                {
+                  "name": "Upload-Offset",
+                  "value": "5242880"
+                },
+                {
+                  "name": "Upload-Complete",
+                  "value": "?1"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/partial-upload",
+                "text": "<binary chunk data>"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"someDataKey\": \"some new value :D\"}"
           }
-        }
+        ]
       }
     },
     "/search": {
@@ -5559,7 +7561,34 @@
                 "url": "https://http.dev/200",
                 "name": "HTTP.dev"
               }
-            ]
+            ],
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResultResponse"
+                },
+                "examples": {
+                  "default": {
+                    "summary": "Full text search, hydrated into a collection of elements.",
+                    "value": {
+                      "type": "_SearchResultResponse",
+                      "results": [
+                        {
+                          "type": "Plant",
+                          "id": "258c0dfe-b1d8-4839-beed-d00d1b544a96",
+                          "data": {
+                            "created": "2025-09-25T18:35:28+00:00",
+                            "updated": "2025-09-25T18:35:28+00:00",
+                            "name": "Flame Lily",
+                            "description": "Gloriosa superba is a species of flowering plant in the family Colchicaceae."
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
@@ -5685,7 +7714,7 @@
                     "type": "array",
                     "description": "List of search steps, which should be executed sequentially.",
                     "items": {
-                      "type": "#/components/schemas/SearchStep"
+                      "$ref": "#/components/schemas/SearchStep"
                     }
                   },
                   "parameters": {
@@ -5706,36 +7735,40 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "POST",
-          "url": "https://api.example.com/search",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/search",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"debug\":true,\"steps\":[{\"type\":\"elasticsearch-query-dsl-mixin\",\"query\":{\"match\":{\"description\":{\"query\":\"lily\"}}}},{\"type\":\"element-hydration\"}]}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"debug\":true,\"steps\":[{\"type\":\"elasticsearch-query-dsl-mixin\",\"query\":{\"match\":{\"description\":{\"query\":\"lily\"}}}},{\"type\":\"element-hydration\"}]}"
           }
-        }
+        ]
       }
     },
     "/graph-structure": {
       "get": {
         "responses": {
           "200": {
-            "description": "Token found. Returns a node.",
+            "description": "Returns the node and relation types currently present in the graph.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -5755,9 +7788,6 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
-              "ETag": {
-                "$ref": "#/components/headers/ETag"
-              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
@@ -5775,17 +7805,30 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Element"
+                  "$ref": "#/components/schemas/GraphStructure"
                 },
                 "examples": {
-                  "node": {
-                    "type": "Token",
-                    "id": "74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-                    "data": {
-                      "created": "2025-09-27T10:39:51+00:00",
-                      "updated": "2025-09-27T10:39:51+00:00",
-                      "name": "Blue",
-                      "content": "Blue is one of the three primary colours in the RYB colour model...\n"
+                  "graphStructure": {
+                    "value": {
+                      "nodeTypes": [
+                        "Collection",
+                        "Comment",
+                        "Data",
+                        "Group",
+                        "Location",
+                        "Tag",
+                        "Token",
+                        "User"
+                      ],
+                      "relationTypes": [
+                        "HAS_READ_ACCESS",
+                        "HAS_SEARCH_ACCESS",
+                        "HAS_TAG",
+                        "IS_IN_GROUP",
+                        "IS_MEMBER_OF",
+                        "OWNS",
+                        "RELATED"
+                      ]
                     }
                   }
                 }
@@ -5835,6 +7878,54 @@
                 "examples": {
                   "unauthorized": {
                     "$ref": "#/components/examples/UnauthorizedProblemExample"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The endpoint has been disabled by the instance's administrator (`instanceConfiguration.enabled` set to `false`).",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/403",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/403",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "forbidden": {
+                    "$ref": "#/components/examples/ForbiddenProblemExample"
                   }
                 }
               }
@@ -5854,28 +7945,32 @@
           {}
         ],
         "parameters": [],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/graph-structure",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/graph-structure",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       }
     },
     "/instance-configuration": {
       "get": {
         "responses": {
           "200": {
-            "description": "Token found. Returns a node.",
+            "description": "Returns the instance's configuration parameters and limits.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -5895,9 +7990,6 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
-              "ETag": {
-                "$ref": "#/components/headers/ETag"
-              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
@@ -5915,17 +8007,32 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Element"
+                  "$ref": "#/components/schemas/InstanceConfiguration"
                 },
                 "examples": {
-                  "node": {
-                    "type": "Token",
-                    "id": "74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-                    "data": {
-                      "created": "2025-09-27T10:39:51+00:00",
-                      "updated": "2025-09-27T10:39:51+00:00",
-                      "name": "Blue",
-                      "content": "Blue is one of the three primary colours in the RYB colour model...\n"
+                  "instanceConfiguration": {
+                    "value": {
+                      "version": "0.1.31",
+                      "pageSize": {
+                        "min": 5,
+                        "default": 25,
+                        "max": 100
+                      },
+                      "register": {
+                        "enabled": true,
+                        "uniqueIdentifier": "email",
+                        "uniqueIdentifierRegex": false
+                      },
+                      "expression": {
+                        "enabled": true,
+                        "maxLength": 10240
+                      },
+                      "file": {
+                        "maxFileSizeInBytes": 10737418240,
+                        "uploadExpiresInSecondsAfterFirstRequest": 10800,
+                        "uploadMinChunkSizeInBytes": 5242880,
+                        "uploadMaxChunkSizeInBytes": 105906176
+                      }
                     }
                   }
                 }
@@ -5979,43 +8086,9 @@
                 }
               }
             }
-          }
-        },
-        "summary": "Get instance configuration",
-        "description": "Returns instance configuration settings, limits etc.",
-        "operationId": "get-instance-configuration",
-        "tags": [
-          "System"
-        ],
-        "security": [
-          {
-            "BearerAuth": []
           },
-          {}
-        ],
-        "parameters": [],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/instance-configuration",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
-      }
-    },
-    "/.well-known/security.txt": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Token found. Returns a node.",
+          "403": {
+            "description": "The endpoint has been disabled by the instance's administrator (`instanceConfiguration.enabled` set to `false`).",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -6035,8 +8108,91 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
-              "ETag": {
-                "$ref": "#/components/headers/ETag"
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/403",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/403",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "forbidden": {
+                    "$ref": "#/components/examples/ForbiddenProblemExample"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get instance configuration",
+        "description": "Returns instance configuration settings, limits etc.",
+        "operationId": "get-instance-configuration",
+        "tags": [
+          "System"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "parameters": [],
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/instance-configuration",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
+            }
+          }
+        ]
+      }
+    },
+    "/.well-known/security.txt": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Returns the configured `security.txt` file's content as-is.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
               },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
@@ -6053,20 +8209,109 @@
               }
             ],
             "content": {
-              "application/json": {
+              "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Element"
+                  "type": "string"
                 },
                 "examples": {
-                  "node": {
-                    "type": "Token",
-                    "id": "74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-                    "data": {
-                      "created": "2025-09-27T10:39:51+00:00",
-                      "updated": "2025-09-27T10:39:51+00:00",
-                      "name": "Blue",
-                      "content": "Blue is one of the three primary colours in the RYB colour model...\n"
-                    }
+                  "securityTxt": {
+                    "value": "Contact: https://ember-nexus.dev/contact\nExpires: 2026-01-01T00:00:00.000Z\n"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The provided token is either invalid or expired.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/401",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/401",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "unauthorized": {
+                    "$ref": "#/components/examples/UnauthorizedProblemExample"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No `security.txt` file has been configured on this instance.",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "$ref": "#/components/headers/Access-Control-Allow-Headers"
+              },
+              "Access-Control-Allow-Methods": {
+                "$ref": "#/components/headers/Access-Control-Allow-Methods"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/Access-Control-Allow-Origin"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/Access-Control-Expose-Headers"
+              },
+              "Allow": {
+                "$ref": "#/components/headers/Allow"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "X-Powered-By": {
+                "$ref": "#/components/headers/X-Powered-By"
+              }
+            },
+            "x-ember-nexus-links": [
+              {
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/404",
+                "name": "MDN"
+              },
+              {
+                "url": "https://http.dev/404",
+                "name": "HTTP.dev"
+              }
+            ],
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "examples": {
+                  "notFound": {
+                    "$ref": "#/components/examples/NotFoundProblemExample"
                   }
                 }
               }
@@ -6086,21 +8331,25 @@
           {}
         ],
         "parameters": [],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/.well-known/security.txt",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/.well-known/security.txt",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       }
     },
     "/token": {
@@ -6143,7 +8392,7 @@
             ]
           },
           "401": {
-            "description": "The provided token is either invalid or expired.",
+            "description": "The provided token is either invalid or expired, or no token was provided at all (the default anonymous user has no token to delete).",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -6300,21 +8549,25 @@
           {}
         ],
         "parameters": [],
-        "x-ember-nexus-har-example": {
-          "method": "DELETE",
-          "url": "https://api.example.com/token",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "DELETE",
+              "url": "https://api.example.com/token",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       },
       "get": {
         "responses": {
@@ -6515,7 +8768,7 @@
           }
         },
         "summary": "Get token",
-        "description": "Alias endpoint, returns the current sessions's token element.",
+        "description": "Alias endpoint, returns the current session's token element.",
         "operationId": "get-token",
         "tags": [
           "User"
@@ -6534,21 +8787,25 @@
             "$ref": "#/components/parameters/If-None-Match"
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/token",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/token",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       },
       "post": {
         "responses": {
@@ -6573,9 +8830,6 @@
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
               },
-              "Location": {
-                "$ref": "#/components/headers/Location-created"
-              },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
               }
@@ -6589,7 +8843,22 @@
                 "url": "https://http.dev/201",
                 "name": "HTTP.dev"
               }
-            ]
+            ],
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                },
+                "examples": {
+                  "default": {
+                    "value": {
+                      "type": "_TokenResponse",
+                      "token": "secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
@@ -6686,58 +8955,10 @@
                 }
               }
             }
-          },
-          "404": {
-            "description": "The referenced parent node does not exist.",
-            "headers": {
-              "Access-Control-Allow-Headers": {
-                "$ref": "#/components/headers/Access-Control-Allow-Headers"
-              },
-              "Access-Control-Allow-Methods": {
-                "$ref": "#/components/headers/Access-Control-Allow-Methods"
-              },
-              "Access-Control-Allow-Origin": {
-                "$ref": "#/components/headers/Access-Control-Allow-Origin"
-              },
-              "Access-Control-Expose-Headers": {
-                "$ref": "#/components/headers/Access-Control-Expose-Headers"
-              },
-              "Allow": {
-                "$ref": "#/components/headers/Allow"
-              },
-              "Cache-Control": {
-                "$ref": "#/components/headers/Cache-Control"
-              },
-              "X-Powered-By": {
-                "$ref": "#/components/headers/X-Powered-By"
-              }
-            },
-            "x-ember-nexus-links": [
-              {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/404",
-                "name": "MDN"
-              },
-              {
-                "url": "https://http.dev/404",
-                "name": "HTTP.dev"
-              }
-            ],
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                },
-                "examples": {
-                  "notFound": {
-                    "$ref": "#/components/examples/NotFoundProblemExample"
-                  }
-                }
-              }
-            }
           }
         },
         "summary": "Post token",
-        "description": "Creates a new token.",
+        "description": "Creates a new token for the current user.",
         "operationId": "post-token",
         "tags": [
           "User"
@@ -6757,38 +8978,39 @@
                 "type": "object",
                 "required": [
                   "type",
-                  "data"
+                  "uniqueUserIdentifier",
+                  "password"
                 ],
                 "properties": {
                   "type": {
                     "type": "string",
-                    "description": "The type of element to be created.",
-                    "example": "Demo"
+                    "description": "Must be `Token`. No other values are currently possible.",
+                    "enum": [
+                      "Token"
+                    ],
+                    "example": "Token"
                   },
-                  "id": {
+                  "uniqueUserIdentifier": {
                     "type": "string",
-                    "format": "uuid",
-                    "description": "The element's UUID. Auto-generated if not provided.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
+                    "description": "Some attribute uniquely identifying a user, normally an email address. The property name used to store it can be configured server-side.",
+                    "example": "test@example.com"
                   },
-                  "start": {
+                  "password": {
                     "type": "string",
-                    "format": "uuid",
-                    "description": "The start node's UUID. Required for relations.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
+                    "description": "The plain text password of the user.",
+                    "example": "1234"
                   },
-                  "end": {
-                    "type": "string",
-                    "format": "uuid",
-                    "description": "The end node's UUID. Required for relations.",
-                    "example": "ecfe46ff-d3c7-4ca7-9b41-9be5476d36e0"
+                  "lifetimeInSeconds": {
+                    "type": "integer",
+                    "description": "Optional requested token lifetime, in seconds. Silently clamped to the server-configured minimum/maximum lifetime. Defaults to the server-configured default lifetime if omitted.",
+                    "example": 3600
                   },
                   "data": {
                     "type": "object",
-                    "description": "Arbitrary data related to the element.",
+                    "description": "Optional, arbitrary properties stored on the new token element.",
                     "additionalProperties": true,
                     "example": {
-                      "hello": "world :D"
+                      "key": "value"
                     }
                   }
                 }
@@ -6796,29 +9018,29 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "POST",
-          "url": "https://api.example.com/token",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/token",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"type\": \"Token\", \"uniqueUserIdentifier\": \"test@example.com\", \"password\": \"1234\"}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
           }
-        }
+        ]
       }
     },
     "/me": {
@@ -7040,21 +9262,25 @@
             "$ref": "#/components/parameters/If-None-Match"
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "GET",
-          "url": "https://api.example.com/me",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "GET",
+              "url": "https://api.example.com/me",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       }
     },
     "/change-password": {
@@ -7080,9 +9306,6 @@
               },
               "Cache-Control": {
                 "$ref": "#/components/headers/Cache-Control"
-              },
-              "Location": {
-                "$ref": "#/components/headers/Location-created"
               },
               "X-Powered-By": {
                 "$ref": "#/components/headers/X-Powered-By"
@@ -7142,6 +9365,9 @@
                 "examples": {
                   "missingProperty": {
                     "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  },
+                  "badContent": {
+                    "$ref": "#/components/examples/BadContentProblemExample"
                   }
                 }
               }
@@ -7195,8 +9421,8 @@
               }
             }
           },
-          "404": {
-            "description": "The referenced parent node does not exist.",
+          "403": {
+            "description": "The identified user is the default anonymous user, which can not change its password.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -7222,11 +9448,11 @@
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/404",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/403",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/404",
+                "url": "https://http.dev/403",
                 "name": "HTTP.dev"
               }
             ],
@@ -7236,8 +9462,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "notFound": {
-                    "$ref": "#/components/examples/NotFoundProblemExample"
+                  "forbidden": {
+                    "$ref": "#/components/examples/ForbiddenProblemExample"
                   }
                 }
               }
@@ -7245,7 +9471,7 @@
           }
         },
         "summary": "Post change password",
-        "description": "Changes the password for the current user.",
+        "description": "Changes the password for the current user. Knowledge of the currently used (old) password is required.",
         "operationId": "post-change-password",
         "tags": [
           "User"
@@ -7265,68 +9491,62 @@
                 "type": "object",
                 "required": [
                   "type",
-                  "data"
+                  "currentPassword",
+                  "newPassword",
+                  "uniqueUserIdentifier"
                 ],
                 "properties": {
                   "type": {
                     "type": "string",
-                    "description": "The type of element to be created.",
-                    "example": "Demo"
+                    "description": "Must be `ActionChangePassword`. No other values are currently possible.",
+                    "enum": [
+                      "ActionChangePassword"
+                    ],
+                    "example": "ActionChangePassword"
                   },
-                  "id": {
+                  "currentPassword": {
                     "type": "string",
-                    "format": "uuid",
-                    "description": "The element's UUID. Auto-generated if not provided.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
+                    "description": "The user's currently used password, in plain text.",
+                    "example": "1234"
                   },
-                  "start": {
+                  "newPassword": {
                     "type": "string",
-                    "format": "uuid",
-                    "description": "The start node's UUID. Required for relations.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
+                    "description": "The user's new password, in plain text. Must be different from `currentPassword`. Any string is accepted and is hashed internally; no password complexity check is performed.",
+                    "example": "9876"
                   },
-                  "end": {
+                  "uniqueUserIdentifier": {
                     "type": "string",
-                    "format": "uuid",
-                    "description": "The end node's UUID. Required for relations.",
-                    "example": "ecfe46ff-d3c7-4ca7-9b41-9be5476d36e0"
-                  },
-                  "data": {
-                    "type": "object",
-                    "description": "Arbitrary data related to the element.",
-                    "additionalProperties": true,
-                    "example": {
-                      "hello": "world :D"
-                    }
+                    "description": "Some attribute uniquely identifying a user, normally an email address. The property name used to store it can be configured server-side.",
+                    "example": "test@example.com"
                   }
                 }
               }
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "POST",
-          "url": "https://api.example.com/change-password",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/change-password",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"type\": \"ActionChangePassword\", \"currentPassword\": \"1234\", \"newPassword\": \"9876\", \"uniqueUserIdentifier\": \"test@example.com\"}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
           }
-        }
+        ]
       }
     },
     "/register": {
@@ -7414,6 +9634,9 @@
                 "examples": {
                   "missingProperty": {
                     "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  },
+                  "reservedIdentifier": {
+                    "$ref": "#/components/examples/ReservedIdentifierProblemExample"
                   }
                 }
               }
@@ -7467,8 +9690,8 @@
               }
             }
           },
-          "404": {
-            "description": "The referenced parent node does not exist.",
+          "403": {
+            "description": "The register endpoint is disabled via server configuration.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -7494,11 +9717,11 @@
             },
             "x-ember-nexus-links": [
               {
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/404",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/403",
                 "name": "MDN"
               },
               {
-                "url": "https://http.dev/404",
+                "url": "https://http.dev/403",
                 "name": "HTTP.dev"
               }
             ],
@@ -7508,8 +9731,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "notFound": {
-                    "$ref": "#/components/examples/NotFoundProblemExample"
+                  "forbidden": {
+                    "$ref": "#/components/examples/ForbiddenProblemExample"
                   }
                 }
               }
@@ -7537,38 +9760,34 @@
                 "type": "object",
                 "required": [
                   "type",
-                  "data"
+                  "password",
+                  "uniqueUserIdentifier"
                 ],
                 "properties": {
                   "type": {
                     "type": "string",
-                    "description": "The type of element to be created.",
-                    "example": "Demo"
+                    "description": "Must be `User`. No other values are currently possible.",
+                    "enum": [
+                      "User"
+                    ],
+                    "example": "User"
                   },
-                  "id": {
+                  "password": {
                     "type": "string",
-                    "format": "uuid",
-                    "description": "The element's UUID. Auto-generated if not provided.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
+                    "description": "The plain text password of the new user. Any string is accepted and is hashed internally; no password complexity check is performed. Leading/trailing whitespace is preserved, though discouraged.",
+                    "example": "1234"
                   },
-                  "start": {
+                  "uniqueUserIdentifier": {
                     "type": "string",
-                    "format": "uuid",
-                    "description": "The start node's UUID. Required for relations.",
-                    "example": "f9a619e1-f3f5-4fbf-a80e-fa8f7dd88103"
-                  },
-                  "end": {
-                    "type": "string",
-                    "format": "uuid",
-                    "description": "The end node's UUID. Required for relations.",
-                    "example": "ecfe46ff-d3c7-4ca7-9b41-9be5476d36e0"
+                    "description": "Some attribute uniquely identifying a user, normally an email address. The property name used to store it can be configured server-side.",
+                    "example": "test@example.com"
                   },
                   "data": {
                     "type": "object",
-                    "description": "Arbitrary data related to the element.",
+                    "description": "Optional, arbitrary properties stored on the new user element.",
                     "additionalProperties": true,
                     "example": {
-                      "hello": "world :D"
+                      "key": "value"
                     }
                   }
                 }
@@ -7576,29 +9795,29 @@
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "POST",
-          "url": "https://api.example.com/register",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "POST",
+              "url": "https://api.example.com/register",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/json",
+                "text": "{\"type\": \"User\", \"password\": \"1234\", \"uniqueUserIdentifier\": \"test@example.com\"}"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"type\": \"Demo\", \"data\": {\"hello\": \"world :D\"}}"
           }
-        }
+        ]
       }
     }
   },

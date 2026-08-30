@@ -33,8 +33,10 @@ import alpinejs from '@astrojs/alpinejs';
 import expressiveCode from 'astro-expressive-code';
 
 import icon from 'astro-icon';
-import {httpMethodAugmentation, inlineCodeAttrs, linkAugmentation} from "./src/plugins/rehype";
-import pagefind from "astro-pagefind";
+import {footnoteBackrefAugmentation, httpMethodAugmentation, inlineCodeAttrs, linkAugmentation} from "./src/plugins/rehype";
+import mdRobotsHeaders from "./src/plugins/mdRobotsHeaders.ts";
+import pagefind from "./src/plugins/pagefind.ts";
+import trailingSlashRedirect from "./src/plugins/trailingSlashRedirect.ts";
 
 import mdxRollup from '@mdx-js/rollup';
 import remarkFrontmatter from 'remark-frontmatter';
@@ -59,7 +61,11 @@ function mdxMarkdownPlugin() {
     jsxImportSource: 'mdmx',
     elementAttributeNameCase: 'react',
     remarkPlugins: [remarkFrontmatter, remarkGfm],
-    rehypePlugins: [], // deliberately none — no expressive-code, no link augmentation
+    // Only inlineCodeAttrs: strips the `{.hl-1}`-style meta blob from the
+    // inline code's own text (content, not styling) before the mdmx JSX
+    // runtime sees it. No expressive-code, no link/http-method augmentation —
+    // those only apply to HTML.
+    rehypePlugins: [inlineCodeAttrs],
   });
   const isMdMdx = (id) => id.endsWith('.mdx?md');
 
@@ -120,10 +126,14 @@ export default defineConfig({
   },
   server: {
     host: true,
-    allowedHosts: ['localhost', 'astro', 'ember-nexus-org-astro']
+    // 'core' is the docker-compose service name — the `e2e` (Playwright) container reaches
+    // the preview server as http://core:4322, so it needs to pass Astro/Vite's Host check too.
+    allowedHosts: ['localhost', 'astro', 'ember-nexus-org-astro', 'core']
   },
   site: 'https://api.ember-nexus.dev',
   integrations: [
+    trailingSlashRedirect(),
+    mdRobotsHeaders(),
     expressiveCode(),
     mdx(),
     sitemap(),
@@ -148,6 +158,6 @@ export default defineConfig({
     // astro-expressive-code appends its own rehypeExpressiveCode plugin via the same
     // mechanism, so it always runs after our plugins. The deprecation warning about
     // this legacy field is an upstream issue in astro-expressive-code.
-    rehypePlugins: [httpMethodAugmentation, linkAugmentation, inlineCodeAttrs],
+    rehypePlugins: [httpMethodAugmentation, linkAugmentation, inlineCodeAttrs, footnoteBackrefAugmentation],
   }
 });

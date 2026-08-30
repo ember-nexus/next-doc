@@ -17,7 +17,7 @@
             "name": "HTTP.dev"
           },
           {
-            "url": "/guide/caching-guide-todo",
+            "url": "/guide/caching-and-conditional-requests",
             "name": "Caching guide"
           }
         ],

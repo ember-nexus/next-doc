@@ -46,6 +46,9 @@
                 "examples": {
                   "missingProperty": {
                     "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  },
+                  "reservedIdentifier": {
+                    "$ref": "#/components/examples/ReservedIdentifierProblemExample"
                   }
                 }
               }

@@ -3,7 +3,7 @@
     "/upload/{uuid}": {
       "patch": {
         "summary": "Patch upload",
-        "description": "Appends data to a resumable upload instance.",
+        "description": "Appends the next chunk to a resumable upload. Set `Upload-Complete: ?1` on the chunk that finishes the upload - the request body may be empty, which both completes an upload without transmitting further data and behaves like `HEAD /upload/<uuid>` otherwise.",
         "operationId": "patch-upload",
         "tags": [
           "File"
@@ -23,47 +23,85 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Id of the element whose data is to be updated."
+            "description": "Id of the resumable upload, as returned in the `Location` header of the request that created it."
+          },
+          {
+            "name": "Upload-Offset",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 5242880
+            },
+            "description": "Byte offset the appended chunk starts at. Must match the upload's current `Upload-Offset` exactly, otherwise the request fails with `409 Conflict`."
+          },
+          {
+            "name": "Upload-Complete",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "?0"
+            },
+            "description": "`?1` marks this as the final chunk, completing the upload; omitted or `?0` keeps the upload open for further chunks."
+          },
+          {
+            "name": "Repr-Digest",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "sha-256=:X4a4pOezhox2tI5PXW8UAd7NAdOKPjE3wYlYs+eTt7Y=:"
+            },
+            "description": "Cryptographic digest of the complete (reassembled) file. Only read on the chunk that sets `Upload-Complete: ?1`, and checked against the merged file once assembled. Only `sha-256` is supported. A mismatch fails with `400 Bad Request`; the uploaded chunks are discarded and the upload's target element keeps its previous file, if any. `Content-Digest` is accepted as a fallback if `Repr-Digest` is absent."
           }
         ],
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
-            "application/json": {
+            "application/partial-upload": {
               "schema": {
-                "type": "object",
-                "description": "Arbitrary data related to the element.",
-                "additionalProperties": true,
-                "example": {
-                  "hello": "world :D"
-                }
+                "type": "string",
+                "format": "binary"
               }
             }
           }
         },
-        "x-ember-nexus-har-example": {
-          "method": "PATCH",
-          "url": "https://api.example.com/upload/7b80b203-2b82-40f5-accd-c7089fe6114e",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "PATCH",
+              "url": "https://api.example.com/upload/7b80b203-2b82-40f5-accd-c7089fe6114e",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/partial-upload"
+                },
+                {
+                  "name": "Upload-Offset",
+                  "value": "5242880"
+                },
+                {
+                  "name": "Upload-Complete",
+                  "value": "?1"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1,
+              "postData": {
+                "mimeType": "application/partial-upload",
+                "text": "<binary chunk data>"
+              }
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1,
-          "postData": {
-            "mimeType": "application/json",
-            "text": "{\"someDataKey\": \"some new value :D\"}"
           }
-        }
+        ]
       }
     }
   }

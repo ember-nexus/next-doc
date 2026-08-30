@@ -8,7 +8,8 @@ swaggerUrl: /{uuid}
 ---
 
 
-Creates a new child node, attached to the referenced `parent  {.hl-1}`-node.
+Creates a new child node, attached to the referenced `parent  {.hl-1}`-node. The current user needs `HAS_CREATE_ACCESS`
+to the parent, and the parent must itself be a node - a relation can not own children.
 
 <g6-graph mode="manual" layout="antv-dagre-LR">
     <script type="application/json">{`
@@ -25,5 +26,9 @@ Creates a new child node, attached to the referenced `parent  {.hl-1}`-node.
 </g6-graph>
 
 <Note>
-    Endpoint can not be used to create relations.
+    Endpoint can not be used to create relations, as the behavior of a relation "owning" other elements is undefined.
+    Use the [`POST /`](/api/post-index) endpoint to create relations instead. A handful of properties can not be set
+    directly - see [Reserved properties](/reference/security#reserved-properties).
 </Note>
+
+**Note**: New elements take up to a second before they become searchable in Elasticsearch.

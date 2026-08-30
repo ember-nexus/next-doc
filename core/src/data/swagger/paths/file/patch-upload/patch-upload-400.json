@@ -4,7 +4,7 @@
       "patch": {
         "responses": {
           "400": {
-            "description": "General issues with the user provided request, e.g. missing properties, malformed properties, failing validation logic etc.",
+            "description": "General issues with the request, e.g. a missing or malformed `Upload-Offset` header, a `Content-Type` other than `application/partial-upload`, or an uploaded chunk that violates the configured min/max chunk size.",
             "headers": {
               "Access-Control-Allow-Headers": {
                 "$ref": "#/components/headers/Access-Control-Allow-Headers"
@@ -44,8 +44,8 @@
                   "$ref": "#/components/schemas/Problem"
                 },
                 "examples": {
-                  "missingProperty": {
-                    "$ref": "#/components/examples/MissingPropertyProblemExample"
+                  "badContent": {
+                    "$ref": "#/components/examples/BadContentProblemExample"
                   }
                 }
               }

@@ -45,14 +45,26 @@ export function splitPipe(raw: string): { curl: string; pipe: string } {
   let quote: string | null = null;
   for (let i = 0; i < raw.length; i++) {
     const c = raw[i];
-    if (c === "\\" && i + 1 < raw.length) { i++; continue; }
-    if (!quote && (c === "'" || c === '"')) { quote = c; continue; }
-    if (quote === c) { quote = null; continue; }
+    if (c === "\\" && i + 1 < raw.length) {
+      i++;
+      continue;
+    }
+    if (!quote && (c === "'" || c === '"')) {
+      quote = c;
+      continue;
+    }
+    if (quote === c) {
+      quote = null;
+      continue;
+    }
     if (!quote && c === "|") {
       // Drop a shell line-continuation backslash (and surrounding whitespace)
       // that appears immediately before the pipe.
       return {
-        curl: raw.substring(0, i).replace(/\s*\\\s*$/, "").trim(),
+        curl: raw
+          .substring(0, i)
+          .replace(/\s*\\\s*$/, "")
+          .trim(),
         pipe: raw.substring(i).trim(),
       };
     }
@@ -65,17 +77,25 @@ export function tokenize(raw: string): string[] {
   const s = raw.trim();
   let i = 0;
   while (i < s.length) {
-    if (/\s/.test(s[i])) { i++; continue; }
-    if (s[i] === "\\" && i + 1 < s.length && /[\n\s]/.test(s[i + 1])) { i += 2; continue; }
+    if (/\s/.test(s[i])) {
+      i++;
+      continue;
+    }
+    if (s[i] === "\\" && i + 1 < s.length && /[\n\s]/.test(s[i + 1])) {
+      i += 2;
+      continue;
+    }
     if (s[i] === "'" || s[i] === '"') {
       const q = s[i];
       let tok = "";
       i++;
       while (i < s.length && s[i] !== q) {
         if (s[i] === "\\" && q === '"' && i + 1 < s.length) {
-          tok += s[i + 1]; i += 2;
+          tok += s[i + 1];
+          i += 2;
         } else {
-          tok += s[i]; i++;
+          tok += s[i];
+          i++;
         }
       }
       i++; // closing quote
@@ -84,9 +104,11 @@ export function tokenize(raw: string): string[] {
       let tok = "";
       while (i < s.length && !/\s/.test(s[i])) {
         if (s[i] === "\\" && i + 1 < s.length) {
-          tok += s[i + 1]; i += 2;
+          tok += s[i + 1];
+          i += 2;
         } else {
-          tok += s[i]; i++;
+          tok += s[i];
+          i++;
         }
       }
       tokens.push(tok);
@@ -96,22 +118,71 @@ export function tokenize(raw: string): string[] {
 }
 
 const HEADER_FLAGS = new Set(["-H", "--header"]);
-const DATA_FLAGS = new Set(["-d", "--data", "--data-raw", "--data-binary", "--data-ascii", "--data-urlencode", "--json"]);
+const DATA_FLAGS = new Set([
+  "-d",
+  "--data",
+  "--data-raw",
+  "--data-binary",
+  "--data-ascii",
+  "--data-urlencode",
+  "--json",
+]);
 const METHOD_FLAGS = new Set(["-X", "--request"]);
 const VALUED_FLAGS = new Set([
-  "-o", "--output", "-u", "--user", "-A", "--user-agent",
-  "-e", "--referer", "-b", "--cookie", "-c", "--cookie-jar",
-  "--connect-timeout", "-m", "--max-time", "--retry",
-  "-w", "--write-out", "--resolve", "--cert", "--key",
-  "-T", "--upload-file", "-F", "--form",
+  "-o",
+  "--output",
+  "-u",
+  "--user",
+  "-A",
+  "--user-agent",
+  "-e",
+  "--referer",
+  "-b",
+  "--cookie",
+  "-c",
+  "--cookie-jar",
+  "--connect-timeout",
+  "-m",
+  "--max-time",
+  "--retry",
+  "-w",
+  "--write-out",
+  "--resolve",
+  "--cert",
+  "--key",
+  "-T",
+  "--upload-file",
+  "-F",
+  "--form",
 ]);
 const BOOL_FLAGS = new Set([
-  "-v", "--verbose", "-s", "--silent", "-S", "--show-error",
-  "-k", "--insecure", "-L", "--location", "-I", "--head",
-  "-f", "--fail", "--fail-with-body", "--compressed",
-  "-#", "--progress-bar", "--http1.1", "--http2",
-  "--http3", "-N", "--no-buffer", "--raw", "--tr-encoding",
-  "--tcp-fastopen", "--tcp-nodelay",
+  "-v",
+  "--verbose",
+  "-s",
+  "--silent",
+  "-S",
+  "--show-error",
+  "-k",
+  "--insecure",
+  "-L",
+  "--location",
+  "-I",
+  "--head",
+  "-f",
+  "--fail",
+  "--fail-with-body",
+  "--compressed",
+  "-#",
+  "--progress-bar",
+  "--http1.1",
+  "--http2",
+  "--http3",
+  "-N",
+  "--no-buffer",
+  "--raw",
+  "--tr-encoding",
+  "--tcp-fastopen",
+  "--tcp-nodelay",
 ]);
 
 // Canonical short-form aliases: long flag → short flag
@@ -153,7 +224,10 @@ const METHOD_SHORTHANDS: Record<string, string> = {
   "--head": "HEAD",
 };
 
-function collectUrlWithSpaces(tokens: string[], startIdx: number): { url: string; nextIdx: number } {
+function collectUrlWithSpaces(
+  tokens: string[],
+  startIdx: number,
+): { url: string; nextIdx: number } {
   let url = tokens[startIdx];
   let i = startIdx + 1;
   while (i < tokens.length && !tokens[i].startsWith("-")) {
@@ -224,9 +298,14 @@ export function parse(raw: string): ParsedCurl {
       result.flags.push({ flag: tok });
     } else if (VALUED_FLAGS.has(tok)) {
       idx++;
-      if (idx < tokens.length) result.flags.push({ flag: tok, value: tokens[idx] });
+      if (idx < tokens.length)
+        result.flags.push({ flag: tok, value: tokens[idx] });
     } else if (tok.startsWith("-")) {
-      if (idx + 1 < tokens.length && !tokens[idx + 1].startsWith("-") && !tokens[idx + 1].startsWith("http")) {
+      if (
+        idx + 1 < tokens.length &&
+        !tokens[idx + 1].startsWith("-") &&
+        !tokens[idx + 1].startsWith("http")
+      ) {
         result.flags.push({ flag: tok, value: tokens[idx + 1] });
         idx++;
       } else {
@@ -277,9 +356,11 @@ export function validateDomain(url: string, whitelist: string[]): void {
   if (!domain) {
     throw new CurlValidationError(`Could not extract domain from URL: ${url}`);
   }
-  const ok = whitelist.some(w => domain === w || domain.endsWith("." + w));
+  const ok = whitelist.some((w) => domain === w || domain.endsWith("." + w));
   if (!ok) {
-    throw new CurlValidationError(`Domain '${domain}' is not in the whitelist [${whitelist.join(", ")}]`);
+    throw new CurlValidationError(
+      `Domain '${domain}' is not in the whitelist [${whitelist.join(", ")}]`,
+    );
   }
 }
 
@@ -316,7 +397,10 @@ export function format(parsed: ParsedCurl, opts: FormatOptions = {}): string {
   let firstLine = "curl";
   if (parsed.method === "HEAD") {
     firstLine += " -I";
-  } else if (parsed.method !== "GET" && !(parsed.method === "POST" && parsed.data)) {
+  } else if (
+    parsed.method !== "GET" &&
+    !(parsed.method === "POST" && parsed.data)
+  ) {
     firstLine += ` -X ${parsed.method}`;
   }
   if (hasVerbose) {
@@ -340,7 +424,11 @@ export function format(parsed: ParsedCurl, opts: FormatOptions = {}): string {
   }
 
   for (const f of nonVerboseFlags) {
-    lines.push(f.value !== undefined ? `  ${f.flag} ${shellQuote(f.value)}` : `  ${f.flag}`);
+    lines.push(
+      f.value !== undefined
+        ? `  ${f.flag} ${shellQuote(f.value)}`
+        : `  ${f.flag}`,
+    );
   }
 
   if (parsed.data) {

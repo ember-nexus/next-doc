@@ -15,7 +15,7 @@ import {
   httpMethodAugmentation,
   inlineCodeAttrs,
   linkAugmentation,
-} from "../plugins/rehype";
+} from "../plugins/rehype/index.ts";
 
 type Renderer = Awaited<
   ReturnType<ReturnType<typeof unified>["createRenderer"]>

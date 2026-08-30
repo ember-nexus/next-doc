@@ -1,6 +1,6 @@
 import type { RootContent } from "mdast";
 
-import { truncateJson } from "../truncateJson";
+import { truncateJson } from "../truncateJson.ts";
 
 interface Props {
   responseBody: object;

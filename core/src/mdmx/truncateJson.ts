@@ -72,7 +72,33 @@ function truncateString(value: string, maxLength: number): string {
   return `${value.slice(0, maxLength)}...`;
 }
 
-function truncateArray(items: unknown[], opts: Required<TruncateJsonOptions>): unknown[] {
+function truncateValue(
+  value: unknown,
+  opts: Required<TruncateJsonOptions>,
+): unknown {
+  if (typeof value === "string")
+    return truncateString(value, opts.maxStringLength);
+  // truncateValue/truncateArray are mutually recursive; one direction is
+  // necessarily a forward reference. Safe: both are hoisted function
+  // declarations, and neither is called until after the module has loaded.
+  // eslint-disable-next-line no-use-before-define
+  if (Array.isArray(value)) return truncateArray(value, opts);
+  if (value !== null && typeof value === "object") {
+    const result: Record<string, unknown> = {};
+    for (const [key, val] of Object.entries(value as Record<string, unknown>)) {
+      result[key] = opts.keyBlacklist.includes(key)
+        ? val
+        : truncateValue(val, opts);
+    }
+    return result;
+  }
+  return value;
+}
+
+function truncateArray(
+  items: unknown[],
+  opts: Required<TruncateJsonOptions>,
+): unknown[] {
   if (items.length <= opts.maxArrayItems) {
     return items.map((item) => truncateValue(item, opts));
   }
@@ -118,25 +144,15 @@ function truncateArray(items: unknown[], opts: Required<TruncateJsonOptions>): u
   return truncated;
 }
 
-function truncateValue(value: unknown, opts: Required<TruncateJsonOptions>): unknown {
-  if (typeof value === "string") return truncateString(value, opts.maxStringLength);
-  if (Array.isArray(value)) return truncateArray(value, opts);
-  if (value !== null && typeof value === "object") {
-    const result: Record<string, unknown> = {};
-    for (const [key, val] of Object.entries(value as Record<string, unknown>)) {
-      result[key] = opts.keyBlacklist.includes(key) ? val : truncateValue(val, opts);
-    }
-    return result;
-  }
-  return value;
-}
-
 /**
  * Returns `value` unchanged if it's already small (per `sizeBudget`),
  * otherwise a structurally-representative, size-capped copy. Never mutates
  * the input.
  */
-export function truncateJson(value: unknown, options: TruncateJsonOptions = {}): unknown {
+export function truncateJson(
+  value: unknown,
+  options: TruncateJsonOptions = {},
+): unknown {
   const opts = { ...DEFAULTS, ...options };
   if (JSON.stringify(value).length <= opts.sizeBudget) return value;
   return truncateValue(value, opts);

@@ -2,6 +2,8 @@
 // elements → {nodes, edges} transform. Keeping it out of Graph.ts means the
 // component file only deals with rendering concerns.
 
+import type { EdgeData, NodeData } from "@antv/g6";
+
 // ── Color scheme ─────────────────────────────────────────────────────────────
 //
 // Node type colors mirror --c-node-* vars defined in colors.css.
@@ -83,8 +85,8 @@ export interface GraphElement {
 export interface ElementsPayload {
   elements?: GraphElement[];
   // backward-compat: raw g6 data is still accepted as-is
-  nodes?: any[];
-  edges?: any[];
+  nodes?: NodeData[];
+  edges?: EdgeData[];
 }
 
 export interface TypeStyle {
@@ -99,18 +101,18 @@ export interface TypeStyle {
 // Node type color palette — mirrors --c-node-* in colors.css.
 export const TYPE_STYLES: Record<string, TypeStyle> = {
   // Identity
-  User:       { color: "#ef4444", icon: "user"       }, // --c-node-user        red-500
-  Group:      { color: "#f59e0b", icon: "group"      }, // --c-node-group       amber-400
-  Token:      { color: "#d946ef", icon: "token"      }, // --c-node-token       fuchsia-500
+  User: { color: "#ef4444", icon: "user" }, // --c-node-user        red-500
+  Group: { color: "#f59e0b", icon: "group" }, // --c-node-group       amber-400
+  Token: { color: "#d946ef", icon: "token" }, // --c-node-token       fuchsia-500
   // Search
-  Search:     { color: "#6366f1", icon: "search"     }, // --c-node-search      indigo-500
+  Search: { color: "#6366f1", icon: "search" }, // --c-node-search      indigo-500
   // Data
-  Data:       { color: "#2563eb", icon: "data"       }, // --c-node-data        blue-600
+  Data: { color: "#2563eb", icon: "data" }, // --c-node-data        blue-600
   Collection: { color: "#16a34a", icon: "collection" }, // --c-node-collection  green-600
-  File:       { color: "#22d3ee", icon: "file"       }, // --c-node-file        cyan-400
+  File: { color: "#22d3ee", icon: "file" }, // --c-node-file        cyan-400
   // Taxonomy
-  Taxon:      { color: "#6b7280", icon: "tag"        }, // --c-node-taxon       gray-500
-  Plant:      { color: "#16a34a", icon: "plant"      }, // --c-node-plant       green-600
+  Taxon: { color: "#6b7280", icon: "tag" }, // --c-node-taxon       gray-500
+  Plant: { color: "#16a34a", icon: "plant" }, // --c-node-plant       green-600
 };
 
 export const DEFAULT_TYPE: TypeStyle = { color: "#6b7280", icon: "data" }; // --c-node-default  gray-500
@@ -119,7 +121,10 @@ export function typeStyle(type?: string): TypeStyle {
   return (type && TYPE_STYLES[type]) || DEFAULT_TYPE;
 }
 
-const isEdge = (el: GraphElement) => el.start != null && el.end != null;
+const isEdge = (
+  el: GraphElement,
+): el is GraphElement & { start: string; end: string } =>
+  el.start !== undefined && el.end !== undefined;
 
 function firstDefined<T>(...vals: (T | undefined)[]): T | undefined {
   for (const v of vals) if (v !== undefined) return v;
@@ -133,8 +138,8 @@ function firstDefined<T>(...vals: (T | undefined)[]): T | undefined {
  * for both nodes and relations.
  */
 export function elementsToGraphData(payload: ElementsPayload): {
-  nodes: any[];
-  edges: any[];
+  nodes: NodeData[];
+  edges: EdgeData[];
 } {
   // If someone still passes raw nodes/edges, pass them straight through.
   if (!payload?.elements && (payload?.nodes || payload?.edges)) {
@@ -142,8 +147,8 @@ export function elementsToGraphData(payload: ElementsPayload): {
   }
 
   const elements = payload?.elements ?? [];
-  const nodes: any[] = [];
-  const edges: any[] = [];
+  const nodes: NodeData[] = [];
+  const edges: EdgeData[] = [];
 
   for (const el of elements) {
     const data = {

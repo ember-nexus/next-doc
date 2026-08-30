@@ -71,6 +71,39 @@
                     "description": { "query": "lily" }
                   }
                 }
+              },
+              "parameters": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Step-local parameters. In addition to arbitrary values used by expressions inside `query`, this step recognizes the following well-known keys.",
+                "properties": {
+                  "nodeTypes": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Restricts the search to the given node types."
+                  },
+                  "relationTypes": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Restricts the search to the given relation types."
+                  },
+                  "page": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "Page of results to return."
+                  },
+                  "pageSize": {
+                    "type": "integer",
+                    "default": 25,
+                    "description": "Number of results per page."
+                  },
+                  "minScore": {
+                    "type": "number",
+                    "nullable": true,
+                    "default": null,
+                    "description": "If set, removes all results with a lower Elasticsearch relevance score."
+                  }
+                }
               }
             }
           }

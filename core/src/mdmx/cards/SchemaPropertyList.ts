@@ -1,6 +1,8 @@
 import type { RootContent } from "mdast";
 
-import { schemaParam } from "../../util";
+import { schemaPath } from "../../lib/routes.ts";
+import { schemaParam } from "../../util/index.ts";
+import { parseMarkdownSource } from "../markdownSource.ts";
 
 // Markdown port of `SchemaPropertyList.astro` + `SchemaPropertyRow.astro`.
 // The HTML version is a nested tree of cards; markdown has no equivalent
@@ -23,7 +25,7 @@ function schemaLink(name: string, suffix = ""): RootContent[] {
   const nodes: RootContent[] = [
     {
       type: "link",
-      url: `/schema/${schemaParam(name)}`,
+      url: schemaPath(schemaParam(name)),
       title: null,
       children: [{ type: "inlineCode", value: name }],
     },
@@ -120,11 +122,7 @@ function propertyRow(
   const block: RootContent[] = [{ type: "paragraph", children: header }];
 
   const description = typeof n.description === "string" ? n.description : null;
-  if (description)
-    block.push({
-      type: "paragraph",
-      children: [{ type: "text", value: description }],
-    });
+  if (description) block.push(...parseMarkdownSource(description));
 
   if (n.example !== undefined) {
     block.push({

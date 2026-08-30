@@ -3,7 +3,7 @@
     "/upload/{uuid}": {
       "head": {
         "summary": "Head upload",
-        "description": "Retrieves metadata of a single resumable upload process.",
+        "description": "Retrieves the current state of a resumable upload without transferring any of its already-uploaded data. Only the user who created the upload can query it.",
         "operationId": "head-upload",
         "tags": [
           "File"
@@ -22,24 +22,29 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
+            },
+            "description": "Id of the resumable upload, as returned in the `Location` header of the request that created it."
           }
         ],
-        "x-ember-nexus-har-example": {
-          "method": "HEAD",
-          "url": "https://api.example.com/upload/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
-          "httpVersion": "HTTP/1.1",
-          "cookies": [],
-          "headers": [
-            {
-              "name": "Authorization",
-              "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+        "x-ember-nexus-har-example": [
+          {
+            "har": {
+              "method": "HEAD",
+              "url": "https://api.example.com/upload/74a8fcd9-6cb0-4b0d-8d42-0b6c3c54d1ac",
+              "httpVersion": "HTTP/1.1",
+              "cookies": [],
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer secret-token:PIPeJGUt7c00ENn8a5uDlc"
+                }
+              ],
+              "queryString": [],
+              "headersSize": -1,
+              "bodySize": -1
             }
-          ],
-          "queryString": [],
-          "headersSize": -1,
-          "bodySize": -1
-        }
+          }
+        ]
       }
     }
   }

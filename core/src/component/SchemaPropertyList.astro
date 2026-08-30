@@ -1,6 +1,7 @@
 ---
 import SchemaPropertyRow from './SchemaPropertyRow.astro';
-import { schemaParam } from '../util';
+import { schemaPath } from '../lib/routes.ts';
+import { schemaParam } from '../util/index.ts';
 
 interface Props {
     schema: unknown;
@@ -8,7 +9,7 @@ interface Props {
 
 const { schema } = Astro.props;
 
-const raw = (schema != null && typeof schema === 'object' ? schema : {}) as Record<string, unknown>;
+const raw = (schema !== null && schema !== undefined && typeof schema === 'object' ? schema : {}) as Record<string, unknown>;
 
 const requiredNames = new Set<string>(
     Array.isArray(raw.required) ? (raw.required as string[]) : [],
@@ -76,7 +77,7 @@ const hasContent =
                 <span class="text-xs text-gray-400">extends</span>
                 {extendsRefs.map((r) => (
                     <a
-                        href={`/schema/${r.slug}`}
+                        href={schemaPath(r.slug)}
                         class="font-mono text-xs text-blue-600 dark:text-blue-400 hover:underline border border-hairline rounded px-2 py-0.5 bg-white dark:bg-black"
                     >
                         {r.name} ↗
@@ -103,7 +104,7 @@ const hasContent =
                 <div class="flex flex-wrap gap-2">
                     {variants.map((v) => (
                         <a
-                            href={`/schema/${v.slug}`}
+                            href={schemaPath(v.slug)}
                             class="font-mono text-sm text-blue-600 dark:text-blue-400 hover:underline border border-hairline rounded-md px-3 py-1.5 bg-gray-50 dark:bg-zinc-900"
                         >
                             {v.name} ↗
