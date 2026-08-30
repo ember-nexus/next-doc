@@ -30,7 +30,7 @@ jobs:
             --cache-to type=gha,mode=max,scope=amd-dev \
             --load \
             -t api-docs:dev-amd \
-            -f ./docker/Dockerfile \
+            -f ./tools/Dockerfile \
             .
           docker save api-docs:dev-amd | gzip > api-dpcs-dev-amd.tar.gz
       - name: Build Docker image - AMD prod
@@ -42,7 +42,7 @@ jobs:
             --load \
             --build-arg="VERSION=$( cat composer.json | jq -r .version )" \
             -t api-docs:prod-amd \
-            -f ./docker/Dockerfile \
+            -f ./tools/Dockerfile \
             .
           docker save api-docs:prod-amd | gzip > api-docs-prod-amd.tar.gz
       - uses: actions/upload-artifact@v6
