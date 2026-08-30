@@ -32,7 +32,7 @@ jobs:
             -t api-docs:dev-amd \
             -f ./tools/Dockerfile \
             .
-          docker save api-docs:dev-amd | gzip > api-dpcs-dev-amd.tar.gz
+          docker save api-docs:dev-amd | gzip > api-docs-dev-amd.tar.gz
       - name: Build Docker image - AMD prod
         run: |
           docker buildx build \
